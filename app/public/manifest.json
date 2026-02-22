@@ -1,0 +1,21 @@
+{
+  "name": "BinWhere — Singapore Recycling Guide",
+  "short_name": "BinWhere",
+  "description": "Snap a photo or describe an item to find out how to recycle it in Singapore",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F7FA",
+  "theme_color": "#00A651",
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

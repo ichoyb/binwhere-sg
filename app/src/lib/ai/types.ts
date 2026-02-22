@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import type { ChannelType, ClassifyStatus } from '@/types/recycling';
 
 /** Zod schema for AI classification result */
 export const ClassifyResultSchema = z.object({
@@ -29,8 +28,8 @@ export const ClassifyResultSchema = z.object({
   ]).nullable(),
   /** Why this classification was made */
   reason: z.string(),
-  /** How to prepare the item for recycling */
-  preparation: z.string().optional(),
+  /** How to prepare the item for recycling (step-by-step) */
+  preparation: z.array(z.string()).optional(),
   /** Extra tip for the user */
   tip: z.string().optional(),
 });

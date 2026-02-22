@@ -48,7 +48,7 @@ Respond ONLY with a valid JSON object (no markdown, no explanation):
   "confidence": 0.0-1.0,
   "channel": "channel_name or null if not_sure",
   "reason": "brief explanation in user's language",
-  "preparation": "how to prepare for recycling (optional)",
+  "preparation": ["step 1", "step 2"],
   "tip": "extra helpful tip (optional)"
 }
 

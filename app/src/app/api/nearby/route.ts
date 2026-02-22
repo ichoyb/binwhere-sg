@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getBlueBinIndex, getEwasteIndex, DATASET_IDS, getSpatialIndex } from '@/lib/data-gov';
+import { getBlueBinIndex, getEwasteIndex } from '@/lib/data-gov';
 
 const NearbyInputSchema = z.object({
   lat: z.coerce.number().min(1.15).max(1.47),
