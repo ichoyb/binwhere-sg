@@ -1,0 +1,37 @@
+{
+  "name": "binwhere-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prebuild": "tsx scripts/build-geo-data.ts",
+    "phase0:classify": "tsx scripts/phase0/test-classify.ts",
+    "phase0:tools": "tsx scripts/phase0/test-groq-tools.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@google/generative-ai": "^0.24.1",
+    "groq-sdk": "^0.37.0",
+    "next": "14.2.35",
+    "papaparse": "^5.5.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/papaparse": "^5.5.2",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "dotenv": "^17.3.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}
