@@ -10,8 +10,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 import { TEST_ITEMS, getItemsByChannel, type TestItem } from './test-items';
-import { GeminiProvider } from '../../src/lib/ai/providers/gemini';
-import { AnthropicProvider } from '../../src/lib/ai/providers/anthropic';
+import { GroqClassifyProvider } from '../../src/lib/ai/providers/groq-classify';
+import { PollinationsProvider } from '../../src/lib/ai/providers/pollinations';
 import type { ClassifyProvider, ClassifyResult } from '../../src/lib/ai/types';
 
 // Load .env from app directory
@@ -189,36 +189,32 @@ async function main() {
 
   const reports: ProviderReport[] = [];
 
-  // Test Gemini if key available
-  if (process.env.GEMINI_API_KEY) {
+  // Test Groq if key available
+  if (process.env.GROQ_API_KEY) {
     try {
-      const gemini = new GeminiProvider();
-      const report = await testProvider(gemini);
+      const groq = new GroqClassifyProvider();
+      const report = await testProvider(groq);
       reports.push(report);
       printReport(report);
     } catch (err) {
-      console.error(`Gemini test failed: ${(err as Error).message}`);
+      console.error(`Groq test failed: ${(err as Error).message}`);
     }
   } else {
-    console.log('Skipping Gemini (GEMINI_API_KEY not set)');
+    console.log('Skipping Groq (GROQ_API_KEY not set)');
   }
 
-  // Test Anthropic if key available
-  if (process.env.ANTHROPIC_API_KEY) {
-    try {
-      const anthropic = new AnthropicProvider();
-      const report = await testProvider(anthropic);
-      reports.push(report);
-      printReport(report);
-    } catch (err) {
-      console.error(`Anthropic test failed: ${(err as Error).message}`);
-    }
-  } else {
-    console.log('Skipping Anthropic (ANTHROPIC_API_KEY not set)');
+  // Test Pollinations (no key required)
+  try {
+    const pollinations = new PollinationsProvider();
+    const report = await testProvider(pollinations);
+    reports.push(report);
+    printReport(report);
+  } catch (err) {
+    console.error(`Pollinations test failed: ${(err as Error).message}`);
   }
 
   if (reports.length === 0) {
-    console.error('\nNo API keys configured. Set GEMINI_API_KEY and/or ANTHROPIC_API_KEY in .env');
+    console.error('\nNo providers available. Set GROQ_API_KEY in .env');
     process.exit(1);
   }
 

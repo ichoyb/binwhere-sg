@@ -25,8 +25,12 @@ export default function ResultPage({
   onViewNearby,
 }: ResultPageProps) {
   const nearbyChannel = result.channel ? CHANNEL_TO_NEARBY[result.channel] : null;
+  const isInSingapore = userLocation
+    ? userLocation.lat >= 1.15 && userLocation.lat <= 1.47 && userLocation.lng >= 103.6 && userLocation.lng <= 104.05
+    : false;
+
   const { points, loading: nearbyLoading } = useNearby(
-    userLocation,
+    isInSingapore ? userLocation : null,
     nearbyChannel,
   );
 
@@ -89,11 +93,18 @@ export default function ResultPage({
           </button>
         )}
 
-        {/* No location message */}
-        {!userLocation && nearbyChannel && (
-          <p className="text-center text-xs text-gray-400">
-            Enable location access to find nearby recycling points
-          </p>
+        {/* Location / region messages */}
+        {nearbyChannel && !userLocation && (
+          <div className="bg-blue-50 rounded-card p-4 border border-blue-100 text-center">
+            <p className="text-sm text-blue-700 font-medium">Enable location to find nearby bins</p>
+            <p className="text-xs text-blue-500 mt-1">Allow location access in your browser settings</p>
+          </div>
+        )}
+        {nearbyChannel && userLocation && !isInSingapore && (
+          <div className="bg-amber-50 rounded-card p-4 border border-amber-100 text-center">
+            <p className="text-sm text-amber-700 font-medium">Nearby bins only available in Singapore</p>
+            <p className="text-xs text-amber-500 mt-1">Recycling point data covers Singapore only</p>
+          </div>
         )}
 
         {/* Scan again */}

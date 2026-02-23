@@ -53,4 +53,4 @@ export interface ClassifyProvider {
 }
 
 /** Provider type identifier */
-export type ProviderType = 'gemini' | 'anthropic';
+export type ProviderType = 'groq' | 'pollinations';
