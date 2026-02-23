@@ -28,7 +28,7 @@ export class PollinationsProvider implements ClassifyProvider {
 
     const textPrompt = request.text
       ? `Classify this item: ${request.text}`
-      : 'What is this item? Classify it for recycling in Singapore.';
+      : 'What is this item? Classify it for recycling in Singapore. Respond in English.';
     content.push({ type: 'text', text: textPrompt });
 
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };

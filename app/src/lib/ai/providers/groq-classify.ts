@@ -4,8 +4,8 @@ import { CLASSIFY_SYSTEM_PROMPT } from '../prompts/classify-system';
 
 /** Text model for text-only classification */
 const TEXT_MODEL = 'llama-3.3-70b-versatile';
-/** Vision model for image classification */
-const VISION_MODEL = 'llama-3.2-11b-vision-preview';
+/** Vision model for image classification (Llama 4 Scout replaces deprecated 3.2 11B) */
+const VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
 
 export class GroqClassifyProvider implements ClassifyProvider {
   name = 'groq';
@@ -32,7 +32,7 @@ export class GroqClassifyProvider implements ClassifyProvider {
 
     const textPrompt = request.text
       ? `Classify this item: ${request.text}`
-      : 'What is this item? Classify it for recycling in Singapore.';
+      : 'What is this item? Classify it for recycling in Singapore. Respond in English.';
     content.push({ type: 'text', text: textPrompt });
 
     const response = await this.client.chat.completions.create({
