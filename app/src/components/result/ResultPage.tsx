@@ -34,7 +34,7 @@ export default function ResultPage({
   const hasMorePoints = points.length > 1;
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-full bg-bg">
       {/* Header with captured image */}
       {capturedImage && (
         <div className="w-full h-40 relative overflow-hidden">

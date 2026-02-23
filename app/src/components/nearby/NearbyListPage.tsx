@@ -20,7 +20,7 @@ export default function NearbyListPage({ result, userLocation, onBack }: NearbyL
   const channelLabel = result.channel ? CHANNEL_LABELS[result.channel] : 'Recycling';
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-full bg-bg">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-bg/95 backdrop-blur-sm border-b border-gray-100 px-4 py-2">
         <div className="flex items-center gap-2">

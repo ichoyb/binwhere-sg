@@ -50,7 +50,7 @@ export default function HomePage({ onClassified, history }: HomePageProps) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-bg">
+    <div className="flex flex-col min-h-full bg-bg">
       {/* Loading overlay */}
       {loading && <LoadingOverlay capturedImage={capturedImage} />}
 

@@ -48,3 +48,80 @@ html, body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ===== Desktop Shell (≥1024px) ===== */
+@media (min-width: 1024px) {
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .desktop-shell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 80px;
+    width: 100vw;
+    height: 100vh;
+    padding: 40px;
+  }
+
+  .desktop-brand {
+    max-width: 320px;
+    flex-shrink: 0;
+  }
+
+  /* Phone frame — iPhone 14 proportions */
+  .phone-frame {
+    position: relative;
+    width: 390px;
+    height: min(844px, calc(100vh - 80px));
+    border-radius: 44px;
+    border: 6px solid #374151;
+    background: #000;
+    box-shadow:
+      0 0 0 2px #1f2937,
+      0 25px 60px rgba(0, 0, 0, 0.5),
+      inset 0 0 0 2px #4b5563;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* Notch decoration */
+  .phone-notch {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 28px;
+    background: #000;
+    border-radius: 0 0 18px 18px;
+    z-index: 20;
+  }
+
+  /* Inner screen — contains the app */
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--color-bg);
+    border-radius: 38px;
+    /* Creates a new containing block so fixed children stay inside */
+    transform: translateZ(0);
+  }
+
+  /* Custom scrollbar inside phone frame */
+  .phone-screen::-webkit-scrollbar {
+    width: 3px;
+  }
+  .phone-screen::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .phone-screen::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+  }
+}
