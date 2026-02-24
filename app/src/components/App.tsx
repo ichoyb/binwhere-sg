@@ -1,67 +1,95 @@
 'use client';
 
-import { useState } from 'react';
-import type { AppView } from '@/types/app';
+import { useState, useRef } from 'react';
+import type { AppView, ScanHistoryItem } from '@/types/app';
 import type { ClassifyResult } from '@/lib/ai/types';
 import HomePage from '@/components/home/HomePage';
 import ResultPage from '@/components/result/ResultPage';
 import NearbyListPage from '@/components/nearby/NearbyListPage';
+import SlideTransition from '@/components/shared/SlideTransition';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useHistory } from '@/hooks/useHistory';
+
+const VIEW_ORDER: Record<AppView, number> = { home: 0, result: 1, nearby: 2 };
 
 export default function App() {
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [classifyResult, setClassifyResult] = useState<ClassifyResult | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const { location } = useGeolocation();
+  const { location, loading: geoLoading } = useGeolocation();
   const { history, addToHistory } = useHistory();
+  const prevViewRef = useRef<AppView>('home');
+
+  const direction = VIEW_ORDER[currentView] >= VIEW_ORDER[prevViewRef.current] ? 'forward' : 'backward';
+
+  const navigate = (view: AppView) => {
+    prevViewRef.current = currentView;
+    setCurrentView(view);
+  };
 
   const handleClassified = (result: ClassifyResult, image: string | null) => {
     setClassifyResult(result);
     setCapturedImage(image);
     addToHistory(result);
-    setCurrentView('result');
+    navigate('result');
+  };
+
+  const handleHistorySelect = (item: ScanHistoryItem) => {
+    if (!item.result) return;
+    setClassifyResult(item.result);
+    setCapturedImage(null);
+    navigate('result');
   };
 
   const handleScanAgain = () => {
     setClassifyResult(null);
     setCapturedImage(null);
-    setCurrentView('home');
+    navigate('home');
   };
 
   const handleViewNearby = () => {
-    setCurrentView('nearby');
+    navigate('nearby');
   };
 
   const handleBackToResult = () => {
-    setCurrentView('result');
+    navigate('result');
   };
 
-  switch (currentView) {
-    case 'home':
-      return (
-        <HomePage
-          onClassified={handleClassified}
-          history={history}
-        />
-      );
-    case 'result':
-      return (
-        <ResultPage
-          result={classifyResult!}
-          capturedImage={capturedImage}
-          userLocation={location}
-          onScanAgain={handleScanAgain}
-          onViewNearby={handleViewNearby}
-        />
-      );
-    case 'nearby':
-      return (
-        <NearbyListPage
-          result={classifyResult!}
-          userLocation={location}
-          onBack={handleBackToResult}
-        />
-      );
-  }
+  const renderView = () => {
+    switch (currentView) {
+      case 'home':
+        return (
+          <HomePage
+            onClassified={handleClassified}
+            onHistorySelect={handleHistorySelect}
+            history={history}
+          />
+        );
+      case 'result':
+        return (
+          <ResultPage
+            result={classifyResult!}
+            capturedImage={capturedImage}
+            userLocation={location}
+            geoLoading={geoLoading}
+            onScanAgain={handleScanAgain}
+            onViewNearby={handleViewNearby}
+          />
+        );
+      case 'nearby':
+        return (
+          <NearbyListPage
+            result={classifyResult!}
+            userLocation={location}
+            onBack={handleBackToResult}
+          />
+        );
+    }
+  };
+
+  return (
+    <SlideTransition viewKey={currentView} direction={direction}>
+      {renderView()}
+    </SlideTransition>
+  );
 }

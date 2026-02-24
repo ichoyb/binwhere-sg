@@ -14,12 +14,12 @@ export default function ErrorState({ message, onRetry }: ErrorStateProps) {
           <path d="M12 8v4M12 16h.01" stroke="#EF4444" strokeWidth="2" strokeLinecap="round"/>
         </svg>
       </div>
-      <p className="text-gray-700 font-medium mb-1">Something went wrong</p>
-      <p className="text-gray-400 text-sm mb-4">{message}</p>
+      <p className="text-gray-700 font-medium mb-1 text-body">Something went wrong</p>
+      <p className="text-gray-500 text-caption mb-4">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-5 py-2.5 rounded-btn bg-nea-green text-white text-sm font-medium active:bg-nea-green/90"
+          className="px-5 py-2.5 rounded-btn bg-nea-green text-white text-body font-medium active:bg-nea-green/90 min-h-btn"
         >
           Try Again
         </button>

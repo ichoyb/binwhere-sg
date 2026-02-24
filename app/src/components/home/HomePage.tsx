@@ -11,13 +11,15 @@ import TextInput from '@/components/home/TextInput';
 import HistoryChips from '@/components/home/HistoryChips';
 import LoadingOverlay from '@/components/shared/LoadingOverlay';
 import ErrorState from '@/components/shared/ErrorState';
+import MerlionIcon from '@/components/shared/MerlionIcon';
 
 interface HomePageProps {
   onClassified: (result: ClassifyResult, image: string | null) => void;
+  onHistorySelect: (item: ScanHistoryItem) => void;
   history: ScanHistoryItem[];
 }
 
-export default function HomePage({ onClassified, history }: HomePageProps) {
+export default function HomePage({ onClassified, onHistorySelect, history }: HomePageProps) {
   const { videoRef, status: cameraStatus, start, capture } = useCamera();
   const { loading, error, classify, reset } = useClassify();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -55,12 +57,14 @@ export default function HomePage({ onClassified, history }: HomePageProps) {
       {loading && <LoadingOverlay capturedImage={capturedImage} />}
 
       {/* Header */}
-      <header className="px-4 pt-4 pb-2">
-        <h1 className="text-xl font-bold text-gray-900">
-          <span className="text-nea-green">Bin</span>
-          <span className="text-blue-bin">Where</span>
-        </h1>
-        <p className="text-xs text-gray-400 mt-0.5">Snap or describe an item to find out how to recycle it</p>
+      <header className="px-4 pb-2 flex items-center gap-2" style={{ paddingTop: 'max(16px, env(safe-area-inset-top))' }}>
+        <MerlionIcon size={28} />
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 leading-tight">
+            <span className="text-nea-green">Bin</span>
+            <span className="text-blue-bin">Where</span>
+          </h1>
+        </div>
       </header>
 
       {/* Camera area */}
@@ -73,7 +77,7 @@ export default function HomePage({ onClassified, history }: HomePageProps) {
       </div>
 
       {/* Controls */}
-      <div className="px-4 py-4 space-y-3">
+      <div className="px-4 py-4 space-y-3" style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}>
         {/* Error state */}
         {error && (
           <ErrorState message={error} onRetry={handleRetry} />
@@ -94,7 +98,7 @@ export default function HomePage({ onClassified, history }: HomePageProps) {
         />
 
         {/* History */}
-        <HistoryChips items={history} />
+        <HistoryChips items={history} onSelect={onHistorySelect} />
       </div>
     </div>
   );

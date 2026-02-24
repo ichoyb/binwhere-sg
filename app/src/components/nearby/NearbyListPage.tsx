@@ -4,7 +4,7 @@ import type { ClassifyResult } from '@/lib/ai/types';
 import { CHANNEL_LABELS } from '@/types/recycling';
 import { CHANNEL_TO_NEARBY } from '@/lib/constants';
 import BackButton from '@/components/shared/BackButton';
-import PointCard from '@/components/nearby/PointCard';
+import RecyclingPointCard from '@/components/shared/RecyclingPointCard';
 import { useNearby } from '@/hooks/useNearby';
 
 interface NearbyListPageProps {
@@ -50,7 +50,7 @@ export default function NearbyListPage({ result, userLocation, onBack }: NearbyL
         )}
 
         {points.map((point, i) => (
-          <PointCard key={i} point={point} />
+          <RecyclingPointCard key={`${point.name}-${i}`} point={point} />
         ))}
       </div>
     </div>

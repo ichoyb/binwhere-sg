@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import type { ClassifyResult } from '@/lib/ai/types';
 import { classifyItem, isRetryable } from '@/lib/api-client';
+import { getFriendlyError } from '@/lib/constants';
 
 interface UseClassifyReturn {
   result: ClassifyResult | null;
@@ -44,8 +45,8 @@ export function useClassify(): UseClassifyReturn {
       }
     }
 
-    const msg = lastError instanceof Error ? lastError.message : 'Something went wrong';
-    setError(msg);
+    const raw = lastError instanceof Error ? lastError.message : 'Something went wrong';
+    setError(getFriendlyError(raw));
     setLoading(false);
     return null;
   }, []);

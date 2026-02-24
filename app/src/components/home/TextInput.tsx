@@ -27,19 +27,20 @@ export default function TextInput({ onSubmit, disabled, prominent }: TextInputPr
         onChange={(e) => setText(e.target.value)}
         placeholder={prominent ? "Describe your item (e.g. pizza box, old phone)" : "Or type what you have..."}
         disabled={disabled}
+        enterKeyHint="search"
         className={`flex-1 px-4 py-3 rounded-btn border border-gray-200 bg-white
-          text-sm placeholder:text-gray-400
+          text-body placeholder:text-gray-400
           focus:outline-none focus:ring-2 focus:ring-blue-bin/30 focus:border-blue-bin
           disabled:opacity-50
-          ${prominent ? 'text-base py-4 border-blue-bin/30' : ''}`}
+          ${prominent ? 'py-4 border-blue-bin/30' : ''}`}
         maxLength={200}
       />
       <button
         type="submit"
         disabled={disabled || !text.trim()}
-        className="px-4 py-3 rounded-btn bg-nea-green text-white text-sm font-medium
+        className="px-5 py-3 rounded-btn bg-nea-green text-white text-body font-medium
           active:bg-nea-green/90 disabled:opacity-40 disabled:cursor-not-allowed
-          min-w-[60px]"
+          min-h-btn min-w-[60px]"
       >
         Go
       </button>

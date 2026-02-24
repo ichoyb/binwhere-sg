@@ -8,7 +8,7 @@ interface StatusIconProps {
   size?: number;
 }
 
-export default function StatusIcon({ status, size = 40 }: StatusIconProps) {
+export default function StatusIcon({ status, size = 48 }: StatusIconProps) {
   const config = STATUS_CONFIG[status];
 
   const iconPath: Record<ClassifyStatus, string> = {

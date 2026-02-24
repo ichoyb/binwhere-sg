@@ -8,6 +8,8 @@ export interface ScanHistoryItem {
   status: ClassifyResult['status'];
   channel: ClassifyResult['channel'];
   timestamp: number;
+  /** Full classification result for re-display when tapped */
+  result?: ClassifyResult;
 }
 
 export interface NearbyPoint {

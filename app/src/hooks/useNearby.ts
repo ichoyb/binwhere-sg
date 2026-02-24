@@ -1,12 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { NearbyPoint } from '@/types/app';
 import { fetchNearby } from '@/lib/api-client';
 
+/** Cache key for deduplication */
+function cacheKey(lat: number, lng: number, channel: string): string {
+  return `${lat.toFixed(4)},${lng.toFixed(4)},${channel}`;
+}
+
+/** Module-level cache to deduplicate across component instances */
+const nearbyCache = new Map<string, { points: NearbyPoint[]; timestamp: number }>();
+const CACHE_TTL = 60_000; // 1 minute
+
 /**
  * Fetch nearby recycling points.
- * Handles channel mapping: ewaste_battery and lighting → ewaste.
+ * Deduplicates requests with same location+channel within 1 minute.
  */
 export function useNearby(
   userLocation: { lat: number; lng: number } | null,
@@ -15,12 +24,27 @@ export function useNearby(
   const [points, setPoints] = useState<NearbyPoint[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const lastKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!userLocation || !channel) {
       setPoints([]);
       return;
     }
+
+    const key = cacheKey(userLocation.lat, userLocation.lng, channel);
+
+    // Check cache first
+    const cached = nearbyCache.get(key);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      setPoints(cached.points);
+      setLoading(false);
+      return;
+    }
+
+    // Skip if same request already in-flight
+    if (lastKeyRef.current === key && loading) return;
+    lastKeyRef.current = key;
 
     let cancelled = false;
     setLoading(true);
@@ -36,6 +60,7 @@ export function useNearby(
         if (!cancelled) {
           setPoints(data.results);
           setLoading(false);
+          nearbyCache.set(key, { points: data.results, timestamp: Date.now() });
         }
       })
       .catch((err) => {
@@ -48,7 +73,8 @@ export function useNearby(
     return () => {
       cancelled = true;
     };
-  }, [userLocation, channel]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userLocation?.lat, userLocation?.lng, channel]);
 
   return { points, loading, error };
 }

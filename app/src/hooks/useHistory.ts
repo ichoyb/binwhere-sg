@@ -27,6 +27,7 @@ export function useHistory() {
         status: result.status,
         channel: result.channel,
         timestamp: Date.now(),
+        result,
       };
       const next = [item, ...prev].slice(0, MAX_HISTORY_ITEMS);
       setItem(STORAGE_KEY, next);

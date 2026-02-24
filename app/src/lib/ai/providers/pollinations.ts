@@ -9,7 +9,9 @@ export class PollinationsProvider implements ClassifyProvider {
   private apiKey: string | undefined;
 
   constructor(apiKey?: string) {
-    this.apiKey = apiKey ?? process.env.POLLINATIONS_API_KEY;
+    const key = apiKey ?? process.env.POLLINATIONS_API_KEY;
+    if (!key) throw new Error('POLLINATIONS_API_KEY is required');
+    this.apiKey = key;
   }
 
   async classify(request: ClassifyRequest): Promise<ClassifyResult> {
