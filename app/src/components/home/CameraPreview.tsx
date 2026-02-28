@@ -1,7 +1,7 @@
 'use client';
 
 import type { CameraStatus } from '@/hooks/useCamera';
-import { MerlionLarge } from '@/components/shared/MerlionIcon';
+import LogoIcon from '@/components/shared/LogoIcon';
 
 interface CameraPreviewProps {
   videoRef: React.RefObject<HTMLVideoElement>;
@@ -15,7 +15,7 @@ export default function CameraPreview({ videoRef, status, onStart }: CameraPrevi
       <div className="flex-1 flex flex-col items-center justify-center rounded-card p-8 text-center relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #00A651 0%, #E8F8EF 100%)' }}
       >
-        <MerlionLarge size={100} className="mb-4 opacity-90" />
+        <LogoIcon size={100} className="mb-4 opacity-90" />
         <h2 className="text-xl font-bold text-white mb-1 drop-shadow-sm">
           Snap to know.
         </h2>

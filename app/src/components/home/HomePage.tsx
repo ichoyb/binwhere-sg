@@ -11,7 +11,7 @@ import TextInput from '@/components/home/TextInput';
 import HistoryChips from '@/components/home/HistoryChips';
 import LoadingOverlay from '@/components/shared/LoadingOverlay';
 import ErrorState from '@/components/shared/ErrorState';
-import MerlionIcon from '@/components/shared/MerlionIcon';
+import LogoIcon from '@/components/shared/LogoIcon';
 
 interface HomePageProps {
   onClassified: (result: ClassifyResult, image: string | null) => void;
@@ -58,7 +58,7 @@ export default function HomePage({ onClassified, onHistorySelect, history }: Hom
 
       {/* Header */}
       <header className="px-4 pb-2 flex items-center gap-2" style={{ paddingTop: 'max(16px, env(safe-area-inset-top))' }}>
-        <MerlionIcon size={28} />
+        <LogoIcon size={28} />
         <div>
           <h1 className="text-xl font-bold text-gray-900 leading-tight">
             <span className="text-nea-green">Bin</span>

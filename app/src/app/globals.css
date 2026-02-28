@@ -59,10 +59,7 @@ html, body {
     position: sticky;
     top: 0;
     z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 48px;
+    padding: 16px 0;
     background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -76,8 +73,7 @@ html, body {
     gap: 80px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 80px 48px 64px;
-    min-height: calc(100vh - 64px);
+    padding: 48px 48px 64px;
   }
 
   .desktop-hero-text {
@@ -85,12 +81,12 @@ html, body {
     max-width: 480px;
   }
 
-  /* Phone frame — iPhone 14 proportions */
+  /* Phone frame — iPhone 15 Pro proportions */
   .phone-frame {
     position: relative;
-    width: 360px;
-    height: min(780px, calc(100vh - 200px));
-    border-radius: 44px;
+    width: 400px;
+    height: min(860px, calc(100vh - 140px));
+    border-radius: 48px;
     border: 6px solid #374151;
     background: #000;
     box-shadow:
@@ -101,16 +97,16 @@ html, body {
     flex-shrink: 0;
   }
 
-  /* Notch decoration */
+  /* Dynamic Island pill */
   .phone-notch {
     position: absolute;
-    top: 8px;
+    top: 10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 126px;
-    height: 28px;
+    width: 120px;
+    height: 34px;
     background: #000;
-    border-radius: 0 0 18px 18px;
+    border-radius: 20px;
     z-index: 20;
   }
 
@@ -123,6 +119,7 @@ html, body {
     background: var(--color-bg);
     border-radius: 38px;
     transform: translateZ(0);
+    padding-top: 48px;
   }
 
   .phone-screen::-webkit-scrollbar {

@@ -107,15 +107,15 @@ export default function ResultPage({
         </div>
 
         {/* Status content */}
-        <div className="relative px-4 pt-4 pb-6 flex flex-col items-center text-center">
-          <StatusIcon status={result.status} size={56} />
+        <div className="relative px-4 pt-3 pb-4 flex flex-col items-center text-center">
+          <StatusIcon status={result.status} size={44} />
           <span
-            className="inline-block mt-3 px-3 py-1 rounded-full text-caption font-semibold"
+            className="inline-block mt-2 px-3 py-0.5 rounded-full text-caption font-semibold"
             style={{ backgroundColor: `${config.color}20`, color: config.textColor }}
           >
             {config.label}
           </span>
-          <h2 className="text-xl font-bold mt-2 line-clamp-2" style={{ color: config.textColor }}>
+          <h2 className="text-lg font-bold mt-1.5 line-clamp-2" style={{ color: config.textColor }}>
             {result.item}
           </h2>
           {result.channel && (
@@ -127,29 +127,11 @@ export default function ResultPage({
       </div>
 
       {/* Content cards */}
-      <div className="px-4 pb-8 space-y-3 mt-3">
+      <div className="px-4 pb-6 space-y-2.5 mt-2">
         {/* Reason */}
         <div className="bg-white rounded-card p-4 border border-gray-100">
           <p className="text-body text-gray-600 leading-relaxed">{result.reason}</p>
         </div>
-
-        {/* Low confidence warning */}
-        <ConfidenceBadge confidence={result.confidence} />
-
-        {/* Preparation steps */}
-        {result.preparation && result.preparation.length > 0 && (
-          <PreparationList steps={result.preparation} />
-        )}
-
-        {/* Tip */}
-        {result.tip && (
-          <div className="bg-white rounded-card p-4 border border-gray-100">
-            <p className="text-body text-gray-600">
-              <span className="font-medium text-gray-700">Tip: </span>
-              {result.tip}
-            </p>
-          </div>
-        )}
 
         {/* Nearest point */}
         {nearbyLoading && (
@@ -191,6 +173,24 @@ export default function ResultPage({
           <div className="bg-amber-50 rounded-card p-4 border border-amber-100 text-center">
             <p className="text-caption text-amber-700 font-medium">Nearby bins only available in Singapore</p>
             <p className="text-caption text-amber-500 mt-1">Recycling point data covers Singapore only</p>
+          </div>
+        )}
+
+        {/* Low confidence warning */}
+        <ConfidenceBadge confidence={result.confidence} />
+
+        {/* Preparation steps */}
+        {result.preparation && result.preparation.length > 0 && (
+          <PreparationList steps={result.preparation} />
+        )}
+
+        {/* Tip */}
+        {result.tip && (
+          <div className="bg-white rounded-card p-4 border border-gray-100">
+            <p className="text-body text-gray-600">
+              <span className="font-medium text-gray-700">Tip: </span>
+              {result.tip}
+            </p>
           </div>
         )}
 
