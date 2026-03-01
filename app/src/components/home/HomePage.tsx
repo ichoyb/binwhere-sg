@@ -11,15 +11,18 @@ import TextInput from '@/components/home/TextInput';
 import HistoryChips from '@/components/home/HistoryChips';
 import LoadingOverlay from '@/components/shared/LoadingOverlay';
 import ErrorState from '@/components/shared/ErrorState';
+import CategorySelector from '@/components/home/CategorySelector';
 import LogoIcon from '@/components/shared/LogoIcon';
 
 interface HomePageProps {
   onClassified: (result: ClassifyResult, image: string | null) => void;
+  onCategorySelect: (result: ClassifyResult) => void;
   onHistorySelect: (item: ScanHistoryItem) => void;
+  onHistoryClear: () => void;
   history: ScanHistoryItem[];
 }
 
-export default function HomePage({ onClassified, onHistorySelect, history }: HomePageProps) {
+export default function HomePage({ onClassified, onCategorySelect, onHistorySelect, onHistoryClear, history }: HomePageProps) {
   const { videoRef, status: cameraStatus, start, capture } = useCamera();
   const { loading, error, classify, reset } = useClassify();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -67,8 +70,8 @@ export default function HomePage({ onClassified, onHistorySelect, history }: Hom
         </div>
       </header>
 
-      {/* Camera area */}
-      <div className="flex-1 px-4 min-h-0">
+      {/* Camera area — flex-1 only when camera active (video needs full space) */}
+      <div className={`${cameraStatus === 'idle' ? '' : 'flex-1'} flex flex-col px-4 min-h-0`}>
         <CameraPreview
           videoRef={videoRef}
           status={cameraStatus}
@@ -90,15 +93,20 @@ export default function HomePage({ onClassified, onHistorySelect, history }: Hom
           </div>
         )}
 
-        {/* Text input */}
-        <TextInput
-          onSubmit={handleTextSubmit}
-          disabled={loading}
-          prominent={cameraNotActive}
-        />
+        {/* Text input + category selector */}
+        <div>
+          <TextInput
+            onSubmit={handleTextSubmit}
+            disabled={loading}
+            prominent={cameraNotActive}
+          />
+          <div className="mt-1.5">
+            <CategorySelector onSelect={onCategorySelect} disabled={loading} />
+          </div>
+        </div>
 
         {/* History */}
-        <HistoryChips items={history} onSelect={onHistorySelect} />
+        <HistoryChips items={history} onSelect={onHistorySelect} onClear={onHistoryClear} />
       </div>
     </div>
   );

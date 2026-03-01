@@ -271,6 +271,9 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
                   </a>
                 </li>
               </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Location data covers Blue Bins &amp; E-Waste collection points.
+              </p>
             </div>
           </div>
           <div className="mt-10 pt-6 border-t border-white/[0.06]">

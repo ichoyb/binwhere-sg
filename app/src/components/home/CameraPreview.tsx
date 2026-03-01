@@ -12,19 +12,19 @@ interface CameraPreviewProps {
 export default function CameraPreview({ videoRef, status, onStart }: CameraPreviewProps) {
   if (status === 'idle') {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center rounded-card p-8 text-center relative overflow-hidden"
+      <div className="flex-1 flex flex-col items-center justify-center rounded-card p-6 text-center relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #00A651 0%, #E8F8EF 100%)' }}
       >
-        <LogoIcon size={100} className="mb-4 opacity-90" />
+        <LogoIcon size={72} className="mb-3 opacity-90" />
         <h2 className="text-xl font-bold text-white mb-1 drop-shadow-sm">
           Snap to know.
         </h2>
-        <p className="text-base text-white/85 mb-6 drop-shadow-sm">
+        <p className="text-base text-white/85 mb-4 drop-shadow-sm">
           Recycle right.
         </p>
         <button
           onClick={onStart}
-          className="px-8 py-3.5 bg-white text-nea-green font-semibold rounded-full text-base shadow-lg active:scale-95 transition-transform min-h-btn"
+          className="px-6 py-3 bg-white text-nea-green font-semibold rounded-full text-base shadow-lg active:scale-95 transition-transform min-h-btn"
         >
           Open Camera
         </button>

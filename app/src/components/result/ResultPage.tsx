@@ -3,12 +3,11 @@
 import type { ClassifyResult } from '@/lib/ai/types';
 import { STATUS_CONFIG } from '@/lib/constants';
 import ConfidenceBadge from '@/components/result/ConfidenceBadge';
-import PreparationList from '@/components/result/PreparationList';
 import RecyclingPointCard from '@/components/shared/RecyclingPointCard';
 import StatusIcon from '@/components/shared/StatusIcon';
 import { useNearby } from '@/hooks/useNearby';
 import { CHANNEL_LABELS } from '@/types/recycling';
-import { CHANNEL_TO_NEARBY } from '@/lib/constants';
+import { CHANNEL_TO_NEARBY, CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
 
 interface ResultPageProps {
   result: ClassifyResult;
@@ -128,10 +127,56 @@ export default function ResultPage({
 
       {/* Content cards */}
       <div className="px-4 pb-6 space-y-2.5 mt-2">
-        {/* Reason */}
-        <div className="bg-white rounded-card p-4 border border-gray-100">
+        {/* Combined: Reason + Disposal + Preparation */}
+        <div className="bg-white rounded-card p-4 border border-gray-100 space-y-3">
           <p className="text-body text-gray-600 leading-relaxed">{result.reason}</p>
+
+          {/* Disposal instruction tag */}
+          {result.channel && (() => {
+            const ch = CHANNEL_DISPLAY_CONFIG[result.channel];
+            return (
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
+                style={{ backgroundColor: `${ch.color}12`, color: ch.textColor }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={ch.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={ch.iconPath} />
+                </svg>
+                <span className="text-caption font-semibold">{ch.instruction}</span>
+              </div>
+            );
+          })()}
+
+          {/* Preparation steps */}
+          {result.preparation && result.preparation.length > 0 && (
+            <div className="border-t border-gray-100 pt-3">
+              <h4 className="text-caption font-semibold text-gray-700 mb-2">Before you go</h4>
+              <ul className="space-y-1.5">
+                {result.preparation.map((step, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="w-5 h-5 rounded-full bg-nea-green/10 text-nea-green text-caption font-bold flex items-center justify-center shrink-0 mt-0.5">
+                      {i + 1}
+                    </span>
+                    <span className="text-body text-gray-600">{step}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
+
+        {/* Low confidence warning */}
+        <ConfidenceBadge confidence={result.confidence} />
+
+        {/* Tip */}
+        {result.tip && (
+          <div className="bg-white rounded-card p-4 border border-gray-100">
+            <p className="text-body text-gray-600">
+              <span className="font-medium text-gray-700">Tip: </span>
+              {result.tip}
+            </p>
+          </div>
+        )}
 
         {/* Nearest point */}
         {nearbyLoading && (
@@ -153,7 +198,7 @@ export default function ResultPage({
             onClick={onViewNearby}
             className="w-full py-3 rounded-btn border border-blue-bin text-blue-bin text-body font-medium active:bg-blue-bin/5 min-h-btn"
           >
-            View more {result.channel ? CHANNEL_LABELS[result.channel] : ''} points nearby
+            See All Nearby
           </button>
         )}
 
@@ -173,24 +218,6 @@ export default function ResultPage({
           <div className="bg-amber-50 rounded-card p-4 border border-amber-100 text-center">
             <p className="text-caption text-amber-700 font-medium">Nearby bins only available in Singapore</p>
             <p className="text-caption text-amber-500 mt-1">Recycling point data covers Singapore only</p>
-          </div>
-        )}
-
-        {/* Low confidence warning */}
-        <ConfidenceBadge confidence={result.confidence} />
-
-        {/* Preparation steps */}
-        {result.preparation && result.preparation.length > 0 && (
-          <PreparationList steps={result.preparation} />
-        )}
-
-        {/* Tip */}
-        {result.tip && (
-          <div className="bg-white rounded-card p-4 border border-gray-100">
-            <p className="text-body text-gray-600">
-              <span className="font-medium text-gray-700">Tip: </span>
-              {result.tip}
-            </p>
           </div>
         )}
 

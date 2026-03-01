@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, type ReactNode } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, type ReactNode } from 'react';
 
 type Direction = 'forward' | 'backward';
 
@@ -10,98 +10,123 @@ interface SlideTransitionProps {
   children: ReactNode;
 }
 
-const DURATION = 300;
+const ENTER_MS = 250;
+const EXIT_MS = 200;
+const TRANSITION_MS = Math.max(ENTER_MS, EXIT_MS);
+
+interface Layer {
+  key: string;
+  content: ReactNode;
+}
 
 /**
- * Wraps a single child and animates slide transitions when viewKey changes.
- * Forward: new view slides in from right.
- * Backward: old view slides out to right.
- * Respects prefers-reduced-motion.
+ * Two-layer slide transition using CSS grid stacking.
+ *
+ * Both old and new content occupy the same grid cell (gridArea: 1/1).
+ * Unlike absolute positioning, grid children contribute to parent height,
+ * so this works without a complete height chain from html/body.
  */
 export default function SlideTransition({ viewKey, direction, children }: SlideTransitionProps) {
-  const [displayChildren, setDisplayChildren] = useState(children);
-  const [transitioning, setTransitioning] = useState(false);
-  const [phase, setPhase] = useState<'idle' | 'exit' | 'enter'>('idle');
+  const [committed, setCommitted] = useState<Layer>({ key: viewKey, content: children });
+  const [outgoing, setOutgoing] = useState<Layer | null>(null);
+  const [animDir, setAnimDir] = useState<Direction>(direction);
+  const [animating, setAnimating] = useState(false);
+
+  const committedRef = useRef<Layer>({ key: viewKey, content: children });
   const prevKeyRef = useRef(viewKey);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reducedMotion = useReducedMotion();
 
-  useEffect(() => {
+  const updateCommitted = (layer: Layer) => {
+    committedRef.current = layer;
+    setCommitted(layer);
+  };
+
+  useLayoutEffect(() => {
     if (viewKey === prevKeyRef.current) {
-      // Same view, just update children content
-      setDisplayChildren(children);
+      updateCommitted({ key: viewKey, content: children });
       return;
+    }
+
+    if (timerRef.current !== null) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
     }
 
     prevKeyRef.current = viewKey;
 
     if (reducedMotion) {
-      // Skip animation
-      setDisplayChildren(children);
+      updateCommitted({ key: viewKey, content: children });
+      setOutgoing(null);
+      setAnimating(false);
       return;
     }
 
-    // Start exit phase (animate old content out)
-    setTransitioning(true);
-    setPhase('exit');
+    const oldLayer = committedRef.current;
+    setOutgoing({ key: oldLayer.key, content: oldLayer.content });
+    updateCommitted({ key: viewKey, content: children });
+    setAnimDir(direction);
+    setAnimating(true);
 
-    const exitTimer = setTimeout(() => {
-      // Swap to new content and start enter phase
-      setDisplayChildren(children);
-      setPhase('enter');
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
+      setOutgoing(null);
+      setAnimating(false);
+    }, TRANSITION_MS + 30);
 
-      const enterTimer = setTimeout(() => {
-        setPhase('idle');
-        setTransitioning(false);
-      }, DURATION);
-
-      return () => clearTimeout(enterTimer);
-    }, DURATION);
-
-    return () => clearTimeout(exitTimer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewKey]);
 
-  // Update children if view hasn't changed (e.g. props update within same view)
   useEffect(() => {
-    if (!transitioning) {
-      setDisplayChildren(children);
+    if (!animating && viewKey === prevKeyRef.current) {
+      updateCommitted({ key: viewKey, content: children });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children]);
 
-  const getTransform = (): string => {
-    if (phase === 'idle') return 'translateX(0)';
+  const exitAnim = animating
+    ? `${animDir === 'forward' ? 'slide-exit-left' : 'slide-exit-right'} ${EXIT_MS}ms ease-in both`
+    : 'none';
 
-    if (phase === 'exit') {
-      // Old content slides out
-      return direction === 'forward' ? 'translateX(-30%)' : 'translateX(100%)';
-    }
+  const enterAnim = animating
+    ? `${animDir === 'forward' ? 'slide-enter-right' : 'slide-enter-left'} ${ENTER_MS}ms ease-out both`
+    : 'none';
 
-    if (phase === 'enter') {
-      // New content is entering — start position already rendered, animate to 0
-      return 'translateX(0)';
-    }
+  // Idle: simple wrapper
+  if (!animating && !outgoing) {
+    return (
+      <div className="w-full overflow-hidden">
+        {committed.content}
+      </div>
+    );
+  }
 
-    return 'translateX(0)';
-  };
-
-  const getInitialTransform = (): string => {
-    if (phase === 'enter') {
-      return direction === 'forward' ? 'translateX(100%)' : 'translateX(-30%)';
-    }
-    return 'translateX(0)';
-  };
-
+  // Animating: CSS grid stacking — both layers in same grid cell (no absolute positioning needed)
   return (
-    <div
-      className="w-full h-full overflow-hidden"
-      style={{
-        transform: phase === 'enter' && transitioning ? getInitialTransform() : getTransform(),
-        transition: phase !== 'idle' ? `transform ${DURATION}ms ease-out` : 'none',
-        opacity: phase === 'exit' ? 0.5 : 1,
-      }}
-    >
-      {displayChildren}
+    <div className="w-full overflow-hidden" style={{ display: 'grid' }}>
+      {outgoing && (
+        <div
+          key={`out-${outgoing.key}`}
+          className="overflow-y-auto"
+          style={{ gridArea: '1 / 1', animation: exitAnim }}
+          aria-hidden="true"
+        >
+          {outgoing.content}
+        </div>
+      )}
+      <div
+        key={`in-${committed.key}`}
+        className="overflow-y-auto"
+        style={{ gridArea: '1 / 1', animation: enterAnim }}
+      >
+        {committed.content}
+      </div>
     </div>
   );
 }

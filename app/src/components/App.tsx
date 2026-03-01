@@ -17,7 +17,7 @@ export default function App() {
   const [classifyResult, setClassifyResult] = useState<ClassifyResult | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const { location, loading: geoLoading } = useGeolocation();
-  const { history, addToHistory } = useHistory();
+  const { history, addToHistory, clearHistory } = useHistory();
   const prevViewRef = useRef<AppView>('home');
 
   const direction = VIEW_ORDER[currentView] >= VIEW_ORDER[prevViewRef.current] ? 'forward' : 'backward';
@@ -41,6 +41,13 @@ export default function App() {
     navigate('result');
   };
 
+  const handleCategorySelect = (result: ClassifyResult) => {
+    setClassifyResult(result);
+    setCapturedImage(null);
+    addToHistory(result);
+    navigate('result');
+  };
+
   const handleScanAgain = () => {
     setClassifyResult(null);
     setCapturedImage(null);
@@ -61,7 +68,9 @@ export default function App() {
         return (
           <HomePage
             onClassified={handleClassified}
+            onCategorySelect={handleCategorySelect}
             onHistorySelect={handleHistorySelect}
+            onHistoryClear={clearHistory}
             history={history}
           />
         );
