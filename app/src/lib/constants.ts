@@ -45,12 +45,12 @@ export const STATUS_CONFIG: Record<ClassifyStatus, {
 };
 
 /** Map AI channel values to API-supported nearby channels */
-export const CHANNEL_TO_NEARBY: Record<ChannelType, 'blue_bin' | 'ewaste' | null> = {
+export const CHANNEL_TO_NEARBY: Record<ChannelType, 'blue_bin' | 'ewaste' | 'textile' | null> = {
   blue_bin: 'blue_bin',
   ewaste: 'ewaste',
   ewaste_battery: 'ewaste',
   lighting: 'ewaste',
-  textile: null,
+  textile: 'textile',
   hazardous: null,
   bulky_waste: null,
   donation: null,

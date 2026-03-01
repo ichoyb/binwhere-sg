@@ -19,7 +19,7 @@ const CACHE_TTL = 60_000; // 1 minute
  */
 export function useNearby(
   userLocation: { lat: number; lng: number } | null,
-  channel: 'blue_bin' | 'ewaste' | null,
+  channel: 'blue_bin' | 'ewaste' | 'textile' | null,
 ) {
   const [points, setPoints] = useState<NearbyPoint[]>([]);
   const [loading, setLoading] = useState(false);

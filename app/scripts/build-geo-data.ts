@@ -10,6 +10,7 @@ import * as path from 'path';
 import { HttpClient } from '../src/lib/data-gov/api/http-client';
 import { DatasetClient } from '../src/lib/data-gov/api/dataset-client';
 import { DATASET_IDS } from '../src/lib/data-gov/shared/constants';
+import { convertTextileData } from './convert-textile-data';
 
 const GENERATED_DIR = path.join(__dirname, '..', 'src', 'data', 'generated');
 
@@ -60,6 +61,17 @@ async function main() {
       console.error(`  -> FAILED: ${(error as Error).message}\n`);
       process.exit(1);
     }
+  }
+
+  // Convert textile bins from raw JSON to GeoJSON
+  console.log('[build-geo-data] Converting textile bins...');
+  try {
+    const { featureCount, outputPath } = convertTextileData();
+    const fileSizeKB = (fs.statSync(outputPath).size / 1024).toFixed(0);
+    console.log(`  -> ${featureCount} features, ${fileSizeKB} KB\n`);
+  } catch (error) {
+    console.error(`  -> FAILED: ${(error as Error).message}\n`);
+    process.exit(1);
   }
 
   console.log('[build-geo-data] Done! Generated files:');

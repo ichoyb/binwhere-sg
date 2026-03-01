@@ -68,3 +68,8 @@ export function getBlueBinIndex(): SpatialIndex | undefined {
 export function getEwasteIndex(): SpatialIndex | undefined {
   return getSpatialIndex(DATASET_IDS.EWASTE_RECYCLING_POINTS);
 }
+
+/** Get spatial index for textile bins */
+export function getTextileIndex(): SpatialIndex | undefined {
+  return getSpatialIndex(DATASET_IDS.TEXTILE_BINS);
+}

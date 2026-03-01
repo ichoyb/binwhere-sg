@@ -28,7 +28,7 @@ export async function classifyItem(params: {
 export async function fetchNearby(params: {
   lat: number;
   lng: number;
-  channel: 'blue_bin' | 'ewaste';
+  channel: 'blue_bin' | 'ewaste' | 'textile';
   limit?: number;
   radius?: number;
 }): Promise<NearbyResponse> {

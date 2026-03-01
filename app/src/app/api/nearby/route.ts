@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getBlueBinIndex, getEwasteIndex } from '@/lib/data-gov';
+import { getBlueBinIndex, getEwasteIndex, getTextileIndex } from '@/lib/data-gov';
 
 /** Convert "FERNVALE ROAD" → "Fernvale Road" */
 function toTitleCase(s: string): string {
@@ -26,7 +26,7 @@ function parseDescriptionHtml(html: string): Record<string, string> {
 const NearbyInputSchema = z.object({
   lat: z.coerce.number().min(1.15).max(1.47),
   lng: z.coerce.number().min(103.6).max(104.05),
-  channel: z.enum(['blue_bin', 'ewaste']),
+  channel: z.enum(['blue_bin', 'ewaste', 'textile']),
   limit: z.coerce.number().int().min(1).max(20).default(5),
   radius: z.coerce.number().min(0.1).max(5).default(1),
 });
@@ -36,7 +36,11 @@ export async function GET(request: NextRequest) {
     const params = Object.fromEntries(request.nextUrl.searchParams);
     const input = NearbyInputSchema.parse(params);
 
-    const index = input.channel === 'blue_bin' ? getBlueBinIndex() : getEwasteIndex();
+    const index = input.channel === 'blue_bin'
+      ? getBlueBinIndex()
+      : input.channel === 'textile'
+        ? getTextileIndex()
+        : getEwasteIndex();
 
     if (!index) {
       return NextResponse.json(
@@ -69,21 +73,23 @@ export async function GET(request: NextRequest) {
 
         // Build a readable name from address fields
         let name: string;
+        let address: string;
         if (input.channel === 'blue_bin') {
           // Blue bins: "Blk 407 Fernvale Road" or "Sunset Way Residence"
           const parts: string[] = [];
           if (block) parts.push(`Blk ${block}`);
           if (street) parts.push(toTitleCase(street));
           name = parts.join(' ') || (building ? toTitleCase(building) : 'Blue Bin');
+          address = building ? toTitleCase(building) : '';
+        } else if (input.channel === 'textile') {
+          // Textile: place name like "Kebun Baru Court (SG0159)"
+          name = prop('NAME') || 'Textile Bin';
+          address = prop('DESCRIPTION');
         } else {
           // E-waste: use the specific operator/program name
           name = prop('NAME') || (r.properties.Name as string) || 'E-Waste Point';
+          address = street;
         }
-
-        // Address line: building name or postal code for context
-        const address = input.channel === 'blue_bin'
-          ? (building ? toTitleCase(building) : '')
-          : street;
 
         return {
           name,
