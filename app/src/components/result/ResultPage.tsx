@@ -43,7 +43,6 @@ export default function ResultPage({
   userLocation,
   geoLoading,
   onScanAgain,
-  onViewNearby,
   onRequestLocation,
 }: ResultPageProps) {
   const nearbyChannel = result.channel ? CHANNEL_TO_NEARBY[result.channel] : null;
