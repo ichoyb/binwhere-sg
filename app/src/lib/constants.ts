@@ -1,4 +1,5 @@
 import type { ClassifyStatus, ChannelType } from '@/types/recycling';
+import type { NearbyChannel } from '@/types/app';
 
 export const STATUS_CONFIG: Record<ClassifyStatus, {
   label: string;
@@ -45,11 +46,11 @@ export const STATUS_CONFIG: Record<ClassifyStatus, {
 };
 
 /** Map AI channel values to API-supported nearby channels */
-export const CHANNEL_TO_NEARBY: Record<ChannelType, 'blue_bin' | 'ewaste' | 'textile' | null> = {
+export const CHANNEL_TO_NEARBY: Record<ChannelType, NearbyChannel | null> = {
   blue_bin: 'blue_bin',
   ewaste: 'ewaste',
-  ewaste_battery: 'ewaste',
-  lighting: 'ewaste',
+  ewaste_battery: 'ewaste_battery',
+  lighting: 'lighting',
   textile: 'textile',
   hazardous: null,
   bulky_waste: null,

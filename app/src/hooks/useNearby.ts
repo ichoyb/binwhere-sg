@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import type { NearbyPoint } from '@/types/app';
+import type { NearbyPoint, NearbyChannel } from '@/types/app';
 import { fetchNearby } from '@/lib/api-client';
 
 /** Cache key for deduplication */
@@ -19,7 +19,7 @@ const CACHE_TTL = 60_000; // 1 minute
  */
 export function useNearby(
   userLocation: { lat: number; lng: number } | null,
-  channel: 'blue_bin' | 'ewaste' | 'textile' | null,
+  channel: NearbyChannel | null,
 ) {
   const [points, setPoints] = useState<NearbyPoint[]>([]);
   const [loading, setLoading] = useState(false);

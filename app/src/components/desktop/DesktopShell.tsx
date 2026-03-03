@@ -35,6 +35,7 @@ function useAnimatedCounter(target: number, duration: number, active: boolean) {
 const STATS = [
   { target: 12578, label: 'Blue Bins', suffix: '', prefix: '' },
   { target: 718, label: 'E-Waste Points', suffix: '', prefix: '' },
+  { target: 401, label: 'Textile Bins', suffix: '', prefix: '' },
   { target: 3, label: 'AI Scan', suffix: 's', prefix: '<' },
 ] as const;
 
@@ -55,12 +56,13 @@ function StatsSection() {
 
   const v0 = useAnimatedCounter(STATS[0].target, 1800, visible);
   const v1 = useAnimatedCounter(STATS[1].target, 1400, visible);
-  const v2 = useAnimatedCounter(STATS[2].target, 800, visible);
-  const values = [v0, v1, v2];
+  const v2 = useAnimatedCounter(STATS[2].target, 1200, visible);
+  const v3 = useAnimatedCounter(STATS[3].target, 800, visible);
+  const values = [v0, v1, v2, v3];
 
   return (
     <div ref={ref} className="desktop-section border-t border-white/[0.06]">
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-4 gap-8">
         {STATS.map((stat, i) => (
           <div key={stat.label} className="stat-card text-center">
             <p className="text-4xl font-bold text-white tracking-tight">
@@ -188,7 +190,7 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
             Find nearest bin.
           </h1>
           <p className="mt-6 text-lg text-gray-400 leading-relaxed">
-            AI-powered recycling assistant covering 12,000+ collection points across Singapore.
+            AI-powered recycling assistant covering 13,000+ collection points across Singapore.
           </p>
           <div className="mt-8">
             <button
@@ -272,7 +274,7 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
                 </li>
               </ul>
               <p className="text-xs text-gray-600 mt-3">
-                Location data covers Blue Bins &amp; E-Waste collection points.
+                Location data covers Blue Bins, E-Waste &amp; Textile collection points.
               </p>
             </div>
           </div>

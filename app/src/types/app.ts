@@ -12,6 +12,9 @@ export interface ScanHistoryItem {
   result?: ClassifyResult;
 }
 
+/** Channels supported by the nearby API */
+export type NearbyChannel = 'blue_bin' | 'ewaste' | 'ewaste_battery' | 'lighting' | 'textile';
+
 export interface NearbyPoint {
   name: string;
   address: string;
@@ -19,6 +22,8 @@ export interface NearbyPoint {
   distanceKm: number;
   lat: number;
   lng: number;
+  /** What this point accepts, e.g. "ICT, Batteries, Lamps" (e-waste only) */
+  accepts?: string;
 }
 
 export interface NearbyResponse {

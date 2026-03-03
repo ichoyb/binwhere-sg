@@ -26,16 +26,40 @@ function parseDescriptionHtml(html: string): Record<string, string> {
 const NearbyInputSchema = z.object({
   lat: z.coerce.number().min(1.15).max(1.47),
   lng: z.coerce.number().min(103.6).max(104.05),
-  channel: z.enum(['blue_bin', 'ewaste', 'textile']),
+  channel: z.enum(['blue_bin', 'ewaste', 'ewaste_battery', 'lighting', 'textile']),
   limit: z.coerce.number().int().min(1).max(20).default(5),
   radius: z.coerce.number().min(0.1).max(5).default(1),
 });
+
+/** Parse DESCRIPTION into human-readable accepts string */
+function parseAccepts(description: string): string {
+  const d = description.toLowerCase();
+  if (d.includes('all regulated')) return 'All regulated e-waste';
+  if (d.includes('non-regulated')) return 'Small appliances';
+  const parts: string[] = [];
+  if (d.includes('ict')) parts.push('ICT equipment');
+  if (d.includes('batter')) parts.push('Batteries');
+  if (d.includes('lamp')) parts.push('Lamps');
+  return parts.join(', ') || '';
+}
+
+/** Check if an e-waste point accepts the given sub-channel */
+function matchesEwasteChannel(description: string, channel: string): boolean {
+  const d = description.toLowerCase();
+  // "all regulated" points accept everything
+  if (d.includes('all regulated')) return true;
+  if (channel === 'ewaste') return true; // no filtering for generic ewaste
+  if (channel === 'ewaste_battery') return d.includes('batter');
+  if (channel === 'lighting') return d.includes('lamp');
+  return true;
+}
 
 export async function GET(request: NextRequest) {
   try {
     const params = Object.fromEntries(request.nextUrl.searchParams);
     const input = NearbyInputSchema.parse(params);
 
+    const isEwaste = input.channel === 'ewaste' || input.channel === 'ewaste_battery' || input.channel === 'lighting';
     const index = input.channel === 'blue_bin'
       ? getBlueBinIndex()
       : input.channel === 'textile'
@@ -49,18 +73,30 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const results = index.queryRadius(
+    // For sub-channels (ewaste_battery, lighting), fetch extra candidates for post-filtering
+    const needsFilter = input.channel === 'ewaste_battery' || input.channel === 'lighting';
+    const queryLimit = needsFilter ? input.limit * 4 : input.limit;
+
+    const rawResults = index.queryRadius(
       { latitude: input.lat, longitude: input.lng },
       input.radius,
-      input.limit,
+      queryLimit,
     );
+
+    // Filter e-waste sub-channels by DESCRIPTION
+    const filtered = needsFilter
+      ? rawResults.filter((r) => {
+          const desc = (r.properties.DESCRIPTION as string) || '';
+          return matchesEwasteChannel(desc, input.channel);
+        }).slice(0, input.limit)
+      : rawResults;
 
     return NextResponse.json({
       channel: input.channel,
       center: { lat: input.lat, lng: input.lng },
       radiusKm: input.radius,
-      count: results.length,
-      results: results.map((r) => {
+      count: filtered.length,
+      results: filtered.map((r) => {
         // Blue bin data has fields inside Description HTML; e-waste has them as top-level props
         const desc = (r.properties.Description as string) || '';
         const parsed = desc ? parseDescriptionHtml(desc) : {};
@@ -91,6 +127,10 @@ export async function GET(request: NextRequest) {
           address = street;
         }
 
+        // Parse accepts for e-waste points
+        const ewasteDesc = (r.properties.DESCRIPTION as string) || '';
+        const accepts = isEwaste ? parseAccepts(ewasteDesc) : undefined;
+
         return {
           name,
           address,
@@ -98,6 +138,7 @@ export async function GET(request: NextRequest) {
           distanceKm: Math.round(r.distanceKm * 1000) / 1000,
           lat: r.coordinates.latitude,
           lng: r.coordinates.longitude,
+          ...(accepts && { accepts }),
         };
       }),
     });

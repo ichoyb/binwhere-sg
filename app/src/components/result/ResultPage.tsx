@@ -16,6 +16,7 @@ interface ResultPageProps {
   geoLoading?: boolean;
   onScanAgain: () => void;
   onViewNearby: () => void;
+  onRequestLocation?: () => void;
 }
 
 async function handleShare(result: ClassifyResult) {
@@ -38,6 +39,7 @@ export default function ResultPage({
   geoLoading,
   onScanAgain,
   onViewNearby,
+  onRequestLocation,
 }: ResultPageProps) {
   const nearbyChannel = result.channel ? CHANNEL_TO_NEARBY[result.channel] : null;
   const isInSingapore = userLocation
@@ -188,7 +190,7 @@ export default function ResultPage({
         {nearest && (
           <RecyclingPointCard
             point={nearest}
-            heading={`Nearest ${nearbyChannel === 'blue_bin' ? 'Blue Bin' : nearbyChannel === 'ewaste' ? 'E-Waste Point' : 'Point'}`}
+            heading={`Nearest ${nearbyChannel === 'blue_bin' ? 'Blue Bin' : nearbyChannel === 'textile' ? 'Textile Bin' : 'E-Waste Point'}`}
           />
         )}
 
@@ -209,10 +211,13 @@ export default function ResultPage({
           </div>
         )}
         {nearbyChannel && !userLocation && !geoLoading && (
-          <div className="bg-blue-50 rounded-card p-4 border border-blue-100 text-center">
-            <p className="text-caption text-blue-700 font-medium">Enable location to find nearby bins</p>
-            <p className="text-caption text-blue-500 mt-1">Allow location access in your browser settings</p>
-          </div>
+          <button
+            onClick={onRequestLocation}
+            className="w-full bg-blue-50 rounded-card p-4 border border-blue-100 text-center active:bg-blue-100/70"
+          >
+            <p className="text-caption text-blue-700 font-medium">Tap to find nearby bins</p>
+            <p className="text-caption text-blue-500 mt-1">Requires location access</p>
+          </button>
         )}
         {nearbyChannel && userLocation && !isInSingapore && (
           <div className="bg-amber-50 rounded-card p-4 border border-amber-100 text-center">

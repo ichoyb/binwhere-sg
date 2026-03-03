@@ -1,5 +1,5 @@
 import type { ClassifyResult } from '@/lib/ai/types';
-import type { NearbyResponse } from '@/types/app';
+import type { NearbyResponse, NearbyChannel } from '@/types/app';
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -28,7 +28,7 @@ export async function classifyItem(params: {
 export async function fetchNearby(params: {
   lat: number;
   lng: number;
-  channel: 'blue_bin' | 'ewaste' | 'textile';
+  channel: NearbyChannel;
   limit?: number;
   radius?: number;
 }): Promise<NearbyResponse> {

@@ -21,6 +21,9 @@ export default function RecyclingPointCard({ point, heading }: RecyclingPointCar
           {point.address && (
             <p className="text-caption text-gray-400 line-clamp-1 mt-0.5">{point.address}</p>
           )}
+          {point.accepts && (
+            <p className="text-caption text-gray-400 mt-0.5">Accepts: {point.accepts}</p>
+          )}
           <p className="text-caption text-gray-500 mt-1">
             {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} min walk
           </p>

@@ -16,7 +16,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [classifyResult, setClassifyResult] = useState<ClassifyResult | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const { location, loading: geoLoading } = useGeolocation();
+  const { location, loading: geoLoading, requestLocation } = useGeolocation();
   const { history, addToHistory, clearHistory } = useHistory();
   const prevViewRef = useRef<AppView>('home');
 
@@ -31,6 +31,7 @@ export default function App() {
     setClassifyResult(result);
     setCapturedImage(image);
     addToHistory(result);
+    requestLocation();
     navigate('result');
   };
 
@@ -38,6 +39,7 @@ export default function App() {
     if (!item.result) return;
     setClassifyResult(item.result);
     setCapturedImage(null);
+    requestLocation();
     navigate('result');
   };
 
@@ -45,6 +47,7 @@ export default function App() {
     setClassifyResult(result);
     setCapturedImage(null);
     addToHistory(result);
+    requestLocation();
     navigate('result');
   };
 
@@ -83,6 +86,7 @@ export default function App() {
             geoLoading={geoLoading}
             onScanAgain={handleScanAgain}
             onViewNearby={handleViewNearby}
+            onRequestLocation={requestLocation}
           />
         );
       case 'nearby':
