@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { classifyItem } from '@/lib/ai/provider';
+import { checkRateLimit, CLASSIFY_LIMITS } from '@/lib/rate-limit';
 
 const ClassifyInputSchema = z.object({
   /** Base64-encoded image (max ~7.5MB) */
@@ -14,6 +15,9 @@ const ClassifyInputSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const blocked = checkRateLimit(request, CLASSIFY_LIMITS);
+  if (blocked) return blocked;
+
   try {
     const body = await request.json();
     const input = ClassifyInputSchema.parse(body);

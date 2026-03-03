@@ -58,8 +58,9 @@ export const CHANNEL_TO_NEARBY: Record<ChannelType, NearbyChannel | null> = {
   general_waste: null,
 };
 
-/** User-friendly error messages */
+/** User-friendly error messages (order matters — first match wins) */
 export const ERROR_MESSAGES: Record<string, string> = {
+  '(429)': 'Too many requests. Please wait a moment and try again.',
   'Failed to fetch': 'No internet connection. Please check your network.',
   'Classification failed': 'Could not identify the item. Please try again.',
   'Network Error': 'Connection problem. Please check your network.',

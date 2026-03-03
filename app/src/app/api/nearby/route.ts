@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getBlueBinIndex, getEwasteIndex, getTextileIndex } from '@/lib/data-gov';
+import { checkRateLimit, DEFAULT_LIMITS } from '@/lib/rate-limit';
 
 /** Convert "FERNVALE ROAD" → "Fernvale Road" */
 function toTitleCase(s: string): string {
@@ -55,6 +56,9 @@ function matchesEwasteChannel(description: string, channel: string): boolean {
 }
 
 export async function GET(request: NextRequest) {
+  const blocked = checkRateLimit(request, DEFAULT_LIMITS);
+  if (blocked) return blocked;
+
   try {
     const params = Object.fromEntries(request.nextUrl.searchParams);
     const input = NearbyInputSchema.parse(params);
