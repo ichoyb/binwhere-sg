@@ -1,13 +1,18 @@
 'use client';
 
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import type { ClassifyResult } from '@/lib/ai/types';
 import { STATUS_CONFIG } from '@/lib/constants';
 import ConfidenceBadge from '@/components/result/ConfidenceBadge';
 import RecyclingPointCard from '@/components/shared/RecyclingPointCard';
 import StatusIcon from '@/components/shared/StatusIcon';
+import ViewToggle from '@/components/nearby/ViewToggle';
 import { useNearby } from '@/hooks/useNearby';
 import { CHANNEL_LABELS } from '@/types/recycling';
 import { CHANNEL_TO_NEARBY, CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
+
+const NearbyMapView = dynamic(() => import('@/components/nearby/NearbyMapView'), { ssr: false });
 
 interface ResultPageProps {
   result: ClassifyResult;
@@ -15,7 +20,7 @@ interface ResultPageProps {
   userLocation: { lat: number; lng: number } | null;
   geoLoading?: boolean;
   onScanAgain: () => void;
-  onViewNearby: () => void;
+  onViewNearby?: () => void;
   onRequestLocation?: () => void;
 }
 
@@ -51,9 +56,9 @@ export default function ResultPage({
     nearbyChannel,
   );
 
-  const nearest = points[0] ?? null;
-  const hasMorePoints = points.length > 1;
+  const [nearbyMode, setNearbyMode] = useState<'list' | 'map'>('map');
   const config = STATUS_CONFIG[result.status];
+  const nearbyHeading = nearbyChannel === 'blue_bin' ? 'Blue Bins' : nearbyChannel === 'textile' ? 'Textile Bins' : 'E-Waste Points';
 
   return (
     <div className="min-h-full bg-bg">
@@ -180,28 +185,35 @@ export default function ResultPage({
           </div>
         )}
 
-        {/* Nearest point */}
+        {/* Nearby points section */}
         {nearbyLoading && (
           <div className="bg-white rounded-card p-4 border border-gray-100 animate-pulse">
             <div className="h-4 bg-gray-200 rounded w-1/3 mb-2" />
             <div className="h-3 bg-gray-200 rounded w-2/3" />
           </div>
         )}
-        {nearest && (
-          <RecyclingPointCard
-            point={nearest}
-            heading={`Nearest ${nearbyChannel === 'blue_bin' ? 'Blue Bin' : nearbyChannel === 'textile' ? 'Textile Bin' : 'E-Waste Point'}`}
-          />
-        )}
-
-        {/* View more nearby points */}
-        {hasMorePoints && nearbyChannel && (
-          <button
-            onClick={onViewNearby}
-            className="w-full py-3 rounded-btn border border-blue-bin text-blue-bin text-body font-medium active:bg-blue-bin/5 min-h-btn"
-          >
-            See All Nearby
-          </button>
+        {points.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-caption font-semibold text-gray-700">Nearby {nearbyHeading}</h3>
+              <ViewToggle mode={nearbyMode} onChange={setNearbyMode} />
+            </div>
+            {nearbyMode === 'list' ? (
+              <div className="space-y-2">
+                {points.map((point, i) => (
+                  <RecyclingPointCard key={`${point.name}-${i}`} point={point} />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-card overflow-hidden border border-gray-100" style={{ height: '350px' }}>
+                <NearbyMapView
+                  points={points}
+                  userLocation={userLocation}
+                  channel={result.channel ?? null}
+                />
+              </div>
+            )}
+          </div>
         )}
 
         {/* Location / region messages */}

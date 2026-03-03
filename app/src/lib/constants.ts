@@ -123,10 +123,10 @@ export const CHANNEL_DISPLAY_CONFIG: Record<ChannelType, {
   },
   textile: {
     instruction: 'Bring to Textile Collection Bin',
-    color: '#0077B6',
-    bgColor: '#E8F4FA',
-    textColor: '#075985',
-    borderColor: '#B3D9EE',
+    color: '#D4A017',
+    bgColor: '#FFF9E6',
+    textColor: '#7A5D12',
+    borderColor: '#F0D97A',
     // T-shirt/clothing icon
     iconPath: 'M8 2l-5 5 3 1 1 13h10l1-13 3-1-5-5c-1 1-2.5 2-4 2S9 3 8 2z',
   },

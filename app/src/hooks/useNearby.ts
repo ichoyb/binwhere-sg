@@ -54,7 +54,7 @@ export function useNearby(
       lat: userLocation.lat,
       lng: userLocation.lng,
       channel,
-      limit: 5,
+      limit: 20,
     })
       .then((data) => {
         if (!cancelled) {
