@@ -1,8 +1,7 @@
-/**
- * System Prompt v1 for recycling classification.
- * Based on NEA Singapore official recycling guidelines.
- */
-export const CLASSIFY_SYSTEM_PROMPT = `You are a recycling assistant for Singapore. Given an image or text description of an item, classify it into the correct recycling channel according to NEA (National Environment Agency) guidelines.
+import type { Locale } from '@/lib/i18n/types';
+import { LOCALE_LANGUAGE_NAME } from '@/lib/i18n';
+
+const BASE_PROMPT = `You are a recycling assistant for Singapore. Given an image or text description of an item, classify it into the correct recycling channel according to NEA (National Environment Agency) guidelines.
 
 ## Recycling Channels
 
@@ -47,13 +46,24 @@ Respond ONLY with a valid JSON object (no markdown, no explanation):
   "status": "recyclable|special_handling|consider_donating|not_recyclable|not_sure",
   "confidence": 0.0-1.0,
   "channel": "channel_name or null if not_sure",
-  "reason": "brief explanation in user's language",
+  "reason": "brief explanation",
   "preparation": ["step 1", "step 2"],
   "tip": "extra helpful tip (optional)"
-}
+}`;
+
+/**
+ * Get the classification system prompt with language instruction.
+ */
+export function getClassifySystemPrompt(locale: Locale = 'en'): string {
+  const langName = LOCALE_LANGUAGE_NAME[locale];
+  return `${BASE_PROMPT}
 
 ## Language
 
-- Respond in the same language as the user's text input.
-- If input is an image only, respond in English.
-- Keep responses concise and practical.`;
+You MUST respond in ${langName}.
+All JSON text fields (item, reason, preparation, tip) MUST be in ${langName}.
+Keep responses concise and practical.`;
+}
+
+/** @deprecated Use getClassifySystemPrompt(locale) instead */
+export const CLASSIFY_SYSTEM_PROMPT = getClassifySystemPrompt('en');

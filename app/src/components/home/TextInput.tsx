@@ -1,14 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import type { Locale } from '@/lib/i18n/types';
+import { t } from '@/lib/i18n';
 
 interface TextInputProps {
   onSubmit: (text: string) => void;
   disabled?: boolean;
   prominent?: boolean;
+  locale: Locale;
 }
 
-export default function TextInput({ onSubmit, disabled, prominent }: TextInputProps) {
+export default function TextInput({ onSubmit, disabled, prominent, locale }: TextInputProps) {
   const [text, setText] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,7 +28,7 @@ export default function TextInput({ onSubmit, disabled, prominent }: TextInputPr
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder={prominent ? "e.g. plastic bottle, old phone" : "Type an item name..."}
+        placeholder={prominent ? t(locale, 'home.placeholderProminent') : t(locale, 'home.placeholderCompact')}
         disabled={disabled}
         enterKeyHint="search"
         className={`flex-1 px-3 py-2.5 rounded-btn border border-gray-200 bg-white
@@ -42,7 +45,7 @@ export default function TextInput({ onSubmit, disabled, prominent }: TextInputPr
           active:bg-nea-green/90 disabled:opacity-40 disabled:cursor-not-allowed
           min-h-[44px]"
       >
-        Search
+        {t(locale, 'home.search')}
       </button>
     </form>
   );

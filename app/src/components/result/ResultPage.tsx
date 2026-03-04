@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { ClassifyResult } from '@/lib/ai/types';
+import type { Locale } from '@/lib/i18n/types';
+import { t, type TranslationKey } from '@/lib/i18n';
 import { STATUS_CONFIG } from '@/lib/constants';
 import ConfidenceBadge from '@/components/result/ConfidenceBadge';
 import RecyclingPointCard from '@/components/shared/RecyclingPointCard';
 import StatusIcon from '@/components/shared/StatusIcon';
 import ViewToggle from '@/components/nearby/ViewToggle';
 import { useNearby } from '@/hooks/useNearby';
-import { CHANNEL_LABELS } from '@/types/recycling';
 import { CHANNEL_TO_NEARBY, CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
 import { mapItemToAcceptedItem } from '@/lib/donation-mapping';
 import HazardousInfoCard from '@/components/result/HazardousInfoCard';
@@ -24,10 +25,12 @@ interface ResultPageProps {
   onScanAgain: () => void;
   onViewNearby?: () => void;
   onRequestLocation?: () => void;
+  locale: Locale;
 }
 
-async function handleShare(result: ClassifyResult) {
-  const text = `${result.item} — ${STATUS_CONFIG[result.status].label}. ${result.reason}`;
+async function handleShare(result: ClassifyResult, locale: Locale) {
+  const statusLabel = t(locale, `status.${result.status}` as TranslationKey);
+  const text = `${result.item} — ${statusLabel}. ${result.reason}`;
   if (navigator.share) {
     try {
       await navigator.share({ title: 'BinWhere Result', text });
@@ -46,6 +49,7 @@ export default function ResultPage({
   geoLoading,
   onScanAgain,
   onRequestLocation,
+  locale,
 }: ResultPageProps) {
   const nearbyChannel = result.channel ? CHANNEL_TO_NEARBY[result.channel] : null;
   const isHazardous = result.channel === 'hazardous';
@@ -81,12 +85,12 @@ export default function ResultPage({
     ? { ...statusCfg, color: channelCfg.color, bgColor: channelCfg.bgColor, textColor: channelCfg.textColor, borderColor: channelCfg.borderColor }
     : statusCfg;
 
-  const nearbyHeadingMap: Record<string, string> = {
-    blue_bin: 'Blue Bins',
-    textile: 'Textile Bins',
-    donation: 'Donation Points',
+  const nearbyHeadingKeyMap: Record<string, TranslationKey> = {
+    blue_bin: 'result.nearbyBlueBins',
+    textile: 'result.nearbyTextileBins',
+    donation: 'result.nearbyDonationPoints',
   };
-  const nearbyHeading = nearbyChannel ? (nearbyHeadingMap[nearbyChannel] ?? 'E-Waste Points') : '';
+  const nearbyHeading = nearbyChannel ? t(locale, nearbyHeadingKeyMap[nearbyChannel] ?? 'result.nearbyEwastePoints') : '';
 
   return (
     <div className="min-h-full bg-bg">
@@ -124,10 +128,10 @@ export default function ResultPage({
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 18l-6-6 6-6" />
             </svg>
-            <span className="text-body font-medium">Back</span>
+            <span className="text-body font-medium">{t(locale, 'result.back')}</span>
           </button>
           <button
-            onClick={() => handleShare(result)}
+            onClick={() => handleShare(result, locale)}
             className="p-2 -mr-1 active:opacity-70"
             style={{ color: config.textColor }}
             aria-label="Share result"
@@ -144,17 +148,17 @@ export default function ResultPage({
         <div className="relative px-4 pt-3 pb-4 flex flex-col items-center text-center">
           <StatusIcon status={result.status} size={44} />
           <span
-            className="inline-block mt-2 px-3 py-0.5 rounded-full text-caption font-semibold"
-            style={{ backgroundColor: `${config.color}20`, color: config.textColor }}
+            className="inline-block mt-2 px-3 py-0.5 rounded-full text-caption font-semibold text-center"
+            style={{ backgroundColor: `${config.color}20`, color: config.textColor, maxWidth: '90%' }}
           >
-            {config.label}
+            {t(locale, `status.${result.status}` as TranslationKey)}
           </span>
           <h2 className="text-lg font-bold mt-1.5 line-clamp-2" style={{ color: config.textColor }}>
             {result.item}
           </h2>
           {result.channel && (
             <span className="text-caption mt-1" style={{ color: config.textColor, opacity: 0.7 }}>
-              {CHANNEL_LABELS[result.channel]}
+              {t(locale, `channel.${result.channel}` as TranslationKey)}
             </span>
           )}
         </div>
@@ -171,13 +175,13 @@ export default function ResultPage({
             const ch = CHANNEL_DISPLAY_CONFIG[result.channel];
             return (
               <div
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
+                className="flex items-start gap-2 px-3 py-1.5 rounded-btn"
                 style={{ backgroundColor: `${ch.color}12`, color: ch.textColor }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={ch.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={ch.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
                   <path d={ch.iconPath} />
                 </svg>
-                <span className="text-caption font-semibold">{ch.instruction}</span>
+                <span className="text-caption font-semibold">{t(locale, `instruction.${result.channel}` as TranslationKey)}</span>
               </div>
             );
           })()}
@@ -185,7 +189,7 @@ export default function ResultPage({
           {/* Preparation steps */}
           {result.preparation && result.preparation.length > 0 && (
             <div className="border-t border-gray-100 pt-3">
-              <h4 className="text-caption font-semibold text-gray-700 mb-2">Before you go</h4>
+              <h4 className="text-caption font-semibold text-gray-700 mb-2">{t(locale, 'result.beforeYouGo')}</h4>
               <ul className="space-y-1.5">
                 {result.preparation.map((step, i) => (
                   <li key={i} className="flex items-start gap-2">
@@ -201,20 +205,20 @@ export default function ResultPage({
         </div>
 
         {/* Low confidence warning */}
-        <ConfidenceBadge confidence={result.confidence} />
+        <ConfidenceBadge confidence={result.confidence} locale={locale} />
 
         {/* Tip */}
         {result.tip && (
           <div className="bg-white rounded-card p-4 border border-gray-100">
             <p className="text-body text-gray-600">
-              <span className="font-medium text-gray-700">Tip: </span>
+              <span className="font-medium text-gray-700">{t(locale, 'result.tip')}</span>
               {result.tip}
             </p>
           </div>
         )}
 
         {/* Hazardous waste info card */}
-        {isHazardous && <HazardousInfoCard />}
+        {isHazardous && <HazardousInfoCard locale={locale} />}
 
         {/* Nearby points section */}
         {nearbyLoading && (
@@ -225,14 +229,14 @@ export default function ResultPage({
         )}
         {points.length > 0 && (
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-caption font-semibold text-gray-700">Nearby {nearbyHeading}</h3>
-              <ViewToggle mode={nearbyMode} onChange={setNearbyMode} />
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <h3 className="text-caption font-semibold text-gray-700 min-w-0">{t(locale, 'result.nearby')} {nearbyHeading}</h3>
+              <ViewToggle mode={nearbyMode} onChange={setNearbyMode} locale={locale} />
             </div>
             {nearbyMode === 'list' ? (
               <div className="space-y-2">
                 {points.map((point, i) => (
-                  <RecyclingPointCard key={`${point.name}-${i}`} point={point} />
+                  <RecyclingPointCard key={`${point.name}-${i}`} point={point} locale={locale} />
                 ))}
               </div>
             ) : (
@@ -241,6 +245,7 @@ export default function ResultPage({
                   points={points}
                   userLocation={userLocation}
                   channel={result.channel ?? null}
+                  locale={locale}
                 />
               </div>
             )}
@@ -256,14 +261,14 @@ export default function ResultPage({
         )}
         {donationPoints.length > 0 && result.channel === 'bulky_waste' && (
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-caption font-semibold text-gray-700">Consider Donating Instead</h3>
-              <ViewToggle mode={donationMode} onChange={setDonationMode} />
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <h3 className="text-caption font-semibold text-gray-700 min-w-0">{t(locale, 'result.considerDonating')}</h3>
+              <ViewToggle mode={donationMode} onChange={setDonationMode} locale={locale} />
             </div>
             {donationMode === 'list' ? (
               <div className="space-y-2">
                 {donationPoints.slice(0, 5).map((point, i) => (
-                  <RecyclingPointCard key={`donation-${point.name}-${i}`} point={point} />
+                  <RecyclingPointCard key={`donation-${point.name}-${i}`} point={point} locale={locale} />
                 ))}
               </div>
             ) : (
@@ -272,6 +277,7 @@ export default function ResultPage({
                   points={donationPoints.slice(0, 5)}
                   userLocation={userLocation}
                   channel="donation"
+                  locale={locale}
                 />
               </div>
             )}
@@ -281,7 +287,7 @@ export default function ResultPage({
         {/* Location / region messages */}
         {(nearbyChannel || isHazardous) && !isHazardous && !userLocation && geoLoading && (
           <div className="bg-blue-50 rounded-card p-4 border border-blue-100 text-center">
-            <p className="text-caption text-blue-700 font-medium">Getting your location...</p>
+            <p className="text-caption text-blue-700 font-medium">{t(locale, 'result.gettingLocation')}</p>
           </div>
         )}
         {nearbyChannel && !userLocation && !geoLoading && (
@@ -289,14 +295,14 @@ export default function ResultPage({
             onClick={onRequestLocation}
             className="w-full bg-blue-50 rounded-card p-4 border border-blue-100 text-center active:bg-blue-100/70"
           >
-            <p className="text-caption text-blue-700 font-medium">Tap to find nearby bins</p>
-            <p className="text-caption text-blue-500 mt-1">Requires location access</p>
+            <p className="text-caption text-blue-700 font-medium">{t(locale, 'result.tapToFind')}</p>
+            <p className="text-caption text-blue-500 mt-1">{t(locale, 'result.requiresLocation')}</p>
           </button>
         )}
         {nearbyChannel && userLocation && !isInSingapore && (
           <div className="bg-amber-50 rounded-card p-4 border border-amber-100 text-center">
-            <p className="text-caption text-amber-700 font-medium">Nearby bins only available in Singapore</p>
-            <p className="text-caption text-amber-500 mt-1">Recycling point data covers Singapore only</p>
+            <p className="text-caption text-amber-700 font-medium">{t(locale, 'result.onlyInSG')}</p>
+            <p className="text-caption text-amber-500 mt-1">{t(locale, 'result.sgDataOnly')}</p>
           </div>
         )}
 
@@ -305,7 +311,7 @@ export default function ResultPage({
           onClick={onScanAgain}
           className="w-full py-3.5 rounded-btn bg-nea-green text-white text-body font-medium active:bg-nea-green/90 min-h-btn"
         >
-          Scan Another Item
+          {t(locale, 'result.scanAnother')}
         </button>
       </div>
     </div>

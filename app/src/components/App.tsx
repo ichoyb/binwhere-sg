@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { AppView, ScanHistoryItem } from '@/types/app';
 import type { ClassifyResult } from '@/lib/ai/types';
+import type { Locale } from '@/lib/i18n/types';
+import { detectLocale } from '@/lib/i18n';
 import HomePage from '@/components/home/HomePage';
 import ResultPage from '@/components/result/ResultPage';
 import NearbyListPage from '@/components/nearby/NearbyListPage';
@@ -16,9 +18,18 @@ export default function App() {
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [classifyResult, setClassifyResult] = useState<ClassifyResult | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [locale, setLocale] = useState<Locale>(() => {
+    if (typeof window !== 'undefined') return detectLocale();
+    return 'en';
+  });
   const { location, loading: geoLoading, requestLocation } = useGeolocation();
   const { history, addToHistory, clearHistory } = useHistory();
   const prevViewRef = useRef<AppView>('home');
+
+  // Update <html lang> when locale changes
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const direction = VIEW_ORDER[currentView] >= VIEW_ORDER[prevViewRef.current] ? 'forward' : 'backward';
 
@@ -30,7 +41,7 @@ export default function App() {
   const handleClassified = (result: ClassifyResult, image: string | null) => {
     setClassifyResult(result);
     setCapturedImage(image);
-    addToHistory(result);
+    addToHistory(result, locale);
     requestLocation();
     navigate('result');
   };
@@ -46,7 +57,7 @@ export default function App() {
   const handleCategorySelect = (result: ClassifyResult) => {
     setClassifyResult(result);
     setCapturedImage(null);
-    addToHistory(result);
+    addToHistory(result, locale);
     requestLocation();
     navigate('result');
   };
@@ -75,6 +86,8 @@ export default function App() {
             onHistorySelect={handleHistorySelect}
             onHistoryClear={clearHistory}
             history={history}
+            locale={locale}
+            onLocaleChange={setLocale}
           />
         );
       case 'result':
@@ -87,6 +100,7 @@ export default function App() {
             onScanAgain={handleScanAgain}
             onViewNearby={handleViewNearby}
             onRequestLocation={requestLocation}
+            locale={locale}
           />
         );
       case 'nearby':
@@ -95,6 +109,7 @@ export default function App() {
             result={classifyResult!}
             userLocation={location}
             onBack={handleBackToResult}
+            locale={locale}
           />
         );
     }

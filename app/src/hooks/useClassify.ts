@@ -9,7 +9,7 @@ interface UseClassifyReturn {
   result: ClassifyResult | null;
   loading: boolean;
   error: string | null;
-  classify: (params: { image?: string; text?: string }) => Promise<ClassifyResult | null>;
+  classify: (params: { image?: string; text?: string; locale?: string }) => Promise<ClassifyResult | null>;
   reset: () => void;
 }
 
@@ -21,7 +21,7 @@ export function useClassify(): UseClassifyReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const classify = useCallback(async (params: { image?: string; text?: string }): Promise<ClassifyResult | null> => {
+  const classify = useCallback(async (params: { image?: string; text?: string; locale?: string }): Promise<ClassifyResult | null> => {
     setLoading(true);
     setError(null);
     setResult(null);
@@ -46,7 +46,8 @@ export function useClassify(): UseClassifyReturn {
     }
 
     const raw = lastError instanceof Error ? lastError.message : 'Something went wrong';
-    setError(getFriendlyError(raw));
+    const locale = (params as { locale?: string }).locale;
+    setError(getFriendlyError(raw, (locale as 'en' | 'zh' | 'ms' | 'ta') ?? 'en'));
     setLoading(false);
     return null;
   }, []);

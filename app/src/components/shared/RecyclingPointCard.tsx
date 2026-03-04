@@ -1,6 +1,8 @@
 'use client';
 
 import type { NearbyPoint } from '@/types/app';
+import type { Locale } from '@/lib/i18n/types';
+import { t } from '@/lib/i18n';
 import NavigateButton from '@/components/shared/NavigateButton';
 import { formatDistance, estimateWalkTime } from '@/lib/format';
 
@@ -129,9 +131,10 @@ function AcceptsTags({ accepts }: { accepts: string }) {
 interface RecyclingPointCardProps {
   point: NearbyPoint;
   heading?: string;
+  locale?: Locale;
 }
 
-export default function RecyclingPointCard({ point, heading }: RecyclingPointCardProps) {
+export default function RecyclingPointCard({ point, heading, locale = 'en' }: RecyclingPointCardProps) {
   return (
     <div className="bg-white rounded-card p-4 border border-gray-100">
       {heading && (
@@ -150,10 +153,10 @@ export default function RecyclingPointCard({ point, heading }: RecyclingPointCar
           )}
           {point.accepts && <AcceptsTags accepts={point.accepts} />}
           <p className="text-caption text-gray-500 mt-1">
-            {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} min walk
+            {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} {t(locale, 'shared.walk')}
           </p>
         </div>
-        <NavigateButton lat={point.lat} lng={point.lng} name={point.name} label="Go" />
+        <NavigateButton lat={point.lat} lng={point.lng} name={point.name} label={t(locale, 'shared.go')} />
       </div>
     </div>
   );

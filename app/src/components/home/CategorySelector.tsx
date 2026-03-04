@@ -1,15 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { ClassifyResult } from '@/lib/ai/types';
-import { ITEM_CATEGORIES, type ItemCategory } from '@/data/item-categories';
+import type { ItemCategory } from '@/data/item-categories';
+import type { Locale } from '@/lib/i18n/types';
+import { getItemCategories } from '@/data/item-categories-i18n';
 
 interface CategorySelectorProps {
   onSelect: (result: ClassifyResult) => void;
   disabled: boolean;
+  locale: Locale;
 }
 
-export default function CategorySelector({ onSelect, disabled }: CategorySelectorProps) {
+export default function CategorySelector({ onSelect, disabled, locale }: CategorySelectorProps) {
+  const categories = useMemo(() => getItemCategories(locale), [locale]);
   const [activeCategory, setActiveCategory] = useState<ItemCategory | null>(null);
 
   const handleCategoryClick = (cat: ItemCategory) => {
@@ -55,7 +59,7 @@ export default function CategorySelector({ onSelect, disabled }: CategorySelecto
       ) : (
         /* Category grid */
         <div className="grid grid-cols-2 gap-px bg-gray-100">
-          {ITEM_CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => handleCategoryClick(cat)}

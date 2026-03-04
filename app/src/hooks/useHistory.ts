@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { ScanHistoryItem } from '@/types/app';
 import type { ClassifyResult } from '@/lib/ai/types';
+import type { Locale } from '@/lib/i18n/types';
 import { getItem, setItem } from '@/lib/storage';
 import { MAX_HISTORY_ITEMS } from '@/lib/constants';
 
@@ -19,7 +20,7 @@ export function useHistory() {
     }
   }, []);
 
-  const addToHistory = useCallback((result: ClassifyResult) => {
+  const addToHistory = useCallback((result: ClassifyResult, locale?: Locale) => {
     setHistory((prev) => {
       const item: ScanHistoryItem = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
@@ -28,6 +29,7 @@ export function useHistory() {
         channel: result.channel,
         timestamp: Date.now(),
         result,
+        locale,
       };
       const next = [item, ...prev].slice(0, MAX_HISTORY_ITEMS);
       setItem(STORAGE_KEY, next);

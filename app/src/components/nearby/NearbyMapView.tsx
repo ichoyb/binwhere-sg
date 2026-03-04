@@ -6,6 +6,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { NearbyPoint } from '@/types/app';
 import type { ChannelType } from '@/types/recycling';
+import type { Locale } from '@/lib/i18n/types';
+import { t } from '@/lib/i18n';
 import { CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
 import { formatDistance, estimateWalkTime } from '@/lib/format';
 import { getNavigationUrl } from '@/lib/navigation';
@@ -14,6 +16,7 @@ interface NearbyMapViewProps {
   points: NearbyPoint[];
   userLocation: { lat: number; lng: number } | null;
   channel: ChannelType | null;
+  locale?: Locale;
 }
 
 /** Get marker color from channel config */
@@ -81,7 +84,7 @@ function FitBounds({ points, userLocation }: { points: NearbyPoint[]; userLocati
   return null;
 }
 
-export default function NearbyMapView({ points, userLocation, channel }: NearbyMapViewProps) {
+export default function NearbyMapView({ points, userLocation, channel, locale = 'en' }: NearbyMapViewProps) {
   const color = getMarkerColor(channel);
   const pointIcon = useMemo(() => createPointIcon(color), [color]);
   const userIcon = useMemo(() => createUserIcon(), []);
@@ -110,7 +113,7 @@ export default function NearbyMapView({ points, userLocation, channel }: NearbyM
         {userLocation && (
           <Marker position={[userLocation.lat, userLocation.lng]} icon={userIcon}>
             <Popup>
-              <span style={{ fontSize: '14px', fontWeight: 500 }}>You are here</span>
+              <span style={{ fontSize: '14px', fontWeight: 500 }}>{t(locale, 'map.youAreHere')}</span>
             </Popup>
           </Marker>
         )}
@@ -124,7 +127,7 @@ export default function NearbyMapView({ points, userLocation, channel }: NearbyM
                   {point.name}
                 </div>
                 <div style={{ fontSize: '13px', color: '#6B7280', marginBottom: '8px' }}>
-                  {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} min walk
+                  {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} {t(locale, 'shared.walk')}
                 </div>
                 <a
                   href={getNavigationUrl(point.lat, point.lng, point.name)}
@@ -143,7 +146,7 @@ export default function NearbyMapView({ points, userLocation, channel }: NearbyM
                     textDecoration: 'none',
                   }}
                 >
-                  Navigate
+                  {t(locale, 'map.navigate')}
                 </a>
               </div>
             </Popup>

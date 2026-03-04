@@ -11,6 +11,7 @@ class ApiError extends Error {
 export async function classifyItem(params: {
   image?: string;
   text?: string;
+  locale?: string;
 }): Promise<ClassifyResult> {
   const res = await fetch('/api/classify', {
     method: 'POST',

@@ -5,7 +5,7 @@ interface BackButtonProps {
   label?: string;
 }
 
-export default function BackButton({ onClick, label = 'Back' }: BackButtonProps) {
+export default function BackButton({ onClick, label }: BackButtonProps) {
   return (
     <button
       onClick={onClick}

@@ -1,24 +1,27 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { Locale } from '@/lib/i18n/types';
+import { t, type TranslationKey } from '@/lib/i18n';
 
-const LOADING_MESSAGES = [
-  'Identifying item...',
-  'Checking recycling rules...',
-  'Finding nearest bin...',
-  'Almost there...',
+const LOADING_KEYS: TranslationKey[] = [
+  'loading.identifying',
+  'loading.checking',
+  'loading.finding',
+  'loading.almost',
 ];
 
 interface LoadingOverlayProps {
   capturedImage?: string | null;
+  locale: Locale;
 }
 
-export default function LoadingOverlay({ capturedImage }: LoadingOverlayProps) {
+export default function LoadingOverlay({ capturedImage, locale }: LoadingOverlayProps) {
   const [messageIndex, setMessageIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+      setMessageIndex((prev) => (prev + 1) % LOADING_KEYS.length);
     }, 1500);
     return () => clearInterval(interval);
   }, []);
@@ -39,7 +42,7 @@ export default function LoadingOverlay({ capturedImage }: LoadingOverlayProps) {
       <div className="flex flex-col items-center gap-3">
         <div className="w-8 h-8 border-[3px] border-white/30 border-t-white rounded-full animate-spin" />
         <p className="text-white text-sm font-medium transition-opacity duration-300">
-          {LOADING_MESSAGES[messageIndex]}
+          {t(locale, LOADING_KEYS[messageIndex])}
         </p>
       </div>
     </div>

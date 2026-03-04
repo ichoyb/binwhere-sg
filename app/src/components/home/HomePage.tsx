@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { ClassifyResult } from '@/lib/ai/types';
 import type { ScanHistoryItem } from '@/types/app';
+import type { Locale } from '@/lib/i18n/types';
 import { useCamera } from '@/hooks/useCamera';
 import { useClassify } from '@/hooks/useClassify';
 import CameraPreview from '@/components/home/CameraPreview';
@@ -13,6 +14,7 @@ import LoadingOverlay from '@/components/shared/LoadingOverlay';
 import ErrorState from '@/components/shared/ErrorState';
 import CategorySelector from '@/components/home/CategorySelector';
 import LogoIcon from '@/components/shared/LogoIcon';
+import LanguageSelector from '@/components/shared/LanguageSelector';
 
 interface HomePageProps {
   onClassified: (result: ClassifyResult, image: string | null) => void;
@@ -20,9 +22,11 @@ interface HomePageProps {
   onHistorySelect: (item: ScanHistoryItem) => void;
   onHistoryClear: () => void;
   history: ScanHistoryItem[];
+  locale: Locale;
+  onLocaleChange: (locale: Locale) => void;
 }
 
-export default function HomePage({ onClassified, onCategorySelect, onHistorySelect, onHistoryClear, history }: HomePageProps) {
+export default function HomePage({ onClassified, onCategorySelect, onHistorySelect, onHistoryClear, history, locale, onLocaleChange }: HomePageProps) {
   const { videoRef, status: cameraStatus, start, capture } = useCamera();
   const { loading, error, classify, reset } = useClassify();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -38,7 +42,7 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
     if (navigator.vibrate) navigator.vibrate(50);
     setTimeout(() => setFlash(false), 200);
     setCapturedImage(image);
-    const result = await classify({ image });
+    const result = await classify({ image, locale });
     if (result) {
       onClassified(result, image);
     }
@@ -47,7 +51,7 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
 
   const handleTextSubmit = async (text: string) => {
     setCapturedImage(null);
-    const result = await classify({ text });
+    const result = await classify({ text, locale });
     if (result) {
       onClassified(result, null);
     }
@@ -61,18 +65,20 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
   return (
     <div className="flex flex-col min-h-full bg-bg">
       {/* Loading overlay */}
-      {loading && <LoadingOverlay capturedImage={capturedImage} />}
+      {loading && <LoadingOverlay capturedImage={capturedImage} locale={locale} />}
 
       {/* Header */}
       <header className="px-4 pb-2 flex items-center justify-between" style={{ paddingTop: 'max(16px, env(safe-area-inset-top))' }}>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <LogoIcon size={28} />
           <h1 className="text-xl font-bold text-gray-900 leading-tight">
             <span className="text-nea-green">Bin</span>
             <span className="text-blue-bin">Where</span>
           </h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <LanguageSelector locale={locale} onChange={onLocaleChange} />
+          <div className="w-px h-4 bg-gray-200" />
           {[
             { color: '#0077B6', value: '12.5k', delay: '0s',
               icon: 'M6 7h12l-1 12H7L6 7zM4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2' },
@@ -99,6 +105,7 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
           videoRef={videoRef}
           status={cameraStatus}
           onStart={start}
+          locale={locale}
         />
         {flash && (
           <div className="absolute inset-0 bg-white rounded-card animate-shutter-flash pointer-events-none" />
@@ -109,7 +116,7 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
       <div className="px-4 py-4 space-y-3" style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}>
         {/* Error state */}
         {error && (
-          <ErrorState message={error} onRetry={handleRetry} />
+          <ErrorState message={error} onRetry={handleRetry} locale={locale} />
         )}
 
         {/* Snap button — centered below camera */}
@@ -125,14 +132,15 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
             onSubmit={handleTextSubmit}
             disabled={loading}
             prominent={cameraNotActive}
+            locale={locale}
           />
           <div className="mt-1.5">
-            <CategorySelector onSelect={onCategorySelect} disabled={loading} />
+            <CategorySelector onSelect={onCategorySelect} disabled={loading} locale={locale} />
           </div>
         </div>
 
         {/* History */}
-        <HistoryChips items={history} onSelect={onHistorySelect} onClear={onHistoryClear} />
+        <HistoryChips items={history} onSelect={onHistorySelect} onClear={onHistoryClear} locale={locale} />
       </div>
     </div>
   );

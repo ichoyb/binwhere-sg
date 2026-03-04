@@ -1,21 +1,24 @@
 'use client';
 
 import type { ScanHistoryItem } from '@/types/app';
+import type { Locale } from '@/lib/i18n/types';
+import { t } from '@/lib/i18n';
 import { STATUS_CONFIG } from '@/lib/constants';
 
 interface HistoryChipsProps {
   items: ScanHistoryItem[];
   onSelect?: (item: ScanHistoryItem) => void;
   onClear?: () => void;
+  locale: Locale;
 }
 
-export default function HistoryChips({ items, onSelect, onClear }: HistoryChipsProps) {
+export default function HistoryChips({ items, onSelect, onClear, locale }: HistoryChipsProps) {
   if (items.length === 0) return null;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-caption font-medium text-gray-400 uppercase tracking-wide">Recent</h3>
+        <h3 className="text-caption font-medium text-gray-400 uppercase tracking-wide">{t(locale, 'home.recent')}</h3>
         {onClear && (
           <button
             onClick={onClear}

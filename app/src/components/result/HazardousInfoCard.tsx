@@ -1,10 +1,16 @@
 'use client';
 
+import type { Locale } from '@/lib/i18n/types';
+import { t } from '@/lib/i18n';
 import { CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
 
 const config = CHANNEL_DISPLAY_CONFIG.hazardous;
 
-export default function HazardousInfoCard() {
+interface HazardousInfoCardProps {
+  locale: Locale;
+}
+
+export default function HazardousInfoCard({ locale }: HazardousInfoCardProps) {
   return (
     <div
       className="rounded-card p-4 border space-y-3"
@@ -15,7 +21,7 @@ export default function HazardousInfoCard() {
           <path d={config.iconPath} />
         </svg>
         <h3 className="text-body font-semibold" style={{ color: config.textColor }}>
-          How to Dispose of Hazardous Waste
+          {t(locale, 'hazardous.title')}
         </h3>
       </div>
 
@@ -25,8 +31,8 @@ export default function HazardousInfoCard() {
             <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
           </svg>
           <div>
-            <a href="tel:+6562255632" className="font-medium underline underline-offset-2" style={{ color: config.textColor }}>NEA Hotline: 6225 5632</a>
-            <p className="opacity-75">Tap to call for disposal guidance</p>
+            <a href="tel:+6562255632" className="font-medium underline underline-offset-2" style={{ color: config.textColor }}>{t(locale, 'hazardous.hotline')}</a>
+            <p className="opacity-75">{t(locale, 'hazardous.hotlineHint')}</p>
           </div>
         </div>
 
@@ -44,7 +50,7 @@ export default function HazardousInfoCard() {
               className="font-medium underline underline-offset-2"
               style={{ color: config.textColor }}
             >
-              NEA Toxic Waste Info
+              {t(locale, 'hazardous.toxicWaste')}
             </a>
           </div>
         </div>
@@ -56,7 +62,7 @@ export default function HazardousInfoCard() {
             <line x1="12" y1="8" x2="12.01" y2="8" />
           </svg>
           <div>
-            <p>Expired medicine can be returned to pharmacies (Guardian / Watsons)</p>
+            <p>{t(locale, 'hazardous.pharmacy')}</p>
           </div>
         </div>
 
@@ -68,7 +74,7 @@ export default function HazardousInfoCard() {
             <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
           <div>
-            <p>NEA holds regular community hazardous waste collection events</p>
+            <p>{t(locale, 'hazardous.events')}</p>
           </div>
         </div>
       </div>

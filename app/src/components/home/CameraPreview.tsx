@@ -1,15 +1,18 @@
 'use client';
 
 import type { CameraStatus } from '@/hooks/useCamera';
+import type { Locale } from '@/lib/i18n/types';
+import { t } from '@/lib/i18n';
 import LogoIcon from '@/components/shared/LogoIcon';
 
 interface CameraPreviewProps {
   videoRef: React.RefObject<HTMLVideoElement>;
   status: CameraStatus;
   onStart: () => void;
+  locale: Locale;
 }
 
-export default function CameraPreview({ videoRef, status, onStart }: CameraPreviewProps) {
+export default function CameraPreview({ videoRef, status, onStart, locale }: CameraPreviewProps) {
   if (status === 'idle') {
     return (
       <div className="flex-1 flex flex-col items-center justify-center rounded-card p-6 text-center relative overflow-hidden"
@@ -17,16 +20,16 @@ export default function CameraPreview({ videoRef, status, onStart }: CameraPrevi
       >
         <LogoIcon size={72} className="mb-3 opacity-90" />
         <h2 className="text-xl font-bold text-white mb-1 drop-shadow-sm">
-          Snap to know.
+          {t(locale, 'home.snapToKnow')}
         </h2>
         <p className="text-base text-white/85 mb-4 drop-shadow-sm">
-          Recycle right.
+          {t(locale, 'home.recycleRight')}
         </p>
         <button
           onClick={onStart}
           className="px-6 py-3 bg-white text-nea-green font-semibold rounded-full text-base shadow-lg active:scale-95 transition-transform min-h-btn"
         >
-          Open Camera
+          {t(locale, 'home.openCamera')}
         </button>
       </div>
     );
@@ -40,8 +43,8 @@ export default function CameraPreview({ videoRef, status, onStart }: CameraPrevi
           <path d="M2 8V6a2 2 0 012-2h2l2-2h4l2 2h2a2 2 0 012 2v2M2 8v10a2 2 0 002 2h12a2 2 0 002-2V8M2 8h14" stroke="currentColor" strokeWidth="1.5"/>
           <path d="M3 3l18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         </svg>
-        <p className="text-gray-600 font-medium mb-1 text-body">Camera access denied</p>
-        <p className="text-gray-400 text-caption">Use the text input below to describe your item instead</p>
+        <p className="text-gray-600 font-medium mb-1 text-body">{t(locale, 'home.cameraDenied')}</p>
+        <p className="text-gray-400 text-caption">{t(locale, 'home.cameraDeniedHint')}</p>
       </div>
     );
   }
@@ -49,8 +52,8 @@ export default function CameraPreview({ videoRef, status, onStart }: CameraPrevi
   if (status === 'unavailable') {
     return (
       <div className="flex-1 flex flex-col items-center justify-center bg-gray-100 rounded-card p-6 text-center">
-        <p className="text-gray-600 font-medium mb-1 text-body">Camera not available</p>
-        <p className="text-gray-400 text-caption">Use the text input below to describe your item</p>
+        <p className="text-gray-600 font-medium mb-1 text-body">{t(locale, 'home.cameraUnavailable')}</p>
+        <p className="text-gray-400 text-caption">{t(locale, 'home.cameraUnavailableHint')}</p>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import { ClassifyResultSchema, type ClassifyProvider, type ClassifyRequest, type ClassifyResult } from '../types';
-import { CLASSIFY_SYSTEM_PROMPT } from '../prompts/classify-system';
+import { getClassifySystemPrompt } from '../prompts/classify-system';
+import { LOCALE_LANGUAGE_NAME } from '@/lib/i18n';
 
 const API_URL = 'https://text.pollinations.ai/openai';
 const MODEL = 'openai';
@@ -19,6 +20,8 @@ export class PollinationsProvider implements ClassifyProvider {
       | { type: 'text'; text: string }
       | { type: 'image_url'; image_url: { url: string } };
 
+    const locale = request.locale ?? 'en';
+    const langName = LOCALE_LANGUAGE_NAME[locale];
     const content: ContentPart[] = [];
 
     if (request.image) {
@@ -29,8 +32,8 @@ export class PollinationsProvider implements ClassifyProvider {
     }
 
     const textPrompt = request.text
-      ? `Classify this item: ${request.text}`
-      : 'What is this item? Classify it for recycling in Singapore. Respond in English.';
+      ? `Classify this item: ${request.text}\n\nRespond in ${langName}.`
+      : `What is this item? Classify it for recycling in Singapore. Respond in ${langName}.`;
     content.push({ type: 'text', text: textPrompt });
 
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -44,7 +47,7 @@ export class PollinationsProvider implements ClassifyProvider {
       body: JSON.stringify({
         model: MODEL,
         messages: [
-          { role: 'system', content: CLASSIFY_SYSTEM_PROMPT },
+          { role: 'system', content: getClassifySystemPrompt(locale) },
           { role: 'user', content },
         ],
         max_tokens: 1024,

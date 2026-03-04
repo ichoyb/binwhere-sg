@@ -1,4 +1,5 @@
 import type { ClassifyResult } from '@/lib/ai/types';
+import type { Locale } from '@/lib/i18n/types';
 
 export type AppView = 'home' | 'result' | 'nearby';
 
@@ -10,6 +11,8 @@ export interface ScanHistoryItem {
   timestamp: number;
   /** Full classification result for re-display when tapped */
   result?: ClassifyResult;
+  /** Locale when this item was classified */
+  locale?: Locale;
 }
 
 /** Channels supported by the nearby API */

@@ -1,6 +1,7 @@
 import Groq from 'groq-sdk';
 import { ClassifyResultSchema, type ClassifyProvider, type ClassifyRequest, type ClassifyResult } from '../types';
-import { CLASSIFY_SYSTEM_PROMPT } from '../prompts/classify-system';
+import { getClassifySystemPrompt } from '../prompts/classify-system';
+import { LOCALE_LANGUAGE_NAME } from '@/lib/i18n';
 
 /** Text model for text-only classification */
 const TEXT_MODEL = 'llama-3.3-70b-versatile';
@@ -20,6 +21,8 @@ export class GroqClassifyProvider implements ClassifyProvider {
   async classify(request: ClassifyRequest): Promise<ClassifyResult> {
     const hasImage = !!request.image;
     const model = hasImage ? VISION_MODEL : TEXT_MODEL;
+    const locale = request.locale ?? 'en';
+    const langName = LOCALE_LANGUAGE_NAME[locale];
 
     const content: Groq.Chat.Completions.ChatCompletionContentPart[] = [];
 
@@ -31,14 +34,14 @@ export class GroqClassifyProvider implements ClassifyProvider {
     }
 
     const textPrompt = request.text
-      ? `Classify this item: ${request.text}`
-      : 'What is this item? Classify it for recycling in Singapore. Respond in English.';
+      ? `Classify this item: ${request.text}\n\nRespond in ${langName}.`
+      : `What is this item? Classify it for recycling in Singapore. Respond in ${langName}.`;
     content.push({ type: 'text', text: textPrompt });
 
     const response = await this.client.chat.completions.create({
       model,
       messages: [
-        { role: 'system', content: CLASSIFY_SYSTEM_PROMPT },
+        { role: 'system', content: getClassifySystemPrompt(locale) },
         { role: 'user', content },
       ],
       max_tokens: 1024,

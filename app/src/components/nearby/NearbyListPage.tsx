@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { ClassifyResult } from '@/lib/ai/types';
-import { CHANNEL_LABELS } from '@/types/recycling';
+import type { Locale } from '@/lib/i18n/types';
+import { t, type TranslationKey } from '@/lib/i18n';
 import { CHANNEL_TO_NEARBY } from '@/lib/constants';
 import BackButton from '@/components/shared/BackButton';
 import RecyclingPointCard from '@/components/shared/RecyclingPointCard';
@@ -16,23 +17,24 @@ interface NearbyListPageProps {
   result: ClassifyResult;
   userLocation: { lat: number; lng: number } | null;
   onBack: () => void;
+  locale: Locale;
 }
 
-export default function NearbyListPage({ result, userLocation, onBack }: NearbyListPageProps) {
+export default function NearbyListPage({ result, userLocation, onBack, locale }: NearbyListPageProps) {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const nearbyChannel = result.channel ? CHANNEL_TO_NEARBY[result.channel] : null;
   const { points, loading, error } = useNearby(userLocation, nearbyChannel);
 
-  const channelLabel = result.channel ? CHANNEL_LABELS[result.channel] : 'Recycling';
+  const channelLabel = result.channel ? t(locale, `channel.${result.channel}` as TranslationKey) : t(locale, 'channel.blue_bin');
 
   return (
     <div className="min-h-full bg-bg">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-bg/95 backdrop-blur-sm border-b border-gray-100 px-4 py-2">
         <div className="flex items-center gap-2">
-          <BackButton onClick={onBack} />
-          <h1 className="text-base font-semibold text-gray-900 truncate flex-1">{channelLabel} Nearby</h1>
-          <ViewToggle mode={viewMode} onChange={setViewMode} />
+          <BackButton onClick={onBack} label={t(locale, 'result.back')} />
+          <h1 className="text-base font-semibold text-gray-900 truncate flex-1">{channelLabel} {t(locale, 'nearby.nearby')}</h1>
+          <ViewToggle mode={viewMode} onChange={setViewMode} locale={locale} />
         </div>
       </div>
 
@@ -54,18 +56,18 @@ export default function NearbyListPage({ result, userLocation, onBack }: NearbyL
           )}
 
           {!loading && !error && points.length === 0 && (
-            <p className="text-center text-sm text-gray-400 py-8">No points found nearby</p>
+            <p className="text-center text-sm text-gray-400 py-8">{t(locale, 'nearby.noPoints')}</p>
           )}
 
           {points.map((point, i) => (
-            <RecyclingPointCard key={`${point.name}-${i}`} point={point} />
+            <RecyclingPointCard key={`${point.name}-${i}`} point={point} locale={locale} />
           ))}
         </div>
       ) : (
         <>
           {loading && (
             <div className="flex items-center justify-center py-20">
-              <div className="text-sm text-gray-400">Loading map...</div>
+              <div className="text-sm text-gray-400">{t(locale, 'nearby.loadingMap')}</div>
             </div>
           )}
 
@@ -77,7 +79,7 @@ export default function NearbyListPage({ result, userLocation, onBack }: NearbyL
 
           {!loading && !error && points.length === 0 && (
             <div className="flex items-center justify-center py-20">
-              <p className="text-sm text-gray-400">No points found nearby</p>
+              <p className="text-sm text-gray-400">{t(locale, 'nearby.noPoints')}</p>
             </div>
           )}
 
@@ -87,6 +89,7 @@ export default function NearbyListPage({ result, userLocation, onBack }: NearbyL
                 points={points}
                 userLocation={userLocation}
                 channel={result.channel ?? null}
+                locale={locale}
               />
             </div>
           )}
