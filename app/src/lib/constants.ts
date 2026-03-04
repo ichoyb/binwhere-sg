@@ -61,6 +61,9 @@ export const CHANNEL_TO_NEARBY: Record<ChannelType, NearbyChannel | null> = {
 /** User-friendly error messages (order matters — first match wins) */
 export const ERROR_MESSAGES: Record<string, string> = {
   '(429)': 'Too many requests. Please wait a moment and try again.',
+  'Invalid image': 'The uploaded image could not be processed. Please try taking a new photo.',
+  'Image too large': 'The image is too large. Please try a smaller image.',
+  'Server busy': 'The server is busy. Please try again in a moment.',
   'Failed to fetch': 'No internet connection. Please check your network.',
   'Classification failed': 'Could not identify the item. Please try again.',
   'Network Error': 'Connection problem. Please check your network.',
