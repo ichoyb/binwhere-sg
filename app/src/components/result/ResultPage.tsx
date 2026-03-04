@@ -37,7 +37,7 @@ async function handleShare(result: ClassifyResult, locale: Locale) {
     const filename = `binwhere_${slug}_${ts}.png`;
     const file = new File([blob], filename, { type: 'image/png' });
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      await navigator.share({ files: [file], title: 'BinWhere' });
+      await navigator.share({ files: [file] });
     } else {
       // Fallback: download PNG
       const a = document.createElement('a');
