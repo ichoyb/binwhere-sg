@@ -3,7 +3,7 @@ import type { ClassifyResult } from '@/lib/ai/types';
 import type { Locale } from '@/lib/i18n/types';
 import { t, type TranslationKey } from '@/lib/i18n';
 import { STATUS_CONFIG, CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
-import type { ClassifyStatus, ChannelType } from '@/types/recycling';
+import type { ClassifyStatus } from '@/types/recycling';
 
 // Canvas dimensions (2x for retina)
 const W = 720;
