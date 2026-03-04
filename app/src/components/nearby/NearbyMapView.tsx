@@ -88,6 +88,8 @@ export default function NearbyMapView({ points, userLocation, channel, locale = 
   const color = getMarkerColor(channel);
   const pointIcon = useMemo(() => createPointIcon(color), [color]);
   const userIcon = useMemo(() => createUserIcon(), []);
+  // Stable key per mount to prevent "container already initialized" in StrictMode
+  const mapKey = useRef(`map-${Date.now()}`);
 
   const center: [number, number] = userLocation
     ? [userLocation.lat, userLocation.lng]
@@ -96,6 +98,7 @@ export default function NearbyMapView({ points, userLocation, channel, locale = 
   return (
     <div className="relative w-full h-full">
       <MapContainer
+        key={mapKey.current}
         center={center}
         zoom={15}
         style={{ height: '100%', width: '100%' }}

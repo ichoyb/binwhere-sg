@@ -14,6 +14,7 @@ import { useNearby } from '@/hooks/useNearby';
 import { CHANNEL_TO_NEARBY, CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
 import { mapItemToAcceptedItem } from '@/lib/donation-mapping';
 import HazardousInfoCard from '@/components/result/HazardousInfoCard';
+import { generateShareCard } from '@/lib/share-card';
 
 const NearbyMapView = dynamic(() => import('@/components/nearby/NearbyMapView'), { ssr: false });
 
@@ -29,16 +30,24 @@ interface ResultPageProps {
 }
 
 async function handleShare(result: ClassifyResult, locale: Locale) {
-  const statusLabel = t(locale, `status.${result.status}` as TranslationKey);
-  const text = `${result.item} — ${statusLabel}. ${result.reason}`;
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: 'BinWhere Result', text });
-    } catch {
-      // User cancelled or share failed
+  try {
+    const blob = await generateShareCard(result, locale);
+    const slug = result.item.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '_').replace(/^_|_$/g, '').slice(0, 30);
+    const ts = Date.now().toString(36);
+    const filename = `binwhere_${slug}_${ts}.png`;
+    const file = new File([blob], filename, { type: 'image/png' });
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'BinWhere' });
+    } else {
+      // Fallback: download PNG
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
     }
-  } else {
-    await navigator.clipboard.writeText(text);
+  } catch {
+    // User cancelled or generation failed
   }
 }
 
