@@ -1,7 +1,7 @@
 'use client';
 
 import type { ClassifyResult } from '@/lib/ai/types';
-import { STATUS_CONFIG } from '@/lib/constants';
+import { STATUS_CONFIG, CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
 import { CHANNEL_LABELS } from '@/types/recycling';
 import StatusIcon from '@/components/shared/StatusIcon';
 
@@ -10,7 +10,11 @@ interface StatusCardProps {
 }
 
 export default function StatusCard({ result }: StatusCardProps) {
-  const config = STATUS_CONFIG[result.status];
+  const statusCfg = STATUS_CONFIG[result.status];
+  const channelCfg = result.channel ? CHANNEL_DISPLAY_CONFIG[result.channel] : null;
+  const config = channelCfg
+    ? { ...statusCfg, color: channelCfg.color, bgColor: channelCfg.bgColor, textColor: channelCfg.textColor, borderColor: channelCfg.borderColor }
+    : statusCfg;
 
   return (
     <div

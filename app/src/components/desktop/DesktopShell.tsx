@@ -36,6 +36,7 @@ const STATS = [
   { target: 12578, label: 'Blue Bins', suffix: '', prefix: '' },
   { target: 718, label: 'E-Waste Points', suffix: '', prefix: '' },
   { target: 401, label: 'Textile Bins', suffix: '', prefix: '' },
+  { target: 75, label: 'Donation Points', suffix: '', prefix: '' },
   { target: 3, label: 'AI Scan', suffix: 's', prefix: '<' },
 ] as const;
 
@@ -57,12 +58,13 @@ function StatsSection() {
   const v0 = useAnimatedCounter(STATS[0].target, 1800, visible);
   const v1 = useAnimatedCounter(STATS[1].target, 1400, visible);
   const v2 = useAnimatedCounter(STATS[2].target, 1200, visible);
-  const v3 = useAnimatedCounter(STATS[3].target, 800, visible);
-  const values = [v0, v1, v2, v3];
+  const v3 = useAnimatedCounter(STATS[3].target, 1000, visible);
+  const v4 = useAnimatedCounter(STATS[4].target, 800, visible);
+  const values = [v0, v1, v2, v3, v4];
 
   return (
     <div ref={ref} className="desktop-section border-t border-white/[0.06]">
-      <div className="grid grid-cols-4 gap-8">
+      <div className="grid grid-cols-5 gap-8">
         {STATS.map((stat, i) => (
           <div key={stat.label} className="stat-card text-center">
             <p className="text-4xl font-bold text-white tracking-tight">
@@ -190,7 +192,7 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
             Find nearest bin.
           </h1>
           <p className="mt-6 text-lg text-gray-400 leading-relaxed">
-            AI-powered recycling assistant covering 13,000+ collection points across Singapore.
+            AI-powered recycling assistant covering 13,700+ collection points across Singapore.
           </p>
           <div className="mt-8">
             <button
@@ -218,12 +220,11 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
       <StepsSection />
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.06] py-12">
-        <div className="max-w-[1200px] mx-auto px-12">
+      <footer className="desktop-section border-t border-white/[0.06] !py-12">
           <div className="grid grid-cols-3 gap-12">
             {/* Brand */}
-            <div>
-              <div className="flex items-center gap-2 mb-3">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-3">
                 <LogoIcon size={20} />
                 <span className="text-base font-bold tracking-tight">
                   <span className="text-emerald-400">Bin</span>
@@ -231,11 +232,11 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
                 </span>
               </div>
               <p className="text-sm text-gray-500 leading-relaxed">
-                AI-powered recycling assistant for Singapore. Snap, know, and find the nearest bin.
+                AI-powered recycling assistant for Singapore.<br />Snap, know, and find the nearest bin.
               </p>
             </div>
             {/* Data */}
-            <div>
+            <div className="text-center">
               <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Data Sources</h4>
               <ul className="space-y-2">
                 <li>
@@ -251,9 +252,9 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
               </ul>
             </div>
             {/* Connect */}
-            <div>
+            <div className="text-center">
               <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Connect</h4>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center gap-3">
                 <a href="https://x.com/ichoyb" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors" aria-label="X">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </a>
@@ -269,7 +270,6 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
           <div className="mt-10 pt-6 border-t border-white/[0.06]">
             <p className="text-xs text-gray-600 text-center">&copy; {new Date().getFullYear()} BinWhere</p>
           </div>
-        </div>
       </footer>
 
       {/* QR Popup */}

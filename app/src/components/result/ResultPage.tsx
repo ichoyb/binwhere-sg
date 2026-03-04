@@ -74,7 +74,12 @@ export default function ResultPage({
 
   const [nearbyMode, setNearbyMode] = useState<'list' | 'map'>('map');
   const [donationMode, setDonationMode] = useState<'list' | 'map'>('map');
-  const config = STATUS_CONFIG[result.status];
+  const statusCfg = STATUS_CONFIG[result.status];
+  const channelCfg = result.channel ? CHANNEL_DISPLAY_CONFIG[result.channel] : null;
+  // Use channel color when available so header matches map markers
+  const config = channelCfg
+    ? { ...statusCfg, color: channelCfg.color, bgColor: channelCfg.bgColor, textColor: channelCfg.textColor, borderColor: channelCfg.borderColor }
+    : statusCfg;
 
   const nearbyHeadingMap: Record<string, string> = {
     blue_bin: 'Blue Bins',
