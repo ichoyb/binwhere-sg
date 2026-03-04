@@ -22,6 +22,16 @@ html, body {
   overscroll-behavior: none;
 }
 
+/* Shutter flash for camera capture */
+@keyframes shutter-flash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.animate-shutter-flash {
+  animation: shutter-flash 200ms ease-out forwards;
+}
+
 /* Shimmer animation for loading overlay */
 @keyframes shimmer {
   0% { background-position: -200% 0; }

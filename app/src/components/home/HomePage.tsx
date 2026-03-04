@@ -26,6 +26,7 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
   const { videoRef, status: cameraStatus, start, capture } = useCamera();
   const { loading, error, classify, reset } = useClassify();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [flash, setFlash] = useState(false);
 
   const cameraAvailable = cameraStatus === 'active';
   const cameraNotActive = cameraStatus !== 'active';
@@ -33,6 +34,9 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
   const handleSnap = async () => {
     const image = await capture();
     if (!image) return;
+    setFlash(true);
+    if (navigator.vibrate) navigator.vibrate(50);
+    setTimeout(() => setFlash(false), 200);
     setCapturedImage(image);
     const result = await classify({ image });
     if (result) {
@@ -90,12 +94,15 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
       </header>
 
       {/* Camera area — flex-1 only when camera active (video needs full space) */}
-      <div className={`${cameraStatus === 'idle' ? '' : 'flex-1'} flex flex-col px-4 min-h-0`}>
+      <div className={`${cameraStatus === 'idle' ? '' : 'flex-1'} flex flex-col px-4 min-h-0 relative`}>
         <CameraPreview
           videoRef={videoRef}
           status={cameraStatus}
           onStart={start}
         />
+        {flash && (
+          <div className="absolute inset-0 bg-white rounded-card animate-shutter-flash pointer-events-none" />
+        )}
       </div>
 
       {/* Controls */}
