@@ -60,13 +60,32 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
       {loading && <LoadingOverlay capturedImage={capturedImage} />}
 
       {/* Header */}
-      <header className="px-4 pb-2 flex items-center gap-2" style={{ paddingTop: 'max(16px, env(safe-area-inset-top))' }}>
-        <LogoIcon size={28} />
-        <div>
+      <header className="px-4 pb-2 flex items-center justify-between" style={{ paddingTop: 'max(16px, env(safe-area-inset-top))' }}>
+        <div className="flex items-center gap-2">
+          <LogoIcon size={28} />
           <h1 className="text-xl font-bold text-gray-900 leading-tight">
             <span className="text-nea-green">Bin</span>
             <span className="text-blue-bin">Where</span>
           </h1>
+        </div>
+        <div className="flex items-center gap-2">
+          {[
+            { color: '#0077B6', value: '12.5k', delay: '0s',
+              icon: 'M6 7h12l-1 12H7L6 7zM4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2' },
+            { color: '#00897B', value: '718', delay: '1s',
+              icon: 'M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1zm4 14h8m-4-3v3' },
+            { color: '#D4A017', value: '401', delay: '2s',
+              icon: 'M8 2l-5 5 3 1 1 13h10l1-13 3-1-5-5c-1 1-2.5 2-4 2S9 3 8 2z' },
+            { color: '#8E24AA', value: '75', delay: '3s',
+              icon: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' },
+          ].map((s) => (
+            <div key={s.color} className="flex items-center gap-0.5">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={s.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d={s.icon} />
+              </svg>
+              <span className="text-[10px] font-medium text-gray-400">{s.value}</span>
+            </div>
+          ))}
         </div>
       </header>
 

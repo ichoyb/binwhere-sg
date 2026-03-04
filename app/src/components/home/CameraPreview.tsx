@@ -28,31 +28,6 @@ export default function CameraPreview({ videoRef, status, onStart }: CameraPrevi
         >
           Open Camera
         </button>
-        <div className="grid grid-cols-4 gap-2 mt-4">
-          {[
-            { color: '#0077B6', value: '12,578', label: 'Blue Bins', delay: '0s' },
-            { color: '#00897B', value: '718', label: 'E-Waste', delay: '1s' },
-            { color: '#D4A017', value: '401', label: 'Textile', delay: '2s' },
-            { color: '#8E24AA', value: '75', label: 'Donation', delay: '3s' },
-          ].map((s) => (
-            <div key={s.label} className="flex flex-col items-center">
-              <div className="flex items-center gap-1">
-                <span className="relative flex h-2 w-2">
-                  <span
-                    className="absolute inset-0 rounded-full opacity-75 animate-[ping_4s_ease-in-out_infinite]"
-                    style={{ backgroundColor: s.color, animationDelay: s.delay }}
-                  />
-                  <span
-                    className="relative inline-flex h-2 w-2 rounded-full"
-                    style={{ backgroundColor: s.color }}
-                  />
-                </span>
-                <span className="text-xs font-semibold text-white/90">{s.value}</span>
-              </div>
-              <span className="text-[10px] text-white/60">{s.label}</span>
-            </div>
-          ))}
-        </div>
       </div>
     );
   }
