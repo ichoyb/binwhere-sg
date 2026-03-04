@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getBlueBinIndex, getEwasteIndex, getTextileIndex } from '@/lib/data-gov';
+import { getBlueBinIndex, getEwasteIndex, getTextileIndex, getReuseChannelsIndex } from '@/lib/data-gov';
 import { checkRateLimit, DEFAULT_LIMITS } from '@/lib/rate-limit';
 
 /** Convert "FERNVALE ROAD" → "Fernvale Road" */
@@ -27,9 +27,10 @@ function parseDescriptionHtml(html: string): Record<string, string> {
 const NearbyInputSchema = z.object({
   lat: z.coerce.number().min(1.15).max(1.47),
   lng: z.coerce.number().min(103.6).max(104.05),
-  channel: z.enum(['blue_bin', 'ewaste', 'ewaste_battery', 'lighting', 'textile']),
+  channel: z.enum(['blue_bin', 'ewaste', 'ewaste_battery', 'lighting', 'textile', 'donation']),
   limit: z.coerce.number().int().min(1).max(20).default(5),
   radius: z.coerce.number().min(0.1).max(5).default(1),
+  acceptedItem: z.string().optional(),
 });
 
 /** Parse DESCRIPTION into human-readable accepts string */
@@ -64,11 +65,14 @@ export async function GET(request: NextRequest) {
     const input = NearbyInputSchema.parse(params);
 
     const isEwaste = input.channel === 'ewaste' || input.channel === 'ewaste_battery' || input.channel === 'lighting';
+    const isDonation = input.channel === 'donation';
     const index = input.channel === 'blue_bin'
       ? getBlueBinIndex()
       : input.channel === 'textile'
         ? getTextileIndex()
-        : getEwasteIndex();
+        : isDonation
+          ? getReuseChannelsIndex()
+          : getEwasteIndex();
 
     if (!index) {
       return NextResponse.json(
@@ -77,8 +81,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // For sub-channels (ewaste_battery, lighting), fetch extra candidates for post-filtering
-    const needsFilter = input.channel === 'ewaste_battery' || input.channel === 'lighting';
+    // For sub-channels or acceptedItem filtering, fetch extra candidates for post-filtering
+    const needsEwasteFilter = input.channel === 'ewaste_battery' || input.channel === 'lighting';
+    const needsDonationFilter = isDonation && !!input.acceptedItem;
+    const needsFilter = needsEwasteFilter || needsDonationFilter;
     const queryLimit = needsFilter ? input.limit * 4 : input.limit;
 
     const rawResults = index.queryRadius(
@@ -87,13 +93,20 @@ export async function GET(request: NextRequest) {
       queryLimit,
     );
 
-    // Filter e-waste sub-channels by DESCRIPTION
-    const filtered = needsFilter
-      ? rawResults.filter((r) => {
-          const desc = (r.properties.DESCRIPTION as string) || '';
-          return matchesEwasteChannel(desc, input.channel);
-        }).slice(0, input.limit)
-      : rawResults;
+    // Filter by sub-channel or acceptedItem
+    let filtered = rawResults;
+    if (needsEwasteFilter) {
+      filtered = rawResults.filter((r) => {
+        const desc = (r.properties.DESCRIPTION as string) || '';
+        return matchesEwasteChannel(desc, input.channel);
+      }).slice(0, input.limit);
+    } else if (needsDonationFilter && input.acceptedItem) {
+      const needle = input.acceptedItem.toLowerCase();
+      filtered = rawResults.filter((r) => {
+        const accepted = ((r.properties.ACCEPTEDITEMS as string) || '').toLowerCase();
+        return accepted.includes(needle);
+      }).slice(0, input.limit);
+    }
 
     return NextResponse.json({
       channel: input.channel,
@@ -125,6 +138,10 @@ export async function GET(request: NextRequest) {
           // Textile: place name like "Kebun Baru Court (SG0159)"
           name = prop('NAME') || 'Textile Bin';
           address = prop('DESCRIPTION');
+        } else if (isDonation) {
+          // Donation: organization name + full address
+          name = prop('NAME') || 'Donation Point';
+          address = prop('FULLADDRESS') || [block, street, building].filter(Boolean).join(', ');
         } else {
           // E-waste: use the specific operator/program name
           name = prop('NAME') || (r.properties.Name as string) || 'E-Waste Point';
@@ -134,6 +151,9 @@ export async function GET(request: NextRequest) {
         // Parse accepts for e-waste points
         const ewasteDesc = (r.properties.DESCRIPTION as string) || '';
         const accepts = isEwaste ? parseAccepts(ewasteDesc) : undefined;
+        // Donation points: show accepted items and reuse type
+        const donationAccepts = isDonation ? prop('ACCEPTEDITEMS') || undefined : undefined;
+        const reuseType = isDonation ? prop('REUSETYPE') || undefined : undefined;
 
         return {
           name,
@@ -143,6 +163,8 @@ export async function GET(request: NextRequest) {
           lat: r.coordinates.latitude,
           lng: r.coordinates.longitude,
           ...(accepts && { accepts }),
+          ...(donationAccepts && { accepts: donationAccepts }),
+          ...(reuseType && { reuseType }),
         };
       }),
     });

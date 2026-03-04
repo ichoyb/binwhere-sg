@@ -31,6 +31,7 @@ export async function fetchNearby(params: {
   channel: NearbyChannel;
   limit?: number;
   radius?: number;
+  acceptedItem?: string;
 }): Promise<NearbyResponse> {
   const qs = new URLSearchParams({
     lat: String(params.lat),
@@ -38,6 +39,7 @@ export async function fetchNearby(params: {
     channel: params.channel,
     ...(params.limit && { limit: String(params.limit) }),
     ...(params.radius && { radius: String(params.radius) }),
+    ...(params.acceptedItem && { acceptedItem: params.acceptedItem }),
   });
 
   const res = await fetch(`/api/nearby?${qs}`);

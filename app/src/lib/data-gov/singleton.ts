@@ -73,3 +73,8 @@ export function getEwasteIndex(): SpatialIndex | undefined {
 export function getTextileIndex(): SpatialIndex | undefined {
   return getSpatialIndex(DATASET_IDS.TEXTILE_BINS);
 }
+
+/** Get spatial index for reuse channels (donation/resale/repair) */
+export function getReuseChannelsIndex(): SpatialIndex | undefined {
+  return getSpatialIndex(DATASET_IDS.REUSE_CHANNELS);
+}

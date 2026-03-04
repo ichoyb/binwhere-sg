@@ -5,8 +5,8 @@ import type { NearbyPoint, NearbyChannel } from '@/types/app';
 import { fetchNearby } from '@/lib/api-client';
 
 /** Cache key for deduplication */
-function cacheKey(lat: number, lng: number, channel: string): string {
-  return `${lat.toFixed(4)},${lng.toFixed(4)},${channel}`;
+function cacheKey(lat: number, lng: number, channel: string, acceptedItem?: string): string {
+  return `${lat.toFixed(4)},${lng.toFixed(4)},${channel}${acceptedItem ? `,${acceptedItem}` : ''}`;
 }
 
 /** Module-level cache to deduplicate across component instances */
@@ -20,6 +20,7 @@ const CACHE_TTL = 60_000; // 1 minute
 export function useNearby(
   userLocation: { lat: number; lng: number } | null,
   channel: NearbyChannel | null,
+  acceptedItem?: string,
 ) {
   const [points, setPoints] = useState<NearbyPoint[]>([]);
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,7 @@ export function useNearby(
       return;
     }
 
-    const key = cacheKey(userLocation.lat, userLocation.lng, channel);
+    const key = cacheKey(userLocation.lat, userLocation.lng, channel, acceptedItem);
 
     // Check cache first
     const cached = nearbyCache.get(key);
@@ -55,6 +56,7 @@ export function useNearby(
       lng: userLocation.lng,
       channel,
       limit: 20,
+      ...(acceptedItem && { acceptedItem }),
     })
       .then((data) => {
         if (!cancelled) {
@@ -74,7 +76,7 @@ export function useNearby(
       cancelled = true;
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userLocation?.lat, userLocation?.lng, channel]);
+  }, [userLocation?.lat, userLocation?.lng, channel, acceptedItem]);
 
   return { points, loading, error };
 }

@@ -28,6 +28,7 @@ export const DATASET_IDS = {
   RECYCLING_BINS: 'd_4dde14826642f49eefff48b7832b90db',
   EWASTE_RECYCLING_POINTS: 'd_db40d004afeb5a7f0f555fdcc34934cc',
   TEXTILE_BINS: 'textile_bins',
+  REUSE_CHANNELS: 'reuse_channels',
 } as const;
 
 /** Cache TTL defaults */

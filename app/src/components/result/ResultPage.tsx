@@ -11,6 +11,8 @@ import ViewToggle from '@/components/nearby/ViewToggle';
 import { useNearby } from '@/hooks/useNearby';
 import { CHANNEL_LABELS } from '@/types/recycling';
 import { CHANNEL_TO_NEARBY, CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
+import { mapItemToAcceptedItem } from '@/lib/donation-mapping';
+import HazardousInfoCard from '@/components/result/HazardousInfoCard';
 
 const NearbyMapView = dynamic(() => import('@/components/nearby/NearbyMapView'), { ssr: false });
 
@@ -46,18 +48,40 @@ export default function ResultPage({
   onRequestLocation,
 }: ResultPageProps) {
   const nearbyChannel = result.channel ? CHANNEL_TO_NEARBY[result.channel] : null;
+  const isHazardous = result.channel === 'hazardous';
   const isInSingapore = userLocation
     ? userLocation.lat >= 1.15 && userLocation.lat <= 1.47 && userLocation.lng >= 103.6 && userLocation.lng <= 104.05
     : false;
 
+  // For donation channel, derive acceptedItem from the item name
+  const acceptedItem = nearbyChannel === 'donation' ? mapItemToAcceptedItem(result.item) : undefined;
+
+  // For bulky_waste, also query donation channel for Furniture/Large home appliances
+  const bulkyDonationChannel = result.channel === 'bulky_waste' ? 'donation' as const : null;
+  const bulkyAcceptedItem = result.channel === 'bulky_waste' ? 'Furniture' : undefined;
+
   const { points, loading: nearbyLoading } = useNearby(
     isInSingapore ? userLocation : null,
     nearbyChannel,
+    acceptedItem,
+  );
+
+  const { points: donationPoints, loading: donationLoading } = useNearby(
+    isInSingapore ? userLocation : null,
+    bulkyDonationChannel,
+    bulkyAcceptedItem,
   );
 
   const [nearbyMode, setNearbyMode] = useState<'list' | 'map'>('map');
+  const [donationMode, setDonationMode] = useState<'list' | 'map'>('map');
   const config = STATUS_CONFIG[result.status];
-  const nearbyHeading = nearbyChannel === 'blue_bin' ? 'Blue Bins' : nearbyChannel === 'textile' ? 'Textile Bins' : 'E-Waste Points';
+
+  const nearbyHeadingMap: Record<string, string> = {
+    blue_bin: 'Blue Bins',
+    textile: 'Textile Bins',
+    donation: 'Donation Points',
+  };
+  const nearbyHeading = nearbyChannel ? (nearbyHeadingMap[nearbyChannel] ?? 'E-Waste Points') : '';
 
   return (
     <div className="min-h-full bg-bg">
@@ -184,6 +208,9 @@ export default function ResultPage({
           </div>
         )}
 
+        {/* Hazardous waste info card */}
+        {isHazardous && <HazardousInfoCard />}
+
         {/* Nearby points section */}
         {nearbyLoading && (
           <div className="bg-white rounded-card p-4 border border-gray-100 animate-pulse">
@@ -215,8 +242,39 @@ export default function ResultPage({
           </div>
         )}
 
+        {/* Bulky waste: also show donation points accepting Furniture */}
+        {donationLoading && result.channel === 'bulky_waste' && (
+          <div className="bg-white rounded-card p-4 border border-gray-100 animate-pulse">
+            <div className="h-4 bg-gray-200 rounded w-1/3 mb-2" />
+            <div className="h-3 bg-gray-200 rounded w-2/3" />
+          </div>
+        )}
+        {donationPoints.length > 0 && result.channel === 'bulky_waste' && (
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-caption font-semibold text-gray-700">Consider Donating Instead</h3>
+              <ViewToggle mode={donationMode} onChange={setDonationMode} />
+            </div>
+            {donationMode === 'list' ? (
+              <div className="space-y-2">
+                {donationPoints.slice(0, 5).map((point, i) => (
+                  <RecyclingPointCard key={`donation-${point.name}-${i}`} point={point} />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-card overflow-hidden border border-gray-100" style={{ height: '350px' }}>
+                <NearbyMapView
+                  points={donationPoints.slice(0, 5)}
+                  userLocation={userLocation}
+                  channel="donation"
+                />
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Location / region messages */}
-        {nearbyChannel && !userLocation && geoLoading && (
+        {(nearbyChannel || isHazardous) && !isHazardous && !userLocation && geoLoading && (
           <div className="bg-blue-50 rounded-card p-4 border border-blue-100 text-center">
             <p className="text-caption text-blue-700 font-medium">Getting your location...</p>
           </div>

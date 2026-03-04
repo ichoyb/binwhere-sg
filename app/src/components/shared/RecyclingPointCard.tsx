@@ -27,21 +27,98 @@ const ACCEPT_ICONS: Record<string, { icon: JSX.Element; label: string }> = {
   },
 };
 
+/** Icon+label config for donation ACCEPTEDITEMS categories */
+const DONATION_ICONS: Record<string, { icon: JSX.Element; label: string }> = {
+  'Baby and children\'s Items': {
+    label: 'Baby',
+    // Pacifier / baby
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 12a4 4 0 100-8 4 4 0 000 8z" /><path d="M12 12v4m-3 2h6a2 2 0 012 2H7a2 2 0 012-2z" /></svg>,
+  },
+  'Bags and accessories': {
+    label: 'Bags',
+    // Shopping bag
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 01-8 0" /></svg>,
+  },
+  'Books': {
+    label: 'Books',
+    // Book
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" /></svg>,
+  },
+  'Clothing': {
+    label: 'Clothing',
+    // T-shirt
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2l-5 5 3 1 1 13h10l1-13 3-1-5-5c-1 1-2.5 2-4 2S9 3 8 2z" /></svg>,
+  },
+  'Food': {
+    label: 'Food',
+    // Apple / food
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2c-1 0-2 .5-2.5 1.5C8 5 5 7 5 11c0 5 3 10 7 10s7-5 7-10c0-4-3-6-4.5-7.5C14 2.5 13 2 12 2z" /><path d="M12 2c0 2-2 3-2 3" /></svg>,
+  },
+  'Furniture': {
+    label: 'Furniture',
+    // Chair
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 11V6a2 2 0 012-2h10a2 2 0 012 2v5" /><path d="M3 11h18v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4z" /><path d="M5 17v4m14-4v4" /></svg>,
+  },
+  'Household goods': {
+    label: 'Household',
+    // Home
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path d="M9 22V12h6v10" /></svg>,
+  },
+  'Large home appliances': {
+    label: 'Appliances',
+    // Fridge
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" /><path d="M4 10h16" /><path d="M8 6v2m0 4v4" /></svg>,
+  },
+  'Other electrical appliances': {
+    label: 'Electrical',
+    // Plug
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22v-5" /><path d="M9 7V2m6 5V2" /><path d="M6 7h12v4a6 6 0 01-12 0V7z" /></svg>,
+  },
+  'Shoes': {
+    label: 'Shoes',
+    // Shoe footprint
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 16s1-4 4-4 4 4 8 4 4-4 4-4v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-1z" /><path d="M6 12V6a2 2 0 012-2h1l1 3h4l1-3h1a2 2 0 012 2v6" /></svg>,
+  },
+  'Stationery': {
+    label: 'Stationery',
+    // Pen
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z" /></svg>,
+  },
+  'Toys': {
+    label: 'Toys',
+    // Teddy bear / dice
+    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8.5" cy="8.5" r="1" /><circle cx="15.5" cy="8.5" r="1" /><circle cx="8.5" cy="15.5" r="1" /><circle cx="15.5" cy="15.5" r="1" /><circle cx="12" cy="12" r="1" /></svg>,
+  },
+};
+
 function AcceptsTags({ accepts }: { accepts: string }) {
-  const items = accepts.split(', ');
+  const items = accepts.split(/\s*,\s*/);
   return (
     <div className="flex flex-wrap gap-1 mt-1">
       {items.map((item) => {
-        const config = ACCEPT_ICONS[item];
-        if (!config) return null;
+        const ewaste = ACCEPT_ICONS[item];
+        if (ewaste) {
+          return (
+            <span
+              key={item}
+              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-100 text-gray-500"
+              title={item}
+            >
+              {ewaste.icon}
+              <span className="text-[11px] leading-none">{ewaste.label}</span>
+            </span>
+          );
+        }
+        const donation = DONATION_ICONS[item];
+        if (!donation) return null;
         return (
           <span
             key={item}
-            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-100 text-gray-500"
+            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-pink-50 text-pink-600"
             title={item}
           >
-            {config.icon}
-            <span className="text-[11px] leading-none">{config.label}</span>
+            {donation.icon}
+            <span className="text-[11px] leading-none">{donation.label}</span>
           </span>
         );
       })}
@@ -65,6 +142,11 @@ export default function RecyclingPointCard({ point, heading }: RecyclingPointCar
           <p className="text-body font-medium text-gray-900 line-clamp-2">{point.name}</p>
           {point.address && (
             <p className="text-caption text-gray-400 line-clamp-1 mt-0.5">{point.address}</p>
+          )}
+          {point.reuseType && (
+            <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-pink-100 text-pink-700">
+              {point.reuseType}
+            </span>
           )}
           {point.accepts && <AcceptsTags accepts={point.accepts} />}
           <p className="text-caption text-gray-500 mt-1">

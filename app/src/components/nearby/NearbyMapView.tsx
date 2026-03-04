@@ -70,7 +70,11 @@ function FitBounds({ points, userLocation }: { points: NearbyPoint[]; userLocati
     if (coords.length === 0) return;
 
     const bounds = L.latLngBounds(coords);
-    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
+    try {
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16, animate: false });
+    } catch {
+      // Leaflet may throw if DOM is detached during zoom transition
+    }
     fittedRef.current = true;
   }, [map, points, userLocation]);
 

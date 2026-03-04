@@ -13,7 +13,7 @@ export interface ScanHistoryItem {
 }
 
 /** Channels supported by the nearby API */
-export type NearbyChannel = 'blue_bin' | 'ewaste' | 'ewaste_battery' | 'lighting' | 'textile';
+export type NearbyChannel = 'blue_bin' | 'ewaste' | 'ewaste_battery' | 'lighting' | 'textile' | 'donation';
 
 export interface NearbyPoint {
   name: string;
@@ -22,8 +22,10 @@ export interface NearbyPoint {
   distanceKm: number;
   lat: number;
   lng: number;
-  /** What this point accepts, e.g. "ICT, Batteries, Lamps" (e-waste only) */
+  /** What this point accepts, e.g. "ICT, Batteries, Lamps" (e-waste) or "Clothing" (donation) */
   accepts?: string;
+  /** Reuse type for donation points: Donate, Resell, or Repair */
+  reuseType?: string;
 }
 
 export interface NearbyResponse {
