@@ -20,7 +20,7 @@ export default function PointCard({ point }: PointCardProps) {
           {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} min walk
         </p>
       </div>
-      <NavigateButton lat={point.lat} lng={point.lng} name={point.name} label="Go" />
+      <NavigateButton lat={point.lat} lng={point.lng} label="Go" />
     </div>
   );
 }

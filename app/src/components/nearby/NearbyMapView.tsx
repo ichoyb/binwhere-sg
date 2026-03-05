@@ -126,25 +126,30 @@ export default function NearbyMapView({ points, userLocation, channel, locale = 
           <Marker key={`${point.name}-${i}`} position={[point.lat, point.lng]} icon={pointIcon}>
             <Popup>
               <div style={{ minWidth: '180px', fontFamily: 'system-ui, sans-serif' }}>
-                <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '4px', lineHeight: 1.3 }}>
+                <a
+                  href={getNavigationUrl(point.lat, point.lng)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ fontWeight: 600, fontSize: '14px', marginBottom: '4px', lineHeight: 1.3, color: '#0077B6', textDecoration: 'none', display: 'block' }}
+                >
                   {point.name}
-                </div>
+                </a>
                 <div style={{ fontSize: '13px', color: '#6B7280', marginBottom: '8px' }}>
                   {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} {t(locale, 'shared.walk')}
                 </div>
                 <a
-                  href={getNavigationUrl(point.lat, point.lng, point.name)}
+                  href={getNavigationUrl(point.lat, point.lng)}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
-                    padding: '6px 14px',
+                    padding: '10px 16px',
                     borderRadius: '8px',
                     background: '#0077B6',
                     color: 'white',
-                    fontSize: '13px',
+                    fontSize: '14px',
                     fontWeight: 500,
                     textDecoration: 'none',
                   }}

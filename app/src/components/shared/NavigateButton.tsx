@@ -6,11 +6,10 @@ interface NavigateButtonProps {
   lat: number;
   lng: number;
   label?: string;
-  name?: string;
 }
 
-export default function NavigateButton({ lat, lng, label = 'Navigate', name }: NavigateButtonProps) {
-  const url = getNavigationUrl(lat, lng, name);
+export default function NavigateButton({ lat, lng, label = 'Navigate' }: NavigateButtonProps) {
+  const url = getNavigationUrl(lat, lng);
 
   return (
     <a

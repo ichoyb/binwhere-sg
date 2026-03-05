@@ -4,6 +4,7 @@ import type { NearbyPoint } from '@/types/app';
 import type { Locale } from '@/lib/i18n/types';
 import { t } from '@/lib/i18n';
 import NavigateButton from '@/components/shared/NavigateButton';
+import { getNavigationUrl } from '@/lib/navigation';
 import { formatDistance, estimateWalkTime } from '@/lib/format';
 
 const ACCEPT_ICONS: Record<string, { icon: JSX.Element; label: string }> = {
@@ -142,7 +143,14 @@ export default function RecyclingPointCard({ point, heading, locale = 'en' }: Re
       )}
       <div className="flex items-center justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <p className="text-body font-medium text-gray-900 line-clamp-2">{point.name}</p>
+          <a
+            href={getNavigationUrl(point.lat, point.lng)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-body font-medium text-blue-bin line-clamp-2 hover:underline"
+          >
+            {point.name}
+          </a>
           {point.address && (
             <p className="text-caption text-gray-400 line-clamp-1 mt-0.5">{point.address}</p>
           )}
@@ -156,7 +164,7 @@ export default function RecyclingPointCard({ point, heading, locale = 'en' }: Re
             {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} {t(locale, 'shared.walk')}
           </p>
         </div>
-        <NavigateButton lat={point.lat} lng={point.lng} name={point.name} label={t(locale, 'shared.go')} />
+        <NavigateButton lat={point.lat} lng={point.lng} label={t(locale, 'shared.go')} />
       </div>
     </div>
   );

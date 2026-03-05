@@ -22,7 +22,7 @@ export default function NearestPoint({ point }: NearestPointProps) {
             {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} min walk
           </p>
         </div>
-        <NavigateButton lat={point.lat} lng={point.lng} name={point.name} />
+        <NavigateButton lat={point.lat} lng={point.lng} />
       </div>
     </div>
   );
