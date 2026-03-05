@@ -24,6 +24,11 @@ export class GroqClassifyProvider implements ClassifyProvider {
     const locale = request.locale ?? 'en';
     const langName = LOCALE_LANGUAGE_NAME[locale];
 
+    // Vision model has poor non-English output — classify in English, then translate
+    const needsTranslation = hasImage && locale !== 'en';
+    const classifyLocale = needsTranslation ? 'en' : locale;
+    const classifyLang = needsTranslation ? 'English' : langName;
+
     const content: Groq.Chat.Completions.ChatCompletionContentPart[] = [];
 
     if (request.image) {
@@ -34,14 +39,14 @@ export class GroqClassifyProvider implements ClassifyProvider {
     }
 
     const textPrompt = request.text
-      ? `Classify this item: ${request.text}\n\nRespond in ${langName}.`
-      : `What is this item? Classify it for recycling in Singapore. Respond in ${langName}.`;
+      ? `Classify this item: ${request.text}\n\nRespond in ${classifyLang}.`
+      : `What is this item? Classify it for recycling in Singapore. Respond in ${classifyLang}.`;
     content.push({ type: 'text', text: textPrompt });
 
     const response = await this.client.chat.completions.create({
       model,
       messages: [
-        { role: 'system', content: getClassifySystemPrompt(locale) },
+        { role: 'system', content: getClassifySystemPrompt(classifyLocale) },
         { role: 'user', content },
       ],
       max_tokens: 1024,
@@ -55,6 +60,52 @@ export class GroqClassifyProvider implements ClassifyProvider {
     }
 
     const parsed = JSON.parse(jsonMatch[0]);
-    return ClassifyResultSchema.parse(parsed);
+    const result = ClassifyResultSchema.parse(parsed);
+
+    if (needsTranslation) {
+      return this.translateResult(result, langName);
+    }
+    return result;
+  }
+
+  /** Translate text fields from English to target language using the text model */
+  private async translateResult(result: ClassifyResult, langName: string): Promise<ClassifyResult> {
+    const fields = {
+      item: result.item,
+      reason: result.reason,
+      ...(result.preparation && { preparation: result.preparation }),
+      ...(result.tip && { tip: result.tip }),
+    };
+
+    const response = await this.client.chat.completions.create({
+      model: TEXT_MODEL,
+      messages: [
+        {
+          role: 'system',
+          content: `Translate the following JSON values to ${langName}. Return ONLY valid JSON with the same keys. Keep translations concise and practical.`,
+        },
+        { role: 'user', content: JSON.stringify(fields) },
+      ],
+      max_tokens: 512,
+    });
+
+    const text = response.choices[0]?.message?.content ?? '';
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return result; // translation failed, return English result
+    }
+
+    try {
+      const translated = JSON.parse(jsonMatch[0]);
+      return {
+        ...result,
+        item: translated.item || result.item,
+        reason: translated.reason || result.reason,
+        preparation: translated.preparation || result.preparation,
+        tip: translated.tip || result.tip,
+      };
+    } catch {
+      return result; // parse failed, return English result
+    }
   }
 }
