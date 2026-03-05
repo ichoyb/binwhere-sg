@@ -62,6 +62,7 @@ export function getClassifySystemPrompt(locale: Locale = 'en'): string {
 
 You MUST respond in ${langName}.
 All JSON text fields (item, reason, preparation, tip) MUST be in ${langName}.
+The "status" and "channel" fields MUST remain exactly as shown in English (e.g. "recyclable", "blue_bin"). Do NOT translate enum values.
 Keep responses concise and practical.`;
 }
 
