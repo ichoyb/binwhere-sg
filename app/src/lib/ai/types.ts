@@ -3,7 +3,7 @@ import { z } from 'zod';
 /** Zod schema for AI classification result */
 export const ClassifyResultSchema = z.object({
   /** Identified item name */
-  item: z.string(),
+  item: z.string().trim().min(1),
   /** Recycling status */
   status: z.enum([
     'recyclable',
@@ -27,11 +27,14 @@ export const ClassifyResultSchema = z.object({
     'general_waste',
   ]).nullable(),
   /** Why this classification was made */
-  reason: z.string(),
+  reason: z.string().trim().min(1),
   /** How to prepare the item for recycling (step-by-step) */
-  preparation: z.array(z.string()).optional(),
+  preparation: z.array(z.string().trim()).optional().transform((steps) => {
+    const cleaned = steps?.filter((s) => s.length > 0);
+    return cleaned && cleaned.length > 0 ? cleaned : undefined;
+  }),
   /** Extra tip for the user */
-  tip: z.string().optional(),
+  tip: z.string().trim().optional().transform((v) => (v && v.length > 0 ? v : undefined)),
 });
 
 export type ClassifyResult = z.infer<typeof ClassifyResultSchema>;
