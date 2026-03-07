@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import type { ClassifyResult } from '@/lib/ai/types';
 import type { ScanHistoryItem } from '@/types/app';
 import type { Locale } from '@/lib/i18n/types';
@@ -35,6 +35,34 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
   const cameraAvailable = cameraStatus === 'active';
   const cameraNotActive = cameraStatus !== 'active';
 
+  // Pull-down reveal
+  const touchStartY = useRef(0);
+  const isPulling = useRef(false);
+  const [pullY, setPullY] = useState(0);
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    if (window.scrollY <= 0) {
+      touchStartY.current = e.touches[0].clientY;
+      isPulling.current = true;
+    }
+  }, []);
+
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isPulling.current) return;
+    const dy = e.touches[0].clientY - touchStartY.current;
+    if (dy > 0) {
+      setPullY(Math.min(dy * 0.35, 36));
+    } else {
+      isPulling.current = false;
+      setPullY(0);
+    }
+  }, []);
+
+  const onTouchEnd = useCallback(() => {
+    isPulling.current = false;
+    setPullY(0);
+  }, []);
+
   const handleSnap = async () => {
     const image = await capture();
     if (!image) return;
@@ -63,7 +91,28 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
   };
 
   return (
-    <div className="flex flex-col min-h-full bg-bg">
+    <div
+      className="min-h-full bg-bg overflow-hidden relative"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
+      {/* Pull-down reveal */}
+      <div
+        className="absolute inset-x-0 top-0 flex items-center justify-center h-9 pointer-events-none"
+        style={{ opacity: pullY > 8 ? Math.min((pullY - 8) / 20, 1) : 0 }}
+      >
+        <span className="text-[10px] text-gray-400 tracking-wide">Powered by BinWhere AI</span>
+      </div>
+
+      {/* Main content */}
+      <div
+        className="flex flex-col min-h-full"
+        style={{
+          transform: `translateY(${pullY}px)`,
+          transition: pullY === 0 ? 'transform 0.3s ease-out' : 'none',
+        }}
+      >
       {/* Loading overlay */}
       {loading && <LoadingOverlay capturedImage={capturedImage} locale={locale} />}
 
@@ -141,6 +190,7 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
 
         {/* History */}
         <HistoryChips items={history} onSelect={onHistorySelect} onClear={onHistoryClear} locale={locale} />
+      </div>
       </div>
     </div>
   );

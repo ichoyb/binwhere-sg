@@ -19,9 +19,6 @@ export default function CameraPreview({ videoRef, status, onStart, locale }: Cam
         style={{ background: 'linear-gradient(135deg, #00A651 0%, #E8F8EF 100%)' }}
       >
         <LogoIcon size={72} className="mb-3 opacity-90" />
-        <span className="inline-block bg-white/25 text-white text-xs px-3 py-0.5 rounded-full mb-2 drop-shadow-sm">
-          Powered by BinWhere AI
-        </span>
         <h2 className="text-xl font-bold text-white mb-1 drop-shadow-sm">
           {t(locale, 'home.snapToKnow')}
         </h2>
