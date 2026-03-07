@@ -106,7 +106,7 @@ html, body {
 
   .desktop-hero-text {
     flex: 1;
-    max-width: 480px;
+    max-width: 540px;
   }
 
   /* Phone frame — iPhone 15 Pro proportions */

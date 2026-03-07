@@ -188,10 +188,10 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
           <p className="text-sm font-medium text-nea-green tracking-wide uppercase mb-4">Singapore&apos;s AI Recycling Guide</p>
           <h1 className="text-5xl font-bold text-white leading-tight tracking-tight">
             Snap a photo.<br />
-            AI tells you how to recycle.<br />
+            AI shows how to recycle.<br />
             Find nearest bin.
           </h1>
-          <p className="mt-6 text-lg text-gray-400 leading-relaxed">
+          <p className="mt-6 text-base text-gray-400 leading-relaxed">
             BinWhere AI identifies your item in seconds — with disposal guidance and navigation to 13,700+ recycling points across Singapore.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
