@@ -37,7 +37,7 @@ const STATS = [
   { target: 718, label: 'E-Waste Points', suffix: '', prefix: '' },
   { target: 401, label: 'Textile Bins', suffix: '', prefix: '' },
   { target: 75, label: 'Donation Points', suffix: '', prefix: '' },
-  { target: 3, label: 'AI Scan', suffix: 's', prefix: '<' },
+  { target: 3, label: 'AI Recognition', suffix: 's', prefix: '<' },
 ] as const;
 
 function StatsSection() {
@@ -89,7 +89,7 @@ const STEPS = [
       </svg>
     ),
     title: 'Snap',
-    desc: 'Take a photo of the item or describe it in text.',
+    desc: 'Take a photo or describe it — AI accepts both.',
   },
   {
     num: '02',
@@ -100,7 +100,7 @@ const STEPS = [
       </svg>
     ),
     title: 'Know',
-    desc: 'AI identifies the item and tells you how to recycle it.',
+    desc: 'BinWhere AI classifies the item and gives disposal instructions.',
   },
   {
     num: '03',
@@ -185,16 +185,21 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
       {/* Hero */}
       <section className="desktop-hero">
         <div className="desktop-hero-text">
-          <p className="text-sm font-medium text-nea-green tracking-wide uppercase mb-4">Singapore Recycling Guide</p>
+          <p className="text-sm font-medium text-nea-green tracking-wide uppercase mb-4">Singapore&apos;s AI Recycling Guide</p>
           <h1 className="text-5xl font-bold text-white leading-tight tracking-tight">
             Snap a photo.<br />
-            Know how to recycle.<br />
+            AI tells you how to recycle.<br />
             Find nearest bin.
           </h1>
           <p className="mt-6 text-lg text-gray-400 leading-relaxed">
-            AI-powered recycling assistant covering 13,700+ collection points across Singapore.
+            BinWhere AI identifies your item in seconds — with disposal guidance and navigation to 13,700+ recycling points across Singapore.
           </p>
-          <div className="mt-8">
+          <div className="mt-4 flex flex-wrap gap-2">
+            {['BinWhere AI', '< 3s Recognition', '4 Languages', 'AI Chat'].map((tag) => (
+              <span key={tag} className="border border-white/15 text-xs text-gray-400 rounded-full px-3 py-1">{tag}</span>
+            ))}
+          </div>
+          <div className="mt-6">
             <button
               onClick={openQR}
               className="px-6 py-3 bg-nea-green text-white font-semibold rounded-xl hover:bg-nea-green/90 transition-colors"
@@ -232,7 +237,7 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
                 </span>
               </div>
               <p className="text-sm text-gray-500 leading-relaxed">
-                AI-powered recycling assistant for Singapore.<br />Snap, know, and find the nearest bin.
+                Singapore&apos;s AI recycling guide.<br />Snap, classify, and find the nearest bin.
               </p>
             </div>
             {/* Data */}

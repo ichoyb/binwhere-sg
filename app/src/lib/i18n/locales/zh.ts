@@ -43,7 +43,7 @@ const zh: Record<keyof typeof en, string> = {
 
   // Home page
   'home.snapToKnow': '拍照识别',
-  'home.recycleRight': '正确回收',
+  'home.recycleRight': '新加坡 AI 回收指南',
   'home.openCamera': '打开相机',
   'home.cameraDenied': '相机权限被拒绝',
   'home.cameraDeniedHint': '请使用下方文字输入来描述物品',

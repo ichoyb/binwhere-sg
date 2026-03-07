@@ -43,7 +43,7 @@ const ms: Record<keyof typeof en, string> = {
 
   // Home page
   'home.snapToKnow': 'Tangkap untuk tahu.',
-  'home.recycleRight': 'Kitar semula dengan betul.',
+  'home.recycleRight': 'Panduan kitar semula AI Singapura.',
   'home.openCamera': 'Buka Kamera',
   'home.cameraDenied': 'Akses kamera ditolak',
   'home.cameraDeniedHint': 'Gunakan input teks di bawah untuk menerangkan item anda',

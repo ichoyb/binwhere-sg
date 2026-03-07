@@ -41,7 +41,7 @@ const en = {
 
   // Home page
   'home.snapToKnow': 'Snap to know.',
-  'home.recycleRight': 'Recycle right.',
+  'home.recycleRight': "Singapore's AI recycling guide.",
   'home.openCamera': 'Open Camera',
   'home.cameraDenied': 'Camera access denied',
   'home.cameraDeniedHint': 'Use the text input below to describe your item instead',

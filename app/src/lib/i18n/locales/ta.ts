@@ -43,7 +43,7 @@ const ta: Record<keyof typeof en, string> = {
 
   // Home page
   'home.snapToKnow': 'படம் எடுத்து அறியுங்கள்.',
-  'home.recycleRight': 'சரியாக மறுசுழற்சி செய்யுங்கள்.',
+  'home.recycleRight': 'சிங்கப்பூரின் AI மறுசுழற்சி வழிகாட்டி.',
   'home.openCamera': 'கேமரா திறக்கவும்',
   'home.cameraDenied': 'கேமரா அணுகல் மறுக்கப்பட்டது',
   'home.cameraDeniedHint': 'உங்கள் பொருளை விவரிக்க கீழே உள்ள உரை உள்ளீட்டைப் பயன்படுத்தவும்',
