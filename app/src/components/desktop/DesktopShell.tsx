@@ -240,10 +240,15 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
                 Singapore&apos;s AI recycling guide.<br />Snap, classify, and find the nearest bin.
               </p>
             </div>
-            {/* Data */}
+            {/* Data & Media */}
             <div className="text-center">
-              <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Data Sources</h4>
+              <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Resources</h4>
               <ul className="space-y-2">
+                <li>
+                  <a href="/blog" className="text-sm text-gray-500 hover:text-white transition-colors">
+                    Blog
+                  </a>
+                </li>
                 <li>
                   <a href="https://www.nea.gov.sg" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-white transition-colors">
                     NEA

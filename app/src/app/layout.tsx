@@ -22,6 +22,23 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "BinWhere",
   },
+  openGraph: {
+    title: "BinWhere — Singapore Recycling Guide",
+    description: "Snap a photo or describe an item to find out how to recycle it in Singapore",
+    url: "https://binwhere.sg",
+    siteName: "BinWhere",
+    type: "website",
+    images: [{ url: "https://binwhere.sg/icons/icon-512.png", width: 512, height: 512, alt: "BinWhere" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "BinWhere — Singapore Recycling Guide",
+    description: "Snap a photo or describe an item to find out how to recycle it in Singapore",
+    images: ["https://binwhere.sg/icons/icon-512.png"],
+  },
+  alternates: {
+    canonical: "https://binwhere.sg",
+  },
 };
 
 export default function RootLayout({
@@ -36,6 +53,9 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <nav className="absolute overflow-hidden w-px h-px" aria-label="Site">
+          <a href="/blog">Blog</a>
+        </nav>
         <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
         <Script id="gtag-init" strategy="afterInteractive">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${GA_ID}')`}

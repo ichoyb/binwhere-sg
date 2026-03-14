@@ -40,6 +40,9 @@ app/scripts/phase0/results/*.json
 *.tsbuildinfo
 next-env.d.ts
 
+# media assets (screenshots, banners, etc.)
+/media/
+
 # claude
 .claude/
 SingapoRecycle.md
