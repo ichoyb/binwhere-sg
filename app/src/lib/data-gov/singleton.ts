@@ -78,3 +78,8 @@ export function getTextileIndex(): SpatialIndex | undefined {
 export function getReuseChannelsIndex(): SpatialIndex | undefined {
   return getSpatialIndex(DATASET_IDS.REUSE_CHANNELS);
 }
+
+/** Get spatial index for BCRS return points */
+export function getReturnPointIndex(): SpatialIndex | undefined {
+  return getSpatialIndex(DATASET_IDS.RETURN_POINTS);
+}

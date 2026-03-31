@@ -17,6 +17,7 @@ export const ClassifyResultSchema = z.object({
   /** Which recycling channel to use */
   channel: z.enum([
     'blue_bin',
+    'return_point',
     'ewaste',
     'ewaste_battery',
     'lighting',

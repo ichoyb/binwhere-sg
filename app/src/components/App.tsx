@@ -11,6 +11,7 @@ import NearbyListPage from '@/components/nearby/NearbyListPage';
 import SlideTransition from '@/components/shared/SlideTransition';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useHistory } from '@/hooks/useHistory';
+import { buildBcrsGuideResult } from '@/lib/bcrs';
 
 const VIEW_ORDER: Record<AppView, number> = { home: 0, result: 1, nearby: 2 };
 
@@ -62,6 +63,13 @@ export default function App() {
     navigate('result');
   };
 
+  const handleBcrsEntry = () => {
+    setClassifyResult(buildBcrsGuideResult(locale));
+    setCapturedImage(null);
+    requestLocation();
+    navigate('result');
+  };
+
   const handleScanAgain = () => {
     setClassifyResult(null);
     setCapturedImage(null);
@@ -88,6 +96,7 @@ export default function App() {
             history={history}
             locale={locale}
             onLocaleChange={setLocale}
+            onBcrsEntry={handleBcrsEntry}
           />
         );
       case 'result':

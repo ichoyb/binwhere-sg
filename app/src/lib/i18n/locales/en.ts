@@ -8,6 +8,7 @@ const en = {
 
   // Channel labels
   'channel.blue_bin': 'Blue Recycling Bin',
+  'channel.return_point': 'BCRS Return Point',
   'channel.ewaste': 'E-Waste Recycling',
   'channel.ewaste_battery': 'Battery Recycling',
   'channel.lighting': 'Lighting Waste',
@@ -19,6 +20,7 @@ const en = {
 
   // Channel instructions
   'instruction.blue_bin': 'Put in Blue Recycling Bin',
+  'instruction.return_point': 'Bring to BCRS Return Point',
   'instruction.ewaste': 'Bring to E-Waste Collection Point',
   'instruction.ewaste_battery': 'Bring to Battery Collection Point',
   'instruction.lighting': 'Bring to Lighting Waste Collection',
@@ -65,6 +67,7 @@ const en = {
   'result.scanAnother': 'Scan Another Item',
   'result.lowConfidence': "We're not 100% sure — double check before recycling",
   'result.nearbyBlueBins': 'Blue Bins',
+  'result.nearbyReturnPoints': 'Return Points',
   'result.nearbyTextileBins': 'Textile Bins',
   'result.nearbyDonationPoints': 'Donation Points',
   'result.nearbyEwastePoints': 'E-Waste Points',
@@ -75,6 +78,26 @@ const en = {
   'result.requiresLocation': 'Requires location access',
   'result.onlyInSG': 'Nearby bins only available in Singapore',
   'result.sgDataOnly': 'Recycling point data covers Singapore only',
+
+  // BCRS
+  'bcrs.title': 'BCRS Refund',
+  'bcrs.refundAmount': 'S$0.10 per container',
+  'bcrs.guideItem': 'BCRS Return Guide',
+  'bcrs.entryDesc': 'Return eligible beverage containers with Deposit Mark for refund.',
+  'bcrs.findNearby': 'Find Nearby Return Point',
+  'bcrs.step1': 'Ensure the container is empty',
+  'bcrs.step2': 'Keep Deposit Mark and barcode intact',
+  'bcrs.step3': 'Insert one container at a time',
+  'bcrs.step4': 'Tap SimplyGo EZ-Link or scan DBS PayLah! QR',
+  'bcrs.eligible': 'Deposit Mark · Plastic & metal · 150ml-3L',
+  'bcrs.excluded': 'No glass, carton, pouch, or crushed containers',
+  'bcrs.openingHours': 'Opening Hours',
+  'bcrs.alwaysOpen': '24 Hours',
+  'bcrs.machinePreLaunch': 'Pre-launch',
+  'bcrs.machineOnline': 'Online',
+  'bcrs.machineOffline': 'Offline',
+  'bcrs.machineMaintenance': 'Maintenance',
+  'bcrs.pointCount': '1,060+ Return Points island-wide',
 
   // Hazardous info card
   'hazardous.title': 'How to Dispose of Hazardous Waste',

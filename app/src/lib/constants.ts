@@ -42,6 +42,7 @@ export const STATUS_CONFIG: Record<ClassifyStatus, {
 /** Map AI channel values to API-supported nearby channels */
 export const CHANNEL_TO_NEARBY: Record<ChannelType, NearbyChannel | null> = {
   blue_bin: 'blue_bin',
+  return_point: 'return_point',
   ewaste: 'ewaste',
   ewaste_battery: 'ewaste_battery',
   lighting: 'lighting',
@@ -90,6 +91,13 @@ export const CHANNEL_DISPLAY_CONFIG: Record<ChannelType, {
     textColor: '#075985',
     borderColor: '#B3D9EE',
     iconPath: 'M12 2L8.5 8H4l4.5 6L4 20h7l1-2 1 2h7l-4.5-6L20 8h-4.5L12 2zm0 3.5L14 9h3l-3 4 3 4h-3l-2 3.5L10 17H7l3-4-3-4h3l2-3.5z',
+  },
+  return_point: {
+    color: '#00A651',
+    bgColor: '#E8F8EF',
+    textColor: '#065F46',
+    borderColor: '#B8E6C8',
+    iconPath: 'M4 12a8 8 0 0113.86-5.66M20 12a8 8 0 01-13.86 5.66M17 3v4h-4M7 21v-4h4M12 8v8m-3-4h6',
   },
   ewaste: {
     color: '#00897B',

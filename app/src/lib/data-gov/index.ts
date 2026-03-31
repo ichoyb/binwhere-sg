@@ -10,7 +10,7 @@ export { haversineDistance } from './geo/haversine';
 export type { Coordinates, FeatureWithDistance, BoundingBox } from './geo/types';
 
 // Runtime singletons
-export { getSpatialIndex, getBlueBinIndex, getEwasteIndex, getTextileIndex, getReuseChannelsIndex } from './singleton';
+export { getSpatialIndex, getBlueBinIndex, getEwasteIndex, getTextileIndex, getReuseChannelsIndex, getReturnPointIndex } from './singleton';
 
 // Constants
 export { DATASET_IDS, SG_BOUNDS, SPATIAL } from './shared/constants';

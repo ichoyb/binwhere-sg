@@ -14,6 +14,7 @@ import { useNearby } from '@/hooks/useNearby';
 import { CHANNEL_TO_NEARBY, CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
 import { mapItemToAcceptedItem } from '@/lib/donation-mapping';
 import HazardousInfoCard from '@/components/result/HazardousInfoCard';
+import BcrsInfoCard from '@/components/result/BcrsInfoCard';
 import { generateShareCard } from '@/lib/share-card';
 
 const NearbyMapView = dynamic(() => import('@/components/nearby/NearbyMapView'), { ssr: false });
@@ -62,6 +63,7 @@ export default function ResultPage({
 }: ResultPageProps) {
   const nearbyChannel = result.channel ? CHANNEL_TO_NEARBY[result.channel] : null;
   const isHazardous = result.channel === 'hazardous';
+  const isBcrsReturn = result.channel === 'return_point';
   const isInSingapore = userLocation
     ? userLocation.lat >= 1.15 && userLocation.lat <= 1.47 && userLocation.lng >= 103.6 && userLocation.lng <= 104.05
     : false;
@@ -96,6 +98,7 @@ export default function ResultPage({
 
   const nearbyHeadingKeyMap: Record<string, TranslationKey> = {
     blue_bin: 'result.nearbyBlueBins',
+    return_point: 'result.nearbyReturnPoints',
     textile: 'result.nearbyTextileBins',
     donation: 'result.nearbyDonationPoints',
   };
@@ -195,8 +198,8 @@ export default function ResultPage({
             );
           })()}
 
-          {/* Preparation steps */}
-          {result.preparation && result.preparation.length > 0 && (
+          {/* Preparation steps (skip for BCRS — BcrsInfoCard handles it) */}
+          {!isBcrsReturn && result.preparation && result.preparation.length > 0 && (
             <div className="border-t border-gray-100 pt-3">
               <h4 className="text-caption font-semibold text-gray-700 mb-2">{t(locale, 'result.beforeYouGo')}</h4>
               <ul className="space-y-1.5">
@@ -228,6 +231,9 @@ export default function ResultPage({
 
         {/* Hazardous waste info card */}
         {isHazardous && <HazardousInfoCard locale={locale} />}
+
+        {/* BCRS info card */}
+        {isBcrsReturn && <BcrsInfoCard locale={locale} />}
 
         {/* Nearby points section */}
         {nearbyLoading && (

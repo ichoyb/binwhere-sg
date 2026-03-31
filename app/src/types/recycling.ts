@@ -2,6 +2,7 @@
 
 export type ChannelType =
   | 'blue_bin'
+  | 'return_point'
   | 'ewaste'
   | 'ewaste_battery'
   | 'lighting'
@@ -13,6 +14,7 @@ export type ChannelType =
 
 export const CHANNEL_LABELS: Record<ChannelType, string> = {
   blue_bin: 'Blue Recycling Bin',
+  return_point: 'BCRS Return Point',
   ewaste: 'E-Waste Recycling',
   ewaste_battery: 'Battery Recycling',
   lighting: 'Lighting Waste',

@@ -33,11 +33,12 @@ function useAnimatedCounter(target: number, duration: number, active: boolean) {
 
 /* ── Stats section ── */
 const STATS = [
-  { target: 12578, label: 'Blue Bins', suffix: '', prefix: '' },
-  { target: 718, label: 'E-Waste Points', suffix: '', prefix: '' },
-  { target: 401, label: 'Textile Bins', suffix: '', prefix: '' },
-  { target: 75, label: 'Donation Points', suffix: '', prefix: '' },
-  { target: 3, label: 'AI Recognition', suffix: 's', prefix: '<' },
+  { target: 12578, label: 'Blue Bins', suffix: '', prefix: '', color: '#0077B6' },
+  { target: 718, label: 'E-Waste Points', suffix: '', prefix: '', color: '#00897B' },
+  { target: 401, label: 'Textile Bins', suffix: '', prefix: '', color: '#D4A017' },
+  { target: 75, label: 'Donation Points', suffix: '', prefix: '', color: '#8E24AA' },
+  { target: 1060, label: 'Return Points', suffix: '', prefix: '', color: '#00A651' },
+  { target: 3, label: 'AI Recognition', suffix: 's', prefix: '<', color: '#FFFFFF' },
 ] as const;
 
 function StatsSection() {
@@ -59,16 +60,17 @@ function StatsSection() {
   const v1 = useAnimatedCounter(STATS[1].target, 1400, visible);
   const v2 = useAnimatedCounter(STATS[2].target, 1200, visible);
   const v3 = useAnimatedCounter(STATS[3].target, 1000, visible);
-  const v4 = useAnimatedCounter(STATS[4].target, 800, visible);
-  const values = [v0, v1, v2, v3, v4];
+  const v4 = useAnimatedCounter(STATS[4].target, 900, visible);
+  const v5 = useAnimatedCounter(STATS[5].target, 800, visible);
+  const values = [v0, v1, v2, v3, v4, v5];
 
   return (
     <div ref={ref} className="desktop-section border-t border-white/[0.06]">
-      <div className="grid grid-cols-5 gap-8">
+      <div className="grid grid-cols-6 gap-6">
         {STATS.map((stat, i) => (
           <div key={stat.label} className="stat-card text-center">
-            <p className="text-4xl font-bold text-white tracking-tight">
-              {stat.prefix ?? ''}{values[i].toLocaleString()}{stat.suffix}
+            <p className="text-4xl font-bold tracking-tight" style={{ color: stat.color }}>
+              {stat.prefix}{values[i].toLocaleString()}{stat.suffix}
             </p>
             <p className="mt-2 text-sm text-gray-400">{stat.label}</p>
           </div>
@@ -135,7 +137,39 @@ function StepsSection() {
   );
 }
 
-/* ── QR Popup ── */
+/* ── BCRS Announcement Bar (below nav, above hero) ── */
+function BcrsAnnouncementBar({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full bg-emerald-950/40 border-b border-emerald-400/10 hover:bg-emerald-950/60 transition-colors cursor-pointer"
+    >
+      <div className="max-w-[1200px] mx-auto px-12 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <span className="text-xs font-semibold text-emerald-400/80 uppercase tracking-wider">BCRS</span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm text-gray-200 font-medium">
+              Beverage Container Return Scheme — S$0.10 refund per container
+            </span>
+            <span className="text-xs text-gray-500">
+              1,060 Return Points island-wide · Plastic & metal containers · 150ml – 3L · Deposit Mark required
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 text-emerald-400/70 shrink-0 ml-6">
+          <span className="text-xs font-medium">Find Return Point</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </div>
+      </div>
+    </button>
+  );
+}
+
 function QRPopup({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null;
   return (
@@ -182,6 +216,9 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
         </div>
       </nav>
 
+      {/* BCRS Announcement */}
+      <BcrsAnnouncementBar onClick={openQR} />
+
       {/* Hero */}
       <section className="desktop-hero">
         <div className="desktop-hero-text">
@@ -192,7 +229,7 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
             Find nearest bin.
           </h1>
           <p className="mt-6 text-base text-gray-400 leading-relaxed">
-            BinWhere AI identifies your item in seconds — with disposal guidance and navigation to 13,700+ recycling points across Singapore.
+            BinWhere AI identifies your item in seconds — with disposal guidance and navigation to 14,800+ recycling points across Singapore.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {['BinWhere AI', '< 3s Recognition', '4 Languages', 'AI Chat'].map((tag) => (
@@ -211,7 +248,6 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
 
         {/* Phone frame */}
         <div className="phone-frame">
-          <div className="phone-notch" />
           <div className="phone-screen">
             {children}
           </div>
@@ -226,59 +262,66 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
 
       {/* Footer */}
       <footer className="desktop-section border-t border-white/[0.06] !py-12">
-          <div className="grid grid-cols-3 gap-12">
-            {/* Brand */}
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <LogoIcon size={20} />
+          {/* Resources — 4 card grid */}
+          <div className="grid grid-cols-4 gap-4 mb-10">
+            {[
+              { href: '/blog', title: 'Blog', desc: 'Recycling tips & guides', color: '#00A651',
+                icon: 'M4 4h16v16H4zM8 2v4M16 2v4M4 10h16' },
+              { href: 'https://www.nea.gov.sg', title: 'NEA', desc: 'National Environment Agency', color: '#0077B6', external: true,
+                icon: 'M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6' },
+              { href: 'https://data.gov.sg', title: 'data.gov.sg', desc: 'Open data source', color: '#8E24AA', external: true,
+                icon: 'M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3zM9 12h6M9 16h3' },
+              { href: 'https://returnright.sg', title: 'Return Right', desc: 'BCRS scheme operator', color: '#00897B', external: true,
+                icon: 'M4 12a8 8 0 0113.86-5.66M20 12a8 8 0 01-13.86 5.66M17 3v4h-4M7 21v-4h4M12 8v8m-3-4h6' },
+            ].map((r) => (
+              <a
+                key={r.title}
+                href={r.href}
+                {...(r.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                className="group rounded-2xl bg-white/[0.03] p-5 hover:bg-white/[0.06] transition-all duration-200 cursor-pointer"
+              >
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
+                  style={{ backgroundColor: `${r.color}15` }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={r.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={r.icon} />
+                  </svg>
+                </div>
+                <p className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">{r.title}</p>
+                <p className="text-xs text-gray-600 mt-1 leading-relaxed">{r.desc}</p>
+              </a>
+            ))}
+          </div>
+
+          {/* Brand + Connect */}
+          <div className="flex items-center justify-between pt-8">
+            <div className="flex items-center gap-3">
+              <LogoIcon size={20} />
+              <div>
                 <span className="text-base font-bold tracking-tight">
                   <span className="text-emerald-400">Bin</span>
                   <span className="text-sky-400">Where</span>
                 </span>
+                <p className="text-xs text-gray-600">Singapore&apos;s AI recycling guide</p>
               </div>
-              <p className="text-sm text-gray-500 leading-relaxed">
-                Singapore&apos;s AI recycling guide.<br />Snap, classify, and find the nearest bin.
-              </p>
             </div>
-            {/* Data & Media */}
-            <div className="text-center">
-              <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Resources</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a href="/blog" className="text-sm text-gray-500 hover:text-white transition-colors">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.nea.gov.sg" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-white transition-colors">
-                    NEA
-                  </a>
-                </li>
-                <li>
-                  <a href="https://data.gov.sg" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-white transition-colors">
-                    data.gov.sg
-                  </a>
-                </li>
-              </ul>
-            </div>
-            {/* Connect */}
-            <div className="text-center">
-              <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Connect</h4>
-              <div className="flex items-center justify-center gap-3">
-                <a href="https://x.com/ichoyb" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors" aria-label="X">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                </a>
-                <a href="https://www.linkedin.com/in/yuboinsg/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors" aria-label="LinkedIn">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                </a>
-                <a href="mailto:ichoyb@gmail.com" className="text-gray-500 hover:text-white transition-colors" aria-label="Contact">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
-                </a>
-              </div>
+            <div className="flex items-center gap-4">
+              <a href="https://x.com/ichoyb" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-white transition-colors" aria-label="X">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+              <a href="https://www.linkedin.com/in/yuboinsg/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-white transition-colors" aria-label="LinkedIn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+              <a href="mailto:ichoyb@gmail.com" className="text-gray-600 hover:text-white transition-colors" aria-label="Email">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+              </a>
             </div>
           </div>
-          <div className="mt-10 pt-6 border-t border-white/[0.06]">
-            <p className="text-xs text-gray-600 text-center">&copy; {new Date().getFullYear()} BinWhere</p>
+
+          {/* Copyright */}
+          <div className="mt-6 pt-4">
+            <p className="text-xs text-gray-700 text-center">&copy; {new Date().getFullYear()} BinWhere</p>
           </div>
       </footer>
 

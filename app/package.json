@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:unit": "tsx src/lib/bcrs.test.ts && tsx scripts/convert-rvm-data.test.ts",
     "prebuild": "tsx scripts/build-geo-data.ts",
     "phase0:classify": "tsx scripts/phase0/test-classify.ts",
     "phase0:tools": "tsx scripts/phase0/test-groq-tools.ts"

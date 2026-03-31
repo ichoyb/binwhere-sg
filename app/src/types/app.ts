@@ -16,7 +16,7 @@ export interface ScanHistoryItem {
 }
 
 /** Channels supported by the nearby API */
-export type NearbyChannel = 'blue_bin' | 'ewaste' | 'ewaste_battery' | 'lighting' | 'textile' | 'donation';
+export type NearbyChannel = 'blue_bin' | 'return_point' | 'ewaste' | 'ewaste_battery' | 'lighting' | 'textile' | 'donation';
 
 export interface NearbyPoint {
   name: string;
@@ -29,6 +29,10 @@ export interface NearbyPoint {
   accepts?: string;
   /** Reuse type for donation points: Donate, Resell, or Repair */
   reuseType?: string;
+  /** Display-friendly opening hours summary for BCRS return points */
+  openingHours?: string;
+  /** Machine status for BCRS return points */
+  machineStatus?: string;
 }
 
 export interface NearbyResponse {

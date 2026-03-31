@@ -12,6 +12,7 @@ import { DatasetClient } from '../src/lib/data-gov/api/dataset-client';
 import { DATASET_IDS } from '../src/lib/data-gov/shared/constants';
 import { convertTextileData } from './convert-textile-data';
 import { fetchAndConvertReusechannels } from './convert-reusechannels-data';
+import { convertRvmData } from './convert-rvm-data';
 
 const GENERATED_DIR = path.join(__dirname, '..', 'src', 'data', 'generated');
 
@@ -84,6 +85,17 @@ async function main() {
   } catch (error) {
     console.error(`  -> FAILED: ${(error as Error).message}\n`);
     console.warn('  -> Continuing without reuse channels data (donation nearby will be unavailable)');
+  }
+
+  // Convert local BCRS return-point data to GeoJSON
+  console.log('[build-geo-data] Converting BCRS Return Points...');
+  try {
+    const { featureCount, outputPath } = convertRvmData();
+    const fileSizeKB = (fs.statSync(outputPath).size / 1024).toFixed(0);
+    console.log(`  -> ${featureCount} features, ${fileSizeKB} KB\n`);
+  } catch (error) {
+    console.error(`  -> FAILED: ${(error as Error).message}\n`);
+    process.exit(1);
   }
 
   console.log('[build-geo-data] Done! Generated files:');

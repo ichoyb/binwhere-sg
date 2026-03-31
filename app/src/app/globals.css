@@ -155,7 +155,7 @@ html, body {
     gap: 80px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 48px 48px 64px;
+    padding: 32px 48px 40px;
   }
 
   .desktop-hero-text {
@@ -167,7 +167,7 @@ html, body {
   .phone-frame {
     position: relative;
     width: 400px;
-    height: min(860px, calc(100vh - 140px));
+    height: min(820px, calc(100vh - 180px));
     border-radius: 48px;
     border: 6px solid #374151;
     background: #000;
@@ -201,7 +201,7 @@ html, body {
     background: var(--color-bg);
     border-radius: 38px;
     transform: translateZ(0);
-    padding-top: 48px;
+    padding-top: 8px;
   }
 
   .phone-screen::-webkit-scrollbar {

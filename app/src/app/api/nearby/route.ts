@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getBlueBinIndex, getEwasteIndex, getTextileIndex, getReuseChannelsIndex } from '@/lib/data-gov';
+import { getBlueBinIndex, getEwasteIndex, getTextileIndex, getReuseChannelsIndex, getReturnPointIndex } from '@/lib/data-gov';
+import { formatReturnPointOpeningHours } from '@/lib/bcrs';
 import { checkRateLimit, DEFAULT_LIMITS } from '@/lib/rate-limit';
 
 /** Convert "FERNVALE ROAD" → "Fernvale Road" */
@@ -27,7 +28,7 @@ function parseDescriptionHtml(html: string): Record<string, string> {
 const NearbyInputSchema = z.object({
   lat: z.coerce.number().min(1.15).max(1.47),
   lng: z.coerce.number().min(103.6).max(104.05),
-  channel: z.enum(['blue_bin', 'ewaste', 'ewaste_battery', 'lighting', 'textile', 'donation']),
+  channel: z.enum(['blue_bin', 'return_point', 'ewaste', 'ewaste_battery', 'lighting', 'textile', 'donation']),
   limit: z.coerce.number().int().min(1).max(20).default(5),
   radius: z.coerce.number().min(0.1).max(5).default(1),
   acceptedItem: z.string().optional(),
@@ -66,8 +67,11 @@ export async function GET(request: NextRequest) {
 
     const isEwaste = input.channel === 'ewaste' || input.channel === 'ewaste_battery' || input.channel === 'lighting';
     const isDonation = input.channel === 'donation';
+    const isReturnPoint = input.channel === 'return_point';
     const index = input.channel === 'blue_bin'
       ? getBlueBinIndex()
+      : isReturnPoint
+        ? getReturnPointIndex()
       : input.channel === 'textile'
         ? getTextileIndex()
         : isDonation
@@ -138,6 +142,9 @@ export async function GET(request: NextRequest) {
           // Textile: place name like "Kebun Baru Court (SG0159)"
           name = prop('NAME') || 'Textile Bin';
           address = prop('DESCRIPTION');
+        } else if (isReturnPoint) {
+          name = prop('NAME') || 'Return Point';
+          address = '';
         } else if (isDonation) {
           // Donation: organization name + full address
           name = prop('NAME') || 'Donation Point';
@@ -154,6 +161,10 @@ export async function GET(request: NextRequest) {
         // Donation points: show accepted items and reuse type
         const donationAccepts = isDonation ? prop('ACCEPTEDITEMS') || undefined : undefined;
         const reuseType = isDonation ? prop('REUSETYPE') || undefined : undefined;
+        const openingHours = isReturnPoint
+          ? formatReturnPointOpeningHours(r.properties.OPENING_HOURS)
+          : undefined;
+        const machineStatus = isReturnPoint ? prop('MACHINE_STATUS') || undefined : undefined;
 
         return {
           name,
@@ -165,6 +176,8 @@ export async function GET(request: NextRequest) {
           ...(accepts && { accepts }),
           ...(donationAccepts && { accepts: donationAccepts }),
           ...(reuseType && { reuseType }),
+          ...(openingHours && { openingHours }),
+          ...(machineStatus && { machineStatus }),
         };
       }),
     });
