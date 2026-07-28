@@ -5,8 +5,12 @@ import { LOCALE_LANGUAGE_NAME } from '@/lib/i18n';
 
 /** Text model for text-only classification */
 const TEXT_MODEL = 'llama-3.3-70b-versatile';
-/** Vision model for image classification (Llama 4 Scout replaces deprecated 3.2 11B) */
-const VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
+/**
+ * Vision model for image classification.
+ * Groq has now decommissioned every Llama vision model (3.2 11B, then Llama 4
+ * Scout/Maverick); qwen3.6 is the only image-capable model left on the account.
+ */
+const VISION_MODEL = 'qwen/qwen3.6-27b';
 
 export class GroqClassifyProvider implements ClassifyProvider {
   name = 'groq';
@@ -50,6 +54,15 @@ export class GroqClassifyProvider implements ClassifyProvider {
         { role: 'user', content },
       ],
       max_tokens: 1024,
+      // The vision model is a reasoning model: left on its own it spends the whole
+      // token budget on a <think> block and never reaches the JSON. Turning reasoning
+      // off and pinning JSON output keeps the response parseable.
+      ...(hasImage
+        ? {
+            reasoning_effort: 'none' as const,
+            response_format: { type: 'json_object' as const },
+          }
+        : {}),
     });
 
     const text = response.choices[0]?.message?.content ?? '';
