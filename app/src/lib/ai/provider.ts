@@ -58,7 +58,8 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
  * Classify an item, falling through the chain on failure.
  */
 export async function classifyItem(request: ClassifyRequest): Promise<ClassifyResult> {
-  for (const [index, entry] of FALLBACK_CHAIN.entries()) {
+  for (let index = 0; index < FALLBACK_CHAIN.length; index += 1) {
+    const entry = FALLBACK_CHAIN[index];
     try {
       const provider = entry.create();
       const result = await withTimeout(provider.classify(request), entry.timeoutMs(request));

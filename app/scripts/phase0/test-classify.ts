@@ -1,9 +1,9 @@
 /**
- * Phase 0: Dual-model classification accuracy test.
- * Tests Gemini 2.5 Flash vs Claude Haiku 4.5 on 85 items.
+ * Phase 0: classification accuracy test across providers, 85 items.
+ * Compares whichever of the chain's providers have keys configured.
  *
  * Usage: npx tsx scripts/phase0/test-classify.ts
- * Requires: GEMINI_API_KEY and/or ANTHROPIC_API_KEY in .env
+ * Requires: GROQ_API_KEY and/or OPENROUTER_API_KEY in .env
  */
 
 import * as fs from 'fs';
@@ -11,7 +11,7 @@ import * as path from 'path';
 import * as dotenv from 'dotenv';
 import { TEST_ITEMS, getItemsByChannel, type TestItem } from './test-items';
 import { GroqClassifyProvider } from '../../src/lib/ai/providers/groq-classify';
-import { PollinationsProvider } from '../../src/lib/ai/providers/pollinations';
+import { OpenRouterProvider } from '../../src/lib/ai/providers/openrouter';
 import type { ClassifyProvider, ClassifyResult } from '../../src/lib/ai/types';
 
 // Load .env from app directory
@@ -203,14 +203,18 @@ async function main() {
     console.log('Skipping Groq (GROQ_API_KEY not set)');
   }
 
-  // Test Pollinations (no key required)
-  try {
-    const pollinations = new PollinationsProvider();
-    const report = await testProvider(pollinations);
-    reports.push(report);
-    printReport(report);
-  } catch (err) {
-    console.error(`Pollinations test failed: ${(err as Error).message}`);
+  // Test OpenRouter, which replaced Pollinations as the fallback
+  if (process.env.OPENROUTER_API_KEY) {
+    try {
+      const openrouter = new OpenRouterProvider();
+      const report = await testProvider(openrouter);
+      reports.push(report);
+      printReport(report);
+    } catch (err) {
+      console.error(`OpenRouter test failed: ${(err as Error).message}`);
+    }
+  } else {
+    console.log('Skipping OpenRouter (OPENROUTER_API_KEY not set)');
   }
 
   if (reports.length === 0) {
