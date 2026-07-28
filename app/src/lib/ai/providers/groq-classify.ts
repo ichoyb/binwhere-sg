@@ -109,7 +109,14 @@ export class GroqClassifyProvider implements ClassifyProvider {
         },
         { role: 'user', content: JSON.stringify(fields) },
       ],
-      max_tokens: 512,
+      // Reasoning tokens are charged against max_tokens. Left at the default effort
+      // the model burned 320-510 of them deliberating over a transcription task and
+      // ran out of budget mid-JSON, so the result silently stayed English. 'low' cuts
+      // that to ~20 tokens and is also faster. Note gpt-oss rejects 'none' (400) —
+      // only low/medium/high are valid, unlike the vision model.
+      reasoning_effort: 'low' as const,
+      // A ceiling, not a charge: headroom costs nothing and Tamil runs long.
+      max_tokens: 1024,
       // Translation should transcribe, not paraphrase — this is where S$0.10 drifted to 美分.
       temperature: 0.2,
     });
@@ -117,7 +124,12 @@ export class GroqClassifyProvider implements ClassifyProvider {
     const text = response.choices[0]?.message?.content ?? '';
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      return result; // translation failed, return English result
+      // Falling back to English is better UX than failing the whole classify, but it
+      // must never be silent — that is how this defect survived a deploy.
+      console.warn(
+        `[ai] Translation to ${langName} produced no JSON (finish_reason=${response.choices[0]?.finish_reason}); returning English result`,
+      );
+      return result;
     }
 
     try {
@@ -129,8 +141,9 @@ export class GroqClassifyProvider implements ClassifyProvider {
         preparation: translated.preparation || result.preparation,
         tip: translated.tip || result.tip,
       };
-    } catch {
-      return result; // parse failed, return English result
+    } catch (err) {
+      console.warn(`[ai] Translation to ${langName} returned malformed JSON: ${(err as Error).message}`);
+      return result;
     }
   }
 }

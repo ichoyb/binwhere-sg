@@ -36,7 +36,10 @@ export async function classifyItem(request: ClassifyRequest): Promise<ClassifyRe
   for (const providerType of FALLBACK_CHAIN) {
     try {
       const provider = createProvider(providerType);
-      const timeout = providerType === 'groq' ? 10000 : 20000;
+      // An image classify on Groq is two sequential calls (vision, then translation
+      // for non-English locales) on top of the upload, so it cannot share the
+      // text-only budget — at 10s it was timing out and returning a hard 500.
+      const timeout = providerType === 'groq' ? (request.image ? 25000 : 10000) : 20000;
       const result = await withTimeout(provider.classify(request), timeout);
       return ClassifyResultSchema.parse(result);
     } catch (err) {
