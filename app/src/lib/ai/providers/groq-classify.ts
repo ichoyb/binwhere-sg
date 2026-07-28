@@ -54,6 +54,10 @@ export class GroqClassifyProvider implements ClassifyProvider {
         { role: 'user', content },
       ],
       max_tokens: 1024,
+      // Classification must follow the prompt's channel rules, not sample around them.
+      // At the API default the same photo alternated between blue_bin and return_point,
+      // which sends users to a Return Point for a refund they cannot claim.
+      temperature: 0.3,
       // The vision model is a reasoning model: left on its own it spends the whole
       // token budget on a <think> block and never reaches the JSON. Turning reasoning
       // off and pinning JSON output keeps the response parseable.
@@ -95,11 +99,13 @@ export class GroqClassifyProvider implements ClassifyProvider {
       messages: [
         {
           role: 'system',
-          content: `Translate the following JSON values to ${langName}. Return ONLY valid JSON with the same keys. Keep translations concise and practical.`,
+          content: `Translate the following JSON values to ${langName}. Return ONLY valid JSON with the same keys. Keep translations concise and practical. Copy currency amounts, numbers and units verbatim (e.g. "S$0.10", "150ml-3L") — never convert them to another currency, unit or numeral system.`,
         },
         { role: 'user', content: JSON.stringify(fields) },
       ],
       max_tokens: 512,
+      // Translation should transcribe, not paraphrase — this is where S$0.10 drifted to 美分.
+      temperature: 0.2,
     });
 
     const text = response.choices[0]?.message?.content ?? '';

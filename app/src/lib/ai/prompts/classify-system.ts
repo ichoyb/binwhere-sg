@@ -54,7 +54,9 @@ Respond ONLY with a valid JSON object (no markdown, no explanation):
   "reason": "brief explanation",
   "preparation": ["step 1", "step 2"],
   "tip": "extra helpful tip (optional)"
-}`;
+}
+
+Write Singapore dollar amounts with the "S$" prefix — the BCRS refund is S$0.10, never $0.10. A bare "$" reads as US dollars.`;
 
 /**
  * Get the classification system prompt with language instruction.
@@ -68,6 +70,7 @@ export function getClassifySystemPrompt(locale: Locale = 'en'): string {
 You MUST respond in ${langName}.
 All JSON text fields (item, reason, preparation, tip) MUST be in ${langName}.
 The "status" and "channel" fields MUST remain exactly as shown in English (e.g. "recyclable", "blue_bin"). Do NOT translate enum values.
+Currency amounts, numbers and units are NOT translated: write "S$0.10" and "150ml-3L" verbatim in Latin characters in every language. Never convert an amount to another currency or numeral system.
 Keep responses concise and practical.`;
 }
 
