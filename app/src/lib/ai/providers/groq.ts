@@ -7,7 +7,8 @@ import type {
 
 /**
  * Groq provider for V1 Chatbox (tool_use).
- * Uses Llama 3.3 70B for tool calling with free tier (1K req/day).
+ * Uses GPT-OSS 120B for tool calling with free tier (1K req/day); it replaced
+ * Llama 3.3 70B, which shuts down 2026-08-16.
  * Classification is NOT done through Groq — only chatbox conversations.
  */
 export class GroqChatProvider {
@@ -37,7 +38,7 @@ export class GroqChatProvider {
     allMessages.push(...messages);
 
     return this.client.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       messages: allMessages,
       tools: tools?.length ? tools : undefined,
       tool_choice: tools?.length ? 'auto' : undefined,

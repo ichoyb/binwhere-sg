@@ -3,8 +3,14 @@ import { ClassifyResultSchema, type ClassifyProvider, type ClassifyRequest, type
 import { getClassifySystemPrompt } from '../prompts/classify-system';
 import { LOCALE_LANGUAGE_NAME } from '@/lib/i18n';
 
-/** Text model for text-only classification */
-const TEXT_MODEL = 'llama-3.3-70b-versatile';
+/**
+ * Text model for text-only classification and for translating image results.
+ * llama-3.3-70b-versatile shuts down 2026-08-16; this is Groq's recommended
+ * replacement and, unlike the vision model, it is a Production-tier model.
+ * It emits reasoning into a separate `reasoning` field, so `content` stays
+ * clean JSON and needs no reasoning_effort override.
+ */
+const TEXT_MODEL = 'openai/gpt-oss-120b';
 /**
  * Vision model for image classification.
  * Groq has now decommissioned every Llama vision model (3.2 11B, then Llama 4
