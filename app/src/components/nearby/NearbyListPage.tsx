@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import type { ClassifyResult } from '@/lib/ai/types';
 import type { Locale } from '@/lib/i18n/types';
 import { t, type TranslationKey } from '@/lib/i18n';
-import { CHANNEL_TO_NEARBY } from '@/lib/constants';
+import { CHANNEL_TO_NEARBY, getFriendlyApiError } from '@/lib/constants';
 import BackButton from '@/components/shared/BackButton';
 import RecyclingPointCard from '@/components/shared/RecyclingPointCard';
 import ViewToggle from '@/components/nearby/ViewToggle';
@@ -52,7 +52,9 @@ export default function NearbyListPage({ result, userLocation, onBack, locale }:
           )}
 
           {error && (
-            <p className="text-center text-sm text-red-500 py-4">{error}</p>
+            <p className="text-center text-sm text-red-500 py-4">
+              {getFriendlyApiError(error, locale)}
+            </p>
           )}
 
           {!loading && !error && points.length === 0 && (
@@ -73,7 +75,7 @@ export default function NearbyListPage({ result, userLocation, onBack, locale }:
 
           {error && (
             <div className="flex items-center justify-center py-20">
-              <p className="text-sm text-red-500">{error}</p>
+              <p className="text-sm text-red-500">{getFriendlyApiError(error, locale)}</p>
             </div>
           )}
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import type { ScanHistoryItem } from '@/types/app';
+import { ScanHistorySchema, type ScanHistoryItem } from '@/types/app';
 import type { ClassifyResult } from '@/lib/ai/types';
 import type { Locale } from '@/lib/i18n/types';
 import { getItem, setItem } from '@/lib/storage';
@@ -14,9 +14,10 @@ export function useHistory() {
 
   // Load on mount
   useEffect(() => {
-    const stored = getItem<ScanHistoryItem[]>(STORAGE_KEY);
-    if (stored && Array.isArray(stored)) {
-      setHistory(stored);
+    const stored = getItem<unknown>(STORAGE_KEY);
+    const parsed = ScanHistorySchema.safeParse(stored);
+    if (parsed.success) {
+      setHistory(parsed.data.slice(0, MAX_HISTORY_ITEMS));
     }
   }, []);
 

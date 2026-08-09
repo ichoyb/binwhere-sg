@@ -1,3 +1,5 @@
+import type { ApiErrorCode } from '@binwhere/core';
+
 /**
  * Streaming JSON body reader with size limit enforcement.
  * Next.js App Router ignores `api.bodyParser.sizeLimit` in next.config,
@@ -8,6 +10,7 @@ export class HttpError extends Error {
   constructor(
     message: string,
     public readonly status: number,
+    public readonly code: ApiErrorCode = 'INVALID_INPUT',
   ) {
     super(message);
     this.name = 'HttpError';
@@ -25,12 +28,12 @@ export async function readJsonBodyWithLimit<T = unknown>(
 ): Promise<T> {
   const contentLength = request.headers.get('content-length');
   if (contentLength && parseInt(contentLength, 10) > maxBytes) {
-    throw new HttpError('Image too large', 413);
+    throw new HttpError('Image too large', 413, 'IMAGE_TOO_LARGE');
   }
 
   const reader = request.body?.getReader();
   if (!reader) {
-    throw new HttpError('Missing request body', 400);
+    throw new HttpError('Missing request body', 400, 'INVALID_INPUT');
   }
 
   const chunks: Uint8Array[] = [];
@@ -43,7 +46,7 @@ export async function readJsonBodyWithLimit<T = unknown>(
 
       totalBytes += value.byteLength;
       if (totalBytes > maxBytes) {
-        throw new HttpError('Image too large', 413);
+        throw new HttpError('Image too large', 413, 'IMAGE_TOO_LARGE');
       }
       chunks.push(value);
     }
@@ -58,6 +61,6 @@ export async function readJsonBodyWithLimit<T = unknown>(
   try {
     return JSON.parse(text) as T;
   } catch {
-    throw new HttpError('Invalid JSON body', 400);
+    throw new HttpError('Invalid JSON body', 400, 'INVALID_INPUT');
   }
 }

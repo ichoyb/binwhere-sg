@@ -19,7 +19,7 @@ export interface RateLimitConfig {
   global?: RateLimitRule[];
 }
 
-/** /api/classify — strictest (external AI cost) */
+/** /api/v1/classify — strictest (external AI cost) */
 export const CLASSIFY_LIMITS: RateLimitConfig = {
   perIp: [
     { windowMs: MINUTE, max: 10 },  // 10 req/min per IP
@@ -30,7 +30,7 @@ export const CLASSIFY_LIMITS: RateLimitConfig = {
   ],
 };
 
-/** /api/nearby, /api/chat — basic protection */
+/** /api/v1/nearby, /api/chat — basic protection */
 export const DEFAULT_LIMITS: RateLimitConfig = {
   perIp: [
     { windowMs: MINUTE, max: 10 },  // 10 req/min per IP
@@ -159,7 +159,7 @@ export function checkRateLimit(
   // 1. Origin check
   if (!checkOrigin(request)) {
     return NextResponse.json(
-      { error: 'Forbidden' },
+      { code: 'FORBIDDEN', error: 'Forbidden' },
       { status: 403 },
     );
   }
@@ -171,7 +171,7 @@ export function checkRateLimit(
     const result = ipStore.check(`${ip}:${rule.windowMs}`, rule.windowMs, rule.max);
     if (!result.ok) {
       return NextResponse.json(
-        { error: 'Too many requests' },
+        { code: 'RATE_LIMITED', error: 'Too many requests' },
         { status: 429, headers: { 'Retry-After': String(result.retryAfterS) } },
       );
     }
@@ -183,7 +183,7 @@ export function checkRateLimit(
       const result = globalStore.check(`__global__:${rule.windowMs}`, rule.windowMs, rule.max);
       if (!result.ok) {
         return NextResponse.json(
-          { error: 'Service temporarily unavailable' },
+          { code: 'RATE_LIMITED', error: 'Service temporarily unavailable' },
           { status: 429, headers: { 'Retry-After': String(result.retryAfterS) } },
         );
       }

@@ -13,6 +13,7 @@
     "phase0:tools": "tsx scripts/phase0/test-groq-tools.ts"
   },
   "dependencies": {
+    "@binwhere/core": "file:../packages/core",
     "groq-sdk": "^0.37.0",
     "leaflet": "^1.9.4",
     "next": "14.2.35",

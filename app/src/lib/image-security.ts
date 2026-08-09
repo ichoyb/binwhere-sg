@@ -6,12 +6,13 @@
 
 import sharp from 'sharp';
 import pLimit from 'p-limit';
+import { MAX_CLASSIFY_IMAGE_BASE64_LENGTH } from '@binwhere/core';
 import { HttpError } from './http-utils';
 
 // --- Constants ---
 
 /** Maximum base64 string length accepted (~5MB decoded) */
-export const MAX_IMAGE_BASE64_LENGTH = 7_000_000;
+export const MAX_IMAGE_BASE64_LENGTH = MAX_CLASSIFY_IMAGE_BASE64_LENGTH;
 
 /** Maximum JSON body size in bytes (base64 + text + overhead) */
 export const MAX_JSON_BODY_BYTES = 8_000_000;
@@ -76,20 +77,20 @@ export async function validateAndSanitizeImage(
   if (dataUriMatch) {
     const mime = dataUriMatch[1].toLowerCase();
     if (!ALLOWED_DATA_URI_MIMES.has(mime)) {
-      throw new HttpError('Invalid image', 400);
+      throw new HttpError('Invalid image', 400, 'INVALID_IMAGE');
     }
     base64 = base64.slice(dataUriMatch[0].length);
   }
 
   // Step 2: Strict base64 validation
   if (!base64 || base64.length < 100 || !BASE64_REGEX.test(base64)) {
-    throw new HttpError('Invalid image', 400);
+    throw new HttpError('Invalid image', 400, 'INVALID_IMAGE');
   }
 
   // Step 3: Size pre-check (base64 is ~4/3 of decoded size)
   const estimatedBytes = Math.ceil(base64.length * 3 / 4);
   if (estimatedBytes > MAX_DECODED_BYTES) {
-    throw new HttpError('Image too large', 413);
+    throw new HttpError('Image too large', 413, 'IMAGE_TOO_LARGE');
   }
 
   // Step 4: Decode
@@ -97,12 +98,12 @@ export async function validateAndSanitizeImage(
 
   // Step 5: Magic bytes check
   if (!checkMagicBytes(buffer)) {
-    throw new HttpError('Invalid image', 400);
+    throw new HttpError('Invalid image', 400, 'INVALID_IMAGE');
   }
 
   // Step 6: Concurrency-limited sharp processing
   if (processLimit.pendingCount > MAX_QUEUE_LENGTH) {
-    throw new HttpError('Server busy', 503);
+    throw new HttpError('Server busy', 503, 'SERVER_BUSY');
   }
 
   const cleanBuffer = await processLimit(() => processImage(buffer));
@@ -144,14 +145,14 @@ async function processImage(buffer: Buffer): Promise<Buffer> {
   const metadata = await image.metadata();
 
   if (!metadata.format || !ALLOWED_FORMATS.has(metadata.format)) {
-    throw new HttpError('Invalid image', 400);
+    throw new HttpError('Invalid image', 400, 'INVALID_IMAGE');
   }
 
   if (
     (metadata.width && metadata.width > MAX_DIMENSION) ||
     (metadata.height && metadata.height > MAX_DIMENSION)
   ) {
-    throw new HttpError('Invalid image', 400);
+    throw new HttpError('Invalid image', 400, 'INVALID_IMAGE');
   }
 
   // Re-encode: auto-rotate EXIF → resize → flatten alpha → JPEG

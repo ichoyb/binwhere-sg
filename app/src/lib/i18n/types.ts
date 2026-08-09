@@ -1,1 +1,2 @@
-export type Locale = 'en' | 'zh' | 'ms' | 'ta';
+/** Re-export Locale from @binwhere/core */
+export type { Locale } from '@binwhere/core';

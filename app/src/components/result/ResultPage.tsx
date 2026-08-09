@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import type { ClassifyResult } from '@/lib/ai/types';
 import type { Locale } from '@/lib/i18n/types';
 import { t, type TranslationKey } from '@/lib/i18n';
-import { STATUS_CONFIG } from '@/lib/constants';
+import { STATUS_CONFIG, isSingaporeCoordinates } from '@/lib/constants';
 import ConfidenceBadge from '@/components/result/ConfidenceBadge';
 import RecyclingPointCard from '@/components/shared/RecyclingPointCard';
 import StatusIcon from '@/components/shared/StatusIcon';
@@ -65,7 +65,7 @@ export default function ResultPage({
   const isHazardous = result.channel === 'hazardous';
   const isBcrsReturn = result.channel === 'return_point';
   const isInSingapore = userLocation
-    ? userLocation.lat >= 1.15 && userLocation.lat <= 1.47 && userLocation.lng >= 103.6 && userLocation.lng <= 104.05
+    ? isSingaporeCoordinates(userLocation.lat, userLocation.lng)
     : false;
 
   // For donation channel, derive acceptedItem from the item name

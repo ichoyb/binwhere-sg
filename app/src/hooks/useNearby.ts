@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { NearbyPoint, NearbyChannel } from '@/types/app';
-import { fetchNearby } from '@/lib/api-client';
+import type { ApiErrorCode } from '@binwhere/core';
+import { ApiError, fetchNearby } from '@/lib/api-client';
 
 /** Cache key for deduplication */
 function cacheKey(lat: number, lng: number, channel: string, acceptedItem?: string): string {
@@ -24,7 +25,7 @@ export function useNearby(
 ) {
   const [points, setPoints] = useState<NearbyPoint[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApiErrorCode | null>(null);
   const lastKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -67,7 +68,7 @@ export function useNearby(
       })
       .catch((err) => {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'Failed to load');
+          setError(err instanceof ApiError ? err.code : 'UNKNOWN');
           setLoading(false);
         }
       });
