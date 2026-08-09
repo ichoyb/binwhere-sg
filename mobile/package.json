@@ -1,0 +1,37 @@
+{
+  "name": "binwhere-mobile",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "private": true,
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "export:android": "expo export --platform android",
+    "export:ios": "expo export --platform ios",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "tsx src/api/client.test.ts && tsx src/lib/history.test.ts && tsx src/lib/core-smoke.test.ts",
+    "test:live": "tsx src/api/classify-live.test.ts"
+  },
+  "dependencies": {
+    "@binwhere/core": "file:../packages/core",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "~57.0.6",
+    "expo-camera": "~57.0.3",
+    "expo-haptics": "~57.0.1",
+    "expo-image-manipulator": "~57.0.4",
+    "expo-localization": "~57.0.1",
+    "expo-location": "~57.0.4",
+    "expo-splash-screen": "~57.0.4",
+    "expo-status-bar": "~57.0.1",
+    "react": "19.2.3",
+    "react-native": "0.86.0",
+    "react-native-maps": "1.27.2",
+    "react-native-safe-area-context": "~5.7.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.2",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.2"
+  }
+}
