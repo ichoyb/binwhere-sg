@@ -138,8 +138,8 @@ export const ITEM_CATEGORIES: ItemCategory[] = [
           confidence: 0.95,
           channel: 'blue_bin',
           reason: 'PET (polyethylene terephthalate) bottles are one of the most recyclable plastics. Look for the #1 recycling symbol.',
-          preparation: ['Empty and rinse the bottle', 'Remove the cap (recycle separately)', 'Crush to save space'],
-          tip: 'No need to remove labels — the recycling process handles them.',
+          preparation: ['Empty and rinse the bottle', 'Remove the cap (recycle separately)', 'Do not crush it — crushed containers are refused at Return Points'],
+          tip: 'If it carries a Deposit Mark, take it to a BCRS Return Point instead and get S$0.10 back. Without a Deposit Mark, the Blue Recycling Bin is right.',
         },
       },
       {
@@ -229,8 +229,8 @@ export const ITEM_CATEGORIES: ItemCategory[] = [
           confidence: 0.95,
           channel: 'blue_bin',
           reason: 'Aluminium cans are highly recyclable and can be recycled indefinitely without quality loss.',
-          preparation: ['Empty the can', 'Give it a quick rinse', 'Crush to save space (optional)'],
-          tip: 'Aluminium is one of the most valuable recyclables — recycling one can saves enough energy to run a TV for 3 hours.',
+          preparation: ['Empty the can', 'Give it a quick rinse', 'Do not crush it — crushed containers are refused at Return Points'],
+          tip: 'If it carries a Deposit Mark, take it to a BCRS Return Point instead and get S$0.10 back. Without a Deposit Mark, the Blue Recycling Bin is right.',
         },
       },
       {

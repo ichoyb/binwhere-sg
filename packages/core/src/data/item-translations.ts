@@ -74,8 +74,8 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
         'PET Bottle': {
           name: 'PET 塑料瓶',
           reason: 'PET（聚对苯二甲酸乙二醇酯）瓶子是最容易回收的塑料之一。请认准 #1 回收标志。',
-          preparation: ['倒空并冲洗瓶子', '取下瓶盖（单独回收）', '压扁以节省空间'],
-          tip: '不用撕掉标签——回收过程会处理。',
+          preparation: ['倒空并冲洗瓶子', '取下瓶盖（单独回收）', '不要压扁——压扁的容器退还点不收'],
+          tip: '如果有 Deposit Mark，改送 BCRS 退还点可拿回 S$0.10。没有 Deposit Mark 才投蓝色回收桶。',
         },
         'Plastic Container': {
           name: '塑料容器',
@@ -121,8 +121,8 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
         'Aluminium Can': {
           name: '铝罐',
           reason: '铝罐可回收性极高，可以无限次回收而不会降低品质。',
-          preparation: ['倒空罐子', '简单冲洗', '压扁以节省空间（可选）'],
-          tip: '铝是最有价值的可回收物之一——回收一个铝罐节省的能源足够一台电视运行3小时。',
+          preparation: ['倒空罐子', '简单冲洗', '不要压扁——压扁的容器退还点不收'],
+          tip: '如果有 Deposit Mark，改送 BCRS 退还点可拿回 S$0.10。没有 Deposit Mark 才投蓝色回收桶。',
         },
         'Tin Can': {
           name: '锡罐',
@@ -463,8 +463,8 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
         'PET Bottle': {
           name: 'Botol PET',
           reason: 'Botol PET (polietilena tereftalat) adalah antara plastik yang paling mudah dikitar semula. Cari simbol kitar semula #1.',
-          preparation: ['Kosongkan dan bilas botol', 'Tanggalkan penutup (kitar semula secara berasingan)', 'Remukkan untuk menjimatkan ruang'],
-          tip: 'Tidak perlu tanggalkan label — proses kitar semula akan mengendalikannya.',
+          preparation: ['Kosongkan dan bilas botol', 'Tanggalkan penutup (kitar semula secara berasingan)', 'Jangan remukkan — bekas yang kemek ditolak di Pusat Pulangan'],
+          tip: 'Jika ada Deposit Mark, bawa ke Pusat Pulangan BCRS untuk dapat S$0.10. Tanpa Deposit Mark, Tong Kitar Semula Biru adalah betul.',
         },
         'Plastic Container': {
           name: 'Bekas Plastik',
@@ -510,8 +510,8 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
         'Aluminium Can': {
           name: 'Tin Aluminium',
           reason: 'Tin aluminium sangat mudah dikitar semula dan boleh dikitar semula tanpa had tanpa kehilangan kualiti.',
-          preparation: ['Kosongkan tin', 'Bilas ringkas', 'Remukkan untuk menjimatkan ruang (pilihan)'],
-          tip: 'Aluminium adalah antara bahan kitar semula paling bernilai — mengitar semula satu tin menjimatkan tenaga yang cukup untuk menjalankan TV selama 3 jam.',
+          preparation: ['Kosongkan tin', 'Bilas ringkas', 'Jangan remukkan — bekas yang kemek ditolak di Pusat Pulangan'],
+          tip: 'Jika ada Deposit Mark, bawa ke Pusat Pulangan BCRS untuk dapat S$0.10. Tanpa Deposit Mark, Tong Kitar Semula Biru adalah betul.',
         },
         'Tin Can': {
           name: 'Tin Besi',
@@ -852,8 +852,8 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
         'PET Bottle': {
           name: 'PET பாட்டில்',
           reason: 'PET (பாலியெத்திலீன் டெரெப்தலேட்) பாட்டில்கள் மிகவும் எளிதாக மறுசுழற்சி செய்யக்கூடிய பிளாஸ்டிக்குகளில் ஒன்று. #1 மறுசுழற்சிக் குறியீட்டைத் தேடுங்கள்.',
-          preparation: ['பாட்டிலைக் காலி செய்து கழுவுங்கள்', 'மூடியை அகற்றுங்கள் (தனியாக மறுசுழற்சி செய்யவும்)', 'இடத்தை மிச்சப்படுத்த நசுக்குங்கள்'],
-          tip: 'லேபிள்களை அகற்ற வேண்டியதில்லை — மறுசுழற்சி செயல்முறை அவற்றைக் கையாளும்.',
+          preparation: ['பாட்டிலைக் காலி செய்து கழுவுங்கள்', 'மூடியை அகற்றுங்கள் (தனியாக மறுசுழற்சி செய்யவும்)', 'நசுக்க வேண்டாம் — நசுக்கப்பட்ட கொள்கலன்கள் திருப்பி அளிக்கும் இடங்களில் ஏற்கப்படாது'],
+          tip: 'Deposit Mark இருந்தால், BCRS திருப்பி அளிக்கும் இடத்திற்குக் கொண்டு சென்று S$0.10 பெறுங்கள். Deposit Mark இல்லையெனில் நீல மறுசுழற்சி தொட்டியே சரி.',
         },
         'Plastic Container': {
           name: 'பிளாஸ்டிக் கொள்கலன்',
@@ -899,8 +899,8 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
         'Aluminium Can': {
           name: 'அலுமினியக் கேன்',
           reason: 'அலுமினியக் கேன்கள் மிகவும் எளிதாக மறுசுழற்சி செய்யக்கூடியவை, தரம் குறையாமல் எத்தனை முறையும் மறுசுழற்சி செய்யலாம்.',
-          preparation: ['கேனைக் காலி செய்யுங்கள்', 'விரைவாகக் கழுவுங்கள்', 'இடத்தை மிச்சப்படுத்த நசுக்குங்கள் (விருப்பத்திற்கு)'],
-          tip: 'அலுமினியம் மிகவும் மதிப்புள்ள மறுசுழற்சிப் பொருட்களில் ஒன்று — ஒரு கேனை மறுசுழற்சி செய்வது ஒரு TV-ஐ 3 மணி நேரம் இயக்க போதுமான ஆற்றலை மிச்சப்படுத்தும்.',
+          preparation: ['கேனைக் காலி செய்யுங்கள்', 'விரைவாகக் கழுவுங்கள்', 'நசுக்க வேண்டாம் — நசுக்கப்பட்ட கொள்கலன்கள் திருப்பி அளிக்கும் இடங்களில் ஏற்கப்படாது'],
+          tip: 'Deposit Mark இருந்தால், BCRS திருப்பி அளிக்கும் இடத்திற்குக் கொண்டு சென்று S$0.10 பெறுங்கள். Deposit Mark இல்லையெனில் நீல மறுசுழற்சி தொட்டியே சரி.',
         },
         'Tin Can': {
           name: 'டின் கேன்',
