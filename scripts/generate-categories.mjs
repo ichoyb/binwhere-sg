@@ -1,17 +1,22 @@
 #!/usr/bin/env node
 /**
- * Pre-generate ClassifyResult for all dropdown category items using Groq 70B.
+ * Pre-generate ClassifyResult for all dropdown category items.
  *
  * Usage:
- *   GROQ_API_KEY=gsk_... node scripts/generate-categories.mjs
+ *   TOKENHUB_API_KEY=sk-... node scripts/generate-categories.mjs
  *
- * Output: prints TypeScript source for app/src/data/item-categories.ts to stdout.
- * Review the output, then copy it into the data file.
+ * Output: prints TypeScript source for packages/core/src/data/item-categories.ts
+ * to stdout. Review the output, then copy it into the data file — the committed
+ * data is human-reviewed, and this script only drafts it.
+ *
+ * Calls the API directly rather than through src/lib/ai: this is a plain .mjs run
+ * by node, outside the Next build and its path aliases.
  */
 
-import Groq from 'groq-sdk';
+const API_URL = 'https://tokenhub.tencentmaas.com/v1/chat/completions';
 
-const MODEL = 'llama-3.3-70b-versatile';
+/** Same text model the live classifier uses, so the drafts match what users get. */
+const MODEL = 'hy3';
 
 const CATEGORIES = [
   {
@@ -111,6 +116,7 @@ const SYSTEM_PROMPT = `You are a recycling assistant for Singapore. Given an ite
 | Channel | What goes here | Examples |
 |---------|---------------|----------|
 | blue_bin | Clean & dry recyclables: paper, plastic, metal, glass | Newspapers, PET bottles, aluminum cans, glass jars |
+| return_point | BCRS-eligible beverage containers (S$0.10 refund) | Plastic bottles, aluminum cans (150ml-3L, Deposit Mark visible, barcode intact, not crushed) |
 | ewaste | Regulated e-waste (ICT equipment, large appliances) | Laptops, phones, TVs, fridges, washing machines, printers |
 | ewaste_battery | Batteries of all types | AA/AAA batteries, button cells, lithium-ion batteries, car batteries |
 | lighting | Fluorescent tubes and bulbs | CFL bulbs, fluorescent tubes, LED bulbs |
@@ -122,14 +128,20 @@ const SYSTEM_PROMPT = `You are a recycling assistant for Singapore. Given an ite
 
 ## Classification Rules
 
-1. Blue bin items MUST be clean and dry.
+1. Blue bin items MUST be clean and dry. A pizza box with grease stains → general_waste, NOT blue_bin.
 2. Tissue paper and toilet paper → always general_waste.
 3. Styrofoam → general_waste (not recyclable in Singapore).
 4. Plastic bags → blue_bin ONLY if clean and dry.
 5. Tetra Pak / milk cartons → blue_bin (recyclable in Singapore).
 6. Ceramics, mirrors, pyrex → general_waste.
-7. E-waste batteries must go to ewaste_battery, NOT blue_bin or general_waste.
-8. Incandescent bulbs → general_waste (not hazardous, not recyclable).
+7. BCRS return_point is ONLY for beverage containers when the Deposit Mark is clearly visible or explicitly stated, and the item otherwise matches BCRS rules (plastic/metal, 150ml-3L, barcode intact, not crushed).
+8. Do NOT guess return_point just because an item looks like a drink bottle/can. If Deposit Mark is not visible or not mentioned, do NOT use return_point.
+9. If it is likely a beverage bottle/can but Deposit Mark is unknown, prefer blue_bin and mention in reason or tip: if the container has a Deposit Mark, bring it to a Return Point.
+10. Glass beverage bottles, cartons, and pouches are NOT return_point.
+11. E-waste batteries must go to ewaste_battery, NOT blue_bin or general_waste.
+12. When in doubt, return status "not_sure" with confidence < 0.5. Do NOT guess.
+13. Items in good, reusable condition (clothes, electronics, books) → consider "donation" or "consider_donating".
+14. Incandescent bulbs → general_waste (not hazardous, not recyclable).
 
 ## Output Format
 
@@ -142,23 +154,129 @@ Respond ONLY with a valid JSON object (no markdown, no explanation):
   "channel": "channel_name or null",
   "reason": "brief explanation in English",
   "preparation": ["step 1", "step 2"],
-  "tip": "extra helpful tip"
-}`;
+  "tip": "extra helpful tip (optional)"
+}
 
-async function classifyItem(client, itemName) {
-  const response = await client.chat.completions.create({
-    model: MODEL,
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: `Classify this item for recycling in Singapore: ${itemName}` },
-    ],
-    max_tokens: 512,
-  });
+Write Singapore dollar amounts with the "S$" prefix — the BCRS refund is S$0.10, never $0.10.
+All text fields must be in English. Keep responses concise and practical.`;
 
-  const text = response.choices[0]?.message?.content ?? '';
-  const match = text.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error(`Non-JSON response for "${itemName}": ${text.slice(0, 200)}`);
-  return JSON.parse(match[0]);
+const VALID_STATUSES = new Set([
+  'recyclable',
+  'special_handling',
+  'consider_donating',
+  'not_recyclable',
+  'not_sure',
+]);
+
+const VALID_CHANNELS = new Set([
+  'blue_bin',
+  'return_point',
+  'ewaste',
+  'ewaste_battery',
+  'lighting',
+  'textile',
+  'hazardous',
+  'bulky_waste',
+  'donation',
+  'general_waste',
+]);
+
+const MAX_ATTEMPTS = 3;
+
+function validateResult(result, itemName) {
+  const valid = result
+    && typeof result === 'object'
+    && typeof result.item === 'string'
+    && result.item.trim().length > 0
+    && VALID_STATUSES.has(result.status)
+    && Number.isFinite(result.confidence)
+    && result.confidence >= 0
+    && result.confidence <= 1
+    && (result.channel === null || VALID_CHANNELS.has(result.channel))
+    && typeof result.reason === 'string'
+    && result.reason.trim().length > 0
+    && (result.preparation === undefined
+      || (Array.isArray(result.preparation) && result.preparation.every((step) => typeof step === 'string')))
+    && (result.tip === undefined || typeof result.tip === 'string');
+
+  if (!valid) {
+    throw new Error(`Invalid classification for "${itemName}": ${JSON.stringify(result).slice(0, 300)}`);
+  }
+  return result;
+}
+
+async function waitBeforeRetry(itemName, attempt, delayMs, error) {
+  console.error(
+    `  ↻ ${itemName}: ${error.message.slice(0, 100)}; retry ${attempt + 1}/${MAX_ATTEMPTS} in ${delayMs}ms`,
+  );
+  if (delayMs > 0) await new Promise((resolve) => setTimeout(resolve, delayMs));
+}
+
+async function classifyItem(apiKey, itemName) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    let res;
+    try {
+      res = await fetch(API_URL, {
+        method: 'POST',
+        signal: AbortSignal.timeout(20_000),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: `Classify this item: ${itemName}\n\nRespond in English.` },
+          ],
+          max_tokens: 1024,
+          temperature: 0.3,
+          response_format: { type: 'json_object' },
+        }),
+      });
+    } catch (err) {
+      lastError = new Error(`Request failed for "${itemName}": ${err.message}`);
+      if (attempt === MAX_ATTEMPTS) throw lastError;
+      await waitBeforeRetry(itemName, attempt, 500 * (2 ** (attempt - 1)), lastError);
+      continue;
+    }
+
+    if (!res.ok) {
+      const detail = (await res.text().catch(() => '')).slice(0, 300);
+      lastError = new Error(`API error for "${itemName}": ${res.status} ${detail}`);
+      const retryable = res.status === 429 || res.status >= 500;
+      if (!retryable || attempt === MAX_ATTEMPTS) throw lastError;
+
+      const retryAfter = res.headers.get('Retry-After');
+      const retryAfterSeconds = retryAfter === null || retryAfter.trim() === ''
+        ? Number.NaN
+        : Number(retryAfter);
+      const delayMs = res.status === 429 && Number.isFinite(retryAfterSeconds) && retryAfterSeconds >= 0
+        ? retryAfterSeconds * 1_000
+        : res.status === 504 ? 0 : 500 * (2 ** (attempt - 1));
+      await waitBeforeRetry(itemName, attempt, delayMs, lastError);
+      continue;
+    }
+
+    try {
+      const response = await res.json();
+      const text = response.choices?.[0]?.message?.content;
+      if (typeof text !== 'string') {
+        throw new Error(`No text response for "${itemName}"`);
+      }
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error(`Non-JSON response for "${itemName}": ${text.slice(0, 200)}`);
+      return validateResult(JSON.parse(match[0]), itemName);
+    } catch (err) {
+      lastError = err;
+      if (attempt === MAX_ATTEMPTS) throw lastError;
+      await waitBeforeRetry(itemName, attempt, 500 * (2 ** (attempt - 1)), lastError);
+    }
+  }
+
+  throw lastError ?? new Error(`Classification failed for "${itemName}"`);
 }
 
 function escapeStr(s) {
@@ -184,13 +302,12 @@ function toTS(result) {
 }
 
 async function main() {
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = process.env.TOKENHUB_API_KEY;
   if (!apiKey) {
-    console.error('Error: GROQ_API_KEY environment variable is required');
+    console.error('Error: TOKENHUB_API_KEY environment variable is required');
     process.exit(1);
   }
 
-  const client = new Groq({ apiKey });
   const results = [];
 
   for (const cat of CATEGORIES) {
@@ -199,7 +316,7 @@ async function main() {
 
     for (const itemName of cat.items) {
       try {
-        const result = await classifyItem(client, itemName);
+        const result = await classifyItem(apiKey, itemName);
         console.error(`  ✓ ${itemName}: ${result.status} / ${result.channel}`);
         items.push({ name: itemName, result });
       } catch (err) {
@@ -214,7 +331,7 @@ async function main() {
   }
 
   // Output TypeScript
-  let ts = `import type { ClassifyResult } from '@/lib/ai/types';\n\n`;
+  let ts = `import type { ClassifyResult } from '../types/classify';\n\n`;
   ts += `export interface CategoryItem {\n  name: string;\n  result: ClassifyResult;\n}\n\n`;
   ts += `export interface ItemCategory {\n  id: string;\n  label: string;\n  icon: string;\n  items: CategoryItem[];\n}\n\n`;
   ts += `export const ITEM_CATEGORIES: ItemCategory[] = [\n`;

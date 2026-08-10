@@ -1,6 +1,6 @@
 /**
- * System Prompt for V1 Chatbox (Groq tool_use).
- * Stub — will be expanded when implementing V1 chatbox feature.
+ * System Prompt for the V1 Chatbox.
+ * Stub — the chatbox has no provider wired to it; see app/api/chat/route.ts.
  */
 export const CHAT_SYSTEM_PROMPT = `You are BinWhere, a helpful recycling assistant for Singapore residents.
 

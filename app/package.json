@@ -7,14 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:unit": "tsx src/lib/bcrs.test.ts && tsx scripts/convert-rvm-data.test.ts",
+    "test:unit": "tsx src/lib/bcrs.test.ts && tsx src/lib/ai/provider.test.ts && tsx scripts/convert-rvm-data.test.ts",
     "prebuild": "tsx scripts/build-geo-data.ts",
-    "phase0:classify": "tsx scripts/phase0/test-classify.ts",
-    "phase0:tools": "tsx scripts/phase0/test-groq-tools.ts"
+    "test:classify": "tsx scripts/phase0/test-classify.ts"
   },
   "dependencies": {
     "@binwhere/core": "file:../packages/core",
-    "groq-sdk": "^0.37.0",
     "leaflet": "^1.9.4",
     "next": "14.2.35",
     "p-limit": "^7.3.0",

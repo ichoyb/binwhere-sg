@@ -1,17 +1,24 @@
 /**
- * Phase 0: classification accuracy test across providers, 85 items.
- * Compares whichever of the chain's providers have keys configured.
+ * Classification accuracy gate: 85 items, per-channel thresholds.
+ *
+ * This is the only thing that exercises the classifier end to end against known
+ * answers, and it matters more now than when there were two providers to fall back
+ * between: TokenHub is the sole route, so a regression here is a regression in
+ * production. Run it after any change to the model ids or the system prompt.
+ *
+ * It costs money — at least 85 paid calls, plus any transient retries — but at the
+ * cheap tier that is a rounding error against one wrong answer shipped to users.
  *
  * Usage: npx tsx scripts/phase0/test-classify.ts
- * Requires: GROQ_API_KEY and/or OPENROUTER_API_KEY in .env
+ * Requires: TOKENHUB_API_KEY in .env
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 import { TEST_ITEMS, getItemsByChannel, type TestItem } from './test-items';
-import { GroqClassifyProvider } from '../../src/lib/ai/providers/groq-classify';
-import { OpenRouterProvider } from '../../src/lib/ai/providers/openrouter';
+import { classifyItem } from '../../src/lib/ai/provider';
+import { TokenHubProvider } from '../../src/lib/ai/providers/tokenhub';
 import type { ClassifyProvider, ClassifyResult } from '../../src/lib/ai/types';
 
 // Load .env from app directory
@@ -40,31 +47,6 @@ interface ProviderReport {
   results: TestResult[];
 }
 
-/** Classify with automatic 429 retry (up to maxRetries) */
-async function classifyWithRetry(
-  provider: ClassifyProvider,
-  request: { text: string },
-  maxRetries = 3,
-): Promise<ClassifyResult> {
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      return await provider.classify(request);
-    } catch (error) {
-      const msg = (error as Error).message;
-      if (msg.includes('429') && attempt < maxRetries) {
-        // Parse retry delay from error message, default 60s
-        const retryMatch = msg.match(/retry in ([\d.]+)s/i);
-        const waitSec = retryMatch ? Math.ceil(parseFloat(retryMatch[1])) + 2 : 60;
-        console.log(`    [429] Rate limited. Waiting ${waitSec}s before retry ${attempt + 1}/${maxRetries}...`);
-        await new Promise((r) => setTimeout(r, waitSec * 1000));
-        continue;
-      }
-      throw error;
-    }
-  }
-  throw new Error('Max retries exceeded');
-}
-
 async function testProvider(provider: ClassifyProvider): Promise<ProviderReport> {
   console.log(`\n${'='.repeat(60)}`);
   console.log(`Testing: ${provider.name}`);
@@ -83,7 +65,8 @@ async function testProvider(provider: ClassifyProvider): Promise<ProviderReport>
     const startTime = Date.now();
 
     try {
-      const result = await classifyWithRetry(provider, { text: item.text });
+      // Exercise the same deadline, retry and schema boundary used in production.
+      const result = await classifyItem({ text: item.text }, provider);
       const duration = Date.now() - startTime;
 
       const channelMatch = result.channel === item.expectedChannel;
@@ -102,8 +85,10 @@ async function testProvider(provider: ClassifyProvider): Promise<ProviderReport>
 
       results.push({ item, result, channelMatch, statusMatch, durationMs: duration });
 
-      // Rate limit: 4s delay (15 RPM = 1 req per 4s)
-      await new Promise((r) => setTimeout(r, 4000));
+      // TokenHub publishes no rate limit, so this is deliberate politeness rather
+      // than a measured requirement: enough spacing that an 85-item sweep cannot be
+      // mistaken for abuse, without stretching the run to Groq's old 6 minutes.
+      await new Promise((r) => setTimeout(r, 1000));
     } catch (error) {
       const duration = Date.now() - startTime;
       errorCount++;
@@ -119,7 +104,7 @@ async function testProvider(provider: ClassifyProvider): Promise<ProviderReport>
         durationMs: duration,
       });
 
-      await new Promise((r) => setTimeout(r, 4000));
+      await new Promise((r) => setTimeout(r, 1000));
     }
   }
 
@@ -145,7 +130,7 @@ async function testProvider(provider: ClassifyProvider): Promise<ProviderReport>
     notSureRate: notSureCount / TEST_ITEMS.length,
     perChannel,
     avgConfidence: totalConfidence / (TEST_ITEMS.length - errorCount || 1),
-    avgDurationMs: totalDuration / TEST_ITEMS.length,
+    avgDurationMs: totalDuration / (TEST_ITEMS.length - errorCount || 1),
     errors: errorCount,
     results,
   };
@@ -183,67 +168,19 @@ function printReport(report: ProviderReport): void {
 }
 
 async function main() {
-  console.log(`Phase 0: Classification Accuracy Test`);
+  console.log(`Classification Accuracy Gate`);
   console.log(`Test set: ${TEST_ITEMS.length} items`);
   console.log(`Date: ${new Date().toISOString()}\n`);
 
-  const reports: ProviderReport[] = [];
-
-  // Test Groq if key available
-  if (process.env.GROQ_API_KEY) {
-    try {
-      const groq = new GroqClassifyProvider();
-      const report = await testProvider(groq);
-      reports.push(report);
-      printReport(report);
-    } catch (err) {
-      console.error(`Groq test failed: ${(err as Error).message}`);
-    }
-  } else {
-    console.log('Skipping Groq (GROQ_API_KEY not set)');
-  }
-
-  // Test OpenRouter, which replaced Pollinations as the fallback
-  if (process.env.OPENROUTER_API_KEY) {
-    try {
-      const openrouter = new OpenRouterProvider();
-      const report = await testProvider(openrouter);
-      reports.push(report);
-      printReport(report);
-    } catch (err) {
-      console.error(`OpenRouter test failed: ${(err as Error).message}`);
-    }
-  } else {
-    console.log('Skipping OpenRouter (OPENROUTER_API_KEY not set)');
-  }
-
-  if (reports.length === 0) {
-    console.error('\nNo providers available. Set GROQ_API_KEY in .env');
+  if (!process.env.TOKENHUB_API_KEY) {
+    console.error('TOKENHUB_API_KEY not set in .env');
     process.exit(1);
   }
 
-  // Summary comparison
-  if (reports.length === 2) {
-    console.log('\n\n' + '='.repeat(60));
-    console.log('COMPARISON SUMMARY');
-    console.log('='.repeat(60));
-    console.log(
-      `${'Metric'.padEnd(25)} ${reports[0].provider.padEnd(15)} ${reports[1].provider.padEnd(15)}`,
-    );
-    console.log('-'.repeat(55));
-    console.log(
-      `${'Channel Accuracy'.padEnd(25)} ${(reports[0].channelAccuracy * 100).toFixed(1).padEnd(15)}% ${(reports[1].channelAccuracy * 100).toFixed(1)}%`,
-    );
-    console.log(
-      `${'Status Accuracy'.padEnd(25)} ${(reports[0].statusAccuracy * 100).toFixed(1).padEnd(15)}% ${(reports[1].statusAccuracy * 100).toFixed(1)}%`,
-    );
-    console.log(
-      `${'Avg Latency'.padEnd(25)} ${(reports[0].avgDurationMs.toFixed(0) + 'ms').padEnd(15)} ${reports[1].avgDurationMs.toFixed(0)}ms`,
-    );
-    console.log(
-      `${'Not Sure Rate'.padEnd(25)} ${(reports[0].notSureRate * 100).toFixed(1).padEnd(15)}% ${(reports[1].notSureRate * 100).toFixed(1)}%`,
-    );
-  }
+  const reports: ProviderReport[] = [];
+  const report = await testProvider(new TokenHubProvider());
+  reports.push(report);
+  printReport(report);
 
   // Save results to JSON
   const outputPath = path.join(__dirname, 'results', `classify-${Date.now()}.json`);
@@ -276,16 +213,19 @@ async function main() {
     const overallPass = report.channelAccuracy >= 0.9;
     const notSurePass = report.notSureRate < 0.15;
     const channelPasses = Object.values(report.perChannel).every((s) => s.accuracy >= 0.8);
+    const errorsPass = report.errors === 0;
 
     console.log(`\n${report.provider}:`);
     console.log(`  Overall >90%:     ${overallPass ? 'PASS' : 'FAIL'} (${(report.channelAccuracy * 100).toFixed(1)}%)`);
     console.log(`  Per-channel >80%: ${channelPasses ? 'PASS' : 'FAIL'}`);
     console.log(`  Not-sure <15%:    ${notSurePass ? 'PASS' : 'FAIL'} (${(report.notSureRate * 100).toFixed(1)}%)`);
+    console.log(`  Provider errors:  ${errorsPass ? 'PASS' : 'FAIL'} (${report.errors})`);
 
-    if (!overallPass || !channelPasses || !notSurePass) allPass = false;
+    if (!overallPass || !channelPasses || !notSurePass || !errorsPass) allPass = false;
   }
 
   console.log(`\nGate: ${allPass ? 'PASS - Ready to proceed' : 'FAIL - Adjust system prompt and retest'}`);
+  if (!allPass) process.exitCode = 1;
 }
 
 main().catch((err) => {

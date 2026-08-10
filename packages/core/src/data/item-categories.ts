@@ -14,10 +14,12 @@ export interface ItemCategory {
 
 /**
  * Pre-generated classification results for the dropdown category selector.
- * Generated via Groq llama-3.3-70b-versatile using the same system prompt
- * as camera/text classification, then human-reviewed for accuracy.
+ * Drafted by the same text model the live classifier uses, with a category-specific
+ * prompt aligned to the same channel rules, then human-reviewed for accuracy. The
+ * review is the point: these strings ship without a model in the loop, so they are
+ * held to a higher bar than a live answer that the user can re-run.
  *
- * To regenerate: GROQ_API_KEY=... node scripts/generate-categories.mjs
+ * To regenerate: TOKENHUB_API_KEY=... node scripts/generate-categories.mjs
  */
 export const ITEM_CATEGORIES: ItemCategory[] = [
   {

@@ -34,8 +34,6 @@ export {
 export type {
   ClassifyResult,
   ClassifyRequest,
-  ClassifyProvider,
-  ProviderType,
 } from './types/classify';
 export {
   ClassifyResultSchema,

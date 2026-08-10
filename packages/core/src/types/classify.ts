@@ -44,11 +44,8 @@ export const ClassifyRequestSchema = z.object({
 
 export type ClassifyRequest = z.input<typeof ClassifyRequestSchema>;
 
-/** Provider interface for classification */
-export interface ClassifyProvider {
-  name: string;
-  classify(request: ClassifyRequest): Promise<ClassifyResult>;
-}
-
-/** Provider type identifier */
-export type ProviderType = 'groq' | 'pollinations';
+// The classify *provider* interface deliberately does not live here. Core is the
+// contract both clients share, compiled against lib ES2020 with no platform
+// globals so a browser-only or Node-only API cannot leak into the React Native
+// bundle. A provider is server-side machinery that only the web app implements,
+// and typing its cancellation needs AbortSignal — so it belongs in app/src/lib/ai.

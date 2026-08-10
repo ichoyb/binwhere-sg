@@ -117,5 +117,8 @@ export async function fetchNearby(
 export function isRetryable(error: unknown): boolean {
   return error instanceof ApiError
     && (error.status === 0 || error.status >= 500)
-    && error.code !== 'INVALID_RESPONSE';
+    && error.code !== 'INVALID_RESPONSE'
+    // The classify provider has already exhausted its own bounded retries. Running
+    // the whole request again here doubles both upstream attempts and user latency.
+    && error.code !== 'CLASSIFICATION_FAILED';
 }
