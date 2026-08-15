@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { getClientIp } from './http-utils';
+
 // ═══════════════════════════════════════════════════════════
 //  Configurable limits — adjust these values as needed
 // ═══════════════════════════════════════════════════════════
@@ -110,14 +112,6 @@ const globalStore = new SlidingWindowStore();
 // ═══════════════════════════════════════════════════════════
 //  Helpers
 // ═══════════════════════════════════════════════════════════
-
-function getClientIp(request: NextRequest): string {
-  return (
-    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
-    request.headers.get('x-real-ip') ||
-    'unknown'
-  );
-}
 
 /**
  * Origin/Referer check.

@@ -6,6 +6,22 @@ import type { ApiErrorCode } from '@binwhere/core';
  * so we enforce the limit ourselves by reading the body as a stream.
  */
 
+/**
+ * The client identity used for both rate limiting and telemetry.
+ *
+ * Behind Cloudflare the socket peer is always an edge IP, so the first
+ * x-forwarded-for entry is the real caller. Defined once because two copies of
+ * this would eventually disagree, and then a rate-limit bucket and its event
+ * would describe different clients.
+ */
+export function getClientIp(request: Request): string {
+  return (
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+    request.headers.get('x-real-ip') ||
+    'unknown'
+  );
+}
+
 export class HttpError extends Error {
   constructor(
     message: string,

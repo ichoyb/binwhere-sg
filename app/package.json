@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:unit": "tsx src/lib/bcrs.test.ts && tsx src/lib/ai/provider.test.ts && tsx scripts/convert-rvm-data.test.ts",
+    "test:unit": "tsx src/lib/bcrs.test.ts && tsx src/lib/ai/provider.test.ts && tsx src/lib/telemetry.test.ts && tsx scripts/convert-rvm-data.test.ts",
     "prebuild": "tsx scripts/build-geo-data.ts",
     "test:classify": "tsx scripts/phase0/test-classify.ts"
   },

@@ -13,6 +13,7 @@ import {
 } from '@/lib/data-gov';
 import { formatReturnPointOpeningHours } from '@/lib/bcrs';
 import { checkRateLimit, DEFAULT_LIMITS } from '@/lib/rate-limit';
+import { clientId, gridCell, logEvent } from '@/lib/telemetry';
 
 function errorResponse(
   code: ApiErrorCode,
@@ -63,13 +64,35 @@ function matchesEwasteChannel(description: string, channel: string): boolean {
 }
 
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
+  const client = clientId(request);
+  const elapsed = () => Date.now() - startedAt;
+
   const blocked = checkRateLimit(request, DEFAULT_LIMITS);
-  if (blocked) return blocked;
+  if (blocked) {
+    // A throttled caller used to leave no trace: the user sees a channel that
+    // looks broken, and the server recorded nothing to contradict that.
+    logEvent('nearby', {
+      client,
+      ok: false,
+      http: blocked.status,
+      code: blocked.status === 403 ? 'FORBIDDEN' : 'RATE_LIMITED',
+      ms: elapsed(),
+    });
+    return blocked;
+  }
 
   const parsedInput = NearbyQuerySchema.safeParse(
     Object.fromEntries(request.nextUrl.searchParams),
   );
   if (!parsedInput.success) {
+    logEvent('nearby', {
+      client,
+      ok: false,
+      http: 400,
+      code: 'INVALID_INPUT',
+      ms: elapsed(),
+    });
     return errorResponse(
       'INVALID_INPUT',
       'Invalid input',
@@ -78,6 +101,8 @@ export async function GET(request: NextRequest) {
     );
   }
   const input = parsedInput.data;
+  // Rounded to a ~1 km cell: enough to spot uncovered areas, never a person.
+  const cell = gridCell(input.lat, input.lng);
 
   try {
     const isEwaste = input.channel === 'ewaste'
@@ -96,6 +121,15 @@ export async function GET(request: NextRequest) {
             : getEwasteIndex();
 
     if (!index) {
+      logEvent('nearby', {
+        client,
+        ok: false,
+        http: 503,
+        code: 'DATA_UNAVAILABLE',
+        channel: input.channel,
+        cell,
+        ms: elapsed(),
+      });
       return errorResponse(
         'DATA_UNAVAILABLE',
         'Recycling point data is unavailable',
@@ -208,6 +242,15 @@ export async function GET(request: NextRequest) {
         '[api/v1/nearby] Invalid response:',
         parsedResponse.error.issues,
       );
+      logEvent('nearby', {
+        client,
+        ok: false,
+        http: 502,
+        code: 'INVALID_RESPONSE',
+        channel: input.channel,
+        cell,
+        ms: elapsed(),
+      });
       return errorResponse(
         'INVALID_RESPONSE',
         'Invalid nearby response',
@@ -215,9 +258,29 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // results=0 is the signal an access log cannot carry: this is still a 200.
+    logEvent('nearby', {
+      client,
+      ok: true,
+      http: 200,
+      channel: input.channel,
+      cell,
+      radiusKm: input.radius,
+      results: parsedResponse.data.count,
+      ms: elapsed(),
+    });
     return NextResponse.json(parsedResponse.data);
   } catch (error) {
     console.error('[api/v1/nearby] Error:', error);
+    logEvent('nearby', {
+      client,
+      ok: false,
+      http: 500,
+      code: 'NEARBY_QUERY_FAILED',
+      channel: input.channel,
+      cell,
+      ms: elapsed(),
+    });
     return errorResponse('NEARBY_QUERY_FAILED', 'Nearby query failed', 500);
   }
 }
