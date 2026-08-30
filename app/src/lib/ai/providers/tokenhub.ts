@@ -1,6 +1,7 @@
 import { ClassifyResultSchema, type ClassifyProvider, type ClassifyRequest, type ClassifyResult } from '../types';
 import { getClassifySystemPrompt } from '../prompts/classify-system';
 import { LOCALE_LANGUAGE_NAME } from '@/lib/i18n';
+import { logEvent } from '@/lib/telemetry';
 
 const API_URL = 'https://tokenhub.tencentmaas.com/v1/chat/completions';
 
@@ -14,8 +15,20 @@ const API_URL = 'https://tokenhub.tencentmaas.com/v1/chat/completions';
  * Chosen over mimo-v2.5-pro (correct but ~2x slower) and, decisively, over the
  * reasoning models: glm-5-turbo spent 1483-3641 tokens thinking, ran into
  * max_tokens, and truncated the JSON so the S$0.10 deposit vanished — the same
- * failure that gpt-oss produced on the previous provider. hy3 emits zero reasoning
- * tokens, so the budget belongs entirely to the answer.
+ * failure that gpt-oss produced on the previous provider.
+ *
+ * That choice rested on "hy3 emits zero reasoning tokens", which was true when
+ * measured and stopped being true on 2026-08-29 with no change on this side: hy3
+ * began spending 445-608 tokens thinking, which cost a real user an HTTP 500 and
+ * pushed the rest to 7-15s. The durable lesson is not about this model. A vendor's
+ * default is not a contract, so the request below now *states* the requirement
+ * rather than inheriting it, and logUsage treats a nonzero reasoning count as the
+ * provider ignoring that instruction.
+ *
+ * hy4 was evaluated on 2026-08-30 and rejected: `hy4-preview` is the only hy4 build
+ * on the account, it ignores the thinking switch, and it spent all 1024 output
+ * tokens reasoning — finish_reason=length, empty content, 38s — which is the
+ * glm-5-turbo failure again. Preview-tier is also withdrawable without notice.
  */
 const TEXT_MODEL = 'hy3';
 
@@ -26,6 +39,23 @@ const TEXT_MODEL = 'hy3';
  * path is where both localisation defects originated.
  */
 const VISION_MODEL = 'hy-vision-2.0-instruct';
+
+/**
+ * Both models are asked to answer without a chain-of-thought.
+ *
+ * Reasoning tokens bill as output, consume max_tokens, and are the mechanism behind
+ * every truncated-JSON defect this classifier has had — while contributing nothing
+ * to answer quality here: measured 2026-08-30, 16/16 correct across all four locales
+ * with thinking off, at 1.7-3.1s against 5-15s with it on.
+ *
+ * `thinking` is the spelling TokenHub honours. Probed against hy3 on 2026-08-30:
+ * `enable_thinking`, `chat_template_kwargs`, `extra_body` and a `/no_think` prompt
+ * suffix were all accepted and silently ignored; only `reasoning_effort: 'none'`
+ * behaves the same as this. An unrecognised parameter does not error, so a wrong
+ * spelling here would fail silently — which is why logUsage verifies the outcome
+ * instead of trusting the send.
+ */
+const THINKING_DISABLED = { type: 'disabled' } as const;
 
 interface TokenHubUsage {
   prompt_tokens?: number;
@@ -124,6 +154,7 @@ export class TokenHubProvider implements ClassifyProvider {
           // does not exist.
           temperature: 0.3,
           response_format: { type: 'json_object' },
+          thinking: THINKING_DISABLED,
         }),
       });
     } catch (err) {
@@ -236,8 +267,8 @@ async function formatApiError(res: Response): Promise<string> {
  *    has: the photo is part of the prompt, so no two image requests share a
  *    prefix, and an image classify pays full price for ~1.85k input tokens.
  *  - reasoning_tokens: billed as output whether or not anything reads them, and the
- *    mechanism behind every truncated-JSON defect this classifier has had. Both
- *    chosen models emit ~0; a nonzero reading means the model behind the id changed.
+ *    mechanism behind every truncated-JSON defect this classifier has had. The
+ *    request asks for none, so any nonzero reading is the provider overriding us.
  */
 function logUsage(model: string, usage: TokenHubUsage | undefined, finishReason?: string) {
   if (!usage) return;
@@ -249,5 +280,19 @@ function logUsage(model: string, usage: TokenHubUsage | undefined, finishReason?
   );
   if (reasoning > 0) {
     console.warn(`[ai] ${model} spent ${reasoning} reasoning tokens — it is billed as output and eats max_tokens`);
+    // The request set THINKING_DISABLED, so a nonzero count is the provider
+    // declining it: a silent vendor-side change to a model chosen *because* it did
+    // not think. This same console.warn already existed on 2026-08-29 and recorded
+    // the regression faithfully — nobody read it, and a user ate a 500 for a day.
+    // So it also goes to the event stream every other API outcome lands in, where
+    // one `grep '"evt":"provider_contract"'` answers "is this still true?".
+    logEvent('provider_contract', {
+      provider: 'tokenhub',
+      model,
+      issue: 'reasoning_not_disabled',
+      reasoning,
+      out: usage.completion_tokens,
+      finish: finishReason ?? null,
+    });
   }
 }

@@ -50,9 +50,10 @@ async function runTest(name: string, fn: () => Promise<void>) {
   console.log(`PASS ${name}`);
 }
 
-function completionResponse(content: unknown): Response {
+function completionResponse(content: unknown, usage?: unknown): Response {
   return new Response(JSON.stringify({
     choices: [{ message: { content }, finish_reason: 'stop' }],
+    ...(usage === undefined ? {} : { usage }),
   }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
@@ -104,6 +105,54 @@ async function main() {
     }, async () => {
       await new TokenHubProvider('test-key').classify({ image: 'base64-image' });
     });
+  });
+
+  await runTest('TokenHub tells both models not to think', async () => {
+    for (const [request, model] of [
+      [{ text: 'can' }, 'hy3'],
+      [{ image: 'base64-image' }, 'hy-vision-2.0-instruct'],
+    ] as Array<[ClassifyRequest, string]>) {
+      await withMockFetch(async (_input, init) => {
+        const body = JSON.parse(String(init?.body)) as { model: string; thinking: unknown };
+        assert.equal(body.model, model);
+        // A chain-of-thought bills as output, consumes max_tokens, and is what
+        // turned hy3 into a 500 on 2026-08-29 with no change on this side. The
+        // vendor default is not a contract, so every path must carry this.
+        assert.deepEqual(body.thinking, { type: 'disabled' });
+        return completionResponse(JSON.stringify(OK));
+      }, async () => {
+        await new TokenHubProvider('test-key').classify(request);
+      });
+    }
+  });
+
+  await runTest('A provider that thinks anyway is reported, not just warned about', async () => {
+    // The console.warn below already existed on 2026-08-29 and recorded the
+    // regression correctly. Nobody read it. An alarm nothing reads is the same
+    // failure as the fallback that rotted unnoticed, so what is asserted here is
+    // that the finding reaches the event stream — not merely that it is noticed.
+    const lines: string[] = [];
+    const original = { log: console.log, warn: console.warn, info: console.info };
+    console.log = (...args: unknown[]) => { lines.push(args.join(' ')); };
+    console.warn = () => {};
+    console.info = () => {};
+    try {
+      await withMockFetch(
+        async () => completionResponse(JSON.stringify(OK), {
+          prompt_tokens: 1109,
+          completion_tokens: 536,
+          completion_tokens_details: { reasoning_tokens: 445 },
+        }),
+        async () => { await new TokenHubProvider('test-key').classify({ text: 'can' }); },
+      );
+    } finally {
+      Object.assign(console, original);
+    }
+    const event = lines.find((line) => line.includes('"evt":"provider_contract"'));
+    assert.ok(event, 'a nonzero reasoning count must reach the event stream');
+    assert.match(event, /"issue":"reasoning_not_disabled"/);
+    assert.match(event, /"reasoning":445/);
+    assert.match(event, /"model":"hy3"/);
   });
 
   await runTest('TokenHub preserves Retry-After and request_id on 429', async () => {
