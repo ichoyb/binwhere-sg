@@ -1,19 +1,34 @@
+import * as Sentry from '@sentry/react-native';
+import * as Localization from 'expo-localization';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, BackHandler, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   buildBcrsGuideResult,
+  normalizeLocale,
   type AppView,
   type ClassifyResult,
   type ScanHistoryItem,
 } from '@binwhere/core';
+import { ErrorBoundary } from './src/components/ErrorBoundary';
+import { initReporting } from './src/lib/reporting';
 import { AppStateProvider, useAppState } from './src/state/AppState';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { ResultScreen } from './src/screens/ResultScreen';
 import { NearbyScreen } from './src/screens/NearbyScreen';
 import { colors } from './src/theme/colors';
 import { getNearbyTarget } from './src/lib/nearby';
+
+// Before the first render, so a crash during startup is reported too.
+initReporting();
+
+/**
+ * The crash screen sits above the state provider (so a provider failure is
+ * caught as well) and therefore cannot read the user's chosen language; the
+ * device language is the best available stand-in.
+ */
+const deviceLocale = normalizeLocale(Localization.getLocales()[0]?.languageTag);
 
 function Root() {
   const {
@@ -160,15 +175,20 @@ function Root() {
   );
 }
 
-export default function App() {
+function App() {
   return (
     <SafeAreaProvider>
-      <AppStateProvider>
-        <Root />
-      </AppStateProvider>
+      <ErrorBoundary locale={deviceLocale}>
+        <AppStateProvider>
+          <Root />
+        </AppStateProvider>
+      </ErrorBoundary>
     </SafeAreaProvider>
   );
 }
+
+// Adds touch breadcrumbs to crash reports; a no-op when reporting is off.
+export default Sentry.wrap(App);
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },

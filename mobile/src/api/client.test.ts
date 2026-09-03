@@ -7,7 +7,10 @@ import {
   buildNearbyQueryString,
   buildNearbyUrl,
   classifyItem,
+  fetchNearby,
   getApiBaseUrl,
+  setContractViolationReporter,
+  type ContractViolation,
 } from './client';
 
 function run(name: string, test: () => void) {
@@ -34,14 +37,14 @@ async function withFetch(
 }
 
 run('getApiBaseUrl defaults to production host without trailing slash', () => {
-  const url = getApiBaseUrl({});
+  const url = getApiBaseUrl(undefined);
   assert.equal(url, DEFAULT_API_BASE);
   assert.equal(url.endsWith('/'), false);
 });
 
 run('getApiBaseUrl strips all trailing slashes from an override', () => {
   assert.equal(
-    getApiBaseUrl({ EXPO_PUBLIC_API_BASE_URL: 'https://example.com///' }),
+    getApiBaseUrl('https://example.com///'),
     'https://example.com',
   );
 });
@@ -157,6 +160,89 @@ async function runNetworkContractTests() {
         );
       },
     );
+  });
+
+  await runAsync('a malformed success payload is reported as a classify contract violation', async () => {
+    const reports: ContractViolation[] = [];
+    setContractViolationReporter((v) => reports.push(v));
+    try {
+      await withFetch(
+        async () => new Response(JSON.stringify({ item: 'Bottle', status: 'recyclable' }), { status: 200 }),
+        async () => {
+          await assert.rejects(() => classifyItem({ text: 'bottle', locale: 'en' }));
+        },
+      );
+    } finally {
+      setContractViolationReporter(() => {});
+    }
+    assert.equal(reports.length, 1);
+    assert.equal(reports[0].endpoint, 'classify');
+    assert.equal(reports[0].status, 200);
+    assert.ok(reports[0].issues.length > 0);
+    assert.ok(reports[0].issues.some((line) => line.startsWith('confidence:')), reports[0].issues.join('\n'));
+  });
+
+  await runAsync('a non-JSON success body is reported with the body marker', async () => {
+    const reports: ContractViolation[] = [];
+    setContractViolationReporter((v) => reports.push(v));
+    try {
+      await withFetch(
+        async () => new Response('<html>ok</html>', { status: 200 }),
+        async () => {
+          await assert.rejects(
+            () => fetchNearby({ lat: 1.3691, lng: 103.8454, channel: 'blue_bin' }),
+            (error: unknown) => error instanceof ApiError && error.code === 'INVALID_RESPONSE',
+          );
+        },
+      );
+    } finally {
+      setContractViolationReporter(() => {});
+    }
+    assert.deepEqual(reports, [{ endpoint: 'nearby', status: 200, issues: ['<body>: not valid JSON'] }]);
+  });
+
+  await runAsync('a malformed error envelope is reported and keeps the HTTP status', async () => {
+    const reports: ContractViolation[] = [];
+    setContractViolationReporter((v) => reports.push(v));
+    try {
+      await withFetch(
+        async () => new Response(JSON.stringify({ message: 'edge error' }), { status: 503 }),
+        async () => {
+          await assert.rejects(
+            () => fetchNearby({ lat: 1.3691, lng: 103.8454, channel: 'blue_bin' }),
+            (error: unknown) => error instanceof ApiError && error.status === 503 && error.code === 'INVALID_RESPONSE',
+          );
+        },
+      );
+    } finally {
+      setContractViolationReporter(() => {});
+    }
+    assert.equal(reports.length, 1);
+    assert.equal(reports[0].endpoint, 'nearby');
+    assert.equal(reports[0].status, 503);
+  });
+
+  await runAsync('a well-formed response reports nothing', async () => {
+    const reports: ContractViolation[] = [];
+    setContractViolationReporter((v) => reports.push(v));
+    try {
+      await withFetch(
+        async () => new Response(JSON.stringify({
+          channel: 'blue_bin',
+          center: { lat: 1.3691, lng: 103.8454 },
+          radiusKm: 1,
+          count: 0,
+          results: [],
+        }), { status: 200 }),
+        async () => {
+          const result = await fetchNearby({ lat: 1.3691, lng: 103.8454, channel: 'blue_bin' });
+          assert.equal(result.count, 0);
+        },
+      );
+    } finally {
+      setContractViolationReporter(() => {});
+    }
+    assert.deepEqual(reports, []);
   });
 
   console.log('All client tests passed');

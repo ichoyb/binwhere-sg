@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -14,7 +15,9 @@ import {
   getFriendlyApiError,
   getItemCategories,
   LOCALE_OPTIONS,
+  PRIVACY_POLICY_URL,
   STATUS_CONFIG,
+  SUPPORT_URL,
   t,
   type ClassifyResult,
   type Locale,
@@ -283,6 +286,24 @@ export function HomeScreen({
           </ScrollView>
         </View>
       ) : null}
+      {/* App Store guideline 5.1.1: the privacy policy must be reachable in-app. */}
+      <View style={styles.footer}>
+        <Pressable
+          style={styles.footerLink}
+          onPress={() => void Linking.openURL(PRIVACY_POLICY_URL)}
+          accessibilityRole="link"
+        >
+          <Text style={styles.footerLinkText}>{t(locale, 'home.privacy')}</Text>
+        </Pressable>
+        <Text style={styles.footerDivider}>·</Text>
+        <Pressable
+          style={styles.footerLink}
+          onPress={() => void Linking.openURL(SUPPORT_URL)}
+          accessibilityRole="link"
+        >
+          <Text style={styles.footerLinkText}>{t(locale, 'home.support')}</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }
@@ -437,4 +458,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   historyChipText: { fontSize: 14, color: colors.text },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing.lg,
+  },
+  footerLink: { minHeight: 44, justifyContent: 'center', paddingHorizontal: spacing.sm },
+  footerLinkText: { color: colors.textMuted, fontSize: 14 },
+  footerDivider: { color: colors.textMuted, fontSize: 14 },
 });

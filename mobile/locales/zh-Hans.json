@@ -1,0 +1,4 @@
+{
+  "NSCameraUsageDescription": "BinWhere 使用相机识别物品，为你提供回收指引。",
+  "NSLocationWhenInUseUsageDescription": "BinWhere 使用你的位置查找新加坡附近的回收点。"
+}

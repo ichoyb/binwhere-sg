@@ -14,13 +14,17 @@ import {
 
 export const DEFAULT_API_BASE = 'https://binwhere.sg';
 
-/** Resolve the API origin at bundle time and normalize a trailing slash. */
+/**
+ * Resolve the API origin and normalize a trailing slash.
+ *
+ * The override must be read as the literal `process.env.EXPO_PUBLIC_…` member
+ * expression: Expo inlines those at bundle time and leaves any other access
+ * pattern undefined on the device.
+ */
 export function getApiBaseUrl(
-  env: { EXPO_PUBLIC_API_BASE_URL?: string } = process.env as {
-    EXPO_PUBLIC_API_BASE_URL?: string;
-  },
+  override: string | undefined = process.env.EXPO_PUBLIC_API_BASE_URL,
 ): string {
-  const raw = env.EXPO_PUBLIC_API_BASE_URL || DEFAULT_API_BASE;
+  const raw = override || DEFAULT_API_BASE;
   return raw.replace(/\/+$/, '');
 }
 
@@ -65,22 +69,97 @@ export class ApiError extends Error {
   }
 }
 
-async function toApiError(
-  response: Response,
-): Promise<ApiError> {
+export type ApiEndpoint = 'classify' | 'nearby';
+
+/**
+ * A server response this build could not parse against the v1 contract.
+ *
+ * An installed app cannot be redeployed, so this is the one failure the
+ * server side must hear about from the client: it means a web deploy broke
+ * a promise every installed version depends on.
+ */
+export interface ContractViolation {
+  endpoint: ApiEndpoint;
+  status: number;
+  /** Human-readable `path: message` lines, capped so a report stays small. */
+  issues: string[];
+}
+
+export type ContractViolationReporter = (violation: ContractViolation) => void;
+
+let reportContractViolation: ContractViolationReporter = (violation) => {
+  console.error('[api] v1 contract violation', violation);
+};
+
+/** Route violations to crash reporting; the default only logs, so tests stay SDK-free. */
+export function setContractViolationReporter(reporter: ContractViolationReporter): void {
+  reportContractViolation = reporter;
+}
+
+const MAX_REPORTED_ISSUES = 10;
+
+/** Structural view of a Zod error, so this module never imports zod directly. */
+interface SchemaIssues {
+  issues: ReadonlyArray<{ path: ReadonlyArray<PropertyKey>; message: string }>;
+}
+
+function describeIssues(error: SchemaIssues): string[] {
+  return error.issues
+    .slice(0, MAX_REPORTED_ISSUES)
+    .map((issue) => `${issue.path.map(String).join('.') || '<root>'}: ${issue.message}`);
+}
+
+/** Read the body as JSON, reporting a non-JSON body as a contract violation. */
+async function readJson(response: Response, endpoint: ApiEndpoint): Promise<unknown> {
   try {
-    const parsed = ApiErrorResponseSchema.safeParse(await response.json());
-    if (parsed.success) {
-      return new ApiError(response.status, parsed.data.code, parsed.data.error);
-    }
+    return await response.json();
   } catch {
-    // Handled below as a v1 contract violation.
+    reportContractViolation({
+      endpoint,
+      status: response.status,
+      issues: ['<body>: not valid JSON'],
+    });
+    throw new ApiError(response.status, 'INVALID_RESPONSE', `Invalid ${endpoint} response`);
   }
-  return new ApiError(
-    response.status,
-    'INVALID_RESPONSE',
-    'Invalid API error response',
-  );
+}
+
+/** Parse a body against a v1 schema, reporting any mismatch before failing. */
+function parseContract<T>(
+  schema: { safeParse: (data: unknown) => { success: true; data: T } | { success: false; error: SchemaIssues } },
+  body: unknown,
+  response: Response,
+  endpoint: ApiEndpoint,
+): T {
+  const parsed = schema.safeParse(body);
+  if (parsed.success) return parsed.data;
+  reportContractViolation({
+    endpoint,
+    status: response.status,
+    issues: describeIssues(parsed.error),
+  });
+  throw new ApiError(502, 'INVALID_RESPONSE', `Invalid ${endpoint} response`);
+}
+
+async function toApiError(response: Response, endpoint: ApiEndpoint): Promise<ApiError> {
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    body = undefined;
+  }
+  const parsed = ApiErrorResponseSchema.safeParse(body);
+  if (parsed.success) {
+    return new ApiError(response.status, parsed.data.code, parsed.data.error);
+  }
+  // Any non-2xx without the v1 error envelope: an edge error page, a crashed
+  // origin, or a server that changed its error shape. Report it, keep the
+  // real HTTP status so retry logic still sees a 5xx as retryable.
+  reportContractViolation({
+    endpoint,
+    status: response.status,
+    issues: body === undefined ? ['<body>: not valid JSON'] : describeIssues(parsed.error),
+  });
+  return new ApiError(response.status, 'INVALID_RESPONSE', 'Invalid API error response');
 }
 
 export async function classifyItem(
@@ -107,14 +186,10 @@ export async function classifyItem(
   }
 
   if (!response.ok) {
-    throw await toApiError(response);
+    throw await toApiError(response, 'classify');
   }
 
-  try {
-    return ClassifyResultSchema.parse(await response.json());
-  } catch {
-    throw new ApiError(502, 'INVALID_RESPONSE', 'Invalid classification response');
-  }
+  return parseContract(ClassifyResultSchema, await readJson(response, 'classify'), response, 'classify');
 }
 
 export async function fetchNearby(
@@ -137,14 +212,10 @@ export async function fetchNearby(
   }
 
   if (!response.ok) {
-    throw await toApiError(response);
+    throw await toApiError(response, 'nearby');
   }
 
-  try {
-    return NearbyResponseSchema.parse(await response.json());
-  } catch {
-    throw new ApiError(502, 'INVALID_RESPONSE', 'Invalid nearby response');
-  }
+  return parseContract(NearbyResponseSchema, await readJson(response, 'nearby'), response, 'nearby');
 }
 
 export function isRetryable(error: unknown): boolean {

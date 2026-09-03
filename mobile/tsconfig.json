@@ -2,9 +2,17 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "types": [
+      "node"
+    ],
     "paths": {
-      "@binwhere/core": ["../packages/core/src/index.ts"]
+      "@binwhere/core": [
+        "../packages/core/src/index.ts"
+      ]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }
