@@ -7,9 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:unit": "tsx src/lib/bcrs.test.ts && tsx src/lib/ai/provider.test.ts && tsx src/lib/telemetry.test.ts && tsx scripts/convert-rvm-data.test.ts",
+    "test:unit": "tsx src/lib/bcrs.test.ts && tsx src/lib/ai/provider.test.ts && tsx src/lib/telemetry.test.ts && tsx scripts/convert-rvm-data.test.ts && tsx src/app/api/v1/nearby/route.test.ts && tsx ../packages/core/scripts/v1-contract.ts --check",
     "prebuild": "tsx scripts/build-geo-data.ts",
-    "test:classify": "tsx scripts/phase0/test-classify.ts"
+    "test:classify": "tsx scripts/phase0/test-classify.ts",
+    "contract:update": "tsx ../packages/core/scripts/v1-contract.ts --update"
   },
   "dependencies": {
     "@binwhere/core": "file:../packages/core",
