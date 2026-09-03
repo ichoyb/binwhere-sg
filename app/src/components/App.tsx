@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { AppView, ScanHistoryItem } from '@/types/app';
 import type { ClassifyResult } from '@/lib/ai/types';
 import type { Locale } from '@/lib/i18n/types';
@@ -19,23 +19,20 @@ export default function App() {
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [classifyResult, setClassifyResult] = useState<ClassifyResult | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const [locale, setLocale] = useState<Locale>(() => {
     if (typeof window !== 'undefined') return detectLocale();
     return 'en';
   });
   const { location, loading: geoLoading, requestLocation } = useGeolocation();
   const { history, addToHistory, clearHistory } = useHistory();
-  const prevViewRef = useRef<AppView>('home');
-
   // Update <html lang> when locale changes
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
 
-  const direction = VIEW_ORDER[currentView] >= VIEW_ORDER[prevViewRef.current] ? 'forward' : 'backward';
-
   const navigate = (view: AppView) => {
-    prevViewRef.current = currentView;
+    setDirection(VIEW_ORDER[view] >= VIEW_ORDER[currentView] ? 'forward' : 'backward');
     setCurrentView(view);
   };
 

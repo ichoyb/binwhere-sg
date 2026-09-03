@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactElement } from 'react';
 import type { NearbyPoint } from '@/types/app';
 import type { Locale } from '@/lib/i18n/types';
 import { t, type TranslationKey } from '@/lib/i18n';
@@ -7,7 +8,7 @@ import NavigateButton from '@/components/shared/NavigateButton';
 import { getNavigationUrl } from '@/lib/navigation';
 import { formatDistance, estimateWalkTime } from '@/lib/format';
 
-const ACCEPT_ICONS: Record<string, { icon: JSX.Element; label: string }> = {
+const ACCEPT_ICONS: Record<string, { icon: ReactElement; label: string }> = {
   'ICT equipment': {
     label: 'ICT',
     icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8m-4-4v4" /></svg>,
@@ -30,7 +31,7 @@ const ACCEPT_ICONS: Record<string, { icon: JSX.Element; label: string }> = {
   },
 };
 
-const DONATION_ICONS: Record<string, { icon: JSX.Element; label: string }> = {
+const DONATION_ICONS: Record<string, { icon: ReactElement; label: string }> = {
   'Baby and children\'s Items': {
     label: 'Baby',
     icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 12a4 4 0 100-8 4 4 0 000 8z" /><path d="M12 12v4m-3 2h6a2 2 0 012 2H7a2 2 0 012-2z" /></svg>,

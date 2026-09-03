@@ -127,7 +127,13 @@ function checkOrigin(request: NextRequest): boolean {
   const referer = request.headers.get('referer');
 
   if (origin && !ALLOWED_ORIGINS.includes(origin)) return false;
-  if (!origin && referer && !ALLOWED_ORIGINS.some((o) => referer.startsWith(o))) return false;
+  if (!origin && referer) {
+    try {
+      if (!ALLOWED_ORIGINS.includes(new URL(referer).origin)) return false;
+    } catch {
+      return false;
+    }
+  }
 
   return true;
 }

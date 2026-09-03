@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import Script from "next/script";
 import "./globals.css";
 
@@ -54,7 +55,7 @@ export default function RootLayout({
       <body className="antialiased">
         {children}
         <nav className="absolute overflow-hidden w-px h-px" aria-label="Site">
-          <a href="/blog">Blog</a>
+          <Link href="/blog">Blog</Link>
         </nav>
         <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
         <Script id="gtag-init" strategy="afterInteractive">

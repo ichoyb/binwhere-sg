@@ -22,7 +22,7 @@ function IdleCarousel({ onStart, onBcrsEntry, locale }: {
 }) {
   const [page, setPage] = useState(0);
   const [fading, setFading] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   const goTo = useCallback((target: number) => {
     setFading(true);

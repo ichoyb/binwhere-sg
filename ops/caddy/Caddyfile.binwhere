@@ -1,0 +1,39 @@
+binwhere.sg {
+	tls /etc/caddy/origin/binwhere.sg.pem /etc/caddy/origin/binwhere.sg.key {
+		client_auth {
+			mode require_and_verify
+			trust_pool file /etc/caddy/aop/binwhere-client-ca.pem
+		}
+	}
+
+	log {
+		output file /var/log/caddy/binwhere.log {
+			roll_size 10mb
+			roll_keep 5
+		}
+		format filter {
+			wrap json
+			fields {
+				request>uri query {
+					delete lat
+					delete lng
+				}
+				request>headers>Authorization delete
+				request>headers>Cookie delete
+			}
+		}
+	}
+
+	reverse_proxy 127.0.0.1:3100
+}
+
+www.binwhere.sg {
+	tls /etc/caddy/origin/binwhere.sg.pem /etc/caddy/origin/binwhere.sg.key {
+		client_auth {
+			mode require_and_verify
+			trust_pool file /etc/caddy/aop/binwhere-client-ca.pem
+		}
+	}
+
+	redir https://binwhere.sg{uri} permanent
+}

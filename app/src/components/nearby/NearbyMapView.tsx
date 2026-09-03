@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -89,7 +89,7 @@ export default function NearbyMapView({ points, userLocation, channel, locale = 
   const pointIcon = useMemo(() => createPointIcon(color), [color]);
   const userIcon = useMemo(() => createUserIcon(), []);
   // Stable key per mount to prevent "container already initialized" in StrictMode
-  const mapKey = useRef(`map-${Date.now()}`);
+  const mapKey = useId();
 
   const center: [number, number] = userLocation
     ? [userLocation.lat, userLocation.lng]
@@ -98,7 +98,7 @@ export default function NearbyMapView({ points, userLocation, channel, locale = 
   return (
     <div className="relative w-full h-full">
       <MapContainer
-        key={mapKey.current}
+        key={mapKey}
         center={center}
         zoom={15}
         style={{ height: '100%', width: '100%' }}

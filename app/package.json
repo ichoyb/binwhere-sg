@@ -2,12 +2,17 @@
   "name": "binwhere-app",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@11.19.0",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "package:web": "node scripts/package-standalone.mjs",
     "start": "next start",
-    "lint": "next lint",
-    "test:unit": "tsx src/lib/bcrs.test.ts && tsx src/lib/ai/provider.test.ts && tsx src/lib/telemetry.test.ts && tsx scripts/convert-rvm-data.test.ts && tsx src/app/api/v1/nearby/route.test.ts && tsx ../packages/core/scripts/v1-contract.ts --check",
+    "lint": "eslint . --max-warnings 0",
+    "test:unit": "tsx src/lib/bcrs.test.ts && tsx src/lib/ai/provider.test.ts && tsx src/lib/telemetry.test.ts && tsx src/lib/rate-limit.test.ts && tsx scripts/convert-rvm-data.test.ts && tsx src/app/api/v1/nearby/route.test.ts && tsx ../packages/core/scripts/v1-contract.ts --check",
     "prebuild": "tsx scripts/build-geo-data.ts",
     "test:classify": "tsx scripts/phase0/test-classify.ts",
     "contract:update": "tsx ../packages/core/scripts/v1-contract.ts --update"
@@ -15,30 +20,35 @@
   "dependencies": {
     "@binwhere/core": "file:../packages/core",
     "leaflet": "^1.9.4",
-    "next": "14.2.35",
+    "next": "16.3.3",
     "p-limit": "^7.3.0",
     "papaparse": "^5.5.3",
     "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-leaflet": "^4.2.1",
-    "sharp": "^0.34.5",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-leaflet": "5.0.0",
+    "sharp": "0.35.4",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.21",
-    "@types/node": "^20",
+    "@types/node": "^24",
     "@types/papaparse": "^5.5.2",
     "@types/qrcode": "^1.5.6",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
     "dotenv": "^17.3.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.35",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.3",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "tsx": "^4.21.0",
     "typescript": "^5"
+  },
+  "allowScripts": {
+    "esbuild@0.27.2": true,
+    "unrs-resolver@1.11.1": true,
+    "fsevents": false
   }
 }

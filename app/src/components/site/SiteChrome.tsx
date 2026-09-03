@@ -14,6 +14,8 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-[960px] mx-auto px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
+            {/* This bundled logo intentionally bypasses the blocked /_next/image endpoint. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/icons/binwhere-logo.png" alt="BinWhere" width={24} height={24} />
             <span className="text-lg font-bold tracking-tight">
               <span className="text-[#00A651]">Bin</span>
@@ -43,6 +45,8 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         <div className="max-w-[960px] mx-auto px-6 py-10">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
+              {/* This bundled logo intentionally bypasses the blocked /_next/image endpoint. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/icons/binwhere-logo.png" alt="BinWhere" width={20} height={20} />
               <span className="text-sm font-bold tracking-tight">
                 <span className="text-[#00A651]">Bin</span>

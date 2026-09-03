@@ -61,30 +61,41 @@ runTest('gridCell never emits more than two decimals', () => {
   }
 });
 
-runTest('getClientIp takes the first x-forwarded-for entry', () => {
-  const ip = getClientIp(req({ 'x-forwarded-for': '203.0.113.7, 172.16.0.1' }));
+runTest('getClientIp uses Cloudflare client identity', () => {
+  const ip = getClientIp(req({ 'cf-connecting-ip': '203.0.113.7' }));
   assert.equal(ip, '203.0.113.7');
 });
 
-runTest('getClientIp falls back to x-real-ip then unknown', () => {
-  assert.equal(getClientIp(req({ 'x-real-ip': '198.51.100.4' })), '198.51.100.4');
+runTest('getClientIp ignores caller-controlled forwarding headers', () => {
+  assert.equal(getClientIp(req({
+    'x-forwarded-for': '203.0.113.7, 172.16.0.1',
+    'x-real-ip': '198.51.100.4',
+  })), 'unknown');
   assert.equal(getClientIp(req({})), 'unknown');
 });
 
+runTest('getClientIp prefers Cloudflare over a forged forwarding chain', () => {
+  const ip = getClientIp(req({
+    'cf-connecting-ip': '198.51.100.4',
+    'x-forwarded-for': '203.0.113.7, 172.16.0.1',
+  }));
+  assert.equal(ip, '198.51.100.4');
+});
+
 runTest('clientId is stable for the same IP', () => {
-  const a = clientId(req({ 'x-forwarded-for': '203.0.113.7' }));
-  const b = clientId(req({ 'x-forwarded-for': '203.0.113.7' }));
+  const a = clientId(req({ 'cf-connecting-ip': '203.0.113.7' }));
+  const b = clientId(req({ 'cf-connecting-ip': '203.0.113.7' }));
   assert.equal(a, b);
 });
 
 runTest('clientId differs across IPs', () => {
-  const a = clientId(req({ 'x-forwarded-for': '203.0.113.7' }));
-  const b = clientId(req({ 'x-forwarded-for': '203.0.113.8' }));
+  const a = clientId(req({ 'cf-connecting-ip': '203.0.113.7' }));
+  const b = clientId(req({ 'cf-connecting-ip': '203.0.113.8' }));
   assert.notEqual(a, b);
 });
 
 runTest('clientId never contains the raw IP', () => {
-  const id = clientId(req({ 'x-forwarded-for': '203.0.113.7' }));
+  const id = clientId(req({ 'cf-connecting-ip': '203.0.113.7' }));
   assert.ok(!id.includes('203.0.113.7'));
   assert.match(id, /^[0-9a-f]{12}$/);
 });

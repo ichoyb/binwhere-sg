@@ -1,0 +1,231 @@
+name: Deploy Web to Production
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build verified release
+    runs-on: ${{ vars.WEB_BUILD_RUNNER }}
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    outputs:
+      archive_sha256: ${{ steps.bundle.outputs.archive_sha256 }}
+      artifact_name: ${{ steps.bundle.outputs.artifact_name }}
+      release_id: ${{ steps.bundle.outputs.release_id }}
+      script_sha256: ${{ steps.bundle.outputs.script_sha256 }}
+
+    steps:
+      - name: Require the master branch
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF}" != 'refs/heads/master' ]]; then
+            echo 'Production releases must be dispatched from master.' >&2
+            exit 1
+          fi
+
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Validate build architecture
+        env:
+          EXPECTED_ARCH: ${{ vars.WEB_MACHINE_ARCH }}
+        shell: bash
+        run: |
+          case "${EXPECTED_ARCH}:$(uname -m)" in
+            x86_64:x86_64 | aarch64:aarch64) ;;
+            *)
+              echo "WEB_BUILD_RUNNER architecture does not match WEB_MACHINE_ARCH=${EXPECTED_ARCH}" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Install core locked dependencies
+        working-directory: packages/core
+        run: npm ci
+
+      - name: Audit core dependencies
+        working-directory: packages/core
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Install Web locked dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Audit production dependencies
+        working-directory: app
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Audit build dependencies
+        working-directory: app
+        run: npm audit --audit-level=high
+
+      - name: Lint
+        working-directory: app
+        run: npm run lint
+
+      - name: Build production bundle
+        working-directory: app
+        run: npm run build
+
+      - name: Type-check
+        working-directory: app
+        run: npm exec tsc -- --noEmit
+
+      - name: Run unit and contract tests
+        working-directory: app
+        run: npm run test:unit
+
+      - name: Prepare Web-only deployment tree
+        working-directory: app
+        run: npm run package:web
+
+      - name: Create release bundle
+        id: bundle
+        shell: bash
+        run: |
+          release_id="${GITHUB_SHA}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          artifact_name="web-deploy-${release_id}"
+          bundle_dir="${RUNNER_TEMP}/binwhere-deploy"
+          install -d -m 0700 "${bundle_dir}"
+
+          tar -czf "${bundle_dir}/binwhere-web.tar.gz" -C app/.next/deploy .
+          cp ops/deploy-web-release.sh "${bundle_dir}/deploy-web-release.sh"
+
+          archive_sha256="$(sha256sum "${bundle_dir}/binwhere-web.tar.gz" | awk '{print $1}')"
+          script_sha256="$(sha256sum "${bundle_dir}/deploy-web-release.sh" | awk '{print $1}')"
+
+          echo "archive_sha256=${archive_sha256}" >>"${GITHUB_OUTPUT}"
+          echo "artifact_name=${artifact_name}" >>"${GITHUB_OUTPUT}"
+          echo "release_id=${release_id}" >>"${GITHUB_OUTPUT}"
+          echo "script_sha256=${script_sha256}" >>"${GITHUB_OUTPUT}"
+
+      - name: Transfer release to deploy job
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ steps.bundle.outputs.artifact_name }}
+          path: ${{ runner.temp }}/binwhere-deploy
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  deploy:
+    name: Deploy through SSM
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Download verified release
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+          path: ${{ runner.temp }}/binwhere-deploy
+
+      - name: Verify transferred files
+        env:
+          ARCHIVE_SHA256: ${{ needs.build.outputs.archive_sha256 }}
+          SCRIPT_SHA256: ${{ needs.build.outputs.script_sha256 }}
+        shell: bash
+        run: |
+          archive="${RUNNER_TEMP}/binwhere-deploy/binwhere-web.tar.gz"
+          script="${RUNNER_TEMP}/binwhere-deploy/deploy-web-release.sh"
+          [[ "$(sha256sum "${archive}" | awk '{print $1}')" == "${ARCHIVE_SHA256}" ]]
+          [[ "$(sha256sum "${script}" | awk '{print $1}')" == "${SCRIPT_SHA256}" ]]
+
+      - name: Configure short-lived AWS credentials
+        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          allowed-account-ids: ${{ vars.AWS_ACCOUNT_ID }}
+          role-session-name: binwhere-${{ github.run_id }}
+          mask-aws-account-id: true
+          unset-current-credentials: true
+
+      - name: Upload immutable release to private S3
+        env:
+          ARTIFACT_BUCKET: ${{ vars.WEB_ARTIFACT_BUCKET }}
+          RELEASE_ID: ${{ needs.build.outputs.release_id }}
+        shell: bash
+        run: |
+          [[ "${ARTIFACT_BUCKET}" =~ ^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$ ]]
+          [[ "${RELEASE_ID}" =~ ^[0-9a-f]{40}-[0-9]+-[0-9]+$ ]]
+
+          local_dir="${RUNNER_TEMP}/binwhere-deploy"
+          s3_prefix="s3://${ARTIFACT_BUCKET}/releases/${RELEASE_ID}"
+          aws s3 cp "${local_dir}/binwhere-web.tar.gz" \
+            "${s3_prefix}/binwhere-web.tar.gz" --sse AES256 --only-show-errors
+          aws s3 cp "${local_dir}/deploy-web-release.sh" \
+            "${s3_prefix}/deploy-web-release.sh" --sse AES256 --only-show-errors
+
+      - name: Deploy on EC2 with SSM Run Command
+        env:
+          ARCHIVE_SHA256: ${{ needs.build.outputs.archive_sha256 }}
+          ARTIFACT_BUCKET: ${{ vars.WEB_ARTIFACT_BUCKET }}
+          INSTANCE_ID: ${{ vars.WEB_INSTANCE_ID }}
+          MACHINE_ARCH: ${{ vars.WEB_MACHINE_ARCH }}
+          RELEASE_ID: ${{ needs.build.outputs.release_id }}
+          SCRIPT_SHA256: ${{ needs.build.outputs.script_sha256 }}
+        shell: bash
+        run: |
+          [[ "${INSTANCE_ID}" =~ ^i-[0-9a-f]+$ ]]
+          [[ "${MACHINE_ARCH}" == 'x86_64' || "${MACHINE_ARCH}" == 'aarch64' ]]
+
+          s3_prefix="s3://${ARTIFACT_BUCKET}/releases/${RELEASE_ID}"
+          remote_dir="/var/tmp/binwhere-command-${RELEASE_ID}"
+          remote_script="${remote_dir}/deploy-web-release.sh"
+          remote_command="set -eu; trap 'rm -rf -- ${remote_dir}' EXIT; install -d -m 0700 ${remote_dir}; aws s3 cp ${s3_prefix}/deploy-web-release.sh ${remote_script} --only-show-errors; printf '%s  %s\\n' ${SCRIPT_SHA256} ${remote_script} | sha256sum -c -; chmod 0700 ${remote_script}; ${remote_script} ${s3_prefix}/binwhere-web.tar.gz ${ARCHIVE_SHA256} ${RELEASE_ID} ${MACHINE_ARCH}"
+
+          jq -n --arg command "${remote_command}" \
+            '{commands: [$command], executionTimeout: ["900"]}' \
+            >"${RUNNER_TEMP}/ssm-parameters.json"
+
+          command_id="$(aws ssm send-command \
+            --instance-ids "${INSTANCE_ID}" \
+            --document-name AWS-RunShellScript \
+            --comment "BinWhere ${RELEASE_ID}" \
+            --parameters "file://${RUNNER_TEMP}/ssm-parameters.json" \
+            --query 'Command.CommandId' \
+            --output text)"
+
+          status='Pending'
+          for _ in {1..180}; do
+            status="$(aws ssm get-command-invocation \
+              --command-id "${command_id}" \
+              --instance-id "${INSTANCE_ID}" \
+              --query 'Status' \
+              --output text 2>/dev/null || true)"
+            case "${status}" in
+              Success | Cancelled | TimedOut | Failed | Cancelling) break ;;
+            esac
+            sleep 5
+          done
+
+          aws ssm get-command-invocation \
+            --command-id "${command_id}" \
+            --instance-id "${INSTANCE_ID}" \
+            --query '{Status:Status,Output:StandardOutputContent,Error:StandardErrorContent}' \
+            --output json
+
+          [[ "${status}" == 'Success' ]]

@@ -9,17 +9,13 @@ import type { ApiErrorCode } from '@binwhere/core';
 /**
  * The client identity used for both rate limiting and telemetry.
  *
- * Behind Cloudflare the socket peer is always an edge IP, so the first
- * x-forwarded-for entry is the real caller. Defined once because two copies of
- * this would eventually disagree, and then a rate-limit bucket and its event
- * would describe different clients.
+ * Production traffic reaches the origin through Cloudflare, which sets
+ * CF-Connecting-IP to the connecting client. X-Forwarded-For is deliberately
+ * ignored because Cloudflare appends to a caller-supplied chain, so its first
+ * entry is not a trustworthy identity.
  */
 export function getClientIp(request: Request): string {
-  return (
-    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
-    request.headers.get('x-real-ip') ||
-    'unknown'
-  );
+  return request.headers.get('cf-connecting-ip')?.trim() || 'unknown';
 }
 
 export class HttpError extends Error {
