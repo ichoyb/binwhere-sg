@@ -40,6 +40,9 @@ const zh: Record<keyof typeof en, string> = {
   'error.networkError': '连接出现问题，请检查您的网络。',
   'error.generic': '出了点问题，请重试。',
   'error.title': '出了点问题',
+  'error.crashTitle': 'BinWhere 遇到了问题',
+  'error.crashBody': '发生了意外错误。你的历史记录不受影响，点击「继续」回到首页。',
+  'error.crashRetry': '继续',
 
   // Home page
   'home.snapToKnow': '拍照识别',
@@ -54,6 +57,8 @@ const zh: Record<keyof typeof en, string> = {
   'home.search': '搜索',
   'home.recent': '最近',
   'home.clearHistory': '清除',
+  'home.privacy': '隐私政策',
+  'home.support': '帮助与反馈',
 
   // Loading
   'loading.identifying': '正在识别物品...',

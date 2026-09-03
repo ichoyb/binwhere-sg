@@ -40,6 +40,9 @@ const en = {
   'error.networkError': 'Connection problem. Please check your network.',
   'error.generic': 'Something went wrong. Please try again.',
   'error.title': 'Something went wrong',
+  'error.crashTitle': 'BinWhere ran into a problem',
+  'error.crashBody': 'Something unexpected went wrong. Your history is safe. Tap Continue to go back to the start.',
+  'error.crashRetry': 'Continue',
 
   // Home page
   'home.snapToKnow': 'Snap to know.',
@@ -54,6 +57,8 @@ const en = {
   'home.search': 'Search',
   'home.recent': 'Recent',
   'home.clearHistory': 'Clear',
+  'home.privacy': 'Privacy Policy',
+  'home.support': 'Support',
 
   // Loading
   'loading.identifying': 'Identifying item...',

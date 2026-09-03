@@ -40,6 +40,9 @@ const ms: Record<keyof typeof en, string> = {
   'error.networkError': 'Masalah sambungan. Sila periksa rangkaian anda.',
   'error.generic': 'Sesuatu telah berlaku. Sila cuba lagi.',
   'error.title': 'Sesuatu telah berlaku',
+  'error.crashTitle': 'BinWhere menghadapi masalah',
+  'error.crashBody': 'Ralat yang tidak dijangka telah berlaku. Sejarah anda selamat. Ketik Teruskan untuk kembali ke skrin utama.',
+  'error.crashRetry': 'Teruskan',
 
   // Home page
   'home.snapToKnow': 'Tangkap untuk tahu.',
@@ -54,6 +57,8 @@ const ms: Record<keyof typeof en, string> = {
   'home.search': 'Cari',
   'home.recent': 'Terkini',
   'home.clearHistory': 'Kosongkan',
+  'home.privacy': 'Dasar Privasi',
+  'home.support': 'Bantuan',
 
   // Loading
   'loading.identifying': 'Mengenal pasti item...',

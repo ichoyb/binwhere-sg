@@ -185,3 +185,16 @@ export const LOW_CONFIDENCE_THRESHOLD = 0.6;
 export const MAX_HISTORY_ITEMS = 10;
 export const IMAGE_MAX_SIZE = 1024;
 export const IMAGE_QUALITY = 0.7;
+
+/**
+ * Public web pages both clients link to.
+ *
+ * App Store guideline 5.1.1 requires a privacy policy link inside the app as
+ * well as in App Store Connect, so these URLs are a cross-client contract,
+ * not a web detail. The pages live in app/src/app/(site)/.
+ */
+export const SITE_URL = 'https://binwhere.sg';
+export const PRIVACY_POLICY_URL = `${SITE_URL}/privacy`;
+export const SUPPORT_URL = `${SITE_URL}/support`;
+/** Contact published on the site footer, the privacy policy and App Store Connect. */
+export const SUPPORT_EMAIL = 'ichoyb@gmail.com';

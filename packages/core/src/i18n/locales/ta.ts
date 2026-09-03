@@ -40,6 +40,9 @@ const ta: Record<keyof typeof en, string> = {
   'error.networkError': 'இணைப்பு சிக்கல். உங்கள் நெட்வொர்க்கை சரிபாருங்கள்.',
   'error.generic': 'ஏதோ தவறு நடந்தது. மீண்டும் முயலவும்.',
   'error.title': 'ஏதோ தவறு நடந்தது',
+  'error.crashTitle': 'BinWhere-இல் ஒரு சிக்கல் ஏற்பட்டது',
+  'error.crashBody': 'எதிர்பாராத பிழை ஏற்பட்டது. உங்கள் வரலாறு பாதுகாப்பாக உள்ளது. முகப்புக்குத் திரும்ப “தொடரவும்” என்பதைத் தட்டவும்.',
+  'error.crashRetry': 'தொடரவும்',
 
   // Home page
   'home.snapToKnow': 'படம் எடுத்து அறியுங்கள்.',
@@ -54,6 +57,8 @@ const ta: Record<keyof typeof en, string> = {
   'home.search': 'தேடு',
   'home.recent': 'சமீபத்தியவை',
   'home.clearHistory': 'அழி',
+  'home.privacy': 'தனியுரிமைக் கொள்கை',
+  'home.support': 'உதவி',
 
   // Loading
   'loading.identifying': 'பொருளை அடையாளம் காணுகிறது...',
