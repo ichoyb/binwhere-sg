@@ -24,7 +24,7 @@ die() {
 
 for command in \
   awk aws chmod chown curl find grep id install journalctl ln mktemp mv node \
-  readlink sha256sum sleep stat systemctl tar uname; do
+  readlink rm sha256sum sleep stat systemctl tar uname; do
   command -v "${command}" >/dev/null || die "missing command: ${command}"
 done
 
@@ -56,6 +56,7 @@ install -d -o root -g binwhere -m 0750 "${RELEASES_DIR}"
 readonly WORK_DIR="$(mktemp -d /var/tmp/binwhere-deploy.XXXXXX)"
 STAGING_DIR=""
 CURRENT_TEMP_LINK=""
+PREVIOUS_RELEASE=""
 
 cleanup() {
   rm -rf -- "${WORK_DIR}"
@@ -65,6 +66,67 @@ cleanup() {
   [[ -z "${CURRENT_TEMP_LINK}" ]] || rm -f -- "${CURRENT_TEMP_LINK}"
 }
 trap cleanup EXIT
+
+wait_for_server() {
+  for _ in {1..30}; do
+    if systemctl is-active --quiet "${SERVICE_NAME}" \
+      && curl --fail --silent --max-time 2 \
+        http://127.0.0.1:3100/robots.txt >/dev/null; then
+      return 0
+    fi
+    sleep 1
+  done
+  return 1
+}
+
+verify_application() {
+  local response
+
+  response="$(curl --fail --silent --max-time 5 \
+    'http://127.0.0.1:3100/api/v1/nearby?lat=1.37&lng=103.85&channel=blue_bin&limit=1' \
+    --header 'CF-Connecting-IP: 192.0.2.1')" || return 1
+
+  grep -Eq '"channel":"blue_bin"' <<<"${response}" \
+    && grep -Eq '"count":[0-9]+' <<<"${response}"
+}
+
+verify_release() {
+  wait_for_server && verify_application
+}
+
+activate_release() {
+  local target="$1"
+  local operation="$2"
+
+  CURRENT_TEMP_LINK="/opt/binwhere/.current-${RELEASE_ID}-${operation}"
+  [[ ! -e "${CURRENT_TEMP_LINK}" && ! -L "${CURRENT_TEMP_LINK}" ]] \
+    || die "temporary current link already exists: ${CURRENT_TEMP_LINK}"
+  ln -s "${target}" "${CURRENT_TEMP_LINK}"
+  mv -Tf "${CURRENT_TEMP_LINK}" "${CURRENT_LINK}"
+  CURRENT_TEMP_LINK=""
+}
+
+rollback_failed_release() {
+  local failure="$1"
+
+  journalctl -u "${SERVICE_NAME}" -n 50 --no-pager >&2 || true
+
+  if [[ -n "${PREVIOUS_RELEASE}" ]]; then
+    activate_release "${PREVIOUS_RELEASE}" rollback
+    if systemctl restart "${SERVICE_NAME}" && verify_release; then
+      die "${failure}; rolled back to ${PREVIOUS_RELEASE##*/}"
+    fi
+
+    journalctl -u "${SERVICE_NAME}" -n 50 --no-pager >&2 || true
+    die "${failure}; rollback to ${PREVIOUS_RELEASE##*/} did not recover the service"
+  fi
+
+  systemctl stop "${SERVICE_NAME}" >/dev/null 2>&1 || true
+  if [[ -L "${CURRENT_LINK}" ]]; then
+    rm -f -- "${CURRENT_LINK}"
+  fi
+  die "${failure}; no previous release exists, so the service was stopped"
+}
 
 readonly ARCHIVE="${WORK_DIR}/binwhere-web.tar.gz"
 aws s3 cp "${ARTIFACT_URI}" "${ARCHIVE}" --only-show-errors
@@ -123,30 +185,22 @@ if [[ -e "${CURRENT_LINK}" && ! -L "${CURRENT_LINK}" ]]; then
 fi
 
 if [[ -L "${CURRENT_LINK}" ]]; then
-  current_target="$(readlink -f "${CURRENT_LINK}")"
+  current_target="$(readlink -f "${CURRENT_LINK}")" \
+    || die 'current symlink is broken'
   [[ "${current_target}" == "${RELEASES_DIR}"/* ]] || die 'current symlink points outside releases'
+  [[ -f "${current_target}/app/server.js" ]] || die 'current release is missing app/server.js'
+  PREVIOUS_RELEASE="${current_target}"
 fi
 
-CURRENT_TEMP_LINK="/opt/binwhere/.current-${RELEASE_ID}"
-ln -s "${RELEASE_DIR}" "${CURRENT_TEMP_LINK}"
-mv -Tf "${CURRENT_TEMP_LINK}" "${CURRENT_LINK}"
-CURRENT_TEMP_LINK=""
+activate_release "${RELEASE_DIR}" activate
 
 if ! systemctl restart "${SERVICE_NAME}"; then
-  journalctl -u "${SERVICE_NAME}" -n 50 --no-pager >&2 || true
-  die 'systemd restart failed'
+  rollback_failed_release 'systemd restart failed'
 fi
 
-for _ in {1..30}; do
-  if systemctl is-active --quiet "${SERVICE_NAME}" \
-    && curl --fail --silent --show-error --max-time 2 \
-      http://127.0.0.1:3100/robots.txt >/dev/null; then
-    printf 'deployed release %s (%s, Node %s)\n' \
-      "${RELEASE_ID}" "${ACTUAL_ARCH}" "${NODE_VERSION}"
-    exit 0
-  fi
-  sleep 1
-done
+if ! verify_release; then
+  rollback_failed_release 'release failed the local application health check'
+fi
 
-journalctl -u "${SERVICE_NAME}" -n 50 --no-pager >&2 || true
-die 'service did not pass the local health check within 30 seconds'
+printf 'deployed release %s (%s, Node %s)\n' \
+  "${RELEASE_ID}" "${ACTUAL_ARCH}" "${NODE_VERSION}"

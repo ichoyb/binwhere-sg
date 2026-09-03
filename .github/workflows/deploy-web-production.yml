@@ -1,6 +1,15 @@
 name: Deploy Web to Production
 
 on:
+  push:
+    branches:
+      - master
+    paths:
+      - app/**
+      - packages/core/**
+      - .nvmrc
+      - ops/deploy-web-release.sh
+      - .github/workflows/deploy-web-production.yml
   workflow_dispatch:
 
 permissions:
@@ -28,7 +37,7 @@ jobs:
         shell: bash
         run: |
           if [[ "${GITHUB_REF}" != 'refs/heads/master' ]]; then
-            echo 'Production releases must be dispatched from master.' >&2
+            echo 'Production releases must run from master.' >&2
             exit 1
           fi
 
