@@ -35,5 +35,10 @@
     "@types/react": "~19.2.2",
     "tsx": "^4.21.0",
     "typescript": "~6.0.3"
+  },
+  "allowScripts": {
+    "@sentry/cli@2.58.4": true,
+    "esbuild@0.27.2": true,
+    "fsevents": false
   }
 }
