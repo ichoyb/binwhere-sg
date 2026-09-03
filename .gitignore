@@ -36,6 +36,7 @@ yarn-error.log*
 
 # build-time generated data
 app/src/data/generated/
+app/src/data/.generated-staging-*/
 
 # Phase 0 test results
 app/scripts/phase0/results/*.json

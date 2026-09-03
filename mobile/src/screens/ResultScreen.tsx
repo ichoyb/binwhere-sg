@@ -274,11 +274,14 @@ export function ResultScreen({
           ) : nearest ? (
             <>
               <Text style={styles.pointName}>{nearest.name}</Text>
-              <Text style={styles.muted}>{nearest.address}</Text>
+              <Text style={styles.pointAddress}>{nearest.address}</Text>
               {nearest.openingHours ? (
-                <Text style={styles.muted}>
-                  {t(locale, 'bcrs.openingHours')}: {nearest.openingHours}
-                </Text>
+                <View style={styles.hoursBox}>
+                  <Text style={styles.hoursText}>
+                    <Text style={styles.hoursLabel}>{t(locale, 'bcrs.openingHours')}: </Text>
+                    {nearest.openingHours}
+                  </Text>
+                </View>
               ) : null}
               <Text style={styles.distance}>
                 {formatDistance(nearest.distanceKm)} · {estimateWalkTime(nearest.distanceKm)}{' '}
@@ -360,6 +363,16 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center' },
   muted: { fontSize: 14, color: colors.textMuted },
   pointName: { fontSize: 16, fontWeight: '600', color: colors.text },
+  pointAddress: { marginTop: 4, fontSize: 14, lineHeight: 20, color: colors.textMuted },
+  hoursBox: {
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#ECFDF5',
+  },
+  hoursText: { fontSize: 13, lineHeight: 18, color: '#047857' },
+  hoursLabel: { fontWeight: '700' },
   distance: { fontSize: 14, color: colors.blueBin, marginVertical: spacing.sm, fontWeight: '600' },
   primaryBtn: {
     minHeight: touch.minHeight,

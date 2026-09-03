@@ -61,6 +61,31 @@ async function main() {
     assert.ok(body.count > 0, 'Ang Mo Kio has blue bins');
   });
 
+  await runTest('return points expose current locations without static machine status', async () => {
+    const response = await GET(request({
+      ...ANG_MO_KIO,
+      channel: 'return_point',
+      radius: '5',
+      limit: '20',
+    }));
+    assert.equal(response.status, 200);
+    const body = NearbyResponseSchema.parse(await response.json());
+    assert.ok(body.results.length > 0, 'Ang Mo Kio has BCRS return points');
+    for (const point of body.results) {
+      assert.ok(point.address, `${point.name} has no address`);
+      assert.ok(point.postalCode, `${point.name} has no postal code`);
+      assert.equal(
+        point.address.split(point.postalCode).length - 1,
+        1,
+        `${point.name} does not contain exactly one postal code`,
+      );
+      if (point.openingHours) {
+        assert.equal(/\s{2,}/.test(point.openingHours), false, `${point.name} has untrimmed hours`);
+      }
+      assert.equal(point.machineStatus, undefined);
+    }
+  });
+
   await runTest('a position outside Singapore is a v1 INVALID_INPUT error', async () => {
     const response = await GET(request({ lat: '22.3193', lng: '114.1694', channel: 'blue_bin' }));
     assert.equal(response.status, 400);

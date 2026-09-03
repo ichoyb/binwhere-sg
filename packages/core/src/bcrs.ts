@@ -35,6 +35,14 @@ function parseOpeningHours(input: unknown): ReturnPointOpeningHours | undefined 
   return undefined;
 }
 
+function plainOpeningHours(input: unknown): string | undefined {
+  if (typeof input !== 'string') return undefined;
+  const value = input.trim();
+  if (!value || value.startsWith('{') || value.startsWith('[')) return undefined;
+  if (/^Mon\s*-\s*Sun:\s*24\s*Hrs$/i.test(value)) return '24 Hours';
+  return value.replace(/\s+/g, ' ');
+}
+
 function formatTime(input?: string): string | null {
   if (!input || !/^\d{4}$/.test(input)) return null;
   return `${input.slice(0, 2)}:${input.slice(2)}`;
@@ -47,6 +55,9 @@ function formatDayRange(startDay: number, endDay: number): string {
 }
 
 export function formatReturnPointOpeningHours(input: unknown): string | undefined {
+  const plainText = plainOpeningHours(input);
+  if (plainText) return plainText;
+
   const openingHours = parseOpeningHours(input);
   if (!openingHours) return undefined;
 

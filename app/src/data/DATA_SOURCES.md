@@ -1,109 +1,57 @@
-# BinWhere Data Sources
+# BinWhere 地理数据来源
 
-## Overview
+生产构建不会使用仓库中的 generated 文件或上一次构建结果。`npm run prebuild`
+会重新获取远端数据、校验全部五类点位，并生成
+`src/data/generated/data-manifest.json`。该目录不进入 Git。
 
-Data is sourced from [data.gov.sg](https://data.gov.sg) and NEA. **These are static datasets with annual updates, NOT real-time APIs.**
+## 当前来源
 
-## Available Datasets
+| 数据集 | 权威来源 | 获取方式 | 上游时间字段 | 最低点位数 |
+| --- | --- | --- | --- | ---: |
+| Blue Bins | data.gov.sg / NEA | 每次构建下载最新 GeoJSON | `lastUpdatedAt` | 10,000 |
+| E-Waste | data.gov.sg / NEA | 每次构建下载最新 GeoJSON | `lastUpdatedAt`、`coverageStart` | 500 |
+| Textile Bins | Cloop / recycle.gov.sg | 仓库内版本化快照 | `snapshotCapturedAt` | 300 |
+| Reuse Channels | NEA OneMap feed | 每次构建获取 | feed `DateTime` | 50 |
+| BCRS Return Points | BCRS 公共 location feed | 每次构建获取 | 无内容更新时间；记录本次 `retrievedAt` | 1,000 |
 
-| Dataset | Points | Last Updated | Update Freq | Format | Size |
-|---------|--------|--------------|-------------|--------|------|
-| Recycling Bins (Blue Bins) | 12,578 | 2024-06-06 | Unknown | GeoJSON | 19MB |
-| E-waste Collection | 718 | 2025-11-08 | Annual | GeoJSON | 661KB |
-| Textile/Clothing | N/A | - | - | - | - |
+点位总数不在代码或文档中固定；Web 界面从本次构建的 manifest 读取实际数量。
+mobile 仅展示 BCRS 官方长期口径 `1,000+`，附近点位仍由 Web API 返回。
 
-**Note:** Textile recycling data is NOT available as a separate dataset. Options:
-1. Use "2nd Hand Goods Collection Points" from NEA
-2. Scrape from recycle.gov.sg
-3. Contact NEA for data access
+## 新鲜度语义
 
-## Data Schemas
+- 远端来源必须在当前构建中成功返回并通过校验；不存在本地回退。
+- data.gov.sg 和 NEA 的发布内容可能长期不变。manifest 同时记录本次获取时间和
+  发布方时间，不能把“刚下载”误写成“内容刚更新”。
+- Textile 是唯一的本地快照，采集于 `2026-03-01T18:04:55+08:00`，最长允许
+  366 天；过期后构建直接失败，必须重新核实并更新快照日期。
+- BCRS feed 没有每条机器状态的更新时间。因此构建只使用点位、地址、邮编和
+  营业时间，不发布 `MACHINE_STATUS`，也不把任何历史状态改写为 `ONLINE`。
 
-### Recycling Bins (recycling-bins.geojson)
-```
-Properties embedded in HTML Description field:
-- ADDRESSBLOCKHOUSENUMBER: string
-- ADDRESSBUILDINGNAME: string
-- ADDRESSFLOORNUMBER: string
-- ADDRESSPOSTALCODE: string
-- ADDRESSSTREETNAME: string
-- ADDRESSTYPE: "H" (HDB)
-- DESCRIPTION: string
-- HYPERLINK: string
-- NAME: "Recycling Bins in HDB Estates"
-- PHOTOURL: string
-- INC_CRC: string (checksum)
-- FMEL_UPD_D: string (yyyymmddHHMMSS)
+## 构建质量门槛
 
-Geometry:
-- type: "Point"
-- coordinates: [lng, lat, altitude]
-```
+所有输出都必须满足：
 
-### E-waste Collection (ewaste.geojson)
-```
-Properties:
-- OBJECTID: number
-- NAME: string (operator name)
-- ADDRESSBLOCKHOUSENUMBER: string | null
-- ADDRESSBUILDINGNAME: string
-- ADDRESSFLOORNUMBER: string | null
-- ADDRESSPOSTALCODE: string
-- ADDRESSSTREETNAME: string
-- ADDRESSUNITNUMBER: string | null
-- DESCRIPTION: string (e.g., "E-waste accepted: ICT equipment, Batteries and Lamps only")
-- HYPERLINK: string (operator website)
-- PHOTOURL: string | null
-- ACCESSRESTRICTION: "Public" | "Private"
-- LANDXADDRESSPOINT: number
-- LANDYADDRESSPOINT: number
-- INC_CRC: string (checksum)
-- FMEL_UPD_D: string (yyyymmddHHMMSS) - Last update: mostly 2022
+1. 是 GeoJSON `FeatureCollection`，且每条记录为 `Point`；
+2. 经纬度是有限数值并位于新加坡边界内；
+3. 数据集所需名称、地址、来源 ID 等字段完整；
+4. 唯一 ID 不重复，点位数量高于表中的保守下限；
+5. 上游声明记录数时，声明值必须与响应记录数一致。
 
-Geometry:
-- type: "Point"
-- coordinates: [lng, lat]
-```
+BCRS endpoint 还包含尚未分配位置的设备库存记录，这类记录不会成为地图点位，
+数量会显式写入 manifest。具有部分位置字段但无法定位的记录视为无效点位；无效
+比例超过 1% 时构建失败。
 
-## Data Quality Issues
+## 原子生成与审计
 
-1. **E-waste data is outdated**: Most records show `FMEL_UPD_D` from 2022
-2. **Recycling bins Description parsing required**: Data is embedded in HTML table
-3. **Missing coordinates**: Some records have `LANDXADDRESSPOINT: 0`
-4. **No textile-specific dataset available**
+构建先删除旧 generated 目录，再写入独立 staging 目录。只有五类数据全部成功时
+才原子改名为 generated；任何异常都会同时清除 staging 和 generated，避免后续步骤
+打包旧数据或半成品。
 
-## Maintenance Strategy
+manifest 为每个数据集记录：来源 URL、发布方、获取时间、上游更新时间、实际点位
+数、最低点位数、排除/无效记录数（如适用）及内容 SHA-256。
 
-Since data is updated **annually** (not real-time):
-
-1. **Monthly check**: Run script to compare file hash with source
-2. **Manual refresh**: Re-download when source updates
-3. **User feedback**: Allow users to report outdated/incorrect points
-4. **Show freshness**: Display "Data as of: {date}" in UI
-
-### Automated Update Check Script
 ```bash
-# Check if source has been updated (compare file hash)
-curl -s "https://api-open.data.gov.sg/v1/public/api/datasets/d_4dde14826642f49eefff48b7832b90db/metadata" | jq '.lastUpdatedAt'
+cd app
+npm run prebuild
+jq . src/data/generated/data-manifest.json
 ```
-
-## API Endpoints
-
-### Poll-Download Pattern
-```
-GET https://api-open.data.gov.sg/v1/public/api/datasets/{dataset_id}/poll-download
-Response: { "code": 0, "data": { "url": "https://s3...signed-url" } }
-```
-
-### Dataset IDs
-- Recycling Bins: `d_4dde14826642f49eefff48b7832b90db`
-- E-waste: `d_db40d004afeb5a7f0f555fdcc34934cc`
-
-## Additional Data Sources
-
-From [sg3rdata](https://github.com/cheeaun/sg3rdata):
-- 2nd Hand Goods Collection Points
-- Cash For Trash
-- Lighting Waste Collection Points
-
-Source: https://www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/recycling-collection-points

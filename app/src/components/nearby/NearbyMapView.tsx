@@ -125,7 +125,7 @@ export default function NearbyMapView({ points, userLocation, channel, locale = 
         {points.map((point, i) => (
           <Marker key={`${point.name}-${i}`} position={[point.lat, point.lng]} icon={pointIcon}>
             <Popup>
-              <div style={{ minWidth: '180px', fontFamily: 'system-ui, sans-serif' }}>
+              <div style={{ minWidth: '180px', width: channel === 'return_point' ? '220px' : undefined, fontFamily: 'system-ui, sans-serif' }}>
                 <a
                   href={getNavigationUrl(point.lat, point.lng)}
                   target="_blank"
@@ -134,7 +134,12 @@ export default function NearbyMapView({ points, userLocation, channel, locale = 
                 >
                   {point.name}
                 </a>
-                <div style={{ fontSize: '13px', color: '#6B7280', marginBottom: '8px' }}>
+                {channel === 'return_point' && point.address && (
+                  <div style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', fontSize: '12px', lineHeight: 1.4, color: '#64748B', overflowWrap: 'anywhere' }}>
+                    {point.address}
+                  </div>
+                )}
+                <div style={{ fontSize: '13px', color: '#6B7280', marginTop: '8px', marginBottom: '8px' }}>
                   {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} {t(locale, 'shared.walk')}
                 </div>
                 <a

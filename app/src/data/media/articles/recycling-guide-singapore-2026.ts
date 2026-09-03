@@ -18,7 +18,7 @@ export const recyclingGuideSingapore2026: MediaArticle = {
     {
       question: 'Where can I recycle old phones and batteries in Singapore?',
       answer:
-        'Old phones can be dropped at any of the 718 e-waste collection points across Singapore, often located at community centres and shopping malls. Batteries have dedicated collection boxes at libraries, community centres, and selected retail stores. Use BinWhere to find the nearest point.',
+        'Old phones can be dropped at authorised e-waste collection points across Singapore, often located at community centres and shopping malls. Batteries have dedicated collection boxes at libraries, community centres, and selected retail stores. Use BinWhere to find the nearest point.',
     },
     {
       question: 'What happens to contaminated recyclables?',
@@ -41,10 +41,10 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 <p>Singapore's <strong>Zero Waste Masterplan</strong>, launched in 2019, continues to drive ambitious sustainability targets. Key developments shaping the recycling landscape in 2026 include:</p>
 
 <ul>
-  <li><strong>National Recycling Programme</strong>: Over 12,500 blue recycling bins placed across all HDB estates and condominiums, serving 80% of Singapore's population.</li>
-  <li><strong>E-Waste Extended Producer Responsibility (EPR)</strong>: Since 2021, producers are obligated to collect and recycle e-waste through 718+ authorised collection points.</li>
+  <li><strong>National Recycling Programme</strong>: Blue recycling bins are placed across HDB estates and condominiums throughout Singapore.</li>
+  <li><strong>E-Waste Extended Producer Responsibility (EPR)</strong>: Since 2021, producers are obligated to provide authorised collection channels for e-waste.</li>
   <li><strong>Beverage Container Return Scheme (BCRS)</strong>: Launching <strong>April 2026</strong>, this scheme offers a S$0.10 refundable deposit on plastic bottles and metal cans (150 ml–3 L). Reverse Vending Machines (RVMs) will be installed across the island.</li>
-  <li><strong>Textile Recycling Network</strong>: Over 400 textile collection bins operated by licensed waste collectors.</li>
+  <li><strong>Textile Recycling Network</strong>: Textile collection bins are operated across the island by licensed waste collectors.</li>
 </ul>
 
 <p>Despite this robust infrastructure, contamination from incorrectly sorted waste remains the biggest challenge. A 2023 NEA study found that <strong>40% of items in blue bins were contaminants</strong> — items that should not have been placed there.</p>
@@ -91,7 +91,7 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 <h3>Drop-Off Options</h3>
 
 <ol>
-  <li><strong>E-Waste Collection Points</strong>: 718 locations across Singapore, typically at community centres, shopping malls, and electronics retailers.</li>
+  <li><strong>E-Waste Collection Points</strong>: Available across Singapore, typically at community centres, shopping malls, and electronics retailers.</li>
   <li><strong>Large Appliance Collection</strong>: For bulky items like refrigerators, contact the ALBA Group (appointed Producer Responsibility Scheme operator) for free doorstep collection.</li>
   <li><strong>Quarterly Collection Drives</strong>: Many Town Councils organise periodic e-waste collection events in HDB estates.</li>
   <li><strong>Retailer Take-Back</strong>: When buying a new appliance, retailers must offer free 1-for-1 take-back of old appliances of the same type.</li>
@@ -106,7 +106,7 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 <h3>Collection Channels</h3>
 
 <ul>
-  <li><strong>Textile Recycling Bins</strong>: 401 bins operated by licensed collectors across HDB estates and public spaces</li>
+  <li><strong>Textile Recycling Bins</strong>: Operated by licensed collectors across HDB estates and public spaces</li>
   <li><strong>The Salvation Army</strong>: Accepts clothing, shoes, and household items at donation centres island-wide</li>
   <li><strong>Resale Platforms</strong>: Apps like Carousell and Refash give second life to good-condition clothing</li>
   <li><strong>Retailer Programs</strong>: H&M, Uniqlo, and other brands offer in-store garment collection</li>
@@ -144,7 +144,7 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 <ol>
   <li><strong>Snap</strong>: Take a photo of your item, or type a description</li>
   <li><strong>Classify</strong>: BinWhere's AI identifies the item in under 3 seconds and tells you whether it's recyclable, e-waste, textile, hazardous, or general waste</li>
-  <li><strong>Navigate</strong>: Get walking directions to the nearest appropriate recycling point from a database of <strong>13,700+ locations</strong> across Singapore</li>
+  <li><strong>Navigate</strong>: Get walking directions using BinWhere's current recycling-location dataset for Singapore</li>
 </ol>
 
 <p>BinWhere supports all four of Singapore's official languages — English, Chinese, Malay, and Tamil — making it accessible to the entire population. The app also provides specific preparation instructions (like "rinse and flatten the carton" or "remove the battery before disposal") to help you recycle correctly.</p>

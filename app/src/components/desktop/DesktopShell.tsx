@@ -5,6 +5,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import LogoIcon from '@/components/shared/LogoIcon';
 import { SITE_URL, SUPPORT_EMAIL } from '@binwhere/core';
+import type { GeoDataCounts } from '@/lib/data-gov';
 
 /* ── Animated counter hook ── */
 function useAnimatedCounter(target: number, duration: number, active: boolean) {
@@ -31,18 +32,38 @@ function useAnimatedCounter(target: number, duration: number, active: boolean) {
 }
 
 /* ── Stats section ── */
-const STATS = [
-  { target: 12578, label: 'Blue Bins', suffix: '', prefix: '', color: '#0077B6' },
-  { target: 718, label: 'E-Waste Points', suffix: '', prefix: '', color: '#00897B' },
-  { target: 401, label: 'Textile Bins', suffix: '', prefix: '', color: '#D4A017' },
-  { target: 75, label: 'Donation Points', suffix: '', prefix: '', color: '#8E24AA' },
-  { target: 1060, label: 'Return Points', suffix: '', prefix: '', color: '#00A651' },
-  { target: 3, label: 'AI Recognition', suffix: 's', prefix: '<', color: '#FFFFFF' },
-] as const;
+interface Stat {
+  target: number;
+  label: string;
+  suffix: string;
+  prefix: string;
+  color: string;
+}
 
-function StatsSection() {
+function StatCard({ stat, visible }: { stat: Stat; visible: boolean }) {
+  const value = useAnimatedCounter(stat.target, 1_400, visible);
+
+  return (
+    <div className="stat-card text-center">
+      <p className="text-4xl font-bold tracking-tight" style={{ color: stat.color }}>
+        {stat.prefix}{value.toLocaleString('en-SG')}{stat.suffix}
+      </p>
+      <p className="mt-2 text-sm text-gray-400">{stat.label}</p>
+    </div>
+  );
+}
+
+function StatsSection({ dataCounts }: { dataCounts: GeoDataCounts }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const stats: Stat[] = [
+    { target: dataCounts.recyclingBins, label: 'Blue Bins', suffix: '', prefix: '', color: '#0077B6' },
+    { target: dataCounts.ewaste, label: 'E-Waste Points', suffix: '', prefix: '', color: '#00897B' },
+    { target: dataCounts.textile, label: 'Textile Bins', suffix: '', prefix: '', color: '#D4A017' },
+    { target: dataCounts.reuseChannels, label: 'Donation Points', suffix: '', prefix: '', color: '#8E24AA' },
+    { target: dataCounts.returnPoints, label: 'Return Points', suffix: '', prefix: '', color: '#00A651' },
+    { target: 3, label: 'AI Recognition', suffix: 's', prefix: '<', color: '#FFFFFF' },
+  ];
 
   useEffect(() => {
     const el = ref.current;
@@ -55,24 +76,11 @@ function StatsSection() {
     return () => observer.disconnect();
   }, []);
 
-  const v0 = useAnimatedCounter(STATS[0].target, 1800, visible);
-  const v1 = useAnimatedCounter(STATS[1].target, 1400, visible);
-  const v2 = useAnimatedCounter(STATS[2].target, 1200, visible);
-  const v3 = useAnimatedCounter(STATS[3].target, 1000, visible);
-  const v4 = useAnimatedCounter(STATS[4].target, 900, visible);
-  const v5 = useAnimatedCounter(STATS[5].target, 800, visible);
-  const values = [v0, v1, v2, v3, v4, v5];
-
   return (
     <div ref={ref} className="desktop-section border-t border-white/[0.06]">
       <div className="grid grid-cols-6 gap-6">
-        {STATS.map((stat, i) => (
-          <div key={stat.label} className="stat-card text-center">
-            <p className="text-4xl font-bold tracking-tight" style={{ color: stat.color }}>
-              {stat.prefix}{values[i].toLocaleString()}{stat.suffix}
-            </p>
-            <p className="mt-2 text-sm text-gray-400">{stat.label}</p>
-          </div>
+        {stats.map((stat) => (
+          <StatCard key={stat.label} stat={stat} visible={visible} />
         ))}
       </div>
     </div>
@@ -137,7 +145,13 @@ function StepsSection() {
 }
 
 /* ── BCRS Announcement Bar (below nav, above hero) ── */
-function BcrsAnnouncementBar({ onClick }: { onClick: () => void }) {
+function BcrsAnnouncementBar({
+  onClick,
+  returnPointCount,
+}: {
+  onClick: () => void;
+  returnPointCount: number;
+}) {
   return (
     <button
       onClick={onClick}
@@ -154,7 +168,7 @@ function BcrsAnnouncementBar({ onClick }: { onClick: () => void }) {
               Beverage Container Return Scheme — S$0.10 refund per container
             </span>
             <span className="text-xs text-gray-500">
-              1,060 Return Points island-wide · Plastic & metal containers · 150ml – 3L · Deposit Mark required
+              {returnPointCount.toLocaleString('en-SG')} Return Points island-wide · Plastic & metal containers · 150ml – 3L · Deposit Mark required
             </span>
           </div>
         </div>
@@ -183,9 +197,17 @@ function QRPopup({ open, onClose }: { open: boolean; onClose: () => void }) {
 }
 
 /* ── Main DesktopShell ── */
-export default function DesktopShell({ children }: { children: ReactNode }) {
+export default function DesktopShell({
+  children,
+  dataCounts,
+}: {
+  children: ReactNode;
+  dataCounts: GeoDataCounts;
+}) {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [qrOpen, setQrOpen] = useState(false);
+  const totalLocationCount = Object.values(dataCounts)
+    .reduce((total, count) => total + count, 0);
 
   const openQR = useCallback(() => setQrOpen(true), []);
   const closeQR = useCallback(() => setQrOpen(false), []);
@@ -216,7 +238,10 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
       </nav>
 
       {/* BCRS Announcement */}
-      <BcrsAnnouncementBar onClick={openQR} />
+      <BcrsAnnouncementBar
+        onClick={openQR}
+        returnPointCount={dataCounts.returnPoints}
+      />
 
       {/* Hero */}
       <section className="desktop-hero">
@@ -228,7 +253,7 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
             Find nearest bin.
           </h1>
           <p className="mt-6 text-base text-gray-400 leading-relaxed">
-            BinWhere AI identifies your item in seconds — with disposal guidance and navigation to 14,800+ recycling points across Singapore.
+            BinWhere AI identifies your item in seconds — with disposal guidance and navigation to {totalLocationCount.toLocaleString('en-SG')} recycling points across Singapore.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {['BinWhere AI', '< 3s Recognition', '4 Languages', 'AI Chat'].map((tag) => (
@@ -254,7 +279,7 @@ export default function DesktopShell({ children }: { children: ReactNode }) {
       </section>
 
       {/* Stats */}
-      <StatsSection />
+      <StatsSection dataCounts={dataCounts} />
 
       {/* Steps */}
       <StepsSection />

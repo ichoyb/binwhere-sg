@@ -104,7 +104,7 @@ const en = {
   'bcrs.machineOnline': 'Online',
   'bcrs.machineOffline': 'Offline',
   'bcrs.machineMaintenance': 'Maintenance',
-  'bcrs.pointCount': '1,060+ Return Points island-wide',
+  'bcrs.pointCount': '1,000+ Return Points island-wide',
 
   // Hazardous info card
   'hazardous.title': 'How to Dispose of Hazardous Waste',

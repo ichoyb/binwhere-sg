@@ -147,7 +147,7 @@ const zh: Record<keyof typeof en, string> = {
   'bcrs.machineOnline': '运行中',
   'bcrs.machineOffline': '离线',
   'bcrs.machineMaintenance': '维护中',
-  'bcrs.pointCount': '1,060+ 退还点遍布全岛',
+  'bcrs.pointCount': '1,000+ 退还点遍布全岛',
 };
 
 export default zh;

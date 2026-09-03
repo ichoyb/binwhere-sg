@@ -12,6 +12,17 @@ runTest('formatReturnPointOpeningHours handles 24-hour points', () => {
   assert.equal(value, '24 Hours');
 });
 
+runTest('formatReturnPointOpeningHours compacts current BCRS text', () => {
+  assert.equal(
+    formatReturnPointOpeningHours('Mon - Sun:  24 Hrs'),
+    '24 Hours',
+  );
+  assert.equal(
+    formatReturnPointOpeningHours('Mon - Fri:  09:00 AM - 10:00 PM'),
+    'Mon - Fri: 09:00 AM - 10:00 PM',
+  );
+});
+
 runTest('formatReturnPointOpeningHours collapses identical daily periods', () => {
   const value = formatReturnPointOpeningHours({
     periods: Array.from({ length: 7 }, (_, day) => ({

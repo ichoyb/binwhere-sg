@@ -16,7 +16,12 @@ export { getSpatialIndex, getBlueBinIndex, getEwasteIndex, getTextileIndex, getR
 export { DATASET_IDS, SG_BOUNDS, SPATIAL } from './shared/constants';
 
 // Types
-export type { GeoJSONFeature, GeoJSONFeatureCollection } from './shared/types';
+export type {
+  DatasetMetadata,
+  GeoDataCounts,
+  GeoJSONFeature,
+  GeoJSONFeatureCollection,
+} from './shared/types';
 
 // Errors
 export {

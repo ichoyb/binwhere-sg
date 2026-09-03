@@ -147,7 +147,7 @@ const ms: Record<keyof typeof en, string> = {
   'bcrs.machineOnline': 'Online',
   'bcrs.machineOffline': 'Offline',
   'bcrs.machineMaintenance': 'Penyelenggaraan',
-  'bcrs.pointCount': '1,060+ Pusat Pulangan di seluruh pulau',
+  'bcrs.pointCount': '1,000+ Pusat Pulangan di seluruh pulau',
 };
 
 export default ms;

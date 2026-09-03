@@ -3,6 +3,8 @@ import { API_URLS, HTTP } from '../shared/constants';
 import { DatasetError } from '../shared/errors';
 import type {
   PollDownloadResponse,
+  DatasetMetadata,
+  DatasetMetadataResponse,
   GeoJSONFeatureCollection,
   CSVRow,
 } from '../shared/types';
@@ -16,6 +18,32 @@ import type { HttpClient } from './http-client';
  */
 export class DatasetClient {
   constructor(private readonly http: HttpClient) {}
+
+  /** Fetch and validate publisher metadata used by the build manifest. */
+  async getMetadata(datasetId: string): Promise<DatasetMetadata> {
+    const url = `${API_URLS.DATASET_METADATA}/datasets/${datasetId}/metadata`;
+    const response = await this.http.get<DatasetMetadataResponse>(url);
+    const metadata = response.data;
+
+    if (
+      response.code !== 0
+      || !metadata
+      || metadata.datasetId !== datasetId
+      || metadata.format !== 'GEOJSON'
+      || !metadata.lastUpdatedAt
+    ) {
+      throw new DatasetError(
+        response.errMsg || 'Metadata response is incomplete or does not match the requested dataset',
+        datasetId,
+      );
+    }
+
+    if (Number.isNaN(Date.parse(metadata.lastUpdatedAt))) {
+      throw new DatasetError('Metadata lastUpdatedAt is not a valid timestamp', datasetId);
+    }
+
+    return metadata;
+  }
 
   /** Download and parse a GeoJSON dataset */
   async getGeoJSON(datasetId: string): Promise<GeoJSONFeatureCollection> {

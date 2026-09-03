@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import {
   estimateWalkTime,
   formatDistance,
@@ -185,10 +185,26 @@ export function NearbyScreen({
             <Marker
               key={`${point.lat},${point.lng},${index}`}
               coordinate={{ latitude: point.lat, longitude: point.lng }}
-              title={point.name}
-              description={`${formatDistance(point.distanceKm)} · ${estimateWalkTime(point.distanceKm)} ${t(locale, 'shared.walk')}`}
+              title={nearbyChannel === 'return_point' ? undefined : point.name}
+              description={nearbyChannel === 'return_point'
+                ? undefined
+                : `${formatDistance(point.distanceKm)} · ${estimateWalkTime(point.distanceKm)} ${t(locale, 'shared.walk')}`}
               pinColor={colors.blueBin}
-            />
+            >
+              {nearbyChannel === 'return_point' ? (
+                <Callout onPress={() => openWalkingDirections(point.lat, point.lng)}>
+                  <View style={styles.callout}>
+                    <Text style={styles.calloutName}>{point.name}</Text>
+                    <Text style={styles.calloutAddress} numberOfLines={2}>{point.address}</Text>
+                    <Text style={styles.calloutDistance}>
+                      {formatDistance(point.distanceKm)} · {estimateWalkTime(point.distanceKm)}{' '}
+                      {t(locale, 'shared.walk')}
+                    </Text>
+                    <Text style={styles.calloutAction}>{t(locale, 'map.navigate')} →</Text>
+                  </View>
+                </Callout>
+              ) : null}
+            </Marker>
           ))}
         </MapView>
       ) : (
@@ -201,9 +217,12 @@ export function NearbyScreen({
               <Text style={styles.name}>{item.name}</Text>
               <Text style={styles.address}>{item.address}</Text>
               {item.openingHours ? (
-                <Text style={styles.meta}>
-                  {t(locale, 'bcrs.openingHours')}: {item.openingHours}
-                </Text>
+                <View style={styles.hoursBox}>
+                  <Text style={styles.hoursText}>
+                    <Text style={styles.hoursLabel}>{t(locale, 'bcrs.openingHours')}: </Text>
+                    {item.openingHours}
+                  </Text>
+                </View>
               ) : null}
               {item.machineStatus ? (
                 <Text style={styles.meta}>
@@ -272,7 +291,16 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   name: { fontSize: 16, fontWeight: '700', color: colors.text },
-  address: { fontSize: 14, color: colors.textMuted, marginTop: 4 },
+  address: { fontSize: 14, lineHeight: 20, color: colors.textMuted, marginTop: 4 },
+  hoursBox: {
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#ECFDF5',
+  },
+  hoursText: { fontSize: 13, lineHeight: 18, color: '#047857' },
+  hoursLabel: { fontWeight: '700' },
   meta: { fontSize: 13, color: colors.textMuted, marginTop: 4 },
   distance: {
     fontSize: 14,
@@ -289,6 +317,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   navBtnText: { color: colors.white, fontWeight: '700', fontSize: 15 },
+  callout: { width: 230, paddingVertical: spacing.xs },
+  calloutName: { fontSize: 15, lineHeight: 20, fontWeight: '700', color: colors.text },
+  calloutAddress: { marginTop: 4, fontSize: 13, lineHeight: 18, color: colors.textMuted },
+  calloutDistance: {
+    marginTop: spacing.sm,
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.blueBin,
+  },
+  calloutAction: {
+    marginTop: spacing.sm,
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.blueBin,
+  },
   muted: {
     margin: spacing.md,
     fontSize: 15,

@@ -138,49 +138,50 @@ export default function RecyclingPointCard({ point, heading, locale = 'en' }: Re
       {heading && (
         <h3 className="text-caption font-semibold text-gray-700 mb-1.5">{heading}</h3>
       )}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          <a
-            href={getNavigationUrl(point.lat, point.lng)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-body font-medium text-blue-bin line-clamp-2 hover:underline"
-          >
-            {point.name}
-          </a>
-          {point.address && (
-            <p className="text-caption text-gray-400 line-clamp-1 mt-0.5">{point.address}</p>
-          )}
-          {point.reuseType && (
-            <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-pink-100 text-pink-700">
-              {point.reuseType}
-            </span>
-          )}
-          {(point.openingHours || machineStatus) && (
-            <div className="mt-1.5 flex flex-wrap items-center gap-2">
-              {point.openingHours && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-emerald-50 text-emerald-700">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 7v5l3 2" />
-                  </svg>
-                  {t(locale, 'bcrs.openingHours')}: {point.openingHours}
-                </span>
-              )}
-              {machineStatus && (
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${machineStatus.className}`}>
-                  {t(locale, machineStatus.key)}
-                </span>
-              )}
-            </div>
-          )}
-          {point.accepts && <AcceptsTags accepts={point.accepts} />}
-          <p className="text-caption text-gray-500 mt-1">
-            {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} {t(locale, 'shared.walk')}
-          </p>
-        </div>
+      <div className="flex items-start justify-between gap-3">
+        <a
+          href={getNavigationUrl(point.lat, point.lng)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="min-w-0 flex-1 text-body font-medium text-blue-bin line-clamp-2 hover:underline"
+        >
+          {point.name}
+        </a>
         <NavigateButton lat={point.lat} lng={point.lng} label={t(locale, 'shared.go')} />
       </div>
+      {point.address && (
+        <p className="mt-1 text-caption leading-snug text-gray-500 break-words">{point.address}</p>
+      )}
+      {point.reuseType && (
+        <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-pink-100 text-pink-700">
+          {point.reuseType}
+        </span>
+      )}
+      {(point.openingHours || machineStatus) && (
+        <div className="mt-2 flex flex-col items-start gap-1.5">
+          {point.openingHours && (
+            <div className="flex w-full items-start gap-1.5 rounded-lg bg-emerald-50 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-800">
+              <svg className="mt-0.5 shrink-0" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+              <span className="min-w-0 break-words">
+                <span className="font-semibold">{t(locale, 'bcrs.openingHours')}:</span>{' '}
+                {point.openingHours}
+              </span>
+            </div>
+          )}
+          {machineStatus && (
+            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${machineStatus.className}`}>
+              {t(locale, machineStatus.key)}
+            </span>
+          )}
+        </div>
+      )}
+      {point.accepts && <AcceptsTags accepts={point.accepts} />}
+      <p className="text-caption text-gray-500 mt-1.5">
+        {formatDistance(point.distanceKm)} · ~{estimateWalkTime(point.distanceKm)} {t(locale, 'shared.walk')}
+      </p>
     </div>
   );
 }

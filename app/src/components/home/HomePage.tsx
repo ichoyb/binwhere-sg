@@ -15,40 +15,45 @@ import ErrorState from '@/components/shared/ErrorState';
 import CategorySelector from '@/components/home/CategorySelector';
 import LogoIcon from '@/components/shared/LogoIcon';
 import LanguageSelector from '@/components/shared/LanguageSelector';
+import type { GeoDataCounts } from '@/lib/data-gov';
 
-const STAT_PAGES = [
-  [
-    { color: '#0077B6', value: '12.5k',
-      icon: 'M6 7h12l-1 12H7L6 7zM4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2' },
-    { color: '#00897B', value: '718',
-      icon: 'M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1zm4 14h8m-4-3v3' },
-    { color: '#D4A017', value: '401',
-      icon: 'M8 2l-5 5 3 1 1 13h10l1-13 3-1-5-5c-1 1-2.5 2-4 2S9 3 8 2z' },
-    { color: '#8E24AA', value: '75',
-      icon: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' },
-  ],
-  [
-    { color: '#00A651', value: '1,060',
-      icon: 'M4 12a8 8 0 0113.86-5.66M20 12a8 8 0 01-13.86 5.66M17 3v4h-4M7 21v-4h4M12 8v8m-3-4h6' },
-    { color: '#00A651', value: 'BCRS',
-      icon: 'M21 12a9 9 0 01-9 9m0 0a9 9 0 01-9-9m9 9V3m0 0L8 8m4-5l4 5' },
-  ],
-];
+function compactCount(value: number): string {
+  if (value < 1_000) return String(value);
+  return `${(value / 1_000).toFixed(1).replace(/\.0$/, '')}k`;
+}
 
-function HeaderStats() {
+function HeaderStats({ dataCounts }: { dataCounts: GeoDataCounts }) {
   const [page, setPage] = useState(0);
   const [visible, setVisible] = useState(true);
+  const statPages = [
+    [
+      { label: 'Blue bins', color: '#0077B6', value: compactCount(dataCounts.recyclingBins),
+        icon: 'M6 7h12l-1 12H7L6 7zM4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2' },
+      { label: 'E-waste', color: '#00897B', value: compactCount(dataCounts.ewaste),
+        icon: 'M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1zm4 14h8m-4-3v3' },
+      { label: 'Textile', color: '#D4A017', value: compactCount(dataCounts.textile),
+        icon: 'M8 2l-5 5 3 1 1 13h10l1-13 3-1-5-5c-1 1-2.5 2-4 2S9 3 8 2z' },
+      { label: 'Donation', color: '#8E24AA', value: compactCount(dataCounts.reuseChannels),
+        icon: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' },
+    ],
+    [
+      { label: 'Return points', color: '#00A651', value: compactCount(dataCounts.returnPoints),
+        icon: 'M4 12a8 8 0 0113.86-5.66M20 12a8 8 0 01-13.86 5.66M17 3v4h-4M7 21v-4h4M12 8v8m-3-4h6' },
+      { label: 'BCRS', color: '#00A651', value: 'BCRS',
+        icon: 'M21 12a9 9 0 01-9 9m0 0a9 9 0 01-9-9m9 9V3m0 0L8 8m4-5l4 5' },
+    ],
+  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
       setVisible(false);
       setTimeout(() => {
-        setPage((p) => (p + 1) % STAT_PAGES.length);
+        setPage((p) => (p + 1) % statPages.length);
         setVisible(true);
       }, 400);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [statPages.length]);
 
   return (
     <div className="relative w-[150px] h-4 overflow-hidden">
@@ -56,8 +61,8 @@ function HeaderStats() {
         className="absolute inset-0 flex items-center justify-end gap-1.5 transition-opacity duration-400"
         style={{ opacity: visible ? 1 : 0 }}
       >
-        {STAT_PAGES[page].map((s) => (
-          <div key={s.value} className="flex items-center gap-0.5">
+        {statPages[page].map((s) => (
+          <div key={s.label} className="flex items-center gap-0.5">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={s.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d={s.icon} />
             </svg>
@@ -70,6 +75,7 @@ function HeaderStats() {
 }
 
 interface HomePageProps {
+  dataCounts: GeoDataCounts;
   onClassified: (result: ClassifyResult, image: string | null) => void;
   onCategorySelect: (result: ClassifyResult) => void;
   onHistorySelect: (item: ScanHistoryItem) => void;
@@ -80,7 +86,7 @@ interface HomePageProps {
   onBcrsEntry: () => void;
 }
 
-export default function HomePage({ onClassified, onCategorySelect, onHistorySelect, onHistoryClear, history, locale, onLocaleChange, onBcrsEntry }: HomePageProps) {
+export default function HomePage({ dataCounts, onClassified, onCategorySelect, onHistorySelect, onHistoryClear, history, locale, onLocaleChange, onBcrsEntry }: HomePageProps) {
   const { videoRef, status: cameraStatus, start, capture } = useCamera();
   const { loading, error, classify, reset } = useClassify();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -182,7 +188,7 @@ export default function HomePage({ onClassified, onCategorySelect, onHistorySele
         <div className="flex items-center gap-1.5">
           <LanguageSelector locale={locale} onChange={onLocaleChange} />
           <div className="w-px h-4 bg-gray-200" />
-          <HeaderStats />
+          <HeaderStats dataCounts={dataCounts} />
         </div>
       </header>
 

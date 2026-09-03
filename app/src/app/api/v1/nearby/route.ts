@@ -194,7 +194,7 @@ export async function GET(request: NextRequest) {
           address = property('DESCRIPTION');
         } else if (isReturnPoint) {
           name = property('NAME') || 'Return Point';
-          address = '';
+          address = property('FULLADDRESS');
         } else if (isDonation) {
           name = property('NAME') || 'Donation Point';
           address = property('FULLADDRESS')

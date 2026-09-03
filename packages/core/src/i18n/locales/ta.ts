@@ -147,7 +147,7 @@ const ta: Record<keyof typeof en, string> = {
   'bcrs.machineOnline': 'ஆன்லைன்',
   'bcrs.machineOffline': 'ஆஃப்லைன்',
   'bcrs.machineMaintenance': 'பராமரிப்பு',
-  'bcrs.pointCount': '1,060+ திருப்பி அளிக்கும் இடங்கள் தீவு முழுவதும்',
+  'bcrs.pointCount': '1,000+ திருப்பி அளிக்கும் இடங்கள் தீவு முழுவதும்',
 };
 
 export default ta;

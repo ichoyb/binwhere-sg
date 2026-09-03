@@ -160,8 +160,8 @@ export const bcrsBeverageContainerReturnSchemeSingapore2026: MediaArticle = {
 
 <p>With the BCRS adding a new recycling channel to Singapore's already multi-stream system — blue bins, e-waste points, textile bins, and now RVMs — it can feel overwhelming to know where each item should go. That is exactly the problem <strong>BinWhere</strong> solves.</p>
 
-<p>Simply snap a photo of your item or type a description, and BinWhere's AI will identify whether it belongs in the blue bin, an e-waste collection point, a textile bin, or an RVM return point. The app covers over <strong>13,700 recycling locations</strong> across Singapore and provides walking directions to the nearest one. It supports English, Chinese, Malay, and Tamil — all four of Singapore's official languages.</p>
+<p>Simply snap a photo of your item or type a description, and BinWhere's AI will identify whether it belongs in the blue bin, an e-waste collection point, a textile bin, or an RVM return point. The app uses current build-verified location data and provides walking directions to the nearest point. It supports English, Chinese, Malay, and Tamil — all four of Singapore's official languages.</p>
 
-<p>As RVM location data becomes publicly available, BinWhere will integrate these return points into its database, making it your one-stop tool for navigating every recycling channel in Singapore. Try it now at <a href="https://binwhere.sg">binwhere.sg</a> — no download required.</p>
+<p>BinWhere integrates the BCRS public return-point feed into its location database, making it your one-stop tool for navigating every recycling channel in Singapore. Try it now at <a href="https://binwhere.sg">binwhere.sg</a> — no download required.</p>
 `.trim(),
 };

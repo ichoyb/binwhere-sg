@@ -12,10 +12,11 @@ import SlideTransition from '@/components/shared/SlideTransition';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useHistory } from '@/hooks/useHistory';
 import { buildBcrsGuideResult } from '@/lib/bcrs';
+import type { GeoDataCounts } from '@/lib/data-gov';
 
 const VIEW_ORDER: Record<AppView, number> = { home: 0, result: 1, nearby: 2 };
 
-export default function App() {
+export default function App({ dataCounts }: { dataCounts: GeoDataCounts }) {
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [classifyResult, setClassifyResult] = useState<ClassifyResult | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -86,6 +87,7 @@ export default function App() {
       case 'home':
         return (
           <HomePage
+            dataCounts={dataCounts}
             onClassified={handleClassified}
             onCategorySelect={handleCategorySelect}
             onHistorySelect={handleHistorySelect}
