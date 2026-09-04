@@ -2,8 +2,15 @@ import assert from 'node:assert/strict';
 
 import { ApiError, isRetryable } from '../api-client';
 import { ATTEMPT_MS, BUDGET_MS, classifyItem } from './provider';
-import { RetryableProviderError, TokenHubProvider } from './providers/tokenhub';
+import { getClassifySystemPrompt } from './prompts/classify-system';
+import {
+  RetryableProviderError,
+  TOKENHUB_IMAGE_USER_INSTRUCTION,
+  TokenHubProvider,
+  type TokenHubProviderOptions,
+} from './providers/tokenhub';
 import type { ClassifyProvider, ClassifyRequest, ClassifyResult } from './types';
+import { PRODUCTION_PROFILE } from '../../../scripts/phase0/baseline-profiles';
 
 /**
  * Tests for the TokenHub request boundary and the retry policy that replaced the
@@ -22,6 +29,8 @@ const OK: ClassifyResult = {
   channel: 'return_point',
   reason: 'Has a Deposit Mark.',
 };
+
+const TEST_JPEG_BASE64 = '/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAIDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AKpAB//Z';
 
 /** Provider stub that plays back a scripted sequence of outcomes. */
 function stub(script: Array<'ok' | Error | number>): ClassifyProvider & { calls: number } {
@@ -71,18 +80,85 @@ async function withMockFetch(mock: typeof fetch, fn: () => Promise<void>) {
 }
 
 async function main() {
+  await runTest('BCRS prompt never turns an unknown mark into a blue-bin guess', async () => {
+    const prompt = getClassifySystemPrompt('en');
+    assert.match(prompt, /Distinguish unknown from absent/);
+    assert.match(prompt, /one view in which the mark is not visible or readable is NOT proof/);
+    assert.match(prompt, /return status "not_sure", channel null/);
+    assert.match(prompt, /label at every orientation/);
+    assert.match(prompt, /Product of Malaysia/);
+    assert.match(prompt, /circular-arrow 10¢ shape alone is insufficient/);
+    assert.match(prompt, /even when the image was taken beside a return machine/);
+    assert.match(prompt, /Bottle, can and cup shapes are judged by the same material, volume and evidence rules/);
+    assert.match(prompt, /square 2D traceability code[^\n]*cannot substitute/);
+    assert.match(prompt, /separate linear EAN product barcode visibly present and unobscured/);
+    assert.match(prompt, /Return Point performs the final scan/);
+    assert.match(prompt, /A not_sure response must not mention or recommend blue_bin at all/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /plastic or metal beverage container, including a bottle, can or cup/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /sideways or upside down/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /linear EAN product barcode/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /square 2D traceability code[^\n]*cannot substitute/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /Small text counts as direct pixel evidence/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /if either SG or RETURN is blurred or only inferred, use not_sure/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /incidental out-of-focus background containers do not disqualify/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /Return Point performs the final scan/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /do not mention blue_bin/);
+    assert.doesNotMatch(prompt, /Deposit Mark is unknown[^\n]*prefer blue_bin/);
+  });
+
+  await runTest('classification prompt preserves the reviewed Singapore routing rules', async () => {
+    const prompt = getClassifySystemPrompt('en');
+    assert.match(prompt, /aerosol can is blue_bin only when no product comes out/);
+    assert.match(prompt, /including "leftover paint"[^\n]*hazardous \/ special_handling/);
+    assert.match(prompt, /Clean, dry bubble wrap[^\n]*blue_bin/);
+    assert.match(prompt, /Power banks are ICT equipment[^\n]*ewaste, not ewaste_battery/);
+    assert.match(prompt, /loose lithium-ion battery removed from a laptop[^\n]*ewaste_battery/);
+    assert.match(prompt, /laptop with its battery still installed remains ewaste/);
+    assert.match(prompt, /lead-acid car battery is hazardous/);
+    assert.match(prompt, /incandescent, CFL, fluorescent or LED[^\n]*lighting/);
+    assert.match(prompt, /expired household medicine[^\n]*general_waste/);
+    assert.match(prompt, /Textile routing is explicit/);
+    assert.match(prompt, /jackets, shoes, handbags, backpacks, curtains and bedsheets/);
+    assert.match(prompt, /Heavily stained, torn, wet or mouldy textiles[^\n]*general_waste/);
+    assert.match(prompt, /coffee capsules \(including Nespresso\)[^\n]*general_waste/);
+    assert.match(prompt, /Hazardous is a safety classification, not proof of a public drop-off network/);
+    assert.match(prompt, /Never invent a collection point or event/);
+    assert.doesNotMatch(prompt, /Batteries of all types/);
+  });
+
   await runTest('TokenHub sends the text model, locale and caller signal', async () => {
     const controller = new AbortController();
     await withMockFetch(async (_input, init) => {
       const body = JSON.parse(String(init?.body)) as {
         model: string;
         messages: Array<{ content: unknown }>;
+        response_format: {
+          type: string;
+          json_schema: {
+            strict: boolean;
+            schema: {
+              additionalProperties: boolean;
+              required: string[];
+              properties: { channel: { type: string[] } };
+            };
+          };
+        };
       };
       assert.equal(body.model, 'hy3');
       assert.equal(typeof body.messages[1]?.content, 'string');
       assert.match(body.messages[1]?.content as string, /Chinese \(Simplified\)/);
       assert.equal(init?.signal, controller.signal);
       assert.equal(new Headers(init?.headers).get('Authorization'), 'Bearer test-key');
+      assert.equal(body.response_format.type, 'json_schema');
+      assert.equal(body.response_format.json_schema.strict, true);
+      assert.equal(body.response_format.json_schema.schema.additionalProperties, false);
+      assert.deepEqual(
+        body.response_format.json_schema.schema.properties.channel.type,
+        ['string', 'null'],
+      );
+      assert.deepEqual(body.response_format.json_schema.schema.required, [
+        'item', 'status', 'confidence', 'channel', 'reason', 'preparation', 'tip',
+      ]);
       return completionResponse(JSON.stringify(OK));
     }, async () => {
       const result = await new TokenHubProvider('test-key').classify(
@@ -90,6 +166,8 @@ async function main() {
         controller.signal,
       );
       assert.equal(result.channel, 'return_point');
+      assert.match(result.tip ?? '', /S\$0\.10/);
+      assert.match(result.tip ?? '', /每个容器/);
     });
   });
 
@@ -97,31 +175,99 @@ async function main() {
     await withMockFetch(async (_input, init) => {
       const body = JSON.parse(String(init?.body)) as {
         model: string;
-        messages: Array<{ content: unknown }>;
+        temperature: number;
+        thinking: unknown;
+        reasoning_effort?: string;
+        messages: Array<{ content: Array<{ type: string }> }>;
       };
-      assert.equal(body.model, 'hy-vision-2.0-instruct');
+      assert.equal(body.model, 'kimi-k2.6');
+      assert.equal(body.temperature, 0.6);
+      assert.deepEqual(body.thinking, { type: 'disabled' });
+      assert.equal(body.reasoning_effort, undefined);
       assert.ok(Array.isArray(body.messages[1]?.content));
+      assert.equal(body.messages[1]?.content.filter((part) => part.type === 'image_url').length, 1);
       return completionResponse(JSON.stringify(OK));
     }, async () => {
-      await new TokenHubProvider('test-key').classify({ image: 'base64-image' });
+      await new TokenHubProvider('test-key').classify({ image: TEST_JPEG_BASE64 });
     });
   });
 
-  await runTest('TokenHub tells both models not to think', async () => {
-    for (const [request, model] of [
-      [{ text: 'can' }, 'hy3'],
-      [{ image: 'base64-image' }, 'hy-vision-2.0-instruct'],
-    ] as Array<[ClassifyRequest, string]>) {
+  await runTest('TokenHub owns uncertain copy and never leaks a disposal channel into not_sure', async () => {
+    const modelResult: ClassifyResult = {
+      item: '塑料饮料瓶',
+      status: 'not_sure',
+      confidence: 0.9,
+      channel: null,
+      reason: '无法看到 Deposit Mark。',
+      preparation: ['查看条码。'],
+      tip: '可以放入蓝色回收箱。',
+    };
+    await withMockFetch(
+      async () => completionResponse(JSON.stringify(modelResult)),
+      async () => {
+        const result = await new TokenHubProvider('test-key').classify({ text: '饮料瓶', locale: 'zh' });
+        assert.equal(result.status, 'not_sure');
+        assert.equal(result.channel, null);
+        assert.equal(result.confidence, 0.49);
+        assert.equal(result.reason, '现有信息不足，无法安全确定回收渠道。');
+        assert.deepEqual(result.preparation, [
+          '请提供更清晰的照片或描述，并完整展示物品及其标签或标识。饮料容器请拍清产品条码周围的标签。',
+        ]);
+        assert.equal(result.tip, undefined);
+      },
+    );
+  });
+
+  await runTest('production baseline profile reproduces the deployed request contract', async () => {
+    await withMockFetch(async (_input, init) => {
+      const body = JSON.parse(String(init?.body)) as {
+        model: string;
+        temperature: number;
+        response_format: { type: string };
+        messages: Array<{ content: string | Array<{ type: string; text?: string }> }>;
+      };
+      assert.equal(body.model, 'hy-vision-2.0-instruct');
+      assert.equal(body.temperature, 0.3);
+      assert.equal(body.response_format.type, 'json_object');
+      assert.match(body.messages[0]?.content as string, /prefer blue_bin/);
+      const userContent = body.messages[1]?.content;
+      assert.ok(Array.isArray(userContent));
+      assert.equal(userContent.filter((part) => part.type === 'image_url').length, 1);
+      const instruction = userContent.find((part) => part.type === 'text')?.text;
+      assert.equal(
+        instruction,
+        'What is this item? Classify it for recycling in Singapore. Respond in English.',
+      );
+      return completionResponse(JSON.stringify(OK));
+    }, async () => {
+      const result = await new TokenHubProvider(
+        'test-key',
+        PRODUCTION_PROFILE.providerOptions,
+      ).classify({ image: TEST_JPEG_BASE64 });
+      assert.equal(result.tip, undefined, 'production did not append refund copy in code');
+    });
+  });
+
+  await runTest('TokenHub disables thinking on text and the frozen production image profile', async () => {
+    for (const [request, model, options] of [
+      [{ text: 'can' }, 'hy3', undefined],
+      [{ image: TEST_JPEG_BASE64 }, 'hy-vision-2.0-instruct', PRODUCTION_PROFILE.providerOptions],
+    ] as Array<[ClassifyRequest, string, TokenHubProviderOptions | undefined]>) {
       await withMockFetch(async (_input, init) => {
-        const body = JSON.parse(String(init?.body)) as { model: string; thinking: unknown };
+        const body = JSON.parse(String(init?.body)) as {
+          model: string;
+          thinking: unknown;
+          reasoning_effort?: string;
+        };
         assert.equal(body.model, model);
         // A chain-of-thought bills as output, consumes max_tokens, and is what
         // turned hy3 into a 500 on 2026-08-29 with no change on this side. The
         // vendor default is not a contract, so every path must carry this.
         assert.deepEqual(body.thinking, { type: 'disabled' });
+        assert.equal(body.reasoning_effort, undefined);
         return completionResponse(JSON.stringify(OK));
       }, async () => {
-        await new TokenHubProvider('test-key').classify(request);
+        await new TokenHubProvider('test-key', options).classify(request);
       });
     }
   });
@@ -205,6 +351,23 @@ async function main() {
   await runTest('TokenHub treats invalid model output as retryable', async () => {
     await withMockFetch(
       async () => completionResponse(JSON.stringify({ item: 'can' })),
+      async () => {
+        await assert.rejects(
+          new TokenHubProvider('test-key').classify({ text: 'can' }),
+          (err: unknown) => err instanceof RetryableProviderError,
+        );
+      },
+    );
+  });
+
+  await runTest('TokenHub rejects an inconsistent status and channel as retryable', async () => {
+    const inconsistent = {
+      ...OK,
+      status: 'special_handling',
+      channel: 'return_point',
+    };
+    await withMockFetch(
+      async () => completionResponse(JSON.stringify(inconsistent)),
       async () => {
         await assert.rejects(
           new TokenHubProvider('test-key').classify({ text: 'can' }),
@@ -298,6 +461,12 @@ async function main() {
     const bad = { ...OK, channel: 'not_a_channel' } as unknown as ClassifyResult;
     const provider: ClassifyProvider = { name: 'bad', async classify() { return bad; } };
     await assert.rejects(classifyItem({ text: 'can' }, provider));
+  });
+
+  await runTest('rejects a null channel unless the result is not_sure', async () => {
+    const bad = { ...OK, status: 'not_recyclable', channel: null } as ClassifyResult;
+    const provider: ClassifyProvider = { name: 'bad', async classify() { return bad; } };
+    await assert.rejects(classifyItem({ text: 'medicine' }, provider));
   });
 
   await runTest('does not repeat a classification after server retries are exhausted', async () => {

@@ -36,47 +36,6 @@ export default function HazardousInfoCard({ locale }: HazardousInfoCardProps) {
           </div>
         </div>
 
-        <div className="flex items-start gap-2.5">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={config.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
-            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-            <polyline points="15 3 21 3 21 9" />
-            <line x1="10" y1="14" x2="21" y2="3" />
-          </svg>
-          <div>
-            <a
-              href="https://www.nea.gov.sg/our-services/pollution-control/toxic-industrial-waste"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium underline underline-offset-2"
-              style={{ color: config.textColor }}
-            >
-              {t(locale, 'hazardous.toxicWaste')}
-            </a>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-2.5">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={config.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="16" x2="12" y2="12" />
-            <line x1="12" y1="8" x2="12.01" y2="8" />
-          </svg>
-          <div>
-            <p>{t(locale, 'hazardous.pharmacy')}</p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-2.5">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={config.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
-          <div>
-            <p>{t(locale, 'hazardous.events')}</p>
-          </div>
-        </div>
       </div>
     </div>
   );

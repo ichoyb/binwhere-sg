@@ -161,6 +161,7 @@ export async function fetchAndConvertRvmData(
     const response = await fetch(BCRS_LOCATIONS_API_URL, {
       headers: {
         Accept: 'application/json',
+        Referer: 'https://bts.bcrs.sg/',
         'User-Agent': 'BinWhere/1.0',
       },
       cache: 'no-store',

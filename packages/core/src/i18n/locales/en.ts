@@ -105,14 +105,14 @@ const en = {
   'bcrs.machineOffline': 'Offline',
   'bcrs.machineMaintenance': 'Maintenance',
   'bcrs.pointCount': '1,000+ Return Points island-wide',
+  'bcrs.classifyReason': 'The official Singapore Deposit Mark and product barcode identify the BCRS return channel for this container. Prepare it for the S$0.10 refund; the Return Point makes the final acceptance decision.',
+  'classify.notSureReason': 'There is not enough information to choose a recycling channel safely.',
+  'classify.notSurePreparation': 'Provide a clearer photo or description showing the whole item and any labels or markings. For a beverage container, photograph the label around the product barcode.',
 
   // Hazardous info card
   'hazardous.title': 'How to Dispose of Hazardous Waste',
   'hazardous.hotline': 'NEA Hotline: 6225 5632',
   'hazardous.hotlineHint': 'Tap to call for disposal guidance',
-  'hazardous.toxicWaste': 'NEA Toxic Waste Info',
-  'hazardous.pharmacy': 'Expired medicine can be returned to pharmacies (Guardian / Watsons)',
-  'hazardous.events': 'NEA holds regular community hazardous waste collection events',
 
   // Nearby page
   'nearby.nearby': 'Nearby',

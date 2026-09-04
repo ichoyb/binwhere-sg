@@ -1,0 +1,1401 @@
+{
+  "timestamp": "2026-09-04T02:11:38.771Z",
+  "baseline": {
+    "id": "sg-consumer-text-v1",
+    "reviewedAt": "2026-09-04",
+    "sources": [
+      "https://www.nea.gov.sg/docs/default-source/our-services/waste-management/recycling-guide_v6.pdf",
+      "https://www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/e-waste-management/extended-producer-responsibility-%28epr%29-system-for-e-waste-management-system",
+      "https://www.nea.gov.sg/our-services/waste-management/donation-resale-and-repair-channels/",
+      "https://www.nea.gov.sg/our-services/waste-management/beverage-container-return-scheme/for-consumers"
+    ]
+  },
+  "truthSetDigest": "b1e786cc3e5a026f37fa237c79e4a0a9f127b79c5324d61b27dfcffe03d157a3",
+  "profile": {
+    "id": "production-0a5852f",
+    "revision": "0a5852f18a8b119d0a649f491ef781df94e5e2d3",
+    "digest": "88bcb6b37132bae26057bf21e60c8db41c4d2d995390d714b05f8ece223a69b4"
+  },
+  "models": {
+    "text": "hy3"
+  },
+  "thresholds": {
+    "exactAccuracy": 0.9,
+    "channelAccuracy": 0.9,
+    "statusAccuracy": 0.9,
+    "perChannelAccuracy": 0.8,
+    "maxUnexpectedNotSureRate": 0.15,
+    "maxProviderErrors": 0,
+    "maxUnsafeDiversions": 0
+  },
+  "testSetSize": 86,
+  "gates": [
+    {
+      "exactPass": false,
+      "channelPass": false,
+      "statusPass": false,
+      "perChannelPass": false,
+      "notSurePass": true,
+      "errorsPass": true,
+      "safetyPass": false,
+      "measurementValid": true,
+      "releaseEligible": false
+    }
+  ],
+  "reports": [
+    {
+      "provider": "tokenhub",
+      "totalItems": 86,
+      "channelAccuracy": 0.872093023255814,
+      "statusAccuracy": 0.8837209302325582,
+      "exactAccuracy": 0.8604651162790697,
+      "notSureCount": 0,
+      "notSureRate": 0,
+      "perChannel": {
+        "blue_bin": {
+          "total": 22,
+          "correct": 21,
+          "accuracy": 0.9545454545454546
+        },
+        "ewaste": {
+          "total": 12,
+          "correct": 11,
+          "accuracy": 0.9166666666666666
+        },
+        "ewaste_battery": {
+          "total": 5,
+          "correct": 5,
+          "accuracy": 1
+        },
+        "lighting": {
+          "total": 6,
+          "correct": 5,
+          "accuracy": 0.8333333333333334
+        },
+        "textile": {
+          "total": 5,
+          "correct": 1,
+          "accuracy": 0.2
+        },
+        "hazardous": {
+          "total": 5,
+          "correct": 3,
+          "accuracy": 0.6
+        },
+        "bulky_waste": {
+          "total": 5,
+          "correct": 4,
+          "accuracy": 0.8
+        },
+        "donation": {
+          "total": 7,
+          "correct": 7,
+          "accuracy": 1
+        },
+        "general_waste": {
+          "total": 19,
+          "correct": 18,
+          "accuracy": 0.9473684210526315
+        }
+      },
+      "avgConfidence": 0.9418604651162795,
+      "avgDurationMs": 2106.7906976744184,
+      "p50DurationMs": 2121,
+      "p95DurationMs": 2559,
+      "errors": 0,
+      "unsafeDiversions": 2,
+      "results": [
+        {
+          "text": "clean newspaper",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2209
+        },
+        {
+          "text": "empty PET water bottle with no Singapore BCRS Deposit Mark",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2247
+        },
+        {
+          "text": "aluminum drink can with no Singapore BCRS Deposit Mark",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2504
+        },
+        {
+          "text": "empty and rinsed glass jar",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2374
+        },
+        {
+          "text": "clean, dry cardboard box, flattened",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1913
+        },
+        {
+          "text": "empty, rinsed and flattened milk carton (Tetra Pak)",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2031
+        },
+        {
+          "text": "office paper",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2024
+        },
+        {
+          "text": "empty and rinsed shampoo bottle",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2026
+        },
+        {
+          "text": "tin food can, rinsed",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1938
+        },
+        {
+          "text": "clean plastic container",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2032
+        },
+        {
+          "text": "glass wine bottle, empty and rinsed",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1716
+        },
+        {
+          "text": "magazine",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2052
+        },
+        {
+          "text": "empty and rinsed detergent bottle",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2227
+        },
+        {
+          "text": "clean plastic bag",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1743
+        },
+        {
+          "text": "metal cookie tin",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1669
+        },
+        {
+          "text": "empty aerosol can; fully used and nothing comes out when sprayed",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2180
+        },
+        {
+          "text": "clean yogurt cup",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2198
+        },
+        {
+          "text": "paper egg carton",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1886
+        },
+        {
+          "text": "empty and rinsed glass sauce bottle",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2601
+        },
+        {
+          "text": "clean aluminum foil",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2181
+        },
+        {
+          "text": "broken laptop that cannot be reused",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2022
+        },
+        {
+          "text": "broken smartphone",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2156
+        },
+        {
+          "text": "broken CRT TV that cannot be reused",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2177
+        },
+        {
+          "text": "broken desktop computer that cannot be reused",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2539
+        },
+        {
+          "text": "broken printer that cannot be reused",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2207
+        },
+        {
+          "text": "broken tablet (iPad)",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2576
+        },
+        {
+          "text": "broken desktop monitor that cannot be reused",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2076
+        },
+        {
+          "text": "broken washing machine that cannot be reused",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2266
+        },
+        {
+          "text": "broken refrigerator",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2015
+        },
+        {
+          "text": "broken air conditioner unit that cannot be reused",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2413
+        },
+        {
+          "text": "used AA batteries",
+          "expected": {
+            "channel": "ewaste_battery",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste_battery",
+            "status": "special_handling",
+            "confidence": 0.99
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2132
+        },
+        {
+          "text": "old lithium-ion battery from laptop",
+          "expected": {
+            "channel": "ewaste_battery",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste_battery",
+            "status": "special_handling",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2137
+        },
+        {
+          "text": "button cell battery",
+          "expected": {
+            "channel": "ewaste_battery",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste_battery",
+            "status": "special_handling",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2394
+        },
+        {
+          "text": "used 9-volt household battery with terminals taped",
+          "expected": {
+            "channel": "ewaste_battery",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste_battery",
+            "status": "special_handling",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2646
+        },
+        {
+          "text": "rechargeable AAA batteries",
+          "expected": {
+            "channel": "ewaste_battery",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste_battery",
+            "status": "special_handling",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2210
+        },
+        {
+          "text": "fluorescent tube",
+          "expected": {
+            "channel": "lighting",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "lighting",
+            "status": "special_handling",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2059
+        },
+        {
+          "text": "CFL compact fluorescent light bulb",
+          "expected": {
+            "channel": "lighting",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "lighting",
+            "status": "special_handling",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2264
+        },
+        {
+          "text": "LED light bulb",
+          "expected": {
+            "channel": "lighting",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "lighting",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1876
+        },
+        {
+          "text": "broken fluorescent lamp",
+          "expected": {
+            "channel": "lighting",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "lighting",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2276
+        },
+        {
+          "text": "energy-saving light bulb",
+          "expected": {
+            "channel": "lighting",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "lighting",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1912
+        },
+        {
+          "text": "clean, dry old t-shirts with normal wear and no stains or tears",
+          "expected": {
+            "channel": "textile",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.95
+          },
+          "channelMatch": false,
+          "statusMatch": false,
+          "durationMs": 2181
+        },
+        {
+          "text": "clean, dry used shoes with normal wear, still intact",
+          "expected": {
+            "channel": "textile",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": false,
+          "statusMatch": false,
+          "durationMs": 2098
+        },
+        {
+          "text": "clean, dry used curtains with no mould or stains",
+          "expected": {
+            "channel": "textile",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "textile",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": false,
+          "durationMs": 1838
+        },
+        {
+          "text": "clean, dry used bed sheets without tears or stains",
+          "expected": {
+            "channel": "textile",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": false,
+          "statusMatch": false,
+          "durationMs": 2046
+        },
+        {
+          "text": "clean, dry used handbag with normal wear, still intact",
+          "expected": {
+            "channel": "textile",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": false,
+          "statusMatch": false,
+          "durationMs": 1963
+        },
+        {
+          "text": "leftover paint can",
+          "expected": {
+            "channel": "hazardous",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "hazardous",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1964
+        },
+        {
+          "text": "insect spray can (partially full)",
+          "expected": {
+            "channel": "hazardous",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "hazardous",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2163
+        },
+        {
+          "text": "used lead-acid car battery",
+          "expected": {
+            "channel": "hazardous",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste_battery",
+            "status": "special_handling",
+            "confidence": 0.98
+          },
+          "channelMatch": false,
+          "statusMatch": true,
+          "durationMs": 1910
+        },
+        {
+          "text": "used motor oil",
+          "expected": {
+            "channel": "hazardous",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "hazardous",
+            "status": "special_handling",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2121
+        },
+        {
+          "text": "cleaning chemical bottles (with residue)",
+          "expected": {
+            "channel": "hazardous",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": false,
+          "statusMatch": false,
+          "durationMs": 2686
+        },
+        {
+          "text": "broken sofa that cannot be reused",
+          "expected": {
+            "channel": "bulky_waste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "bulky_waste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1714
+        },
+        {
+          "text": "broken wooden table",
+          "expected": {
+            "channel": "bulky_waste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "bulky_waste",
+            "status": "special_handling",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1819
+        },
+        {
+          "text": "used mattress that cannot be reused",
+          "expected": {
+            "channel": "bulky_waste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "bulky_waste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1846
+        },
+        {
+          "text": "broken bookshelf",
+          "expected": {
+            "channel": "bulky_waste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": false,
+          "statusMatch": false,
+          "durationMs": 2128
+        },
+        {
+          "text": "broken bicycle that cannot be reused and is too large for a waste bin",
+          "expected": {
+            "channel": "bulky_waste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "bulky_waste",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2229
+        },
+        {
+          "text": "good condition winter jacket",
+          "expected": {
+            "channel": "donation",
+            "status": "consider_donating"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1763
+        },
+        {
+          "text": "used books in good condition",
+          "expected": {
+            "channel": "donation",
+            "status": "consider_donating"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1786
+        },
+        {
+          "text": "working blender",
+          "expected": {
+            "channel": "donation",
+            "status": "consider_donating"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1819
+        },
+        {
+          "text": "children's toys, still working",
+          "expected": {
+            "channel": "donation",
+            "status": "consider_donating"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2062
+        },
+        {
+          "text": "good condition backpack",
+          "expected": {
+            "channel": "donation",
+            "status": "consider_donating"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2172
+        },
+        {
+          "text": "used tissue paper",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 1
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2162
+        },
+        {
+          "text": "food waste (leftover rice)",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.99
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1738
+        },
+        {
+          "text": "styrofoam food container",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2165
+        },
+        {
+          "text": "dirty plastic bag with food stains",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2051
+        },
+        {
+          "text": "broken ceramic mug",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2137
+        },
+        {
+          "text": "used paper towel",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.99
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2022
+        },
+        {
+          "text": "used and soiled toilet paper, not the clean cardboard tube",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 1
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1670
+        },
+        {
+          "text": "broken mirror",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2211
+        },
+        {
+          "text": "disposable chopsticks (used)",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1843
+        },
+        {
+          "text": "cigarette butts",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1907
+        },
+        {
+          "text": "pizza box with grease stains",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.98
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1976
+        },
+        {
+          "text": "half-eaten takeaway container",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2216
+        },
+        {
+          "text": "broken electronic toy with a built-in battery that cannot be removed",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste",
+            "status": "special_handling",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2332
+        },
+        {
+          "text": "pyrex glass baking dish",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1894
+        },
+        {
+          "text": "old working iPhone in good condition",
+          "expected": {
+            "channel": "donation",
+            "status": "consider_donating"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2219
+        },
+        {
+          "text": "plastic straw",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 1727
+        },
+        {
+          "text": "empty peanut butter jar (not rinsed)",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2380
+        },
+        {
+          "text": "old clothes that are torn and heavily stained",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2003
+        },
+        {
+          "text": "clean and dry bubble wrap",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "blue_bin",
+            "status": "recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2286
+        },
+        {
+          "text": "used incandescent light bulb",
+          "expected": {
+            "channel": "lighting",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.9
+          },
+          "channelMatch": false,
+          "statusMatch": false,
+          "durationMs": 2083
+        },
+        {
+          "text": "prescription glasses in good reusable condition",
+          "expected": {
+            "channel": "donation",
+            "status": "consider_donating"
+          },
+          "actual": {
+            "channel": "donation",
+            "status": "consider_donating",
+            "confidence": 0.9
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2174
+        },
+        {
+          "text": "empty paint can (completely dry)",
+          "expected": {
+            "channel": "blue_bin",
+            "status": "recyclable"
+          },
+          "actual": {
+            "channel": "hazardous",
+            "status": "special_handling",
+            "confidence": 0.9
+          },
+          "channelMatch": false,
+          "statusMatch": false,
+          "durationMs": 2307
+        },
+        {
+          "text": "coffee capsule (Nespresso)",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.85
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2559
+        },
+        {
+          "text": "broken power bank that cannot be reused",
+          "expected": {
+            "channel": "ewaste",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "ewaste_battery",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": false,
+          "statusMatch": true,
+          "durationMs": 2246
+        },
+        {
+          "text": "expired household medicine pills",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "hazardous",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": false,
+          "statusMatch": false,
+          "durationMs": 2396
+        },
+        {
+          "text": "wet cardboard",
+          "expected": {
+            "channel": "general_waste",
+            "status": "not_recyclable"
+          },
+          "actual": {
+            "channel": "general_waste",
+            "status": "not_recyclable",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2068
+        }
+      ]
+    }
+  ]
+}

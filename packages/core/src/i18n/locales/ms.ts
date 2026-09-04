@@ -89,9 +89,6 @@ const ms: Record<keyof typeof en, string> = {
   'hazardous.title': 'Cara Melupuskan Sisa Berbahaya',
   'hazardous.hotline': 'Talian NEA: 6225 5632',
   'hazardous.hotlineHint': 'Ketik untuk menelefon bagi panduan pelupusan',
-  'hazardous.toxicWaste': 'Info Sisa Toksik NEA',
-  'hazardous.pharmacy': 'Ubat luput boleh dipulangkan ke farmasi (Guardian / Watsons)',
-  'hazardous.events': 'NEA mengadakan acara pengumpulan sisa berbahaya komuniti secara berkala',
 
   // Nearby page
   'nearby.nearby': 'Berdekatan',
@@ -148,6 +145,9 @@ const ms: Record<keyof typeof en, string> = {
   'bcrs.machineOffline': 'Offline',
   'bcrs.machineMaintenance': 'Penyelenggaraan',
   'bcrs.pointCount': '1,000+ Pusat Pulangan di seluruh pulau',
+  'bcrs.classifyReason': 'Deposit Mark rasmi Singapura dan kod bar produk mengenal pasti saluran pemulangan BCRS untuk bekas ini. Sediakan bekas untuk bayaran balik S$0.10; Pusat Pulangan membuat keputusan penerimaan akhir.',
+  'classify.notSureReason': 'Maklumat yang ada belum mencukupi untuk memilih saluran kitar semula dengan selamat.',
+  'classify.notSurePreparation': 'Berikan foto atau penerangan yang lebih jelas yang menunjukkan keseluruhan item serta sebarang label atau tanda. Untuk bekas minuman, ambil gambar label di sekeliling kod bar produk.',
 };
 
 export default ms;

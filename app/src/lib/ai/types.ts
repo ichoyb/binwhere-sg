@@ -2,7 +2,7 @@ import type { ClassifyRequest, ClassifyResult } from '@binwhere/core';
 
 /** Re-export domain classify types from @binwhere/core */
 export type { ClassifyResult, ClassifyRequest } from '@binwhere/core';
-export { ClassifyResultSchema } from '@binwhere/core';
+export { ClassifyResultSchema, ClassifyResultShapeSchema } from '@binwhere/core';
 
 /**
  * Provider interface for classification — server-side only.

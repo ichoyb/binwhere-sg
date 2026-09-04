@@ -171,7 +171,7 @@ export function ResultScreen({
           </View>
         ) : null}
 
-        {result.preparation && result.preparation.length > 0 ? (
+        {!isBcrs && result.preparation && result.preparation.length > 0 ? (
           <View style={styles.prepBlock}>
             <Text style={styles.prepTitle}>{t(locale, 'result.beforeYouGo')}</Text>
             {result.preparation.map((step, i) => (
@@ -182,7 +182,7 @@ export function ResultScreen({
           </View>
         ) : null}
 
-        {result.tip ? (
+        {!isBcrs && result.tip ? (
           <Text style={styles.tip}>
             <Text style={styles.tipLabel}>{t(locale, 'result.tip')}</Text>
             {result.tip}
@@ -193,6 +193,17 @@ export function ResultScreen({
       {isBcrs ? (
         <View style={[styles.card, { backgroundColor: '#E8F8EF', borderColor: '#B8E6C8' }]}>
           <Text style={[styles.prepTitle, { color: '#065F46' }]}>{t(locale, 'bcrs.title')}</Text>
+          <Text style={{ color: '#065F46', marginTop: 4 }}>{t(locale, 'bcrs.refundAmount')}</Text>
+          {[
+            t(locale, 'bcrs.step1'),
+            t(locale, 'bcrs.step2'),
+            t(locale, 'bcrs.step3'),
+            t(locale, 'bcrs.step4'),
+          ].map((step, index) => (
+            <Text key={step} style={{ color: '#065F46', marginTop: 4 }}>
+              {index + 1}. {step}
+            </Text>
+          ))}
           <Text style={{ color: '#065F46', marginTop: 4 }}>{t(locale, 'bcrs.eligible')}</Text>
           <Text style={{ color: '#065F46', marginTop: 4 }}>{t(locale, 'bcrs.excluded')}</Text>
           <Text style={{ color: '#065F46', marginTop: 4 }}>{t(locale, 'bcrs.pointCount')}</Text>
@@ -223,17 +234,6 @@ export function ResultScreen({
             </Text>
           </Pressable>
           <Text style={styles.hazardBody}>{t(locale, 'hazardous.hotlineHint')}</Text>
-          <Pressable
-            onPress={() =>
-              Linking.openURL(
-                'https://www.nea.gov.sg/our-services/pollution-control/toxic-industrial-waste',
-              )
-            }
-          >
-            <Text style={styles.link}>{t(locale, 'hazardous.toxicWaste')}</Text>
-          </Pressable>
-          <Text style={styles.hazardBody}>{t(locale, 'hazardous.pharmacy')}</Text>
-          <Text style={styles.hazardBody}>{t(locale, 'hazardous.events')}</Text>
         </View>
       ) : null}
 

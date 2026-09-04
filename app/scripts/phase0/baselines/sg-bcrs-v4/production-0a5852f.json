@@ -1,0 +1,1167 @@
+{
+  "timestamp": "2026-09-04T04:05:31.265Z",
+  "baseline": {
+    "id": "sg-bcrs-v4",
+    "reviewedAt": "2026-09-04",
+    "holdoutRule": "The v1-v3 holdouts were promoted to regression after evaluation. The v4 holdouts were selected and truth-labelled before the v4 candidate was revised or run, and must not be used to revise that candidate."
+  },
+  "truthSetDigest": "3ceadfcc194f3cd3438be647933d1a23ef97dc22b4c3468e844f5a55f08d82f0",
+  "profile": {
+    "id": "production-0a5852f",
+    "revision": "0a5852f18a8b119d0a649f491ef781df94e5e2d3",
+    "digest": "30584900e87a3821f5f359f9c6722c53381efa60732f492c03a81789e6693f4d"
+  },
+  "models": {
+    "text": "hy3",
+    "image": "hy-vision-2.0-instruct"
+  },
+  "policySource": {
+    "url": "https://www.nea.gov.sg/our-services/waste-management/beverage-container-return-scheme/for-consumers",
+    "reviewedAt": "2026-09-04",
+    "authority": "National Environment Agency, Singapore",
+    "invariants": [
+      "Only containers carrying the BCRS Deposit Mark are eligible for a refund.",
+      "The refund is S$0.10 per eligible container.",
+      "Containers without the mark remain recyclable through blue bins or other recycling stations."
+    ]
+  },
+  "sources": [
+    {
+      "id": "official-mark-closeup",
+      "filename": "official-mark-closeup.webp",
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in",
+      "imageUrl": "https://cassette.sphdigital.com.sg/image/straitstimes/c0d41c7631e5b23f37e460a37b5e0194cffbdf55f1c9bfa6e588fca0962bb7cb",
+      "sha256": "7b81aaa06835332811ce7995aa2651ee25fddcfcdb3b66e99fc913426e434bf3",
+      "credit": "ST Photo/Mark Cheong",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Real photograph of a 500ml beverage bottle; deterministically framed to the label where the Deposit Mark and barcode are readable.",
+      "crop": {
+        "left": 450,
+        "top": 0,
+        "width": 690,
+        "height": 900
+      }
+    },
+    {
+      "id": "official-marked-pair",
+      "filename": "official-marked-pair.jpg",
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-deposit-vending-machine-6018216",
+      "imageUrl": "https://dam.mediacorp.sg/image/upload/s--Vk3t3wmj--/f_auto%2Cq_auto/v1/mediacorp/cna/image/2026/03/26/beverage_containers_with_deposit_mark_on_stickers_1.jpg?itok=QiHn0o2b",
+      "sha256": "c8ee48fdac2c38e1ea368c86629fa7f44dcce8a4516a1c7d98fe01e393dc0e64",
+      "credit": "BCRS Ltd, via CNA",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Real photograph of a marked plastic bottle and metal can."
+    },
+    {
+      "id": "official-marked-bottle",
+      "filename": "official-marked-bottle.jpg",
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361",
+      "imageUrl": "https://dam.mediacorp.sg/image/upload/s--pBqP1eG_--/c_crop%2Ch_1729%2Cw_3074%2Cx_0%2Cy_1/c_fill%2Cg_auto%2Ch_468%2Cw_830/fl_relative%2Cg_south_east%2Cl_mediacorp%3Acna%3Awatermark%3A2021-08%3Acna%2Cw_0.1/f_auto%2Cq_auto/v1/mediacorp/cna/image/2026/01/30/jus_4084.jpg?itok=rJkTQ7-f",
+      "sha256": "8ae964ff398ced34b9388806bb23db49d86cbd3b3650af27e6f25f6ffbd5b8b8",
+      "credit": "CNA/Justin Tan",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Real photograph of an empty 600ml bottle with the Deposit Mark and barcode visible."
+    },
+    {
+      "id": "mark-not-visible-bottle",
+      "filename": "mark-not-visible-bottle.jpg",
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Bottle_of_Water.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Bottle_of_Water.jpg/1920px-Bottle_of_Water.jpg",
+      "sha256": "f3da9b617c7efff48f11460467818b7c6a73a5631c6185f1f8417599fba91f18",
+      "credit": "Jiafei Slay Queen, Wikimedia Commons",
+      "licence": "CC0 1.0",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Real photograph of a plastic beverage bottle from one angle; no label is visible."
+    },
+    {
+      "id": "individual-can-mark-not-visible",
+      "filename": "individual-can-mark-not-visible.png",
+      "sourcePageUrl": "https://mothership.sg/2026/07/ice-mountain-drinks-fairprice-bcrs-logo/",
+      "imageUrl": "https://static.mothership.sg/1/2026/07/coverimage-2026-07-23T171244.845.png",
+      "sha256": "ccf96edc9a7450a45b9d88360f44bca84d8d1faf7fa10bd8feee1bb9acb2461d",
+      "credit": "Photos from Cheah Kok Keong, via Mothership",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Editorial layout made from real photos; deterministically framed to the individual can whose visible label has no Deposit Mark.",
+      "crop": {
+        "left": 650,
+        "top": 80,
+        "width": 350,
+        "height": 445
+      }
+    },
+    {
+      "id": "empty-glass-bottle",
+      "filename": "empty-glass-bottle.jpg",
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Clear_empty_glass_bottle.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Clear_empty_glass_bottle.jpg/1920px-Clear_empty_glass_bottle.jpg",
+      "sha256": "5378c7146cb36ab94eaa2f313570b8977a1fa58734e32042ab5a624cf003e122",
+      "credit": "Santeri Viinamäki, Wikimedia Commons",
+      "licence": "CC BY-SA 4.0",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Real photograph of a clearly empty glass bottle."
+    },
+    {
+      "id": "holdout-singapore-mark-closeup",
+      "filename": "holdout-singapore-mark-closeup.jpg",
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361",
+      "imageUrl": "https://dam.mediacorp.sg/image/upload/s--o1_HKBiK--/c_crop%2Ch_2546%2Cw_4526%2Cx_0%2Cy_469/c_fill%2Cg_auto%2Ch_468%2Cw_830/fl_relative%2Cg_south_east%2Cl_mediacorp%3Acna%3Awatermark%3A2021-08%3Acna%2Cw_0.1/f_auto%2Cq_auto/v1/mediacorp/cna/image/2026/01/30/jus_4229.jpg?itok=8LCq0jnI",
+      "sha256": "8bd0ca834cab36c1591fddf729e4c7eec73c8e423d2236b45d03f97f373a8616",
+      "credit": "CNA/Justin Tan",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Previously unused real close-up of one plastic bottle; the Singapore Deposit Mark and barcode are readable on the same label."
+    },
+    {
+      "id": "holdout-foreign-refund-mark",
+      "filename": "holdout-foreign-refund-mark.jpg",
+      "sourcePageUrl": "https://note.com/ruka926/n/n9c58c8986304",
+      "imageUrl": "https://assets.st-note.com/img/1735459313-DMkZ7pd8rnW0Oi31cAKSgLNI.jpg?fit=bounds&height=2000&quality=85&width=2000",
+      "sha256": "00508d4370d96adedc04c27690548ff242c955181e73b236b028865e3ae0fe63",
+      "credit": "Ruka, note.com",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Previously unused real close-up of an Australian bottle label reading \"10¢ refund at collection depots/points\"; it is not the Singapore Deposit Mark."
+    },
+    {
+      "id": "holdout-single-sideways-marked-can",
+      "filename": "holdout-single-sideways-marked-can.webp",
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/a-map-of-waste-atms-new-website-launched-to-help-people-find-beverage-container-return-machines",
+      "imageUrl": "https://cassette.sphdigital.com.sg/image/straitstimes/522c9d39efeb9854685ee8d537137b78025d0e4c9db0a982a4d1a33457c50bae",
+      "sha256": "a14d5c4eae44e894d0d4498d0013cb47de00282910fb9c360f5c3a004c5a452a",
+      "credit": "ST Photo/Shintaro Tay",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Real photograph of exactly one beverage can. A small circular 10-cent symbol and barcode are visible, but SG/RETURN text is not reliably readable after production sanitisation, so image-only eligibility remains unknown."
+    },
+    {
+      "id": "holdout-multiple-marked-containers",
+      "filename": "holdout-multiple-marked-containers.webp",
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/a-map-of-waste-atms-new-website-launched-to-help-people-find-beverage-container-return-machines",
+      "imageUrl": "https://cassette.sphdigital.com.sg/image/straitstimes/92a383910fa10ac8cdb2e4d9fc778f29e054ea14d6ec419b7053f84a18834ae9",
+      "sha256": "41cdd756549997ae13747c49655ef71ee5baea46c18b35d414a2b7c336de2a06",
+      "credit": "NEA, via The Straits Times",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Previously unused real photograph showing several marked bottles and cans; no single physical container is the sole subject."
+    },
+    {
+      "id": "holdout-single-clear-marked-bottle-v3",
+      "filename": "holdout-single-clear-marked-bottle-v3.jpg",
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-nea-rebut-accusation-6321081",
+      "imageUrl": "https://dam.mediacorp.sg/image/upload/s--Tk-5iWuL--/c_crop,h_1066,w_1332,x_117,y_0/c_fill,g_center,h_598,w_747/fl_relative,g_south_east,l_mediacorp:cna:watermark:2021-08:cna,w_0.1/f_auto,q_auto/v1/mediacorp/cna/image/2026/03/18/sya_2554_0.jpg?itok=Kw6EhqPA",
+      "sha256": "8e9188d76d3164b3f2e7ea8f72563ebaca60f5eaae50a8f975bda047c8a7f2c1",
+      "credit": "CNA/Syamil Sapari",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Previously unused real photograph of one bottle being returned; the official 10¢ SG RETURN mark and barcode are both clearly readable on that bottle."
+    },
+    {
+      "id": "holdout-multiple-containers-collage-v3",
+      "filename": "holdout-multiple-containers-collage-v3.webp",
+      "sourcePageUrl": "https://www.stomp.sg/stomping-ground/man-brings-10-empty-bottles-bcrs-machine-not-all-eligible-10-cent-refund-asks-whats-point",
+      "imageUrl": "https://cassette.sphdigital.com.sg/image/stomp/af75700263dc271480b7a04f33e4e8497af4da302e2de945c332cb20dd8773f3?f=webp&w=960",
+      "sha256": "ed58f16ff0161e50bbd52f32d0cff1746a69c8ed5d3cc9493ada55f1e593860f",
+      "credit": "STOMP/The Straits Times",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Previously unused editorial collage made from real photos of many cans and bottles; it cannot establish eligibility for one individual container."
+    },
+    {
+      "id": "holdout-malaysia-made-singapore-mark-v4",
+      "filename": "holdout-malaysia-made-singapore-mark-v4.jpg",
+      "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/",
+      "imageUrl": "https://static.mothership.sg/1/2026/06/IMG_1105.jpg",
+      "sha256": "b112e7f613b278b08d57ff328fa5973afed6157332fc056402444f88494857ae",
+      "credit": "Mothership",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Previously unused real photograph of one bottle. The label says \"Product of Malaysia\" but separately shows the official 10¢ SG RETURN mark, an intact barcode, and refund-at-point-of-purchase-in-SG wording.",
+      "webClientCompression": true
+    },
+    {
+      "id": "holdout-single-angle-no-mark-v4",
+      "filename": "holdout-single-angle-no-mark-v4.jpg",
+      "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/",
+      "imageUrl": "https://static.mothership.sg/1/2026/06/IMG_1107.jpg",
+      "sha256": "9953d8ee186e6a60ad6e33ada47c79d842028bd76a10392cdb1e28fc8efd91b6",
+      "credit": "Mothership",
+      "licence": "Publisher-owned; evaluation cache only",
+      "reviewedAt": "2026-09-04",
+      "provenance": "Previously unused real photograph of one can from a single angle. The barcode and generic recycling wording are visible, but a single view cannot establish that the Singapore Deposit Mark is absent from the whole container.",
+      "webClientCompression": true
+    }
+  ],
+  "gate": {
+    "measurementValid": true,
+    "releaseEligible": false,
+    "passed": 9,
+    "total": 29,
+    "holdoutPassed": 0,
+    "holdoutTotal": 2,
+    "falseReturnPoints": 2,
+    "notSureBlueBinMentions": 10,
+    "providerErrors": 0
+  },
+  "results": [
+    {
+      "id": "official-mark-present-en",
+      "mode": "text",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-present-en",
+        "locale": "en",
+        "text": "Empty 500ml plastic beverage bottle with the official Singapore BCRS Deposit Mark clearly visible. The barcode is intact and the bottle is not crushed.",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Empty 500ml plastic beverage bottle with BCRS Deposit Mark",
+        "status": "recyclable",
+        "confidence": 1,
+        "channel": "return_point",
+        "reason": "Plastic beverage container (150ml-3L) with visible Deposit Mark, intact barcode, not crushed — eligible for S$0.10 refund under BCRS.",
+        "preparation": [
+          "Ensure bottle is empty",
+          "Do not crush the bottle",
+          "Keep barcode intact"
+        ],
+        "tip": "Bring to any BCRS Return Point to receive S$0.10 refund per container."
+      },
+      "assertions": [],
+      "durationMs": 1870
+    },
+    {
+      "id": "official-mark-present-zh",
+      "mode": "text",
+      "locale": "zh",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-present-zh",
+        "locale": "zh",
+        "text": "一个空的500ml塑料饮料瓶，清楚显示新加坡官方BCRS Deposit Mark；条码完整，瓶身未压扁。",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "500ml塑料饮料瓶（带BCRS Deposit Mark）",
+        "status": "recyclable",
+        "confidence": 0.99,
+        "channel": "return_point",
+        "reason": "该塑料饮料瓶容量500ml在150ml-3L范围内，清晰显示BCRS Deposit Mark，条码完整且未压扁，符合返退点回收条件，可获S$0.10退款。",
+        "preparation": [
+          "确认瓶身Deposit Mark清晰可见",
+          "保持条码完整、瓶身不压扁",
+          "送至任意BCRS返退点"
+        ],
+        "tip": "退回后可获得S$0.10退款，请勿投入蓝色回收箱以免失去退款机会。"
+      },
+      "assertions": [],
+      "durationMs": 2156
+    },
+    {
+      "id": "official-mark-present-ms",
+      "mode": "text",
+      "locale": "ms",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-present-ms",
+        "locale": "ms",
+        "text": "Botol minuman plastik 500ml yang kosong dengan Deposit Mark BCRS Singapura rasmi yang jelas kelihatan. Kod bar masih utuh dan botol tidak kemek.",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Botol minuman plastik 500ml dengan Deposit Mark BCRS",
+        "status": "recyclable",
+        "confidence": 0.99,
+        "channel": "return_point",
+        "reason": "Botol minuman plastik 500ml mempunyai Deposit Mark BCRS yang jelas, kod bar utuh dan tidak kemek, layak untuk bayaran balik S$0.10.",
+        "preparation": [
+          "Pastikan botol kosong dan kering",
+          "Jangan kemekkan botol",
+          "Bawa ke mesin Return Point BCRS"
+        ],
+        "tip": "Anda akan menerima S$0.10 untuk setiap bekas yang layak di Return Point."
+      },
+      "assertions": [],
+      "durationMs": 2459
+    },
+    {
+      "id": "official-mark-present-ta",
+      "mode": "text",
+      "locale": "ta",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-present-ta",
+        "locale": "ta",
+        "text": "அதிகாரப்பூர்வ சிங்கப்பூர் BCRS Deposit Mark தெளிவாகத் தெரியும் காலியான 500ml பிளாஸ்டிக் பான பாட்டில். பார்கோடு சேதமின்றி உள்ளது; பாட்டில் நசுக்கப்படவில்லை.",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "காலியான 500ml பிளாஸ்டிக் பான பாட்டில் (Deposit Mark உடன்)",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "return_point",
+        "reason": "BCRS தகுதியான பானக் கொள்கலன்; Deposit Mark தெளிவாக உள்ளது, பார்கோடு சேதமின்றி உள்ளது, நசுக்கப்படவில்லை, அளவு 150ml-3L இடையே.",
+        "preparation": [
+          "பாட்டிலை காலியாக வடிக்கவும்",
+          "மூடியை அகற்றி வைக்கவும் அல்லது பாட்டிலுடன் விடவும்"
+        ],
+        "tip": "இதை அருகிலுள்ள Return Point-க்கு எடுத்துச் சென்றால் S$0.10 திரும்பப் பெறலாம்."
+      },
+      "assertions": [],
+      "durationMs": 3460
+    },
+    {
+      "id": "official-mark-explicitly-absent-en",
+      "mode": "text",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-explicitly-absent-en",
+        "locale": "en",
+        "text": "Empty, clean 330ml aluminium beverage can. It does not have the Singapore BCRS Deposit Mark.",
+        "channel": "blue_bin",
+        "status": "recyclable"
+      },
+      "actual": {
+        "item": "Empty clean 330ml aluminium beverage can (no Deposit Mark)",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean and dry aluminium can without BCRS Deposit Mark is recyclable via blue bin, not return_point.",
+        "preparation": [
+          "Rinse can to ensure clean and dry",
+          "Place in blue recycling bin"
+        ],
+        "tip": "If the can had a Singapore BCRS Deposit Mark, you could get S$0.10 at a Return Point instead."
+      },
+      "assertions": [],
+      "durationMs": 2426
+    },
+    {
+      "id": "official-mark-explicitly-absent-zh",
+      "mode": "text",
+      "locale": "zh",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-explicitly-absent-zh",
+        "locale": "zh",
+        "text": "一个空的、干净的330ml铝制饮料罐，明确没有新加坡BCRS Deposit Mark。",
+        "channel": "blue_bin",
+        "status": "recyclable"
+      },
+      "actual": {
+        "item": "空的、干净的330ml铝制饮料罐（无Deposit Mark）",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "干净干燥的铝制饮料罐属于可回收金属，但无BCRS Deposit Mark，不符合return_point条件，应投入蓝色回收箱。",
+        "preparation": [
+          "确保罐子干净干燥",
+          "投入蓝色回收箱"
+        ],
+        "tip": "若罐子有Deposit Mark，可带到Return Point获S$0.10退款。"
+      },
+      "assertions": [],
+      "durationMs": 1947
+    },
+    {
+      "id": "official-mark-explicitly-absent-ms",
+      "mode": "text",
+      "locale": "ms",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-explicitly-absent-ms",
+        "locale": "ms",
+        "text": "Tin minuman aluminium 330ml yang kosong dan bersih. Tin ini tidak mempunyai Deposit Mark BCRS Singapura.",
+        "channel": "blue_bin",
+        "status": "recyclable"
+      },
+      "actual": {
+        "item": "Tin minuman aluminium 330ml kosong dan bersih",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Tin aluminium bersih dan kering tanpa Deposit Mark BCRS, jadi tidak layak untuk return_point dan patut ke blue_bin.",
+        "preparation": [
+          "Pastikan tin kosong",
+          "Bilas jika perlu dan keringkan sebelum masuk blue_bin"
+        ],
+        "tip": "Jika tin ada Deposit Mark BCRS, bawa ke Return Point untuk dapat semula S$0.10."
+      },
+      "assertions": [],
+      "durationMs": 2348
+    },
+    {
+      "id": "official-mark-explicitly-absent-ta",
+      "mode": "text",
+      "locale": "ta",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-explicitly-absent-ta",
+        "locale": "ta",
+        "text": "காலியாகவும் சுத்தமாகவும் உள்ள 330ml அலுமினிய பான கேன். இதில் சிங்கப்பூர் BCRS Deposit Mark இல்லை.",
+        "channel": "blue_bin",
+        "status": "recyclable"
+      },
+      "actual": {
+        "item": "காலியான மற்றும் சுத்தமான 330ml அலுமினிய பான கேன்",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "கேன் சுத்தமாகவும் உலர்ந்தும் உள்ளது, ஆனால் BCRS Deposit Mark இல்லை என்பதால் return_point க்கு பதிலாக blue_bin க்கு அனுப்பவும்.",
+        "preparation": [
+          "கேனை கழுவி உலர விடவும்",
+          "நசுக்காமல் blue_bin இல் போடவும்"
+        ],
+        "tip": "இதில் Deposit Mark இருந்திருந்தால் S$0.10 திரும்பப் பெற return_point க்கு கொண்டு செல்லலாம்."
+      },
+      "assertions": [],
+      "durationMs": 3085
+    },
+    {
+      "id": "official-mark-unknown-en",
+      "mode": "text",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-unknown-en",
+        "locale": "en",
+        "text": "This appears to be a plastic drink bottle, but the information provided does not show whether it has the Singapore BCRS Deposit Mark.",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49
+      },
+      "actual": {
+        "item": "plastic drink bottle",
+        "status": "recyclable",
+        "confidence": 0.7,
+        "channel": "blue_bin",
+        "reason": "Plastic drink bottle with no visible Deposit Mark mentioned; classified as blue bin recyclable if clean and dry.",
+        "preparation": [
+          "Empty the bottle",
+          "Rinse and ensure it is clean and dry",
+          "Do not crush if intending for BCRS"
+        ],
+        "tip": "If the container has a Deposit Mark, bring it to a Return Point for S$0.10 refund instead."
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.7",
+        "not_sure response mentions a blue-bin channel before Deposit Mark absence is established"
+      ],
+      "durationMs": 2034
+    },
+    {
+      "id": "official-mark-unknown-zh",
+      "mode": "text",
+      "locale": "zh",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-unknown-zh",
+        "locale": "zh",
+        "text": "这看起来是一个塑料饮料瓶，但现有信息无法看出它是否带有新加坡BCRS Deposit Mark。",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49
+      },
+      "actual": {
+        "item": "塑料饮料瓶",
+        "status": "recyclable",
+        "confidence": 0.7,
+        "channel": "blue_bin",
+        "reason": "疑似饮料瓶但Deposit Mark未知，按规则归入蓝色回收箱；若带Deposit Mark应去Return Point",
+        "preparation": [
+          "清空瓶内液体",
+          "简单冲洗保持干净干燥",
+          "移除瓶盖后投入蓝箱（或保留按本地习惯）"
+        ],
+        "tip": "若瓶身有Deposit Mark且条码完好未压扁（150ml-3L），可带到Return Point退S$0.10"
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.7",
+        "not_sure response mentions a blue-bin channel before Deposit Mark absence is established"
+      ],
+      "durationMs": 2552
+    },
+    {
+      "id": "official-mark-unknown-ms",
+      "mode": "text",
+      "locale": "ms",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-unknown-ms",
+        "locale": "ms",
+        "text": "Ini kelihatan seperti botol minuman plastik, tetapi maklumat yang diberikan tidak menunjukkan sama ada botol ini mempunyai Deposit Mark BCRS Singapura.",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49
+      },
+      "actual": {
+        "item": "Botol minuman plastik (tanda deposit tidak pasti)",
+        "status": "recyclable",
+        "confidence": 0.7,
+        "channel": "blue_bin",
+        "reason": "Botol plastik kelihatan seperti bekas minuman tetapi tiada maklumat tentang Deposit Mark BCRS. Tanpa pengesahan tanda deposit, ia dikelaskan sebagai blue_bin jika bersih dan kering.",
+        "preparation": [
+          "Pastikan botol kosong, bersih dan kering",
+          "Buang penutup jika perlu atau biarkan tertutup"
+        ],
+        "tip": "Jika botol mempunyai Deposit Mark BCRS yang jelas, bawa ke Return Point untuk bayaran balik S$0.10."
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.7",
+        "not_sure response mentions a blue-bin channel before Deposit Mark absence is established"
+      ],
+      "durationMs": 2540
+    },
+    {
+      "id": "official-mark-unknown-ta",
+      "mode": "text",
+      "locale": "ta",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-unknown-ta",
+        "locale": "ta",
+        "text": "இது ஒரு பிளாஸ்டிக் பான பாட்டில் போலத் தெரிகிறது; ஆனால் இதில் சிங்கப்பூர் BCRS Deposit Mark உள்ளதா என்பதை வழங்கப்பட்ட தகவல் காட்டவில்லை.",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49
+      },
+      "actual": {
+        "item": "பிளாஸ்டிக் பான பாட்டில்",
+        "status": "recyclable",
+        "confidence": 0.7,
+        "channel": "blue_bin",
+        "reason": "பான பாட்டில் போல் உள்ளது, ஆனால் BCRS Deposit Mark இருப்பது உறுதியாகத் தெரியவில்லை; எனவே நீலக் குழாயில் மறுசுழற்சி செய்யப்படலாம்.",
+        "preparation": [
+          "பாட்டிலைக் கழுவி சுத்தம் செய்யவும்",
+          "உலர வைத்து மூடியை அகற்றவும்"
+        ],
+        "tip": "பாட்டிலில் Deposit Mark இருந்தால், அதை Return Pointக்குக் கொண்டு சென்று S$0.10 திரும்பப் பெறலாம்."
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.7"
+      ],
+      "durationMs": 3156
+    },
+    {
+      "id": "official-mark-closeup-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-closeup-en",
+        "sourceId": "official-mark-closeup",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ],
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Suntory C.C. Lemon plastic bottle",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry plastic beverage bottle eligible for blue bin recycling. Deposit Mark visible but bottle is not crushed and barcode intact — however, since it's a plastic bottle under 3L, blue bin is appropriate unless specifically returned for BCRS refund.",
+        "preparation": [
+          "Rinse bottle thoroughly to remove residue",
+          "Remove cap and label if possible (optional but helps recycling)",
+          "Flatten bottle to save space"
+        ],
+        "tip": "If you want the S$0.10 deposit refund, bring it to a BCRS Return Point instead — ensure Deposit Mark is visible and barcode is intact."
+      },
+      "assertions": [
+        "channel expected return_point, got blue_bin"
+      ],
+      "durationMs": 6100,
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
+    },
+    {
+      "id": "official-mark-closeup-zh",
+      "mode": "image",
+      "locale": "zh",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-closeup-zh",
+        "sourceId": "official-mark-closeup",
+        "locale": "zh",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ],
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "三得利C.C.柠檬饮料瓶",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "塑料饮料瓶，无可见押金标记，符合蓝色回收箱投放标准",
+        "preparation": [
+          "清空内容物",
+          "冲洗干净并晾干"
+        ],
+        "tip": "若瓶身有押金标记（Deposit Mark），可送至BCRS回收点获得S$0.10退款"
+      },
+      "assertions": [
+        "channel expected return_point, got blue_bin"
+      ],
+      "durationMs": 4558,
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
+    },
+    {
+      "id": "official-mark-closeup-ms",
+      "mode": "image",
+      "locale": "ms",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-closeup-ms",
+        "sourceId": "official-mark-closeup",
+        "locale": "ms",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ],
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Botol minuman plastik Suntory C.C. Lemon",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Botol plastik bersih dan kering boleh dikitar semula dalam tong biru. Walaupun mempunyai simbol '10¢ SG RETURN', Deposit Mark tidak kelihatan dengan jelas dalam imej ini.",
+        "preparation": [
+          "Pastikan botol dibersihkan dan dikeringkan sepenuhnya",
+          "Buang penutup dan label jika boleh"
+        ],
+        "tip": "Jika botol ini mempunyai Deposit Mark yang jelas, bawa ke titik pengembalian untuk dapatkan bayaran balik S$0.10."
+      },
+      "assertions": [
+        "channel expected return_point, got blue_bin"
+      ],
+      "durationMs": 5589,
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
+    },
+    {
+      "id": "official-mark-closeup-ta",
+      "mode": "image",
+      "locale": "ta",
+      "partition": "regression",
+      "expected": {
+        "id": "official-mark-closeup-ta",
+        "sourceId": "official-mark-closeup",
+        "locale": "ta",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ],
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "பிளாஸ்டிக் பானம் பாட்டில்",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "பிளாஸ்டிக் பாட்டில், சுத்தமாகவும் உலர்ந்ததாகவும் இருந்தால் நீல தொட்டியில் மறுசுழற்சி செய்யப்படலாம்.",
+        "preparation": [
+          "பாட்டிலை சுத்தம் செய்து உலர்த்தவும்",
+          "கிரீஸ் அல்லது திரவ எச்சங்கள் இல்லாமல் இருக்கவும்"
+        ],
+        "tip": "பாட்டிலில் '10¢ SG RETURN' முத்திரை இருந்தால், அதை BCRS திருப்பி வழங்கும் மையத்திற்கு கொண்டு செல்லலாம் (S$0.10 திருப்பிச் செலுத்தல்)."
+      },
+      "assertions": [
+        "channel expected return_point, got blue_bin"
+      ],
+      "durationMs": 6845,
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
+    },
+    {
+      "id": "small-mark-wide-shot-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "small-mark-wide-shot-en",
+        "sourceId": "official-marked-pair",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49,
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Coke Zero can and plastic water bottle",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Both are clean, dry beverage containers made of metal and plastic, eligible for blue bin recycling.",
+        "preparation": [
+          "Rinse both containers to remove residue",
+          "Ensure they are completely dry before placing in blue bin"
+        ],
+        "tip": "If either container has a Deposit Mark, you can also return it to a BCRS Return Point for S$0.10 refund."
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.95",
+        "not_sure response mentions a blue-bin channel before Deposit Mark absence is established"
+      ],
+      "durationMs": 4819,
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-deposit-vending-machine-6018216"
+    },
+    {
+      "id": "small-mark-bottle-shot-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "small-mark-bottle-shot-en",
+        "sourceId": "official-marked-bottle",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49,
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Plastic water bottle (500ml)",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry plastic bottle under 3L, no Deposit Mark visible, so not eligible for return_point.",
+        "preparation": [
+          "Rinse bottle thoroughly",
+          "Remove cap and label if possible",
+          "Dry completely before placing in blue bin"
+        ],
+        "tip": "If this bottle has a Deposit Mark (look for '10c' symbol), bring it to a BCRS return point for S$0.10 refund."
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.95",
+        "not_sure response mentions a blue-bin channel before Deposit Mark absence is established"
+      ],
+      "durationMs": 3855,
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361"
+    },
+    {
+      "id": "mark-not-visible-bottle-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "mark-not-visible-bottle-en",
+        "sourceId": "mark-not-visible-bottle",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49,
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Plastic water bottle",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry plastic bottle made of PET, suitable for blue bin recycling.",
+        "preparation": [
+          "Empty the bottle",
+          "Rinse thoroughly",
+          "Remove cap and label if possible",
+          "Flatten to save space"
+        ],
+        "tip": "If the bottle has a Deposit Mark (S$0.10 refund), bring it to a BCRS Return Point instead."
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.95",
+        "not_sure response mentions a blue-bin channel before Deposit Mark absence is established"
+      ],
+      "durationMs": 3899,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Bottle_of_Water.jpg"
+    },
+    {
+      "id": "individual-can-mark-not-visible-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "individual-can-mark-not-visible-en",
+        "sourceId": "individual-can-mark-not-visible",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49,
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Plastic beverage bottle (350ml)",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry plastic bottle under 3L; Deposit Mark not visible, so not eligible for return_point.",
+        "preparation": [
+          "Rinse bottle thoroughly",
+          "Remove cap and label if possible",
+          "Dry completely before placing in blue bin"
+        ],
+        "tip": "If this bottle has a Deposit Mark (look for the 10-cent symbol), bring it to a BCRS Return Point to get S$0.10 back."
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.95",
+        "not_sure response mentions a blue-bin channel before Deposit Mark absence is established"
+      ],
+      "durationMs": 3407,
+      "sourcePageUrl": "https://mothership.sg/2026/07/ice-mountain-drinks-fairprice-bcrs-logo/"
+    },
+    {
+      "id": "empty-glass-bottle-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "empty-glass-bottle-en",
+        "sourceId": "empty-glass-bottle",
+        "locale": "en",
+        "channel": "blue_bin",
+        "status": "recyclable",
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Glass bottle",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry glass bottle is recyclable in blue bin per NEA guidelines.",
+        "preparation": [
+          "Rinse bottle thoroughly",
+          "Remove cap/lid if present",
+          "Place in blue bin"
+        ],
+        "tip": "Avoid breaking glass; keep whole for safe handling at recycling facilities."
+      },
+      "assertions": [],
+      "durationMs": 3252,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Clear_empty_glass_bottle.jpg"
+    },
+    {
+      "id": "holdout-singapore-mark-closeup-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-singapore-mark-closeup-en",
+        "sourceId": "holdout-singapore-mark-closeup",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ],
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Plastic beverage bottle",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry plastic bottle with barcode; no Deposit Mark visible, so not eligible for return_point.",
+        "preparation": [
+          "Rinse bottle thoroughly",
+          "Remove cap and label if possible",
+          "Flatten to save space"
+        ],
+        "tip": "If this bottle has a Deposit Mark (10¢ symbol), bring it to a BCRS Return Point for S$0.10 refund."
+      },
+      "assertions": [
+        "channel expected return_point, got blue_bin"
+      ],
+      "durationMs": 3537,
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361"
+    },
+    {
+      "id": "holdout-foreign-refund-mark-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-foreign-refund-mark-en",
+        "sourceId": "holdout-foreign-refund-mark",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49,
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Plastic beverage bottle",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry plastic bottle with barcode; no Deposit Mark visible, so not eligible for return_point.",
+        "preparation": [
+          "Rinse bottle thoroughly",
+          "Remove cap and label if possible",
+          "Dry completely before placing in blue bin"
+        ],
+        "tip": "If this bottle has a Deposit Mark (usually on base or side), bring it to a BCRS Return Point for S$0.10 refund."
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.95",
+        "not_sure response mentions a blue-bin channel before Deposit Mark absence is established"
+      ],
+      "durationMs": 3735,
+      "sourcePageUrl": "https://note.com/ruka926/n/n9c58c8986304"
+    },
+    {
+      "id": "holdout-single-sideways-marked-can-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-single-sideways-marked-can-en",
+        "sourceId": "holdout-single-sideways-marked-can",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49,
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "aluminum beverage can",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "return_point",
+        "reason": "BCRS-eligible aluminum can inserted into reverse vending machine; Deposit Mark assumed present per context.",
+        "preparation": [
+          "Ensure can is empty, clean, and dry",
+          "Check for Deposit Mark and intact barcode"
+        ],
+        "tip": "You’ll get S$0.10 refund per eligible can at BCRS return points."
+      },
+      "assertions": [
+        "channel expected null, got return_point",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.95"
+      ],
+      "durationMs": 3622,
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/a-map-of-waste-atms-new-website-launched-to-help-people-find-beverage-container-return-machines"
+    },
+    {
+      "id": "holdout-multiple-marked-containers-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-multiple-marked-containers-en",
+        "sourceId": "holdout-multiple-marked-containers",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49,
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Plastic beverage bottles and aluminum cans",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry plastic bottles and aluminum cans are accepted in blue bin. Deposit Mark not visible, so not eligible for return_point.",
+        "preparation": [
+          "Rinse containers thoroughly",
+          "Remove caps and labels if possible",
+          "Dry completely before placing in blue bin"
+        ],
+        "tip": "If any container has a Deposit Mark, bring it to a BCRS Return Point for S$0.10 refund per item."
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.95",
+        "not_sure response mentions a blue-bin channel before Deposit Mark absence is established"
+      ],
+      "durationMs": 5048,
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/a-map-of-waste-atms-new-website-launched-to-help-people-find-beverage-container-return-machines"
+    },
+    {
+      "id": "holdout-single-clear-marked-bottle-v3-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-single-clear-marked-bottle-v3-en",
+        "sourceId": "holdout-single-clear-marked-bottle-v3",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ],
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Plastic beverage bottle",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry plastic bottle with barcode; no Deposit Mark visible, so not eligible for return_point.",
+        "preparation": [
+          "Rinse bottle clean",
+          "Remove cap if possible",
+          "Flatten to save space"
+        ],
+        "tip": "If this bottle has a Deposit Mark, bring it to a BCRS Return Point for S$0.10 refund."
+      },
+      "assertions": [
+        "channel expected return_point, got blue_bin"
+      ],
+      "durationMs": 4017,
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-nea-rebut-accusation-6321081"
+    },
+    {
+      "id": "holdout-multiple-containers-collage-v3-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-multiple-containers-collage-v3-en",
+        "sourceId": "holdout-multiple-containers-collage-v3",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49,
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "aluminum beverage cans",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "return_point",
+        "reason": "These are standard aluminum beverage cans (150ml-3L), commonly eligible for BCRS with Deposit Mark visible on machine interface.",
+        "preparation": [
+          "Ensure can is empty",
+          "Do not crush",
+          "Check for intact barcode and Deposit Mark"
+        ],
+        "tip": "Return to any BCRS station to get S$0.10 refund per can."
+      },
+      "assertions": [
+        "channel expected null, got return_point",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.95"
+      ],
+      "durationMs": 6065,
+      "sourcePageUrl": "https://www.stomp.sg/stomping-ground/man-brings-10-empty-bottles-bcrs-machine-not-all-eligible-10-cent-refund-asks-whats-point"
+    },
+    {
+      "id": "holdout-malaysia-made-singapore-mark-v4-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "holdout",
+      "expected": {
+        "id": "holdout-malaysia-made-singapore-mark-v4-en",
+        "sourceId": "holdout-malaysia-made-singapore-mark-v4",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "requiredExactText": [
+          "S$0.10"
+        ],
+        "partition": "holdout"
+      },
+      "actual": {
+        "item": "Beverage bottle (plastic)",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry plastic bottle eligible for blue bin recycling. Deposit Mark visible, but since it's not confirmed to be purchased in SG with intent to claim refund, default to blue bin.",
+        "preparation": [
+          "Rinse bottle thoroughly",
+          "Remove cap and label if possible",
+          "Dry completely before placing in blue bin"
+        ],
+        "tip": "If purchased in Singapore and you want S$0.10 refund, bring to BCRS Return Point instead."
+      },
+      "assertions": [
+        "channel expected return_point, got blue_bin"
+      ],
+      "durationMs": 5251,
+      "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
+    },
+    {
+      "id": "holdout-single-angle-no-mark-v4-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "holdout",
+      "expected": {
+        "id": "holdout-single-angle-no-mark-v4-en",
+        "sourceId": "holdout-single-angle-no-mark-v4",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "maxConfidence": 0.49,
+        "partition": "holdout"
+      },
+      "actual": {
+        "item": "Coca-Cola beverage can",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "blue_bin",
+        "reason": "Clean, dry aluminum beverage can; Deposit Mark not visible in image, so not eligible for return_point.",
+        "preparation": [
+          "Rinse can thoroughly",
+          "Dry completely before placing in blue bin"
+        ],
+        "tip": "If the can has a Deposit Mark, bring it to a BCRS Return Point for S$0.10 refund."
+      },
+      "assertions": [
+        "channel expected null, got blue_bin",
+        "status expected not_sure, got recyclable",
+        "confidence expected <= 0.49, got 0.95",
+        "not_sure response mentions a blue-bin channel before Deposit Mark absence is established"
+      ],
+      "durationMs": 3457,
+      "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
+    }
+  ]
+}

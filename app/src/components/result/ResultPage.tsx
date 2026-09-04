@@ -220,7 +220,7 @@ export default function ResultPage({
         <ConfidenceBadge confidence={result.confidence} locale={locale} />
 
         {/* Tip */}
-        {result.tip && (
+        {!isBcrsReturn && result.tip && (
           <div className="bg-white rounded-card p-4 border border-gray-100">
             <p className="text-body text-gray-600">
               <span className="font-medium text-gray-700">{t(locale, 'result.tip')}</span>

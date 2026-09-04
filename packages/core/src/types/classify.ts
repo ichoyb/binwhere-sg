@@ -1,12 +1,30 @@
 import { z } from 'zod';
 import { LocaleSchema } from '../i18n/types';
-import { ChannelTypeSchema, ClassifyStatusSchema } from './recycling';
+import {
+  ChannelTypeSchema,
+  ClassifyStatusSchema,
+  type ChannelType,
+  type ClassifyStatus,
+} from './recycling';
 
 export const MAX_CLASSIFY_IMAGE_BASE64_LENGTH = 7_000_000;
 export const MAX_CLASSIFY_TEXT_LENGTH = 500;
 
-/** Zod schema for AI classification result */
-export const ClassifyResultSchema = z.object({
+export const CHANNEL_STATUS: Record<ChannelType, Exclude<ClassifyStatus, 'not_sure'>> = {
+  blue_bin: 'recyclable',
+  return_point: 'recyclable',
+  ewaste: 'special_handling',
+  ewaste_battery: 'special_handling',
+  lighting: 'special_handling',
+  textile: 'recyclable',
+  hazardous: 'special_handling',
+  bulky_waste: 'special_handling',
+  donation: 'consider_donating',
+  general_waste: 'not_recyclable',
+};
+
+/** Wire shape retained so a historical production profile can be replayed exactly. */
+export const ClassifyResultShapeSchema = z.object({
   /** Identified item name */
   item: z.string().trim().min(1),
   /** Recycling status */
@@ -24,6 +42,29 @@ export const ClassifyResultSchema = z.object({
   }),
   /** Extra tip for the user */
   tip: z.string().trim().optional().transform((v) => (v && v.length > 0 ? v : undefined)),
+});
+
+/** Runtime schema for an internally consistent AI classification result. */
+export const ClassifyResultSchema = ClassifyResultShapeSchema.superRefine((result, ctx) => {
+  if (result.channel === null) {
+    if (result.status !== 'not_sure') {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['channel'],
+        message: 'channel may be null only when status is not_sure',
+      });
+    }
+    return;
+  }
+
+  const expectedStatus = CHANNEL_STATUS[result.channel];
+  if (result.status !== expectedStatus) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['status'],
+      message: `channel ${result.channel} requires status ${expectedStatus}`,
+    });
+  }
 });
 
 type ParsedClassifyResult = z.infer<typeof ClassifyResultSchema>;

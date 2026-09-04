@@ -12,9 +12,10 @@
     "package:web": "node scripts/package-standalone.mjs",
     "start": "next start",
     "lint": "eslint . --max-warnings 0",
-    "test:unit": "tsx src/lib/bcrs.test.ts && tsx src/lib/ai/provider.test.ts && tsx src/lib/telemetry.test.ts && tsx src/lib/rate-limit.test.ts && tsx scripts/geo-data-quality.test.ts && tsx scripts/convert-textile-data.test.ts && tsx scripts/convert-reusechannels-data.test.ts && tsx scripts/convert-rvm-data.test.ts && tsx src/app/api/v1/nearby/route.test.ts && tsx ../packages/core/scripts/v1-contract.ts --check",
+    "test:unit": "tsx src/lib/bcrs.test.ts && tsx src/lib/ai/provider.test.ts && tsx src/lib/item-data-policy.test.ts && tsx src/lib/telemetry.test.ts && tsx src/lib/rate-limit.test.ts && tsx scripts/geo-data-quality.test.ts && tsx scripts/convert-textile-data.test.ts && tsx scripts/convert-reusechannels-data.test.ts && tsx scripts/convert-rvm-data.test.ts && tsx src/app/api/v1/nearby/route.test.ts && tsx ../packages/core/scripts/v1-contract.ts --check",
     "prebuild": "tsx scripts/build-geo-data.ts",
     "test:classify": "tsx scripts/phase0/test-classify.ts",
+    "test:classify:bcrs": "tsx scripts/phase0/test-bcrs-classify.ts",
     "contract:update": "tsx ../packages/core/scripts/v1-contract.ts --update"
   },
   "dependencies": {

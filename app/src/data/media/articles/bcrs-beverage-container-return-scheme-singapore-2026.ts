@@ -4,53 +4,53 @@ export const bcrsBeverageContainerReturnSchemeSingapore2026: MediaArticle = {
   slug: 'bcrs-beverage-container-return-scheme-singapore-2026',
   title: 'BCRS Singapore 2026: Beverage Container Return Scheme Guide',
   description:
-    'Everything about Singapore\'s Beverage Container Return Scheme (BCRS) launching April 2026 — eligible containers, S$0.10 deposit refund, reverse vending machine locations, and tips.',
-  date: '2026-03-14',
-  dateDisplay: 'March 14, 2026',
+    'How Singapore\'s Beverage Container Return Scheme (BCRS) works — eligible containers, the S$0.10 deposit refund, reverse vending machines, and return tips.',
+  date: '2026-09-04',
+  dateDisplay: 'September 4, 2026',
   readingTime: '7 min read',
   tags: ['BCRS', 'Recycling', 'Singapore', 'Sustainability'],
   faq: [
     {
       question: 'When does the BCRS start in Singapore?',
       answer:
-        'The Beverage Container Return Scheme (BCRS) officially launches on 1 April 2026. From that date, a S$0.10 deposit will be added to the price of eligible pre-packaged beverages sold in Singapore. Consumers can reclaim the deposit by returning empty containers to designated return points.',
+        'The Beverage Container Return Scheme (BCRS) began on 1 April 2026. A S$0.10 deposit is added to eligible pre-packaged beverages sold in Singapore, and consumers can reclaim it by returning accepted empty containers to designated return points.',
     },
     {
       question: 'Which containers are eligible for BCRS deposit refund?',
       answer:
-        'Eligible containers are pre-packaged beverage containers made of plastic (PET) or metal (aluminium and steel cans) with a volume between 150 ml and 3 litres. Glass bottles are not included in the scheme. Look for the official BCRS deposit mark on the container label to confirm eligibility.',
+        'Eligible containers are pre-packaged beverage containers made of plastic or metal with a volume between 150 ml and 3 litres. Glass bottles are not included. The individual container must carry the official BCRS Deposit Mark, remain empty and uncrushed, and have a scannable product barcode; the return point makes the final acceptance decision.',
     },
     {
       question: 'How do I use a reverse vending machine (RVM) in Singapore?',
       answer:
-        'Insert your empty, uncrushed beverage container into the RVM opening. The machine scans the barcode to verify it is an eligible BCRS container. Once accepted, you can choose to receive your S$0.10 refund via PayNow, bank transfer, or as a donation to a participating charity. Some RVMs may also dispense a receipt redeemable at nearby retailers.',
+        'Insert your empty, uncrushed beverage container into the RVM opening. The machine scans its barcode to verify eligibility. Once accepted, receive the S$0.10 refund through an available mode: SimplyGo EZ-Link, including eligible concession cards, or DBS PayLah!.',
     },
     {
       question: 'Can I return crushed or damaged containers for the BCRS refund?',
       answer:
-        'Containers should be empty, uncrushed, and have the barcode intact for the reverse vending machine to scan and verify. Severely crushed or damaged containers without a readable barcode may be rejected. If an RVM rejects your container, try a manual return point such as a participating retailer where staff can verify eligibility.',
+        'Containers must be empty and uncrushed, with the barcode clearly visible for scanning. A crushed container or unreadable barcode may be rejected. Do not promise a refund based on appearance alone: the container must also carry the BCRS Deposit Mark.',
     },
   ],
   content: `
-<p>Starting <strong>1 April 2026</strong>, Singapore will roll out one of its most significant recycling initiatives in years: the <strong>Beverage Container Return Scheme (BCRS)</strong>. Under this new programme, every pre-packaged drink you buy in a plastic bottle or metal can will include a <strong>S$0.10 refundable deposit</strong>. Return the empty container to a designated collection point, and you get your ten cents back. It sounds simple — and that is exactly the point. The BCRS Singapore 2026 launch aims to make beverage container recycling as effortless as buying the drink itself.</p>
+<p>Singapore's <strong>Beverage Container Return Scheme (BCRS)</strong> began on <strong>1 April 2026</strong>. An eligible pre-packaged drink sold in a marked plastic or metal container includes a <strong>S$0.10 refundable deposit</strong>. Return the empty, uncrushed container with its barcode intact to a Return Right reverse vending machine (RVM) to reclaim the deposit.</p>
 
-<p>Singapore currently recycles only about 12% of household waste through blue bins, and beverage containers make up a significant portion of litter found in public spaces. The BCRS is designed to change that by giving consumers a direct financial incentive to recycle. This guide covers everything you need to know — from which containers qualify to where you can find reverse vending machines across the island.</p>
+<p>NEA reported a domestic recycling rate of 11% for 2025. The BCRS is designed to recover more high-quality plastic and metal by giving eligible empty containers a direct refundable value. This guide covers which containers qualify and how to use the return network.</p>
 
 <h2 id="what-is-bcrs">What Is the Beverage Container Return Scheme?</h2>
 
 <p>The BCRS is a <strong>deposit-refund system</strong> modelled after successful programmes in countries like Germany, Norway, and Australia. The core idea is straightforward: a small deposit is added to the retail price of eligible beverages at the point of sale, and consumers recover that deposit when they return the empty container for recycling.</p>
 
-<p>In Singapore, the National Environment Agency (NEA) has appointed a <strong>scheme operator</strong> responsible for running the programme. The operator manages the return infrastructure — including reverse vending machines (RVMs) and manual return points — collects returned containers, and ensures they are sent to licensed recyclers for processing.</p>
+<p>The National Environment Agency (NEA) has licensed <strong>BCRS Ltd.</strong>, a not-for-profit scheme operator, to run the programme. It manages the Return Right network, collects returned containers, and arranges their recycling.</p>
 
 <p>Key details of the Singapore BCRS:</p>
 
 <ul>
   <li><strong>Deposit amount</strong>: S$0.10 per eligible container</li>
   <li><strong>Launch date</strong>: 1 April 2026</li>
-  <li><strong>Eligible materials</strong>: PET plastic bottles and metal cans (aluminium and steel)</li>
+  <li><strong>Eligible materials</strong>: plastic and metal beverage containers</li>
   <li><strong>Volume range</strong>: 150 ml to 3 litres</li>
   <li><strong>Exclusion</strong>: Glass bottles are <em>not</em> included in the scheme</li>
-  <li><strong>Refund methods</strong>: PayNow, bank transfer, or charitable donation</li>
+  <li><strong>Refund methods at RVMs</strong>: SimplyGo EZ-Link or DBS PayLah!</li>
 </ul>
 
 <p>The deposit is not a tax — it is fully refundable. Think of it as a ten-cent promise: you pay it when you buy the drink, and the system pays you back when you return the container.</p>
@@ -62,12 +62,12 @@ export const bcrsBeverageContainerReturnSchemeSingapore2026: MediaArticle = {
 <h3>Eligible Containers</h3>
 
 <ul>
-  <li><strong>PET plastic bottles</strong>: Most soft drinks, water, juice, and isotonic drinks come in PET (polyethylene terephthalate) bottles. These are the clear or coloured plastic bottles with the resin code "1" on the base.</li>
+  <li><strong>Plastic containers</strong>: Eligible plastics include PET, PP and HDPE when the container otherwise meets the scheme rules and carries the BCRS Deposit Mark.</li>
   <li><strong>Aluminium cans</strong>: Soft drinks, beer, coffee, and energy drinks commonly sold in aluminium cans.</li>
   <li><strong>Steel cans</strong>: Some beverages, particularly certain coffee and tea brands popular in Singapore, use steel cans.</li>
 </ul>
 
-<p>All eligible containers must be <strong>pre-packaged beverages</strong> between <strong>150 ml and 3 litres</strong> in volume, and must carry the official <strong>BCRS deposit mark</strong> on the label. This mark is a small logo that confirms the deposit has been paid and the container can be returned for a refund.</p>
+<p>All eligible containers must be <strong>pre-packaged beverages</strong> between <strong>150 ml and 3 litres</strong> in volume, and must carry the official <strong>BCRS Deposit Mark</strong> on the individual container. The mark identifies a scheme-labelled product; an empty, uncrushed container must also retain a scannable product barcode, and the return point makes the final acceptance decision.</p>
 
 <h3>What Is NOT Eligible</h3>
 
@@ -76,9 +76,11 @@ export const bcrsBeverageContainerReturnSchemeSingapore2026: MediaArticle = {
   <li><strong>Carton packs</strong>: Tetra Pak and similar composite carton containers are not part of the scheme.</li>
   <li><strong>Containers smaller than 150 ml or larger than 3 litres</strong>: Very small medicine vials or large 5-litre water jugs, for example, are excluded.</li>
   <li><strong>Non-beverage containers</strong>: Shampoo bottles, detergent containers, and other non-drink plastic or metal packaging are not eligible, even if made from the same material.</li>
+  <li><strong>Freshly prepared drinks</strong>: Drinks prepared and sold on the same premises, such as bubble tea or freshly brewed coffee, are excluded.</li>
+  <li><strong>Foods for Special Medical Purposes</strong>: These are excluded from the scheme.</li>
 </ul>
 
-<p><strong>Tip:</strong> When shopping, look for the BCRS deposit mark on the label. If you see it, you know the container can be returned for your S$0.10 refund.</p>
+<p><strong>Tip:</strong> Check that the individual container carries the BCRS Deposit Mark and that its product barcode remains visible and scannable. The return point makes the final acceptance decision.</p>
 
 <h2 id="reverse-vending-machines">Where to Find Reverse Vending Machines in Singapore</h2>
 
@@ -86,19 +88,15 @@ export const bcrsBeverageContainerReturnSchemeSingapore2026: MediaArticle = {
 
 <h3>RVM Locations</h3>
 
-<p>The scheme operator will install RVMs across Singapore in high-traffic areas, including:</p>
+<p>The Return Right network started with more than 1,000 RVMs. Official locations include:</p>
 
 <ul>
-  <li><strong>Supermarkets and hypermarkets</strong>: Major chains like FairPrice, Giant, and Cold Storage are expected to host RVMs near entrances or recycling corners.</li>
-  <li><strong>Shopping malls</strong>: Expect RVMs in popular malls, especially near food courts and drink retail areas.</li>
-  <li><strong>MRT stations</strong>: Selected MRT stations with high footfall may have RVMs installed in common areas.</li>
-  <li><strong>Community centres and clubs (CCs)</strong>: Bringing the return points close to HDB heartlands where most Singaporeans live.</li>
-  <li><strong>Hawker centres and coffee shops</strong>: Some high-traffic hawker centres may host RVMs to capture the large volume of canned and bottled drinks sold there.</li>
+  <li><strong>Larger supermarkets</strong>: Outlets with a floor area above 200 m² are required to have a return point.</li>
+  <li><strong>Town centres and HDB void decks</strong>: These bring return points closer to homes.</li>
+  <li><strong>Some hawker centres</strong>: RVMs are also placed in or near selected hawker centres.</li>
 </ul>
 
-<p>In addition to RVMs, the BCRS will include <strong>manual return points</strong> at participating retailers. At these locations, staff verify the containers and process refunds manually — helpful for containers that RVMs might reject due to barcode damage.</p>
-
-<p>The full list of RVM and return point locations is expected to be published by NEA and the scheme operator closer to the April launch. Tools like <a href="https://binwhere.sg">BinWhere</a> will integrate RVM locations into their database once public data becomes available, making it easy to find the nearest return point from wherever you are in Singapore.</p>
+<p>Use the official Return Right locator or <a href="https://binwhere.sg">BinWhere</a> to find a current nearby RVM. Locations can change, so use live location data rather than a static list in this article.</p>
 
 <h2 id="how-to-return">How to Return Containers and Get Your Refund</h2>
 
@@ -106,9 +104,9 @@ export const bcrsBeverageContainerReturnSchemeSingapore2026: MediaArticle = {
 
 <ol>
   <li><strong>Finish your drink and keep the container</strong>: Do not crush or damage the container. The barcode needs to be intact and scannable.</li>
-  <li><strong>Find a return point</strong>: Locate the nearest RVM or manual return point. You can check the NEA website, the scheme operator's app, or use <a href="https://binwhere.sg">BinWhere</a> to find one near you.</li>
+  <li><strong>Find a return point</strong>: Locate the nearest Return Right RVM using the official locator or <a href="https://binwhere.sg">BinWhere</a>.</li>
   <li><strong>Insert the container into the RVM</strong>: Place the empty container into the machine's opening. The RVM will scan the barcode and verify eligibility.</li>
-  <li><strong>Choose your refund method</strong>: Once the container is accepted, select how you want your S$0.10 — via PayNow (linked to your mobile number or NRIC), bank transfer, or as a donation to a participating charity.</li>
+  <li><strong>Choose your refund method</strong>: Once accepted, receive the S$0.10 through SimplyGo EZ-Link, including eligible concession cards, or DBS PayLah!.</li>
   <li><strong>Collect multiple refunds in one session</strong>: You can insert multiple containers consecutively. The refunds accumulate and are processed together.</li>
 </ol>
 
@@ -118,7 +116,7 @@ export const bcrsBeverageContainerReturnSchemeSingapore2026: MediaArticle = {
   <li><strong>Keep containers empty but uncrushed</strong>: RVMs need to scan the barcode, so the label area must be intact.</li>
   <li><strong>Rinse containers briefly</strong>: While not strictly required, rinsing prevents sticky residue and odour, especially if you store containers at home before returning them.</li>
   <li><strong>Batch your returns</strong>: Rather than making individual trips, save up containers and return a batch at once. A bag of 20 containers earns you S$2.00.</li>
-  <li><strong>Check barcode visibility</strong>: If the label is torn or the barcode is obscured, the RVM may reject the container. Try a manual return point instead.</li>
+  <li><strong>Check the mark and barcode</strong>: The individual container needs both the BCRS Deposit Mark and a visible, scannable barcode.</li>
 </ul>
 
 <h2 id="why-bcrs-matters">Why the BCRS Matters for Singapore's Future</h2>
@@ -129,7 +127,7 @@ export const bcrsBeverageContainerReturnSchemeSingapore2026: MediaArticle = {
 
 <ul>
   <li><strong>Closing the loop on packaging waste</strong>: Beverage containers are among the most commonly littered items. A deposit system creates a financial feedback loop that incentivises proper disposal and recycling.</li>
-  <li><strong>Boosting recycling rates</strong>: Countries with deposit-refund schemes typically achieve container recycling rates of <strong>80-95%</strong>. Germany's Pfand system, for example, recovers over 98% of PET bottles. Singapore's household recycling rate of 12% has enormous room for improvement.</li>
+  <li><strong>Boosting recycling</strong>: Giving each eligible container a refundable value encourages people to return it instead of discarding it.</li>
   <li><strong>Reducing contamination</strong>: Because BCRS containers are returned through a separate, dedicated channel (not mixed into blue bins), they arrive clean and sorted — dramatically reducing contamination at Materials Recovery Facilities.</li>
   <li><strong>Creating community engagement</strong>: The visible act of returning containers and earning refunds normalises recycling behaviour. Studies in other countries show that deposit schemes increase overall environmental awareness, not just for beverage containers.</li>
 </ul>
@@ -146,11 +144,11 @@ export const bcrsBeverageContainerReturnSchemeSingapore2026: MediaArticle = {
 
 <h3>What About Drinks Bought Before April 2026?</h3>
 
-<p>Beverages purchased before the scheme launch date will not carry the BCRS deposit mark and are therefore <strong>not eligible</strong> for a refund. However, you should still recycle these containers through the regular blue recycling bins or e-waste collection points as appropriate.</p>
+<p>During the transition period from 1 April to 30 September 2026, both marked and unmarked versions may be sold. Only a container carrying the BCRS Deposit Mark includes the deposit and qualifies for a refund. Empty unmarked plastic or metal beverage containers can still be recycled through blue bins or other suitable recycling stations.</p>
 
 <h3>Can Children and Students Participate?</h3>
 
-<p>Absolutely. The BCRS is open to everyone. Schools and community groups may organise collection drives as fundraising activities — returning containers in bulk can add up quickly. A class that collects 500 containers earns S$50 for their school fund.</p>
+<p>The return process is open to consumers generally. The available digital refund methods are SimplyGo EZ-Link, including student and senior concession cards, and DBS PayLah!.</p>
 
 <h3>What Happens to Returned Containers?</h3>
 
@@ -160,7 +158,7 @@ export const bcrsBeverageContainerReturnSchemeSingapore2026: MediaArticle = {
 
 <p>With the BCRS adding a new recycling channel to Singapore's already multi-stream system — blue bins, e-waste points, textile bins, and now RVMs — it can feel overwhelming to know where each item should go. That is exactly the problem <strong>BinWhere</strong> solves.</p>
 
-<p>Simply snap a photo of your item or type a description, and BinWhere's AI will identify whether it belongs in the blue bin, an e-waste collection point, a textile bin, or an RVM return point. The app uses current build-verified location data and provides walking directions to the nearest point. It supports English, Chinese, Malay, and Tamil — all four of Singapore's official languages.</p>
+<p>Simply snap a photo of your item or type a description, and BinWhere's AI will identify the appropriate recycling channel. For a drink container, it recommends an RVM only when one individual eligible container has both a clear Singapore Deposit Mark and a readable product barcode; if that evidence cannot be verified, it asks for a clearer label photo instead of guessing. The return point still makes the final acceptance decision. The app uses current build-verified location data and provides walking directions to the nearest point. It supports English, Chinese, Malay, and Tamil — all four of Singapore's official languages.</p>
 
 <p>BinWhere integrates the BCRS public return-point feed into its location database, making it your one-stop tool for navigating every recycling channel in Singapore. Try it now at <a href="https://binwhere.sg">binwhere.sg</a> — no download required.</p>
 `.trim(),

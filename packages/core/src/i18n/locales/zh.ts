@@ -89,9 +89,6 @@ const zh: Record<keyof typeof en, string> = {
   'hazardous.title': '如何处理有害废弃物',
   'hazardous.hotline': 'NEA 热线：6225 5632',
   'hazardous.hotlineHint': '点击拨打以获取处理指导',
-  'hazardous.toxicWaste': 'NEA 有毒废弃物信息',
-  'hazardous.pharmacy': '过期药物可退还至药房（Guardian / Watsons）',
-  'hazardous.events': 'NEA 定期举办社区有害废弃物回收活动',
 
   // Nearby page
   'nearby.nearby': '附近',
@@ -148,6 +145,9 @@ const zh: Record<keyof typeof en, string> = {
   'bcrs.machineOffline': '离线',
   'bcrs.machineMaintenance': '维护中',
   'bcrs.pointCount': '1,000+ 退还点遍布全岛',
+  'bcrs.classifyReason': '新加坡官方 Deposit Mark 和产品条码表明，该容器应使用 BCRS 退还渠道。请按要求准备容器以领取 S$0.10；最终是否接收由退还点判定。',
+  'classify.notSureReason': '现有信息不足，无法安全确定回收渠道。',
+  'classify.notSurePreparation': '请提供更清晰的照片或描述，并完整展示物品及其标签或标识。饮料容器请拍清产品条码周围的标签。',
 };
 
 export default zh;

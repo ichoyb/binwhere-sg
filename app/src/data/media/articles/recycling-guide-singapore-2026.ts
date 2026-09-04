@@ -5,15 +5,15 @@ export const recyclingGuideSingapore2026: MediaArticle = {
   title: 'How to Recycle in Singapore: Complete Blue Bin & E-Waste Guide 2026',
   description:
     'A comprehensive guide to recycling in Singapore — what goes in the blue bin, where to drop off e-waste and textiles, common mistakes to avoid, and how AI tools like BinWhere make it simple.',
-  date: '2026-03-14',
-  dateDisplay: 'March 14, 2026',
+  date: '2026-09-04',
+  dateDisplay: 'September 4, 2026',
   readingTime: '8 min read',
   tags: ['Recycling', 'Blue Bin', 'E-Waste', 'Singapore'],
   faq: [
     {
       question: 'Can I put plastic bags in the blue bin?',
       answer:
-        'No. While plastic bags are technically plastic, they jam sorting machinery at Materials Recovery Facilities (MRFs). Reuse them for shopping or dispose of them in general waste. Only rigid plastics like bottles and containers should go in the blue bin.',
+        'Yes, if the plastic bag is empty, clean and dry. Put recyclables loosely into the blue bin instead of sealing them inside a bag. Dirty or greasy bags should go to general waste.',
     },
     {
       question: 'Where can I recycle old phones and batteries in Singapore?',
@@ -23,16 +23,16 @@ export const recyclingGuideSingapore2026: MediaArticle = {
     {
       question: 'What happens to contaminated recyclables?',
       answer:
-        'When non-recyclable items or food-stained materials are mixed into the blue bin, the entire batch may be sent to incineration instead of recycling. A 2023 NEA study found that 40% of items in blue bins were contaminants. Proper sorting and rinsing is crucial.',
+        'Food, liquid and non-recyclable items can soil otherwise recyclable material and reduce what can be recovered. Empty and rinse containers, keep recyclables dry, and put items that cannot be cleaned in general waste.',
     },
     {
       question: 'Is Singapore\'s recycling rate improving?',
       answer:
-        'Singapore\'s overall recycling rate is around 57%, but the domestic household rate remains about 12%. The government\'s Zero Waste Masterplan targets a 30% reduction in waste-to-landfill per capita by 2030. New initiatives like BCRS and improved e-waste collection are expected to boost these numbers.',
+        'NEA reported an overall recycling rate of 52% and a domestic recycling rate of 11% for 2025. Singapore\'s Zero Waste Masterplan targets a 30% reduction in waste sent to landfill per person per day by 2030.',
     },
   ],
   content: `
-<p>Singapore generates over <strong>7.39 million tonnes</strong> of solid waste each year. While the nation's overall recycling rate stands at around 57%, the domestic household recycling rate remains stubbornly low at about 12%. Whether you're a long-time resident or new to the Lion City, knowing exactly where and how to recycle is essential — especially as <strong>Semakau Landfill</strong>, Singapore's only landfill, is projected to reach full capacity by 2035.</p>
+<p>NEA reported that Singapore's overall recycling rate was <strong>52%</strong> in 2025, while the domestic recycling rate was <strong>11%</strong>. Whether you're a long-time resident or new to the Lion City, knowing exactly where and how to recycle is essential — especially as <strong>Semakau Landfill</strong>, Singapore's only landfill, is projected to reach full capacity by 2035.</p>
 
 <p>This guide covers everything you need to know about recycling in Singapore in 2026: from blue bin basics and e-waste drop-off points to textile recycling and how AI-powered tools like BinWhere are helping residents recycle right.</p>
 
@@ -43,11 +43,11 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 <ul>
   <li><strong>National Recycling Programme</strong>: Blue recycling bins are placed across HDB estates and condominiums throughout Singapore.</li>
   <li><strong>E-Waste Extended Producer Responsibility (EPR)</strong>: Since 2021, producers are obligated to provide authorised collection channels for e-waste.</li>
-  <li><strong>Beverage Container Return Scheme (BCRS)</strong>: Launching <strong>April 2026</strong>, this scheme offers a S$0.10 refundable deposit on plastic bottles and metal cans (150 ml–3 L). Reverse Vending Machines (RVMs) will be installed across the island.</li>
+  <li><strong>Beverage Container Return Scheme (BCRS)</strong>: Since <strong>1 April 2026</strong>, eligible marked plastic and metal beverage containers (150 ml–3 L) carry a refundable S$0.10 deposit.</li>
   <li><strong>Textile Recycling Network</strong>: Textile collection bins are operated across the island by licensed waste collectors.</li>
 </ul>
 
-<p>Despite this robust infrastructure, contamination from incorrectly sorted waste remains the biggest challenge. A 2023 NEA study found that <strong>40% of items in blue bins were contaminants</strong> — items that should not have been placed there.</p>
+<p>Contamination remains a major challenge. Food, liquid and non-recyclable items can soil otherwise recyclable material and reduce what can be recovered.</p>
 
 <h2 id="blue-bin">What Goes in the Blue Bin (and What Doesn't)</h2>
 
@@ -57,8 +57,8 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 
 <ul>
   <li><strong>Paper</strong>: newspapers, magazines, cardboard boxes (flattened), office paper, envelopes, paper bags</li>
-  <li><strong>Plastic</strong>: bottles (PET 1, HDPE 2), rigid containers, clean food packaging</li>
-  <li><strong>Metal</strong>: aluminium drink cans, tin/steel food cans, clean aluminium foil</li>
+  <li><strong>Plastic</strong>: household-product bottles, rigid containers, ziplock bags, plastic bags, bubble wrap and film packaging — all empty, clean and dry; an empty beverage bottle belongs here only when it has no Singapore BCRS Deposit Mark</li>
+  <li><strong>Metal</strong>: tin/steel food cans, clean aluminium foil, and empty drink cans explicitly confirmed to have no Singapore BCRS Deposit Mark</li>
   <li><strong>Glass</strong>: bottles and jars (rinse before disposal)</li>
 </ul>
 
@@ -67,7 +67,7 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 <ul>
   <li><strong>Tissue paper and paper towels</strong> — contaminated with moisture, not recyclable</li>
   <li><strong>Styrofoam (expanded polystyrene)</strong> — not accepted in Singapore's blue bins</li>
-  <li><strong>Plastic bags wrapping recyclables</strong> — remove items from bags before placing in the bin</li>
+  <li><strong>Recyclables sealed inside bags</strong> — empty the items loosely into the bin; a clean and dry plastic bag may be recycled separately</li>
   <li><strong>Food-stained containers</strong> — rinse containers first, or discard in general waste</li>
   <li><strong>Electronics and batteries</strong> — use dedicated e-waste channels</li>
   <li><strong>Ceramics and mirrors</strong> — not the same as recyclable glass</li>
@@ -84,7 +84,8 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 <ul>
   <li><strong>ICT Equipment</strong>: laptops, phones, tablets, monitors, printers</li>
   <li><strong>Large Household Appliances</strong>: refrigerators, washing machines, air conditioners</li>
-  <li><strong>Batteries and Power Banks</strong>: all types, including lithium-ion</li>
+  <li><strong>Power Banks</strong>: these belong with ICT e-waste, not in battery-only bins</li>
+  <li><strong>Household Batteries</strong>: common removable batteries such as AA, AAA, 9-volt, button cells and standalone rechargeable batteries</li>
   <li><strong>Lamps and Lighting</strong>: fluorescent tubes, CFL bulbs, LED bulbs</li>
 </ul>
 
@@ -101,7 +102,7 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 
 <h2 id="textile">Textile & Clothing Recycling Options</h2>
 
-<p>Singapore discards approximately <strong>168,000 tonnes</strong> of textile waste annually, with only about 4% diverted from landfill. Much of this is still in wearable condition.</p>
+<p>Clothes and household textiles do not belong in blue recycling bins. Clean, dry items that meet a textile collector's acceptance rules can use that network; direct reuse, donation or resale remains a good alternative for suitable items.</p>
 
 <h3>Collection Channels</h3>
 
@@ -115,24 +116,24 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 <h3>What's Accepted</h3>
 
 <ul>
-  <li>Clean, dry clothing in any condition (even worn out — it can be recycled into industrial rags or insulation)</li>
+  <li>Clean, dry clothing that meets the selected collector's acceptance rules</li>
   <li>Shoes (tie in pairs)</li>
   <li>Bags, belts, and accessories</li>
   <li>Household textiles: towels, bedsheets, curtains</li>
 </ul>
 
-<p><strong>Not Accepted:</strong> Wet, mouldy, or chemically contaminated textiles.</p>
+<p><strong>Not Accepted:</strong> Wet, mouldy, or chemically contaminated textiles. Acceptance differs by operator, so check before travelling.</p>
 
 <h2 id="mistakes">Common Recycling Mistakes to Avoid</h2>
 
 <p>Even well-intentioned recyclers make mistakes. Here are the five most common ones in Singapore:</p>
 
 <ol>
-  <li><strong>Putting recyclables in plastic bags</strong>: Bagged items at Materials Recovery Facilities (MRFs) often get sent directly to incineration because workers cannot easily sort through bags. Place items loosely in the bin.</li>
+  <li><strong>Putting recyclables in sealed plastic bags</strong>: Place the recyclable items loosely in the blue bin so they can be sorted.</li>
   <li><strong>Wishcycling</strong>: Tossing non-recyclable items into the blue bin "just in case" — this contaminates the entire batch. When in doubt, use BinWhere's AI to check.</li>
-  <li><strong>Not rinsing food containers</strong>: Grease and food residue is the #1 cause of contamination. A quick rinse makes the difference between recyclable and waste.</li>
+  <li><strong>Not emptying and rinsing food containers</strong>: Food and liquid can contaminate other recyclables. Rinse the container; if it cannot be cleaned, use general waste.</li>
   <li><strong>Mixing e-waste into general recycling</strong>: Batteries and electronics contain hazardous materials. They need dedicated e-waste collection channels.</li>
-  <li><strong>Ignoring plastic types</strong>: Not all plastics are equal. Look for the resin identification code — types 1 (PET) and 2 (HDPE) are most widely recycled in Singapore.</li>
+  <li><strong>Using the resin code as the only rule</strong>: Singapore's blue-bin guidance is based on the item and its condition, not just the number stamped on the plastic. Check the current recycling guide when unsure.</li>
 </ol>
 
 <h2 id="binwhere-ai">How BinWhere AI Makes Recycling Simple</h2>
@@ -143,11 +144,11 @@ export const recyclingGuideSingapore2026: MediaArticle = {
 
 <ol>
   <li><strong>Snap</strong>: Take a photo of your item, or type a description</li>
-  <li><strong>Classify</strong>: BinWhere's AI identifies the item in under 3 seconds and tells you whether it's recyclable, e-waste, textile, hazardous, or general waste</li>
+  <li><strong>Classify</strong>: BinWhere's AI identifies the item and tells you whether it's recyclable, e-waste, textile, hazardous, or general waste</li>
   <li><strong>Navigate</strong>: Get walking directions using BinWhere's current recycling-location dataset for Singapore</li>
 </ol>
 
-<p>BinWhere supports all four of Singapore's official languages — English, Chinese, Malay, and Tamil — making it accessible to the entire population. The app also provides specific preparation instructions (like "rinse and flatten the carton" or "remove the battery before disposal") to help you recycle correctly.</p>
+<p>BinWhere supports all four of Singapore's official languages — English, Chinese, Malay, and Tamil — making it accessible to the entire population. The app also provides specific preparation instructions, such as rinsing and flattening a carton or keeping a device's built-in battery in place for ICT e-waste collection.</p>
 
 <p>Try it now at <a href="https://binwhere.sg">binwhere.sg</a> — no download required.</p>
 `.trim(),

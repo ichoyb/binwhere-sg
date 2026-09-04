@@ -37,6 +37,8 @@ export type {
 } from './types/classify';
 export {
   ClassifyResultSchema,
+  ClassifyResultShapeSchema,
+  CHANNEL_STATUS,
   ClassifyRequestSchema,
   MAX_CLASSIFY_IMAGE_BASE64_LENGTH,
   MAX_CLASSIFY_TEXT_LENGTH,

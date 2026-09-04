@@ -1,4 +1,10 @@
-import { ClassifyResultSchema, type ClassifyProvider, type ClassifyRequest, type ClassifyResult } from './types';
+import {
+  ClassifyResultSchema,
+  ClassifyResultShapeSchema,
+  type ClassifyProvider,
+  type ClassifyRequest,
+  type ClassifyResult,
+} from './types';
 import { RetryableProviderError, TokenHubProvider } from './providers/tokenhub';
 
 /**
@@ -16,27 +22,56 @@ import { RetryableProviderError, TokenHubProvider } from './providers/tokenhub';
  * What replaces the fallback is a retry, and a deadline that bounds it.
  */
 
+export interface ClassificationExecutionPolicy {
+  textAttemptMs: number;
+  imageAttemptMs: number;
+  textBudgetMs: number;
+  imageBudgetMs: number;
+  minAttemptMs: number;
+  maxAttempts: number;
+  retryBackoffMs: number;
+  validateResultSemantics: boolean;
+}
+
+/** Runtime policy used by the working-tree candidate and, once deployed, production. */
+export const DEFAULT_EXECUTION_POLICY: ClassificationExecutionPolicy = {
+  textAttemptMs: 8_000,
+  imageAttemptMs: 20_000,
+  textBudgetMs: 20_000,
+  imageBudgetMs: 42_000,
+  minAttemptMs: 3_000,
+  maxAttempts: 3,
+  retryBackoffMs: 500,
+  validateResultSemantics: true,
+};
+
+/** Exact timeout policy deployed at revision 0a5852f. */
+export const PRODUCTION_0A5852F_EXECUTION_POLICY: ClassificationExecutionPolicy = {
+  ...DEFAULT_EXECUTION_POLICY,
+  imageAttemptMs: 15_000,
+  imageBudgetMs: 32_000,
+  validateResultSemantics: false,
+};
+
 /** How long one attempt may run before it is abandoned. */
-export const ATTEMPT_MS = (request: ClassifyRequest) => (request.image ? 15_000 : 8_000);
+export const ATTEMPT_MS = (
+  request: ClassifyRequest,
+  policy: ClassificationExecutionPolicy = DEFAULT_EXECUTION_POLICY,
+) => (request.image ? policy.imageAttemptMs : policy.textAttemptMs);
 
 /**
  * How long the whole classify may run, retries included.
  *
  * The client does not repeat a completed classification failure, so this bounds all
  * provider work for one request. End-to-end latency also includes request upload and
- * image sanitisation. Measured provider latencies are 1.9-4.4s for text and 3.7-7.1s
- * for a photo, so one attempt has roughly double the headroom it needs and the budget
- * still covers a second.
+ * image sanitisation. Observed valid image generations can cross the old 15s attempt
+ * boundary. Twenty seconds keeps one attempt bounded, while the 42s budget permits
+ * one slow call to abort and retry without allowing unbounded provider work.
  */
-export const BUDGET_MS = (request: ClassifyRequest) => (request.image ? 32_000 : 20_000);
-
-/** Below this there is not enough of the budget left for an attempt to be worth starting. */
-const MIN_ATTEMPT_MS = 3_000;
-
-const MAX_ATTEMPTS = 3;
-
-/** Short exponential backoff for transient failures without a provider delay. */
-const RETRY_BACKOFF_MS = 500;
+export const BUDGET_MS = (
+  request: ClassifyRequest,
+  policy: ClassificationExecutionPolicy = DEFAULT_EXECUTION_POLICY,
+) => (request.image ? policy.imageBudgetMs : policy.textBudgetMs);
 
 /**
  * Run one attempt, abandoning it at `ms` and aborting the underlying request.
@@ -80,22 +115,29 @@ export async function classifyItem(
   // the code that only ever runs when something is already broken, so leaving it
   // unexercised repeats the mistake that let the old fallback rot unnoticed.
   provider: ClassifyProvider = new TokenHubProvider(),
+  executionPolicy: ClassificationExecutionPolicy = DEFAULT_EXECUTION_POLICY,
 ): Promise<ClassifyResult> {
-  const deadline = Date.now() + BUDGET_MS(request);
+  const deadline = Date.now() + BUDGET_MS(request, executionPolicy);
   let lastError: Error | undefined;
 
-  for (let n = 1; n <= MAX_ATTEMPTS; n += 1) {
+  for (let n = 1; n <= executionPolicy.maxAttempts; n += 1) {
     const remaining = deadline - Date.now();
-    if (n > 1 && remaining < MIN_ATTEMPT_MS) break;
+    if (n > 1 && remaining < executionPolicy.minAttemptMs) break;
 
     try {
-      const result = await attempt(provider, request, Math.min(ATTEMPT_MS(request), remaining));
+      const result = await attempt(
+        provider,
+        request,
+        Math.min(ATTEMPT_MS(request, executionPolicy), remaining),
+      );
       if (n > 1) {
         // A retry that succeeds still means the first call failed. Say so, or the
         // provider degrades invisibly until it degrades past the budget too.
         console.warn(`[ai] Classify succeeded on attempt ${n} — previous attempt failed: ${lastError?.message}`);
       }
-      return ClassifyResultSchema.parse(result);
+      return executionPolicy.validateResultSemantics
+        ? ClassifyResultSchema.parse(result)
+        : ClassifyResultShapeSchema.parse(result);
     } catch (err) {
       lastError = err as Error;
       if (!(err instanceof RetryableProviderError)) {
@@ -106,13 +148,13 @@ export async function classifyItem(
       }
       console.warn(`[ai] Classify attempt ${n} failed: ${lastError.message}`);
 
-      if (n < MAX_ATTEMPTS) {
-        const delayMs = err.retryAfterMs ?? RETRY_BACKOFF_MS * (2 ** (n - 1));
+      if (n < executionPolicy.maxAttempts) {
+        const delayMs = err.retryAfterMs ?? executionPolicy.retryBackoffMs * (2 ** (n - 1));
         const remainingAfterFailure = deadline - Date.now();
-        if (delayMs + MIN_ATTEMPT_MS > remainingAfterFailure) {
+        if (delayMs + executionPolicy.minAttemptMs > remainingAfterFailure) {
           console.warn(
             `[ai] Retry skipped: ${remainingAfterFailure}ms remains, but the next attempt needs ` +
-              `${delayMs}ms delay plus ${MIN_ATTEMPT_MS}ms to run`,
+              `${delayMs}ms delay plus ${executionPolicy.minAttemptMs}ms to run`,
           );
           break;
         }

@@ -1,9 +1,32 @@
-import { ClassifyResultSchema, type ClassifyProvider, type ClassifyRequest, type ClassifyResult } from '../types';
+import {
+  ClassifyResultSchema,
+  ClassifyResultShapeSchema,
+  type ClassifyProvider,
+  type ClassifyRequest,
+  type ClassifyResult,
+} from '../types';
 import { getClassifySystemPrompt } from '../prompts/classify-system';
-import { LOCALE_LANGUAGE_NAME } from '@/lib/i18n';
+import { LOCALE_LANGUAGE_NAME, t } from '@/lib/i18n';
+import type { Locale } from '@/lib/i18n/types';
 import { logEvent } from '@/lib/telemetry';
 
 const API_URL = 'https://tokenhub.tencentmaas.com/v1/chat/completions';
+
+export const TOKENHUB_IMAGE_USER_INSTRUCTION =
+  'For a plastic or metal beverage container, including a bottle, can or cup: inspect the label around the product barcode at every orientation, including sideways or upside down. Use return_point only when exactly one container is the clear subject, the official circular-arrow mark is distinguishable as "10¢ SG RETURN", and a separate linear EAN product barcode is visibly present and unobscured on that same container, unless the container is visibly crushed or the barcode is visibly damaged. Exactly one clear subject means one intended foreground container; incidental out-of-focus background containers do not disqualify it. Treat the image as multiple-container ambiguity only when two or more containers are plausible co-equal subjects. Read both "SG" and "RETURN" directly from the submitted pixels: never reconstruct blurred characters from the familiar circular-arrow logo layout. Small text counts as direct pixel evidence when its letter shapes remain visually distinguishable after careful inspection; "too small" means the letters cannot actually be distinguished, not merely that the mark occupies a small part of the image. The circular-arrow 10¢ shape or return-machine context alone is insufficient; if either SG or RETURN is blurred or only inferred, use not_sure. The barcode digits need not be decoded from the photo, and emptying is a preparation step; the Return Point performs the final scan. A square 2D traceability code on a BCRS sticker is separate from the product barcode and cannot substitute for it; if only the square code is visible, use not_sure. "Product of" text and certification logos describe the product, not the deposit scheme: a container made outside Singapore is still eligible when its mark visibly reads "SG RETURN". For multiple plausible subjects, outer packaging, an ambiguous or foreign mark, or a hidden product barcode, use not_sure with channel null and confidence below 0.5; ask for a clear label photo and do not mention blue_bin.';
+
+export interface TokenHubProviderOptions {
+  getSystemPrompt?: typeof getClassifySystemPrompt;
+  imageUserInstruction?: string;
+  textTemperature?: number;
+  visionTemperature?: number;
+  ensureBcrsRefund?: boolean;
+  textModel?: string;
+  visionModel?: string;
+  strictResponseSchema?: boolean;
+  enforceNotSurePolicy?: boolean;
+  validateResultSemantics?: boolean;
+}
 
 /**
  * Text-only classification. Measured 2026-08-10 against the real system prompt on
@@ -30,18 +53,64 @@ const API_URL = 'https://tokenhub.tencentmaas.com/v1/chat/completions';
  * tokens reasoning — finish_reason=length, empty content, 38s — which is the
  * glm-5-turbo failure again. Preview-tier is also withdrawable without notice.
  */
-const TEXT_MODEL = 'hy3';
+export const TOKENHUB_TEXT_MODEL = 'hy3';
 
 /**
- * Image classification. The only multimodal model on the account, and it answers
- * natively in all four locales (3.7-7.1s on a real photo), which is why this
- * provider has no translation step: the previous two-call classify-then-translate
- * path is where both localisation defects originated.
+ * Image classification. The single-image Kimi K2.6 candidate passed the v16 gate:
+ * 48/48 overall, 36/36 image assertions, 12/12 return-point recall, and both fresh
+ * holdouts, with no false return-point directions, blue-bin leaks, or provider errors.
+ * An earlier v15 run missed one small but human-readable mark. Detail-tile experiments
+ * recovered it but created unsafe false return-point directions, so the single-image
+ * path is retained. TokenHub requires temperature 0.6 with K2.6 thinking disabled;
+ * occasional responses still report one reasoning token and are logged as contract
+ * events, but the v16 run had no truncation or invalid measurement.
  */
-const VISION_MODEL = 'hy-vision-2.0-instruct';
+export const TOKENHUB_VISION_MODEL = 'kimi-k2.6';
+
+export const TOKENHUB_MAX_TOKENS = 1024;
+
+export const STRICT_CLASSIFY_RESPONSE_FORMAT = {
+  type: 'json_schema',
+  json_schema: {
+    name: 'binwhere_classification',
+    strict: true,
+    schema: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        item: { type: 'string', minLength: 1 },
+        status: {
+          type: 'string',
+          enum: ['recyclable', 'special_handling', 'consider_donating', 'not_recyclable', 'not_sure'],
+        },
+        confidence: { type: 'number', minimum: 0, maximum: 1 },
+        channel: {
+          type: ['string', 'null'],
+          enum: [
+            'blue_bin',
+            'return_point',
+            'ewaste',
+            'ewaste_battery',
+            'lighting',
+            'textile',
+            'hazardous',
+            'bulky_waste',
+            'donation',
+            'general_waste',
+            null,
+          ],
+        },
+        reason: { type: 'string', minLength: 1 },
+        preparation: { type: 'array', items: { type: 'string' } },
+        tip: { type: 'string' },
+      },
+      required: ['item', 'status', 'confidence', 'channel', 'reason', 'preparation', 'tip'],
+    },
+  },
+} as const;
 
 /**
- * Both models are asked to answer without a chain-of-thought.
+ * Text classification is asked to answer without a chain-of-thought.
  *
  * Reasoning tokens bill as output, consume max_tokens, and are the mechanism behind
  * every truncated-JSON defect this classifier has had — while contributing nothing
@@ -55,7 +124,7 @@ const VISION_MODEL = 'hy-vision-2.0-instruct';
  * spelling here would fail silently — which is why logUsage verifies the outcome
  * instead of trusting the send.
  */
-const THINKING_DISABLED = { type: 'disabled' } as const;
+export const TOKENHUB_THINKING_DISABLED = { type: 'disabled' } as const;
 
 interface TokenHubUsage {
   prompt_tokens?: number;
@@ -107,28 +176,51 @@ export class RetryableProviderError extends Error {
 export class TokenHubProvider implements ClassifyProvider {
   name = 'tokenhub';
   private apiKey: string;
+  private options: Required<TokenHubProviderOptions>;
 
-  constructor(apiKey?: string) {
+  constructor(apiKey?: string, options: TokenHubProviderOptions = {}) {
     const key = apiKey ?? process.env.TOKENHUB_API_KEY;
     if (!key) throw new Error('TOKENHUB_API_KEY is required');
     this.apiKey = key;
+    this.options = {
+      getSystemPrompt: options.getSystemPrompt ?? getClassifySystemPrompt,
+      imageUserInstruction: options.imageUserInstruction ?? TOKENHUB_IMAGE_USER_INSTRUCTION,
+      textTemperature: options.textTemperature ?? 0,
+      visionTemperature: options.visionTemperature ?? 0.6,
+      ensureBcrsRefund: options.ensureBcrsRefund ?? true,
+      textModel: options.textModel ?? TOKENHUB_TEXT_MODEL,
+      visionModel: options.visionModel ?? TOKENHUB_VISION_MODEL,
+      strictResponseSchema: options.strictResponseSchema ?? true,
+      enforceNotSurePolicy: options.enforceNotSurePolicy ?? true,
+      validateResultSemantics: options.validateResultSemantics ?? true,
+    };
   }
 
   async classify(request: ClassifyRequest, signal?: AbortSignal): Promise<ClassifyResult> {
     const locale = request.locale ?? 'en';
     const langName = LOCALE_LANGUAGE_NAME[locale];
-    const model = request.image ? VISION_MODEL : TEXT_MODEL;
+    const model = request.image ? this.options.visionModel : this.options.textModel;
+    const temperature = request.image
+      ? this.options.visionTemperature
+      : this.options.textTemperature;
 
     const textPrompt = request.text
       ? `Classify this item: ${request.text}\n\nRespond in ${langName}.`
-      : `What is this item? Classify it for recycling in Singapore. Respond in ${langName}.`;
+      : [
+          'What is this item? Classify it for recycling in Singapore.',
+          this.options.imageUserInstruction,
+          `Respond in ${langName}.`,
+        ].filter(Boolean).join(' ');
 
     // Text-only requests send a plain string rather than a single-element content
     // array. Both shapes are valid OpenAI-compatible input, but only the plain one
     // has been exercised against hy3.
     const userContent = request.image
       ? [
-          { type: 'image_url' as const, image_url: { url: `data:image/jpeg;base64,${request.image}` } },
+          {
+            type: 'image_url' as const,
+            image_url: { url: `data:image/jpeg;base64,${request.image}` },
+          },
           { type: 'text' as const, text: textPrompt },
         ]
       : textPrompt;
@@ -145,16 +237,18 @@ export class TokenHubProvider implements ClassifyProvider {
         body: JSON.stringify({
           model,
           messages: [
-            { role: 'system', content: getClassifySystemPrompt(locale) },
+            { role: 'system', content: this.options.getSystemPrompt(locale) },
             { role: 'user', content: userContent },
           ],
-          max_tokens: 1024,
+          max_tokens: TOKENHUB_MAX_TOKENS,
           // Classification follows the prompt's channel rules; it does not sample
           // around them. A false return_point sends someone to claim a refund that
           // does not exist.
-          temperature: 0.3,
-          response_format: { type: 'json_object' },
-          thinking: THINKING_DISABLED,
+          temperature,
+          response_format: this.options.strictResponseSchema
+            ? STRICT_CLASSIFY_RESPONSE_FORMAT
+            : { type: 'json_object' },
+          thinking: TOKENHUB_THINKING_DISABLED,
         }),
       });
     } catch (err) {
@@ -208,13 +302,55 @@ export class TokenHubProvider implements ClassifyProvider {
     }
 
     try {
-      return ClassifyResultSchema.parse(JSON.parse(jsonMatch[0]));
+      const resultSchema = this.options.validateResultSemantics
+        ? ClassifyResultSchema
+        : ClassifyResultShapeSchema;
+      const parsed = resultSchema.parse(JSON.parse(jsonMatch[0]));
+      const policySafe = this.options.enforceNotSurePolicy
+        ? enforceNotSurePolicy(parsed, locale)
+        : parsed;
+      return this.options.ensureBcrsRefund
+        ? ensureBcrsRefundText(policySafe, locale)
+        : policySafe;
     } catch (err) {
       throw new RetryableProviderError(
         `TokenHub returned an invalid classification: ${(err as Error).message}`,
       );
     }
   }
+}
+
+/**
+ * `not_sure` means the application has not established any disposal channel.
+ * Model prose is not allowed to weaken that structured decision with a suggested
+ * channel, so uncertainty copy is owned by the application in every locale.
+ */
+function enforceNotSurePolicy(result: ClassifyResult, locale: Locale): ClassifyResult {
+  if (result.status !== 'not_sure') return result;
+  return {
+    ...result,
+    confidence: Math.min(result.confidence, 0.49),
+    channel: null,
+    reason: t(locale, 'classify.notSureReason'),
+    preparation: [t(locale, 'classify.notSurePreparation')],
+    tip: undefined,
+  };
+}
+
+/** BCRS instructions are statutory/product copy and must not be improvised by a model. */
+function ensureBcrsRefundText(result: ClassifyResult, locale: Locale): ClassifyResult {
+  if (result.channel !== 'return_point') return result;
+  return {
+    ...result,
+    reason: t(locale, 'bcrs.classifyReason'),
+    preparation: [
+      t(locale, 'bcrs.step1'),
+      t(locale, 'bcrs.step2'),
+      t(locale, 'bcrs.step3'),
+      t(locale, 'bcrs.step4'),
+    ],
+    tip: t(locale, 'bcrs.refundAmount'),
+  };
 }
 
 /** TokenHub documents Retry-After as a number of seconds. */
@@ -265,12 +401,16 @@ async function formatApiError(res: Response): Promise<string> {
  *    input is close to free after the first request. If that collapses to zero,
  *    input cost has quietly multiplied. It reads 0 on the image path and always
  *    has: the photo is part of the prompt, so no two image requests share a
- *    prefix, and an image classify pays full price for ~1.85k input tokens.
+ *    prefix, so image input cost must be read from every response.
  *  - reasoning_tokens: billed as output whether or not anything reads them, and the
  *    mechanism behind every truncated-JSON defect this classifier has had. The
  *    request asks for none, so any nonzero reading is the provider overriding us.
  */
-function logUsage(model: string, usage: TokenHubUsage | undefined, finishReason?: string) {
+function logUsage(
+  model: string,
+  usage: TokenHubUsage | undefined,
+  finishReason: string | undefined,
+) {
   if (!usage) return;
   const cached = usage.prompt_tokens_details?.cached_tokens ?? 0;
   const reasoning = usage.completion_tokens_details?.reasoning_tokens ?? 0;
@@ -280,7 +420,7 @@ function logUsage(model: string, usage: TokenHubUsage | undefined, finishReason?
   );
   if (reasoning > 0) {
     console.warn(`[ai] ${model} spent ${reasoning} reasoning tokens — it is billed as output and eats max_tokens`);
-    // The request set THINKING_DISABLED, so a nonzero count is the provider
+    // The request set TOKENHUB_THINKING_DISABLED, so a nonzero count is the provider
     // declining it: a silent vendor-side change to a model chosen *because* it did
     // not think. This same console.warn already existed on 2026-08-29 and recorded
     // the regression faithfully — nobody read it, and a user ate a 500 for a day.

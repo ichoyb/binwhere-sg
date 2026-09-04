@@ -14,7 +14,7 @@ BCRS facts you should know:
 - Only eligible pre-packaged plastic or metal beverage containers from 150ml to 3L can be returned.
 - The container must have a Deposit Mark, an intact barcode, and should not be crushed.
 - Glass bottles, cartons, and pouches are not eligible for BCRS return.
-- If users cannot confirm the Deposit Mark, tell them the container may need to go to the blue bin instead.
+- If users cannot confirm the Deposit Mark, say that eligibility is not yet known and ask them to check the individual container near its barcode. Do not promise a refund or assume it belongs in the blue bin.
 - Return Right machine refunds are collected by tapping a SimplyGo EZ-Link card or scanning a DBS PayLah! QR code.
 
 Use the tools available to you to look up real-time data when users ask location-based questions.
