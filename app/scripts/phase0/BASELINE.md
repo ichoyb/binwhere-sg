@@ -94,6 +94,27 @@ npm run test:classify -- --profile=candidate
 npm run test:classify:bcrs -- --profile=candidate
 ```
 
+The paid runners remain an explicit release decision; CI does not spend money or
+depend on a live model. After both complete candidate runs pass, record their exact
+result files as the evidence for the code being released:
+
+```bash
+npm run release-evidence:record -- \
+  --text-result=scripts/phase0/results/classify-<timestamp>.json \
+  --bcrs-result=scripts/phase0/results/bcrs-<timestamp>.json
+npm run test:release-evidence
+```
+
+`release-evidence/current.json` is tracked and contains the complete per-case
+candidate outputs, not only summary scores. The offline checker derives every gate
+again and compares the candidate with the paired production baselines. It also
+binds the evidence to the executable prompt/model/request profile, both truth-set
+digests, the exact four-language deterministic post-processing strings, the Web +
+server image-processing contract, and the locked Sharp version. A relevant change makes
+CI fail until fresh paid results are explicitly reviewed and recorded; unrelated
+application changes reuse the still-matching evidence. Do not hand-edit the
+evidence file.
+
 Production-profile results are tracked under `baselines/<truth-set>/<profile>.json`
 only for a complete run. `--mode` and `--case` are diagnostics: they never evaluate
 the release gate and never overwrite the canonical production baseline. Candidate

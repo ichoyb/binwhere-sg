@@ -17,20 +17,31 @@ export const MAX_IMAGE_BASE64_LENGTH = MAX_CLASSIFY_IMAGE_BASE64_LENGTH;
 /** Maximum JSON body size in bytes (base64 + text + overhead) */
 export const MAX_JSON_BODY_BYTES = 8_000_000;
 
-const MAX_DECODED_BYTES = 5 * 1024 * 1024; // 5MB
-const MAX_DIMENSION = 4096;
-const OUTPUT_SIZE = 1024;
-const OUTPUT_QUALITY = 70;
-const MAX_INPUT_PIXELS = 8_000_000; // 8MP
+/** Output-affecting contract bound into classification release evidence. */
+export const IMAGE_SANITIZATION_CONTRACT = {
+  version: 1,
+  allowedFormats: ['jpeg', 'png', 'webp'],
+  allowedDataUriMimes: ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
+  maxDecodedBytes: 5 * 1024 * 1024,
+  maxDimension: 4096,
+  maxInputPixels: 8_000_000,
+  output: {
+    format: 'jpeg',
+    maxDimension: 1024,
+    fit: 'inside',
+    withoutEnlargement: true,
+    autoOrient: true,
+    flattenBackground: '#ffffff',
+    quality: 70,
+  },
+} as const;
+
 const MAX_QUEUE_LENGTH = 24;
 
-const ALLOWED_FORMATS = new Set(['jpeg', 'png', 'webp']);
-const ALLOWED_DATA_URI_MIMES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/jpg',
-]);
+const ALLOWED_FORMATS = new Set<string>(IMAGE_SANITIZATION_CONTRACT.allowedFormats);
+const ALLOWED_DATA_URI_MIMES = new Set<string>(
+  IMAGE_SANITIZATION_CONTRACT.allowedDataUriMimes,
+);
 
 // Strict base64: A-Za-z0-9+/ with optional 0-2 trailing '='
 const BASE64_REGEX = /^[A-Za-z0-9+/]+={0,2}$/;
@@ -89,7 +100,7 @@ export async function validateAndSanitizeImage(
 
   // Step 3: Size pre-check (base64 is ~4/3 of decoded size)
   const estimatedBytes = Math.ceil(base64.length * 3 / 4);
-  if (estimatedBytes > MAX_DECODED_BYTES) {
+  if (estimatedBytes > IMAGE_SANITIZATION_CONTRACT.maxDecodedBytes) {
     throw new HttpError('Image too large', 413, 'IMAGE_TOO_LARGE');
   }
 
@@ -135,31 +146,47 @@ function checkMagicBytes(buffer: Buffer): boolean {
 }
 
 async function processImage(buffer: Buffer): Promise<Buffer> {
-  const image = sharp(buffer, {
-    failOn: 'error',
-    limitInputPixels: MAX_INPUT_PIXELS,
-    sequentialRead: true,
-  });
+  try {
+    const image = sharp(buffer, {
+      failOn: 'error',
+      limitInputPixels: IMAGE_SANITIZATION_CONTRACT.maxInputPixels,
+      sequentialRead: true,
+    });
 
-  // Metadata validation
-  const metadata = await image.metadata();
+    // Metadata validation
+    const metadata = await image.metadata();
 
-  if (!metadata.format || !ALLOWED_FORMATS.has(metadata.format)) {
+    if (!metadata.format || !ALLOWED_FORMATS.has(metadata.format)) {
+      throw new HttpError('Invalid image', 400, 'INVALID_IMAGE');
+    }
+
+    if (
+      (metadata.width && metadata.width > IMAGE_SANITIZATION_CONTRACT.maxDimension) ||
+      (metadata.height && metadata.height > IMAGE_SANITIZATION_CONTRACT.maxDimension)
+    ) {
+      throw new HttpError('Invalid image', 400, 'INVALID_IMAGE');
+    }
+
+    // Re-encode: auto-rotate EXIF → resize → flatten alpha → JPEG
+    return await image
+      .rotate()
+      .resize(
+        IMAGE_SANITIZATION_CONTRACT.output.maxDimension,
+        IMAGE_SANITIZATION_CONTRACT.output.maxDimension,
+        {
+          fit: IMAGE_SANITIZATION_CONTRACT.output.fit,
+          withoutEnlargement: IMAGE_SANITIZATION_CONTRACT.output.withoutEnlargement,
+        },
+      )
+      .flatten({ background: IMAGE_SANITIZATION_CONTRACT.output.flattenBackground })
+      .jpeg({ quality: IMAGE_SANITIZATION_CONTRACT.output.quality })
+      .toBuffer();
+  } catch (error) {
+    if (error instanceof HttpError) throw error;
+
+    // A caller-controlled payload that advertises an allowed format but cannot be
+    // decoded is still invalid input. Do not turn corrupt-image parser errors into
+    // a 500 or expose Sharp's decoder details through the public API.
     throw new HttpError('Invalid image', 400, 'INVALID_IMAGE');
   }
-
-  if (
-    (metadata.width && metadata.width > MAX_DIMENSION) ||
-    (metadata.height && metadata.height > MAX_DIMENSION)
-  ) {
-    throw new HttpError('Invalid image', 400, 'INVALID_IMAGE');
-  }
-
-  // Re-encode: auto-rotate EXIF → resize → flatten alpha → JPEG
-  return image
-    .rotate()
-    .resize(OUTPUT_SIZE, OUTPUT_SIZE, { fit: 'inside', withoutEnlargement: true })
-    .flatten({ background: '#ffffff' })
-    .jpeg({ quality: OUTPUT_QUALITY })
-    .toBuffer();
 }

@@ -26,7 +26,6 @@ import sharp from 'sharp';
 import {
   IMAGE_MAX_SIZE,
   IMAGE_QUALITY,
-  t,
   type ClassifyResult,
   type Locale,
 } from '@binwhere/core';
@@ -54,6 +53,13 @@ import {
   profileDigest,
   selectProfile,
 } from './baseline-profiles';
+import {
+  BCRS_GATE_THRESHOLDS,
+  BCRS_TRUTH_SET_DIGEST,
+  checkBcrsResult,
+  mentionsBlueBin,
+  resultText,
+} from './release-contract';
 
 dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
@@ -63,10 +69,7 @@ const MAX_SOURCE_BYTES = 5 * 1024 * 1024;
 const SOURCE_DOWNLOAD_MS = 20_000;
 const CALL_SPACING_MS = 1_000;
 const MAX_BASELINE_PAIR_AGE_MS = 24 * 60 * 60 * 1000;
-const NEAR_DUPLICATE_SIMILARITY_LIMIT = 0.995;
 const PERCEPTUAL_FINGERPRINT_SIZE = 64;
-const MIN_IMAGE_EXACT_ACCURACY = 0.95;
-const MIN_IMAGE_RETURN_POINT_RECALL = 0.90;
 
 type Mode = 'text' | 'image';
 
@@ -325,85 +328,18 @@ async function assertDistinctImageSources(
     }
   }
 
-  if (closestPair && closestPair.similarity >= NEAR_DUPLICATE_SIMILARITY_LIMIT) {
+  if (
+    closestPair &&
+    closestPair.similarity >= BCRS_GATE_THRESHOLDS.nearDuplicateSimilarityLimit
+  ) {
     throw new Error(
       'Image-suite independence check failed: ' +
       `${closestPair.leftSourceId} and ${closestPair.rightSourceId} have ` +
       `${closestPair.similarity.toFixed(6)} perceptual similarity after the complete production image path ` +
-      `(limit ${NEAR_DUPLICATE_SIMILARITY_LIMIT}).`,
+      `(limit ${BCRS_GATE_THRESHOLDS.nearDuplicateSimilarityLimit}).`,
     );
   }
   return closestPair;
-}
-
-function resultText(result: ClassifyResult): string {
-  return [result.item, result.reason, ...(result.preparation ?? []), result.tip]
-    .filter((value): value is string => Boolean(value))
-    .join('\n');
-}
-
-function hasRequestedLanguage(text: string, locale: Locale): boolean {
-  if (locale === 'zh') return /\p{Script=Han}/u.test(text);
-  if (locale === 'ta') return /\p{Script=Tamil}/u.test(text);
-  if (locale === 'ms') {
-    return /\b(yang|dan|tidak|untuk|dengan|ialah|ini|boleh|perlu|sila|pulangan|kosong|bersih|kelihatan)\b/i.test(text) ||
-      /kitar semula|kod bar/i.test(text);
-  }
-  return /\b(the|this|is|has|does|with|to|in|it|bottle|can|glass|recycle)\b/i.test(text) &&
-    !/\p{Script=Han}|\p{Script=Tamil}/u.test(text);
-}
-
-function mentionsBlueBin(text: string): boolean {
-  return /\bblue[ _-]?(?:recycling[ _-]?)?bin\b|蓝色回收箱|蓝箱|tong (?:kitar semula )?biru|நீல[^.!?;。！？；\n]{0,40}(?:தொட்டி|பெட்டி)/iu.test(text);
-}
-
-function checkResult(
-  expected: ExpectedClassification,
-  result: ClassifyResult,
-  locale: Locale,
-): string[] {
-  const failures: string[] = [];
-  if (result.channel !== expected.channel) {
-    failures.push(`channel expected ${expected.channel ?? 'null'}, got ${result.channel ?? 'null'}`);
-  }
-  if (result.status !== expected.status) {
-    failures.push(`status expected ${expected.status}, got ${result.status}`);
-  }
-  if (expected.maxConfidence !== undefined && result.confidence > expected.maxConfidence) {
-    failures.push(`confidence expected <= ${expected.maxConfidence}, got ${result.confidence}`);
-  }
-
-  const prose = resultText(result);
-  for (const exact of expected.requiredExactText ?? []) {
-    if (!prose.includes(exact)) failures.push(`response is missing exact text ${JSON.stringify(exact)}`);
-  }
-  if (prose.replaceAll('S$0.10', '').includes('$0.10')) {
-    failures.push('response contains bare $0.10 instead of Singapore-dollar S$0.10');
-  }
-  if (!hasRequestedLanguage(prose, locale)) {
-    failures.push(`response does not contain a reliable ${locale} language signal`);
-  }
-  if (expected.channel === null && mentionsBlueBin(prose)) {
-    failures.push('not_sure response mentions a blue-bin channel before Deposit Mark absence is established');
-  }
-  if (expected.channel === 'return_point') {
-    const expectedPreparation = [
-      t(locale, 'bcrs.step1'),
-      t(locale, 'bcrs.step2'),
-      t(locale, 'bcrs.step3'),
-      t(locale, 'bcrs.step4'),
-    ];
-    if (result.reason !== t(locale, 'bcrs.classifyReason')) {
-      failures.push('return_point reason is not the application-owned BCRS explanation');
-    }
-    if (JSON.stringify(result.preparation) !== JSON.stringify(expectedPreparation)) {
-      failures.push('return_point preparation is not the application-owned four-step guide');
-    }
-    if (result.tip !== t(locale, 'bcrs.refundAmount')) {
-      failures.push('return_point tip is not the application-owned refund amount');
-    }
-  }
-  return failures;
 }
 
 async function main() {
@@ -423,14 +359,7 @@ async function main() {
   const sources = new Map(BCRS_IMAGE_SOURCES.map((source) => [source.id, source]));
   const cleanImages = new Map<string, string>();
   const results: RegressionResult[] = [];
-  const truthSetDigest = createHash('sha256').update(JSON.stringify({
-    baseline: BCRS_BASELINE,
-    policySource: BCRS_POLICY_SOURCE,
-    nearDuplicateSimilarityLimit: NEAR_DUPLICATE_SIMILARITY_LIMIT,
-    textCases: BCRS_TEXT_CASES,
-    imageSources: BCRS_IMAGE_SOURCES,
-    imageCases: BCRS_IMAGE_CASES,
-  })).digest('hex');
+  const truthSetDigest = BCRS_TRUTH_SET_DIGEST;
 
   if (profile.id === 'candidate-working-tree' && completeSuite) {
     assertProductionBaseline(
@@ -453,7 +382,7 @@ async function main() {
     console.log(
       `Image independence: PASS (closest ${closestImagePair.leftSourceId} / ` +
       `${closestImagePair.rightSourceId} = ${closestImagePair.similarity.toFixed(6)}, ` +
-      `limit ${NEAR_DUPLICATE_SIMILARITY_LIMIT})\n`,
+      `limit ${BCRS_GATE_THRESHOLDS.nearDuplicateSimilarityLimit})\n`,
     );
   }
 
@@ -477,7 +406,7 @@ async function main() {
         provider,
         profile.executionPolicy,
       );
-      const assertions = checkResult(entry.testCase, result, entry.testCase.locale);
+      const assertions = checkBcrsResult(entry.testCase, result, entry.testCase.locale);
       const durationMs = Date.now() - startedAt;
       results.push({
         id: entry.testCase.id,
@@ -576,8 +505,8 @@ async function main() {
     holdout.length === expectedHoldoutTotal &&
     measurementValid &&
     textPassed === textResults.length &&
-    imageExactAccuracy >= MIN_IMAGE_EXACT_ACCURACY &&
-    imageReturnPointRecall >= MIN_IMAGE_RETURN_POINT_RECALL &&
+    imageExactAccuracy >= BCRS_GATE_THRESHOLDS.imageExactAccuracy &&
+    imageReturnPointRecall >= BCRS_GATE_THRESHOLDS.imageReturnPointRecall &&
     wrongChannelDirections === 0 &&
     falseReturnPoints === 0 &&
     notSureBlueBinMentions === 0 &&
@@ -599,7 +528,7 @@ async function main() {
     policySource: BCRS_POLICY_SOURCE,
     imagePipeline: 'web <=1024px JPEG quality 70, then production server sanitiser',
     imageIndependence: {
-      nearDuplicateSimilarityLimit: NEAR_DUPLICATE_SIMILARITY_LIMIT,
+      nearDuplicateSimilarityLimit: BCRS_GATE_THRESHOLDS.nearDuplicateSimilarityLimit,
       closestPair: closestImagePair,
     },
     sources: BCRS_IMAGE_SOURCES,
@@ -625,8 +554,8 @@ async function main() {
       notSureBlueBinMentions,
       providerErrors,
       thresholds: {
-        imageExactAccuracy: MIN_IMAGE_EXACT_ACCURACY,
-        imageReturnPointRecall: MIN_IMAGE_RETURN_POINT_RECALL,
+        imageExactAccuracy: BCRS_GATE_THRESHOLDS.imageExactAccuracy,
+        imageReturnPointRecall: BCRS_GATE_THRESHOLDS.imageReturnPointRecall,
       },
     },
     results,

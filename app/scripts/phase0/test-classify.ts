@@ -16,7 +16,6 @@
  * Requires: TOKENHUB_API_KEY in .env
  */
 
-import { createHash } from 'node:crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
@@ -35,6 +34,11 @@ import {
   profileDigest,
   selectProfile,
 } from './baseline-profiles';
+import {
+  TEXT_GATE_THRESHOLDS,
+  TEXT_SAFETY_CHANNELS,
+  TEXT_TRUTH_SET_DIGEST,
+} from './release-contract';
 
 // Load .env from app directory
 dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
@@ -101,35 +105,18 @@ interface BaselineComparison {
   pass: boolean;
 }
 
-const THRESHOLDS = {
-  exactAccuracy: 0.9,
-  channelAccuracy: 0.9,
-  statusAccuracy: 0.9,
-  perChannelAccuracy: 0.8,
-  maxUnexpectedNotSureRate: 0.15,
-  maxProviderErrors: 0,
-  maxUnsafeDiversions: 0,
-} as const;
-
 const MAX_BASELINE_PAIR_AGE_MS = 24 * 60 * 60 * 1000;
 
-const SAFETY_CHANNELS = new Set([
-  'ewaste',
-  'ewaste_battery',
-  'lighting',
-  'hazardous',
-]);
-
 function evaluateReport(report: ProviderReport) {
-  const exactPass = report.exactAccuracy >= THRESHOLDS.exactAccuracy;
-  const channelPass = report.channelAccuracy >= THRESHOLDS.channelAccuracy;
-  const statusPass = report.statusAccuracy >= THRESHOLDS.statusAccuracy;
-  const notSurePass = report.notSureRate < THRESHOLDS.maxUnexpectedNotSureRate;
+  const exactPass = report.exactAccuracy >= TEXT_GATE_THRESHOLDS.exactAccuracy;
+  const channelPass = report.channelAccuracy >= TEXT_GATE_THRESHOLDS.channelAccuracy;
+  const statusPass = report.statusAccuracy >= TEXT_GATE_THRESHOLDS.statusAccuracy;
+  const notSurePass = report.notSureRate < TEXT_GATE_THRESHOLDS.maxUnexpectedNotSureRate;
   const perChannelPass = Object.values(report.perChannel).every(
-    (stats) => stats.accuracy >= THRESHOLDS.perChannelAccuracy,
+    (stats) => stats.accuracy >= TEXT_GATE_THRESHOLDS.perChannelAccuracy,
   );
-  const errorsPass = report.errors <= THRESHOLDS.maxProviderErrors;
-  const safetyPass = report.unsafeDiversions <= THRESHOLDS.maxUnsafeDiversions;
+  const errorsPass = report.errors <= TEXT_GATE_THRESHOLDS.maxProviderErrors;
+  const safetyPass = report.unsafeDiversions <= TEXT_GATE_THRESHOLDS.maxUnsafeDiversions;
   return {
     exactPass,
     channelPass,
@@ -297,7 +284,7 @@ async function testProvider(
       if (channelMatch && statusMatch) exactCorrect++;
       if (result.status === 'not_sure') notSureCount++;
       if (
-        SAFETY_CHANNELS.has(item.expectedChannel) &&
+        TEXT_SAFETY_CHANNELS.has(item.expectedChannel) &&
         result.channel !== null &&
         result.channel !== item.expectedChannel
       ) {
@@ -404,9 +391,7 @@ function printReport(report: ProviderReport): void {
 
 async function main() {
   const profile = selectProfile(parseArg('profile'));
-  const truthSetDigest = createHash('sha256')
-    .update(JSON.stringify({ baseline: TEXT_BASELINE, items: TEST_ITEMS }))
-    .digest('hex');
+  const truthSetDigest = TEXT_TRUTH_SET_DIGEST;
   const productionBaseline = profile.id === 'candidate-working-tree'
     ? readProductionBaseline(truthSetDigest)
     : undefined;
@@ -451,7 +436,7 @@ async function main() {
       digest: profileDigest(profile),
     },
     models: { text: profile.providerOptions.textModel ?? TOKENHUB_TEXT_MODEL },
-    thresholds: THRESHOLDS,
+    thresholds: TEXT_GATE_THRESHOLDS,
     testSetSize: TEST_ITEMS.length,
     gates: reports.map((entry) => evaluateReport(entry)),
     comparison,
