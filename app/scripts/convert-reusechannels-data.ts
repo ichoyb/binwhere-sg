@@ -156,6 +156,7 @@ export async function fetchAndConvertReusechannels(
     const response = await fetch(NEA_REUSE_API_URL, {
       headers: {
         Accept: 'application/json',
+        Referer: 'https://www.nea.gov.sg/',
         'User-Agent': 'BinWhere/1.0',
       },
       cache: 'no-store',

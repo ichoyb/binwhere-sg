@@ -20,7 +20,9 @@ import {
   NEA_REUSE_API_URL,
 } from './convert-reusechannels-data';
 import {
-  BCRS_LOCATIONS_API_URL,
+  BCRS_LOCATOR_URL,
+  BCRS_MAP_API_BASE_URL,
+  BCRS_REGION_GEO_URL,
   fetchAndConvertRvmData,
 } from './convert-rvm-data';
 import {
@@ -54,6 +56,9 @@ interface DatasetConfig {
 interface GeoDataManifestEntry {
   outputFile: string;
   sourceUrl: string;
+  sourceApiUrl?: string;
+  coverageSourceUrl?: string;
+  coverageSourceSha256?: string;
   publisher: string;
   sourceMode: 'build-fetch' | 'versioned-local-snapshot';
   retrievedAt: string | null;
@@ -67,6 +72,11 @@ interface GeoDataManifestEntry {
   declaredFeatureCount?: number;
   excludedInventoryRecordCount?: number;
   invalidLocationRecordCount?: number;
+  queryCount?: number;
+  queryRadiusMeters?: number;
+  gridSpacingMeters?: number;
+  observationCount?: number;
+  duplicateObservationCount?: number;
   machineStatusIncluded?: boolean;
   responseDate?: string | null;
   responseEtag?: string | null;
@@ -214,7 +224,10 @@ async function buildAllData(): Promise<GeoDataManifest> {
       },
       returnPoints: {
         outputFile: path.basename(returnPoints.outputPath),
-        sourceUrl: BCRS_LOCATIONS_API_URL,
+        sourceUrl: BCRS_LOCATOR_URL,
+        sourceApiUrl: BCRS_MAP_API_BASE_URL,
+        coverageSourceUrl: BCRS_REGION_GEO_URL,
+        coverageSourceSha256: returnPoints.coverageSourceSha256,
         publisher: 'Beverage Container Return Scheme operator',
         sourceMode: 'build-fetch',
         retrievedAt: returnPoints.retrievedAt,
@@ -224,6 +237,11 @@ async function buildAllData(): Promise<GeoDataManifest> {
         sourceRecordCount: returnPoints.sourceRecordCount,
         excludedInventoryRecordCount: returnPoints.excludedInventoryRecordCount,
         invalidLocationRecordCount: returnPoints.invalidLocationRecordCount,
+        queryCount: returnPoints.queryCount,
+        queryRadiusMeters: returnPoints.queryRadiusMeters,
+        gridSpacingMeters: returnPoints.gridSpacingMeters,
+        observationCount: returnPoints.observationCount,
+        duplicateObservationCount: returnPoints.duplicateObservationCount,
         machineStatusIncluded: false,
         responseDate: returnPoints.responseDate,
         responseEtag: returnPoints.responseEtag,
