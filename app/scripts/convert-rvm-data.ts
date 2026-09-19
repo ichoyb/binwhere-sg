@@ -32,7 +32,7 @@ const MAX_REQUEST_ATTEMPTS = 3;
 const RETRY_BASE_DELAY_MS = 500;
 const QUERY_CONCURRENCY = 3;
 const MAX_INVALID_LOCATION_RATIO = 0.01;
-const MIN_ACCESS_TOKEN_LIFETIME_MS = 60_000;
+const ACCESS_TOKEN_REFRESH_WINDOW_MS = 30_000;
 const METERS_PER_LATITUDE_DEGREE = 111_320;
 
 const PUBLIC_MAP_HEADERS = {
@@ -135,17 +135,19 @@ function delay(ms: number): Promise<void> {
 async function fetchJson(
   url: string,
   label: string,
-  headers: Record<string, string> = PUBLIC_MAP_HEADERS,
+  headers: Record<string, string> | (() => Promise<Record<string, string>>) = PUBLIC_MAP_HEADERS,
 ): Promise<FetchedJson> {
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= MAX_REQUEST_ATTEMPTS; attempt++) {
+    // Resolve short-lived credentials again for every attempt, including retries.
+    const requestHeaders = typeof headers === 'function' ? await headers() : headers;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     try {
       const response = await fetch(url, {
-        headers,
+        headers: requestHeaders,
         cache: 'no-store',
         signal: controller.signal,
       });
@@ -489,40 +491,24 @@ export function convertRvmPayload(payload: unknown): RvmConversionResult {
   };
 }
 
-async function fetchMapUuid(): Promise<string> {
+async function fetchAccessToken(): Promise<{ token: string; expiresAt: number }> {
   const response = await fetchJson(
-    BCRS_MAP_API_BASE_URL + '/map-token',
-    'BCRS map token',
-  );
-  const data = dataObject(response.payload, 'BCRS map token');
-  const uuid = textValue(data.uuid);
-  const expiresIn = numericValue(data.expiresIn);
-
-  if (!uuid || expiresIn === null || expiresIn <= 0) {
-    throw new Error('BCRS map token data is missing uuid or expiresIn');
-  }
-  return uuid;
-}
-
-async function fetchAccessToken(mapUuid: string): Promise<string> {
-  const response = await fetchJson(
-    BCRS_MAP_API_BASE_URL + '/' + encodeURIComponent(mapUuid) + '/locations/access-token',
+    BCRS_MAP_API_BASE_URL + '/locations/access-token',
     'BCRS map access token',
   );
   const data = dataObject(response.payload, 'BCRS map access token');
   const token = textValue(data.token);
   const expiresAt = numericValue(data.expiresAt);
 
-  if (!token || expiresAt === null || expiresAt - Date.now() < MIN_ACCESS_TOKEN_LIFETIME_MS) {
+  if (!token || expiresAt === null || expiresAt - Date.now() <= ACCESS_TOKEN_REFRESH_WINDOW_MS) {
     throw new Error('BCRS map access token is missing or expires too soon');
   }
-  return token;
+  return { token, expiresAt };
 }
 
-async function fetchNearbyRadius(mapUuid: string): Promise<number> {
+async function fetchNearbyRadius(): Promise<number> {
   const response = await fetchJson(
-    BCRS_MAP_API_BASE_URL + '/' + encodeURIComponent(mapUuid)
-      + '/public/config/rvm_map_config',
+    BCRS_MAP_API_BASE_URL + '/public/config/rvm_map_config',
     'BCRS map config',
   );
   return parseNearbyRadius(response.payload);
@@ -548,12 +534,25 @@ async function fetchCoverage(): Promise<{
 }
 
 async function fetchNearbyPayloads(
-  mapUuid: string,
-  accessToken: string,
   grid: readonly BcrsGridPoint[],
 ): Promise<FetchedJson[]> {
   const results = new Array<FetchedJson>(grid.length);
   let nextIndex = 0;
+  let cachedToken: Awaited<ReturnType<typeof fetchAccessToken>> | undefined;
+  let pendingToken: ReturnType<typeof fetchAccessToken> | undefined;
+
+  async function requestHeaders(): Promise<Record<string, string>> {
+    if (!cachedToken || cachedToken.expiresAt - Date.now() <= ACCESS_TOKEN_REFRESH_WINDOW_MS) {
+      // All workers share a single refresh; tokens never enter output or metadata.
+      pendingToken ??= fetchAccessToken();
+      try {
+        cachedToken = await pendingToken;
+      } finally {
+        pendingToken = undefined;
+      }
+    }
+    return { ...PUBLIC_MAP_HEADERS, 'x-bcrs-map-token': cachedToken.token };
+  }
 
   async function worker(): Promise<void> {
     while (nextIndex < grid.length) {
@@ -561,7 +560,7 @@ async function fetchNearbyPayloads(
       nextIndex++;
       const point = grid[index];
       const url = new URL(
-        BCRS_MAP_API_BASE_URL + '/' + encodeURIComponent(mapUuid) + '/locations/nearby',
+        BCRS_MAP_API_BASE_URL + '/locations/nearby',
       );
       url.searchParams.set('lat', point.lat.toFixed(9));
       url.searchParams.set('lng', point.lng.toFixed(9));
@@ -570,10 +569,7 @@ async function fetchNearbyPayloads(
       results[index] = await fetchJson(
         url.toString(),
         'BCRS nearby query ' + (index + 1) + '/' + grid.length,
-        {
-          ...PUBLIC_MAP_HEADERS,
-          'x-bcrs-map-token': accessToken,
-        },
+        requestHeaders,
       );
     }
   }
@@ -585,14 +581,12 @@ async function fetchNearbyPayloads(
 export async function fetchAndConvertRvmData(
   outputDirectory = DEFAULT_GENERATED_DIR,
 ): Promise<RvmBuildResult> {
-  const [mapUuid, coverage] = await Promise.all([
-    fetchMapUuid(),
+  const [queryRadiusMeters, coverage] = await Promise.all([
+    fetchNearbyRadius(),
     fetchCoverage(),
   ]);
-  const queryRadiusMeters = await fetchNearbyRadius(mapUuid);
   const grid = createCoverageGrid(coverage.bounds);
-  const accessToken = await fetchAccessToken(mapUuid);
-  const nearbyResponses = await fetchNearbyPayloads(mapUuid, accessToken, grid);
+  const nearbyResponses = await fetchNearbyPayloads(grid);
   const merged = mergeRvmPayloads(nearbyResponses.map(({ payload }) => payload));
   const converted = convertRvmPayload(merged.payload);
   validateGeoData(converted.geojson, GEO_DATA_POLICIES.returnPoints);

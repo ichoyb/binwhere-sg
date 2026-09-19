@@ -1,10 +1,14 @@
 import assert from 'node:assert/strict';
+import * as fs from 'node:fs';
+import * as os from 'node:os';
+import * as path from 'node:path';
 
 import {
   BCRS_QUERY_RADIUS_METERS,
   convertRvmPayload,
   createCoverageGrid,
   deriveCoverageBounds,
+  fetchAndConvertRvmData,
   mergeRvmPayloads,
   parseNearbyRadius,
 } from './convert-rvm-data';
@@ -191,4 +195,85 @@ runTest('parseNearbyRadius fails closed when the map contract changes', () => {
     () => parseNearbyRadius({ status: 'ok', data: { nearbyRadius: 1_000 } }),
     /nearbyRadius changed/,
   );
+});
+
+async function testPublicMapTokenLifecycle(): Promise<void> {
+  const originalFetch = globalThis.fetch;
+  const originalNow = Date.now;
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'binwhere-rvm-test-'));
+  let now = 1_800_000_000_000;
+  let tokenRequests = 0;
+  let nearbyRequests = 0;
+  let activeRefreshes = 0;
+  let maximumRefreshes = 0;
+  let invalidExpiry = false;
+  let retryTriggered = false;
+  const expirations = new Map<string, number>();
+  const records = Array.from({ length: 1_000 }, (_, id) => location({ id: id + 1 }));
+  Date.now = () => now;
+
+  globalThis.fetch = async (input, init) => {
+    const url = new URL(String(input));
+    if (url.pathname === '/px/SGRegionGeo.json') {
+      return Response.json({ SearchResults: [{ geojson: {
+        type: 'Polygon',
+        coordinates: [[[103.8, 1.2], [103.84, 1.24], [103.8, 1.2]]],
+      } }] });
+    }
+    if (url.pathname === '/px-api/public/config/rvm_map_config') {
+      return Response.json({ status: 'success', data: { nearbyRadius: 2_000 } });
+    }
+    if (url.pathname === '/px-api/locations/access-token') {
+      tokenRequests++;
+      activeRefreshes++;
+      maximumRefreshes = Math.max(maximumRefreshes, activeRefreshes);
+      await new Promise((resolve) => setImmediate(resolve));
+      activeRefreshes--;
+      const token = `test-token-${tokenRequests}`;
+      // A normal 60-second token has already lost a few milliseconds in transit.
+      const expiresAt = now + (invalidExpiry ? -1 : 59_996);
+      expirations.set(token, expiresAt);
+      return Response.json({ status: 'success', data: { token, expiresAt } });
+    }
+    assert.equal(url.pathname, '/px-api/locations/nearby', 'must not request a map UUID');
+    assert.equal(url.searchParams.get('radius'), '2000');
+    const token = new Headers(init?.headers).get('x-bcrs-map-token');
+    assert.ok(token && (expirations.get(token) ?? 0) > now, 'must send an unexpired token');
+    nearbyRequests++;
+    await new Promise((resolve) => setImmediate(resolve));
+    now += 11_000;
+    if (!retryTriggered) {
+      retryTriggered = true;
+      return new Response('', { status: 503 });
+    }
+    return Response.json({ status: 'success', data: records });
+  };
+
+  try {
+    const result = await fetchAndConvertRvmData(directory);
+    assert.equal(result.featureCount, 1_000);
+    assert.equal(nearbyRequests, result.queryCount + 1, 'one existing HTTP retry');
+    assert.ok(tokenRequests >= 2, 'a long scan must refresh its initial token');
+    assert.equal(maximumRefreshes, 1, 'concurrent workers must share token refresh');
+    assert.equal(result.observationCount, result.queryCount * 1_000);
+    assert.ok(!fs.readFileSync(result.outputPath, 'utf8').includes('test-token'));
+    console.log('PASS full public-map scan renews short-lived tokens across workers and retries');
+
+    fs.unlinkSync(result.outputPath);
+    invalidExpiry = true;
+    const previousNearbyRequests = nearbyRequests;
+    await assert.rejects(fetchAndConvertRvmData(directory), /expires too soon/);
+    assert.equal(nearbyRequests, previousNearbyRequests);
+    assert.equal(fs.existsSync(result.outputPath), false);
+    console.log('PASS expired access token fails the scan without publishing output');
+  } finally {
+    globalThis.fetch = originalFetch;
+    Date.now = originalNow;
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+}
+
+testPublicMapTokenLifecycle().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
 });
