@@ -59,9 +59,9 @@ async function runTest(name: string, fn: () => Promise<void>) {
   console.log(`PASS ${name}`);
 }
 
-function completionResponse(content: unknown, usage?: unknown): Response {
+function completionResponse(content: unknown, usage?: unknown, finish = 'stop'): Response {
   return new Response(JSON.stringify({
-    choices: [{ message: { content }, finish_reason: 'stop' }],
+    choices: [{ message: { content }, finish_reason: finish }],
     ...(usage === undefined ? {} : { usage }),
   }), {
     status: 200,
@@ -299,6 +299,26 @@ async function main() {
     assert.match(event, /"issue":"reasoning_not_disabled"/);
     assert.match(event, /"reasoning":445/);
     assert.match(event, /"model":"hy3"/);
+  });
+
+  await runTest('reasoning baseline records the known token signature without suppressing violations', async () => {
+    for (const [reasoning, finish, expected] of [[1, 'stop', true], [2, 'stop', false], [1, 'length', false]] as const) {
+      const lines: string[] = [];
+      const original = console.log;
+      console.log = (...args: unknown[]) => { lines.push(args.join(' ')); };
+      try {
+        await withMockFetch(async () => completionResponse(JSON.stringify(OK), {
+          prompt_tokens: 100, completion_tokens: 150,
+          completion_tokens_details: { reasoning_tokens: reasoning },
+        }, finish), async () => {
+          await new TokenHubProvider('test-key').classify({ image: TEST_JPEG_BASE64 });
+        });
+      } finally { console.log = original; }
+      const event = lines.find((line) => line.includes('"evt":"provider_contract"'));
+      assert.ok(event);
+      assert.ok(event.includes(`"matchesRecordedBaseline":${expected}`));
+      assert.ok(event.includes('"expectedReasoning":0'));
+    }
   });
 
   await runTest('TokenHub preserves Retry-After and request_id on 429', async () => {

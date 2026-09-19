@@ -165,10 +165,11 @@ export function checkRateLimit(
   }
 
   const ip = getClientIp(request);
+  const scope = request.nextUrl.pathname;
 
   // 2. Per-IP limits (each rule has its own bucket)
   for (const rule of config.perIp) {
-    const result = ipStore.check(`${ip}:${rule.windowMs}`, rule.windowMs, rule.max);
+    const result = ipStore.check(`${scope}:${ip}:${rule.windowMs}`, rule.windowMs, rule.max);
     if (!result.ok) {
       return NextResponse.json(
         { code: 'RATE_LIMITED', error: 'Too many requests' },
@@ -180,7 +181,7 @@ export function checkRateLimit(
   // 3. Global limits
   if (config.global) {
     for (const rule of config.global) {
-      const result = globalStore.check(`__global__:${rule.windowMs}`, rule.windowMs, rule.max);
+      const result = globalStore.check(`${scope}:__global__:${rule.windowMs}`, rule.windowMs, rule.max);
       if (!result.ok) {
         return NextResponse.json(
           { code: 'RATE_LIMITED', error: 'Service temporarily unavailable' },

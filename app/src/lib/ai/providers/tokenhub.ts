@@ -67,6 +67,14 @@ export const TOKENHUB_TEXT_MODEL = 'hy3';
  */
 export const TOKENHUB_VISION_MODEL = 'kimi-k2.6';
 
+/** Observed on the reviewed 2026-09-05 release; still a contract violation. */
+export const PROVIDER_REASONING_BASELINE = {
+  model: 'kimi-k2.6',
+  reviewedAt: '2026-09-05',
+  reasoning: 1,
+  finish: 'stop',
+} as const;
+
 export const TOKENHUB_MAX_TOKENS = 1024;
 
 export const STRICT_CLASSIFY_RESPONSE_FORMAT = {
@@ -433,6 +441,11 @@ function logUsage(
       reasoning,
       out: usage.completion_tokens,
       finish: finishReason ?? null,
+      expectedReasoning: 0,
+      baselineReviewedAt: PROVIDER_REASONING_BASELINE.reviewedAt,
+      matchesRecordedBaseline: model === PROVIDER_REASONING_BASELINE.model
+        && reasoning === PROVIDER_REASONING_BASELINE.reasoning
+        && finishReason === PROVIDER_REASONING_BASELINE.finish,
     });
   }
 }

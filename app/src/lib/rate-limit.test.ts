@@ -63,3 +63,26 @@ runTest('allows native clients without browser Origin headers', () => {
   }), TEST_LIMITS);
   assert.equal(result, null);
 });
+
+runTest('nearby exhaustion does not consume the classification allowance', () => {
+  const headers = { 'cf-connecting-ip': '192.0.2.70' };
+  const limits = { perIp: [{ windowMs: 60_000, max: 2 }] };
+  const nearby = () => new NextRequest('https://binwhere.sg/api/v1/nearby?limit=1', { headers });
+  assert.equal(checkRateLimit(nearby(), limits), null);
+  assert.equal(checkRateLimit(nearby(), limits), null);
+  const blocked = checkRateLimit(nearby(), limits);
+  assert.equal(blocked?.status, 429);
+  assert.ok(Number(blocked?.headers.get('Retry-After')) > 0);
+  assert.equal(checkRateLimit(request(headers), limits), null);
+  assert.equal(checkRateLimit(request(headers), limits), null);
+  assert.equal(checkRateLimit(request(headers), limits)?.status, 429);
+});
+
+runTest('global quotas are separate across API paths and shared across clients', () => {
+  const limits = { perIp: [], global: [{ windowMs: 12_345, max: 1 }] };
+  const nearby = new NextRequest('https://binwhere.sg/api/v1/nearby');
+  assert.equal(checkRateLimit(nearby, limits), null);
+  assert.equal(checkRateLimit(request({ 'cf-connecting-ip': '192.0.2.71' }), limits), null);
+  assert.equal(checkRateLimit(request({ 'cf-connecting-ip': '192.0.2.72' }), limits)?.status, 429);
+  assert.equal(checkRateLimit(nearby, limits)?.status, 429);
+});
