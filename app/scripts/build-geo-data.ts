@@ -1,9 +1,9 @@
 /**
- * Build all production GeoJSON from declared sources.
+ * Explicitly refresh the versioned production GeoJSON snapshot.
  *
- * The generated directory is replaced only after every source, quality gate,
- * and manifest entry succeeds. Any failure leaves no generated data behind,
- * so a stale or partial dataset cannot be packaged accidentally.
+ * Fetch all sources into staging, then validate and publish one complete data
+ * version for review. Fetch or validation failures leave the selected snapshot
+ * and build inputs unchanged. Application builds never run this operation.
  *
  * Usage: npx tsx scripts/build-geo-data.ts
  */
@@ -35,8 +35,8 @@ import {
   sha256,
   validateGeoData,
 } from './geo-data-quality';
+import { publishGeoSnapshot, type GeoDataManifest } from './geo-data-snapshot';
 
-const GENERATED_DIR = path.join(__dirname, '..', 'src', 'data', 'generated');
 const STAGING_DIR = path.join(
   __dirname,
   '..',
@@ -51,48 +51,6 @@ interface DatasetConfig {
   label: string;
   manifestKey: 'recyclingBins' | 'ewaste';
   policy: GeoDataQualityPolicy;
-}
-
-interface GeoDataManifestEntry {
-  outputFile: string;
-  sourceUrl: string;
-  sourceApiUrl?: string;
-  coverageSourceUrl?: string;
-  coverageSourceSha256?: string;
-  publisher: string;
-  sourceMode: 'build-fetch' | 'versioned-local-snapshot';
-  retrievedAt: string | null;
-  upstreamUpdatedAt: string | null;
-  coverageStart?: string | null;
-  snapshotCapturedAt?: string;
-  maximumAgeDays?: number;
-  featureCount: number;
-  minimumFeatureCount: number;
-  sourceRecordCount?: number;
-  declaredFeatureCount?: number;
-  excludedInventoryRecordCount?: number;
-  invalidLocationRecordCount?: number;
-  queryCount?: number;
-  queryRadiusMeters?: number;
-  gridSpacingMeters?: number;
-  observationCount?: number;
-  duplicateObservationCount?: number;
-  machineStatusIncluded?: boolean;
-  responseDate?: string | null;
-  responseEtag?: string | null;
-  sha256: string;
-}
-
-interface GeoDataManifest {
-  schemaVersion: 1;
-  generatedAt: string;
-  datasets: {
-    recyclingBins: GeoDataManifestEntry;
-    ewaste: GeoDataManifestEntry;
-    textile: GeoDataManifestEntry;
-    reuseChannels: GeoDataManifestEntry;
-    returnPoints: GeoDataManifestEntry;
-  };
 }
 
 const DATASETS: DatasetConfig[] = [
@@ -134,7 +92,7 @@ function dataGovManifestEntry(
   featureCount: number,
   retrievedAt: string,
   contentSha256: string,
-): GeoDataManifestEntry {
+): GeoDataManifest['datasets']['recyclingBins'] {
   return {
     outputFile: dataset.outputFile,
     sourceUrl: `${API_URLS.DATASET_METADATA}/datasets/${dataset.id}/metadata`,
@@ -252,9 +210,8 @@ async function buildAllData(): Promise<GeoDataManifest> {
 }
 
 async function main(): Promise<void> {
-  console.log('[build-geo-data] Starting verified data build...\n');
+  console.log('[build-geo-data] Refreshing the versioned data snapshot...\n');
 
-  fs.rmSync(GENERATED_DIR, { recursive: true, force: true });
   fs.rmSync(STAGING_DIR, { recursive: true, force: true });
   fs.mkdirSync(STAGING_DIR, { recursive: true });
 
@@ -264,18 +221,11 @@ async function main(): Promise<void> {
       path.join(STAGING_DIR, 'data-manifest.json'),
       `${JSON.stringify(manifest, null, 2)}\n`,
     );
-    fs.renameSync(STAGING_DIR, GENERATED_DIR);
-
-    console.log('[build-geo-data] Verified files:');
-    const files = fs.readdirSync(GENERATED_DIR).filter((file) => file.endsWith('.json'));
-    for (const file of files) {
-      const size = (fs.statSync(path.join(GENERATED_DIR, file)).size / 1024).toFixed(0);
-      console.log(`  ${file} (${size} KB)`);
-    }
-  } catch (error) {
+    const version = publishGeoSnapshot(STAGING_DIR);
+    console.log(`[build-geo-data] Verified candidate snapshot: ${version}`);
+    console.log('[build-geo-data] Review and commit app/data/geo-snapshot before release.');
+  } finally {
     fs.rmSync(STAGING_DIR, { recursive: true, force: true });
-    fs.rmSync(GENERATED_DIR, { recursive: true, force: true });
-    throw error;
   }
 }
 

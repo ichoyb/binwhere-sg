@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-11T07:17:25.009Z",
+  "datasets": {
+    "recyclingBins": {
+      "outputFile": "recycling-bins.json",
+      "sourceUrl": "https://api-production.data.gov.sg/v2/public/api/datasets/d_4dde14826642f49eefff48b7832b90db/metadata",
+      "publisher": "National Environment Agency",
+      "sourceMode": "build-fetch",
+      "retrievedAt": "2026-09-11T07:16:37.029Z",
+      "upstreamUpdatedAt": "2024-06-06T14:35:13+08:00",
+      "coverageStart": null,
+      "featureCount": 12578,
+      "minimumFeatureCount": 10000,
+      "sha256": "3081e40c80d5b6edf6c650c4148105745373d079e33cec3148933760cc620f1b"
+    },
+    "ewaste": {
+      "outputFile": "ewaste-recycling-points.json",
+      "sourceUrl": "https://api-production.data.gov.sg/v2/public/api/datasets/d_db40d004afeb5a7f0f555fdcc34934cc/metadata",
+      "publisher": "National Environment Agency",
+      "sourceMode": "build-fetch",
+      "retrievedAt": "2026-09-11T07:16:38.914Z",
+      "upstreamUpdatedAt": "2025-11-08T10:11:56+08:00",
+      "coverageStart": "2022-06-02T00:00:00+08:00",
+      "featureCount": 718,
+      "minimumFeatureCount": 500,
+      "sha256": "9c5d5eab965eb8306be0733059ea6fe517ebe88890dcede976ca42ac2ec64a7d"
+    },
+    "textile": {
+      "outputFile": "textile-bins.json",
+      "sourceUrl": "https://www.recycle.gov.sg/",
+      "publisher": "Cloop / recycle.gov.sg",
+      "sourceMode": "versioned-local-snapshot",
+      "retrievedAt": null,
+      "upstreamUpdatedAt": null,
+      "snapshotCapturedAt": "2026-03-01T18:04:55+08:00",
+      "maximumAgeDays": 366,
+      "featureCount": 401,
+      "minimumFeatureCount": 300,
+      "sha256": "a2493a3c7188f09f398262444c61189a8653497c53225dec0a9af562063b80d9"
+    },
+    "reuseChannels": {
+      "outputFile": "reuse-channels.json",
+      "sourceUrl": "https://www.nea.gov.sg/api/OneMap/GetMapData/reusechannels",
+      "publisher": "NATIONAL ENVIRONMENT AGENCY",
+      "sourceMode": "build-fetch",
+      "retrievedAt": "2026-09-11T07:16:39.821Z",
+      "upstreamUpdatedAt": "2024-01-03T14:53:51+00:00",
+      "coverageStart": "2022-08-19T00:00:00+00:00",
+      "declaredFeatureCount": 75,
+      "featureCount": 75,
+      "minimumFeatureCount": 50,
+      "responseDate": "Fri, 11 Sep 2026 07:16:39 GMT",
+      "responseEtag": null,
+      "sha256": "b3096951f834de4108ef51db88e2d2cc5fed26f947d253d913e9651876435cd1"
+    },
+    "returnPoints": {
+      "outputFile": "return-points.json",
+      "sourceUrl": "https://returnright.sg/p/find-my-nearest-rvm",
+      "sourceApiUrl": "https://returnright.sg/px-api",
+      "coverageSourceUrl": "https://returnright.sg/px/SGRegionGeo.json",
+      "coverageSourceSha256": "fa373cdd75c56eb0c2ce18d0212ba244e60102056c1c6d149ae66ef7705c17a9",
+      "publisher": "Beverage Container Return Scheme operator",
+      "sourceMode": "build-fetch",
+      "retrievedAt": "2026-09-11T07:17:25.008Z",
+      "upstreamUpdatedAt": null,
+      "featureCount": 1306,
+      "minimumFeatureCount": 1000,
+      "sourceRecordCount": 1306,
+      "excludedInventoryRecordCount": 0,
+      "invalidLocationRecordCount": 0,
+      "queryCount": 345,
+      "queryRadiusMeters": 2000,
+      "gridSpacingMeters": 2500,
+      "observationCount": 2739,
+      "duplicateObservationCount": 1433,
+      "machineStatusIncluded": false,
+      "responseDate": "Fri, 11 Sep 2026 07:16:42 GMT",
+      "responseEtag": null,
+      "sha256": "9d9eee72a77577041ccad9567417282ad0d35c07a609dfa5329c1dd7225789eb"
+    }
+  }
+}
