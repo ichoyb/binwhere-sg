@@ -212,6 +212,9 @@ export async function generateShareCard(
   result: ClassifyResult,
   locale: Locale,
 ): Promise<Blob> {
+  const action = result.next_action;
+  const reason = action ? `${action.title}\n\n${action.instruction}\n\n${action.qualification}` : result.reason;
+  const preparation = action ? [] : result.preparation;
   const statusCfg = STATUS_CONFIG[result.status];
   const channelCfg = result.channel ? CHANNEL_DISPLAY_CONFIG[result.channel] : null;
   const config = channelCfg
@@ -226,13 +229,13 @@ export async function generateShareCard(
 
   // Measure reason text
   mCtx.font = `28px ${FONT}`;
-  const reasonLines = wrapText(mCtx, result.reason, CONTENT_W);
+  const reasonLines = wrapText(mCtx, reason, CONTENT_W);
 
   // Measure preparation steps
   const prepLines: string[][] = [];
-  if (result.preparation?.length) {
+  if (preparation?.length) {
     mCtx.font = `26px ${FONT}`;
-    for (const step of result.preparation) {
+    for (const step of preparation) {
       prepLines.push(wrapText(mCtx, step, CONTENT_W - 60));
     }
   }
@@ -260,10 +263,10 @@ export async function generateShareCard(
   ctx.fillRect(0, 0, W, HEADER_H);
 
   // Status icon
-  drawStatusIcon(ctx, result.status, W / 2, 70, 32);
+  if (!action) drawStatusIcon(ctx, result.status, W / 2, 70, 32);
 
   // Status label pill
-  const statusLabel = t(locale, `status.${result.status}` as TranslationKey);
+  const statusLabel = action ? t(locale, 'result.nextAction') : t(locale, `status.${result.status}` as TranslationKey);
   ctx.font = `600 24px ${FONT}`;
   const statusMetrics = ctx.measureText(statusLabel);
   const pillW = statusMetrics.width + 32;
@@ -347,7 +350,7 @@ export async function generateShareCard(
   }
 
   // Preparation steps
-  if (result.preparation && result.preparation.length > 0) {
+  if (preparation && preparation.length > 0) {
     y += 20;
 
     // Divider
@@ -369,7 +372,7 @@ export async function generateShareCard(
 
     // Steps
     ctx.font = `26px ${FONT}`;
-    result.preparation.forEach((step, i) => {
+    preparation.forEach((step, i) => {
       // Number circle
       ctx.fillStyle = '#E8F8EF';
       ctx.beginPath();

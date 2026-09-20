@@ -1,0 +1,283 @@
+{
+  "id": "image-routes-20260920-input-quality",
+  "frozenAt": "2026-09-19T19:14:12.076Z",
+  "revision": "c34617cc90ee3ebbfe775ec9fc04c5bb36c5cdf9",
+  "purpose": "One input variable at a time: JPEG 70 to 90, or long edge 1024 to 2048; same frozen facts prompt and decision code.",
+  "models": [
+    "kimi-k2.6",
+    "deepseek/deepseek-flash"
+  ],
+  "repetitions": 2,
+  "logicalCalls": 24,
+  "maxInFlight": 2,
+  "parameters": {
+    "temperature": 0.6,
+    "max_tokens": 1024,
+    "thinking": {
+      "type": "disabled"
+    },
+    "response_format": "json_object"
+  },
+  "executionPolicy": {
+    "textAttemptMs": 8000,
+    "imageAttemptMs": 20000,
+    "textBudgetMs": 20000,
+    "imageBudgetMs": 42000,
+    "minAttemptMs": 3000,
+    "maxAttempts": 3,
+    "retryBackoffMs": 500,
+    "validateResultSemantics": true
+  },
+  "stopRules": [
+    "Stop a model after a permanent HTTP 400/401/402/403/404/422 response.",
+    "No prompt, threshold, format or budget changes during this plan.",
+    "Keep every completed trial, including failed attempts; never repeat to select a passing run."
+  ],
+  "limitations": [
+    "All images are exposed development cases, English only.",
+    "No actual soft-pouch control in the existing image suite; cannot assess its recognition recall.",
+    "Kimi control is the unpublished action candidate, not a fresh measurement of production.",
+    "Not an independent mark verifier; facts are still probabilistic model outputs.",
+    "Research-only beverage decision function; not a full classifier or a deployable implementation.",
+    "Confidence values are diagnostic constants, not calibrated probabilities."
+  ],
+  "runtimeSha256": "ac6ebab2c52371850e35817d9da40e9512f415cc02169aca2ea9e3d4fad65f48",
+  "harnessSha256": "df6b37dd9051ed26a970c3adc2104a3a1388218ac6dde562ea4013cea6e157e3",
+  "cases": [
+    {
+      "id": "holdout-singapore-mark-closeup-en:q90-1024",
+      "sourceId": "holdout-singapore-mark-closeup",
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "partition": "exposed-development-only",
+      "filename": "holdout-singapore-mark-closeup-q90-1024.jpg",
+      "sourceSha256": "8bd0ca834cab36c1591fddf729e4c7eec73c8e423d2236b45d03f97f373a8616",
+      "submittedSha256": "b5f4fb5b82e1147755470af64aaf97610b19b643fd2c4153f6b494699fc39fb2",
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361",
+      "submittedBytes": 51125,
+      "baseId": "holdout-singapore-mark-closeup-en",
+      "variant": "q90-1024",
+      "width": 830,
+      "height": 468,
+      "identicalToBaseline": false
+    },
+    {
+      "id": "holdout-singapore-mark-closeup-en:q70-2048",
+      "sourceId": "holdout-singapore-mark-closeup",
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "partition": "exposed-development-only",
+      "filename": "holdout-singapore-mark-closeup-q70-2048.jpg",
+      "sourceSha256": "8bd0ca834cab36c1591fddf729e4c7eec73c8e423d2236b45d03f97f373a8616",
+      "submittedSha256": "6339e59356179409ab408ef3db0cef59947d60c5ea328c4cd82fd3a25c00f400",
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361",
+      "submittedBytes": 38114,
+      "baseId": "holdout-singapore-mark-closeup-en",
+      "variant": "q70-2048",
+      "width": 830,
+      "height": 468,
+      "identicalToBaseline": true
+    },
+    {
+      "id": "holdout-single-angle-malaysia-can-v7-en:q90-1024",
+      "sourceId": "holdout-single-angle-malaysia-can-v7",
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "partition": "exposed-development-only",
+      "filename": "holdout-single-angle-malaysia-can-v7-q90-1024.jpg",
+      "sourceSha256": "888748aa4a710a30c8c3dac008c0db85265e98da219312a094851fa2edd82111",
+      "submittedSha256": "52578d6fc42cb2bdce5b6289534fb56f662b86959066f1af39764a1ef72cb023",
+      "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-68",
+      "submittedBytes": 67239,
+      "baseId": "holdout-single-angle-malaysia-can-v7-en",
+      "variant": "q90-1024",
+      "width": 413,
+      "height": 1024,
+      "identicalToBaseline": false
+    },
+    {
+      "id": "holdout-single-angle-malaysia-can-v7-en:q70-2048",
+      "sourceId": "holdout-single-angle-malaysia-can-v7",
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "partition": "exposed-development-only",
+      "filename": "holdout-single-angle-malaysia-can-v7-q70-2048.jpg",
+      "sourceSha256": "888748aa4a710a30c8c3dac008c0db85265e98da219312a094851fa2edd82111",
+      "submittedSha256": "a73de10cd0b272f64665c8027a12bb8ae27914f165975f0e168a2c18d82395e7",
+      "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-68",
+      "submittedBytes": 102612,
+      "baseId": "holdout-single-angle-malaysia-can-v7-en",
+      "variant": "q70-2048",
+      "width": 827,
+      "height": 2048,
+      "identicalToBaseline": false
+    },
+    {
+      "id": "holdout-single-can-mark-and-barcode-v15-en:q90-1024",
+      "sourceId": "holdout-single-can-mark-and-barcode-v15",
+      "locale": "en",
+      "channel": "return_point",
+      "status": "recyclable",
+      "requiredExactText": [
+        "S$0.10"
+      ],
+      "partition": "exposed-development-only",
+      "filename": "holdout-single-can-mark-and-barcode-v15-q90-1024.jpg",
+      "sourceSha256": "f72f485af9ee085e600890f9e6c82440496d2e115573433ca46da37b30334cbb",
+      "submittedSha256": "7122710d31ff81782d216cf840b71f3feef30d583d04fe9e61689bcc2917f29c",
+      "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260730-9413074",
+      "submittedBytes": 133027,
+      "baseId": "holdout-single-can-mark-and-barcode-v15-en",
+      "variant": "q90-1024",
+      "width": 1024,
+      "height": 713,
+      "identicalToBaseline": false
+    },
+    {
+      "id": "holdout-single-can-mark-and-barcode-v15-en:q70-2048",
+      "sourceId": "holdout-single-can-mark-and-barcode-v15",
+      "locale": "en",
+      "channel": "return_point",
+      "status": "recyclable",
+      "requiredExactText": [
+        "S$0.10"
+      ],
+      "partition": "exposed-development-only",
+      "filename": "holdout-single-can-mark-and-barcode-v15-q70-2048.jpg",
+      "sourceSha256": "f72f485af9ee085e600890f9e6c82440496d2e115573433ca46da37b30334cbb",
+      "submittedSha256": "c188042add6b60c886742df83ea1960d9cba457be9cf0303b6de36a17d96d96d",
+      "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260730-9413074",
+      "submittedBytes": 207234,
+      "baseId": "holdout-single-can-mark-and-barcode-v15-en",
+      "variant": "q70-2048",
+      "width": 2048,
+      "height": 1427,
+      "identicalToBaseline": false
+    }
+  ],
+  "system": "Extract visual observations from one photograph. Do not recommend a recycling channel, an action, or a refund. Describe the physical container shown rather than a package usually associated with its brand. Do not use external information or assume missing surfaces are visible.\nOne intended foreground container counts as a single subject; several equally plausible containers count as multiple. Distinguish glass, plastic, metal, paper and composite packaging using visible physical features. Use unknown/null when the image cannot establish a fact. visible_damage is observed crushing, serious container damage, or damage to a visible product barcode. visible_soiling is visible dirt, grease or non-beverage contamination; ordinary beverage contents are not soiling and can be emptied.\nFor a possible deposit mark, transcribe only distinguishable characters, preserving question marks for unreadable characters. Do not complete a familiar logo from its shape, or turn a 10-cent amount into SG/RETURN. Mark text and graphics printed on a poster, a machine, outer packaging or separate artwork do not belong to the subject container. A linear product barcode is separate from a square 2D code. Report a foreign deposit mark only if its text or symbol visibly identifies another deposit scheme.\nReturn only a JSON object with these exact fields and values:\n{\"item\":\"brief English object name\",\"subject\":\"single_container|multiple_containers|no_container|unclear\",\"form\":\"bottle|can|cup|carton|pouch|other|unknown\",\"material\":\"plastic|metal|glass|paper|composite|other|unknown\",\"prepackaged_beverage\":true,\"volume_ml\":null,\"visible_damage\":false,\"visible_soiling\":false,\"return_arrow_graphic_visible\":false,\"deposit_mark_text\":\"literal readable text, or empty string\",\"mark_on_subject_container\":false,\"foreign_deposit_mark\":false,\"linear_barcode_on_subject\":false}\nprepackaged_beverage is true, false or null; volume_ml is a visible numeric volume or null. All other booleans describe visible evidence, not assumptions.",
+  "factsSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "item": {
+        "type": "string",
+        "minLength": 1
+      },
+      "subject": {
+        "type": "string",
+        "enum": [
+          "single_container",
+          "multiple_containers",
+          "no_container",
+          "unclear"
+        ]
+      },
+      "form": {
+        "type": "string",
+        "enum": [
+          "bottle",
+          "can",
+          "cup",
+          "carton",
+          "pouch",
+          "other",
+          "unknown"
+        ]
+      },
+      "material": {
+        "type": "string",
+        "enum": [
+          "plastic",
+          "metal",
+          "glass",
+          "paper",
+          "composite",
+          "other",
+          "unknown"
+        ]
+      },
+      "prepackaged_beverage": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "volume_ml": {
+        "anyOf": [
+          {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "visible_damage": {
+        "type": "boolean"
+      },
+      "visible_soiling": {
+        "type": "boolean"
+      },
+      "return_arrow_graphic_visible": {
+        "type": "boolean"
+      },
+      "deposit_mark_text": {
+        "type": "string"
+      },
+      "mark_on_subject_container": {
+        "type": "boolean"
+      },
+      "foreign_deposit_mark": {
+        "type": "boolean"
+      },
+      "linear_barcode_on_subject": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "item",
+      "subject",
+      "form",
+      "material",
+      "prepackaged_beverage",
+      "volume_ml",
+      "visible_damage",
+      "visible_soiling",
+      "return_arrow_graphic_visible",
+      "deposit_mark_text",
+      "mark_on_subject_container",
+      "foreign_deposit_mark",
+      "linear_barcode_on_subject"
+    ],
+    "additionalProperties": false
+  },
+  "baseline": "facts-plan.json current 1024/Q70 trials; same exposed images, no new holdout",
+  "variants": [
+    {
+      "id": "q90-1024",
+      "size": 1024,
+      "quality": 90
+    },
+    {
+      "id": "q70-2048",
+      "size": 2048,
+      "quality": 70
+    }
+  ],
+  "runnerDerivation": "facts.mjs unchanged except experiment output/plan prefix and absolute research directory",
+  "sourceHarnessSha256": "b382671afe6324f66ae9a7b09423b4016accd28074cea4dbbd182def1a65813a"
+}

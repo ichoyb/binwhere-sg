@@ -130,6 +130,7 @@ export function NearbyScreen({
         </Text>
       </View>
 
+      {result.next_action && <Text style={styles.muted}>{result.next_action.qualification}</Text>}
       {!nearbyChannel ? (
         <Text style={styles.muted}>{t(locale, 'nearby.noPoints')}</Text>
       ) : geoLoading && !userLocation ? (

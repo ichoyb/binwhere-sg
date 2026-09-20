@@ -112,6 +112,7 @@ export async function POST(request: NextRequest) {
       channel: parsedResult.data.channel,
       status: parsedResult.data.status,
       confidence: parsedResult.data.confidence,
+      nextAction: parsedResult.data.next_action?.type,
       ms: elapsed(),
     });
     return NextResponse.json(parsedResult.data);

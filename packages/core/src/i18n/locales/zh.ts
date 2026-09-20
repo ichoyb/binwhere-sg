@@ -1,6 +1,19 @@
 import type en from './en';
 
 const zh: Record<keyof typeof en, string> = {
+  "result.nextAction": "下一步",
+  "action.return.title": "清空后带去退还点",
+  "action.return.instruction": "保持容器未压扁、标签和条码完整，带去退还点退还 S$0.10。",
+  "action.return.qualification": "最终是否接收由退还点判定。",
+  "action.try.title": "先倒空，保留瓶身和标签",
+  "action.try.instruction": "下次顺路经过退还点时，带去扫描。符合条件并被接收后可退 S$0.10。",
+  "action.try.qualification": "退款资格尚未确认，最终是否接收由退还点判定。",
+  "action.check.title": "先确认容器类型",
+  "action.check.instruction": "如果是塑料瓶、预包装塑料杯或金属罐，先倒空并保持完整，下次顺路经过退还点时带去扫描。",
+  "action.check.qualification": "照片还不能确认容器类型；玻璃瓶、纸盒和软袋不参加押金退还。",
+  "classify.cleanGlassReason": "干净的玻璃饮料瓶应放入蓝色回收桶。",
+  "classify.cleanGlassPreparation": "倒空、冲洗并晾干瓶子。",
+
   // Status labels
   'status.recyclable': '可回收',
   'status.special_handling': '需特殊处理',
@@ -52,6 +65,7 @@ const zh: Record<keyof typeof en, string> = {
   'home.cameraDeniedHint': '请使用下方文字输入来描述物品',
   'home.cameraUnavailable': '相机不可用',
   'home.cameraUnavailableHint': '请使用下方文字输入来描述物品',
+  'home.cameraGuide': '把整个物品拍入画面，尽量拍清楚。',
   'home.placeholderProminent': '例如：塑料瓶、旧手机',
   'home.placeholderCompact': '输入物品名称...',
   'home.search': '搜索',
@@ -147,7 +161,7 @@ const zh: Record<keyof typeof en, string> = {
   'bcrs.pointCount': '1,000+ 退还点遍布全岛',
   'bcrs.classifyReason': '新加坡官方 Deposit Mark 和产品条码表明，该容器应使用 BCRS 退还渠道。请按要求准备容器以领取 S$0.10；最终是否接收由退还点判定。',
   'classify.notSureReason': '现有信息不足，无法安全确定回收渠道。',
-  'classify.notSurePreparation': '请提供更清晰的照片或描述，并完整展示物品及其标签或标识。饮料容器请拍清产品条码周围的标签。',
+  'classify.notSurePreparation': '请提供更清晰的照片或描述，并完整展示物品。',
 };
 
 export default zh;

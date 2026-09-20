@@ -88,6 +88,42 @@
         },
         "tip": {
           "type": "string"
+        },
+        "next_action": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "return_container",
+                "try_return_point",
+                "check_container_type"
+              ]
+            },
+            "channel": {
+              "type": "string",
+              "const": "return_point"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "instruction": {
+              "type": "string",
+              "minLength": 1
+            },
+            "qualification": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "type",
+            "channel",
+            "title",
+            "instruction",
+            "qualification"
+          ]
         }
       },
       "required": [

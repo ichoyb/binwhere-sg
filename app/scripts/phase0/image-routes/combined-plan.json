@@ -1,0 +1,489 @@
+{
+  "id": "image-routes-20260920-combined",
+  "frozenAt": "2026-09-19T19:36:15.744Z",
+  "revision": "c34617cc90ee3ebbfe775ec9fc04c5bb36c5cdf9",
+  "purpose": "Test the complete frozen candidate: facts-only + Singapore-relative mark definition + unchanged beverage decision code + 2048/Q70 input.",
+  "models": [
+    "kimi-k2.6",
+    "deepseek/deepseek-flash"
+  ],
+  "repetitions": 3,
+  "logicalCalls": 84,
+  "maxInFlight": 2,
+  "parameters": {
+    "temperature": 0.6,
+    "max_tokens": 1024,
+    "thinking": {
+      "type": "disabled"
+    },
+    "response_format": "json_object"
+  },
+  "executionPolicy": {
+    "textAttemptMs": 8000,
+    "imageAttemptMs": 20000,
+    "textBudgetMs": 20000,
+    "imageBudgetMs": 42000,
+    "minAttemptMs": 3000,
+    "maxAttempts": 3,
+    "retryBackoffMs": 500,
+    "validateResultSemantics": true
+  },
+  "stopRules": [
+    "Stop a model after a permanent HTTP 400/401/402/403/404/422 response.",
+    "No prompt, threshold, format or budget changes during this plan.",
+    "Keep every completed trial, including failed attempts; never repeat to select a passing run."
+  ],
+  "limitations": [
+    "English-only development screening, not full release evidence.",
+    "12 previously exposed images plus 2 developer-selected controls; repeated calls are not independent image samples.",
+    "New can and pouch are different objects, not paired views of the failing v7 object.",
+    "Pouch control validates perception and BCRS exclusion only; no claim to have implemented its final disposal action.",
+    "Facts remain probabilistic model outputs; deterministic rule execution does not establish visual truth.",
+    "Research-only beverage subset, fixed diagnostic confidences, not a complete deployable classifier.",
+    "The 2048 JPEG simulation is not a browser/native end-to-end measurement."
+  ],
+  "runtimeSha256": "ac6ebab2c52371850e35817d9da40e9512f415cc02169aca2ea9e3d4fad65f48",
+  "harnessSha256": "fa574b0bbe617b64e9070762eacb58d2dc72257cdea78360cad329a2f22c9007",
+  "cases": [
+    {
+      "id": "holdout-singapore-mark-closeup-en",
+      "sourceId": "holdout-singapore-mark-closeup",
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "partition": "exposed-development-only",
+      "filename": "holdout-singapore-mark-closeup.jpg",
+      "sourceSha256": "8bd0ca834cab36c1591fddf729e4c7eec73c8e423d2236b45d03f97f373a8616",
+      "submittedSha256": "6339e59356179409ab408ef3db0cef59947d60c5ea328c4cd82fd3a25c00f400",
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361",
+      "submittedBytes": 38114,
+      "kind": "behavior_and_perception",
+      "width": 830,
+      "height": 468,
+      "baselineFilename": "holdout-singapore-mark-closeup.jpg",
+      "identicalTo1024Baseline": true,
+      "nextAction": "try_return_point",
+      "expectedFacts": {
+        "subject": "single_container",
+        "form": "bottle",
+        "material": "plastic",
+        "prepackaged_beverage": true
+      }
+    },
+    {
+      "id": "holdout-single-angle-malaysia-can-v7-en",
+      "sourceId": "holdout-single-angle-malaysia-can-v7",
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "partition": "exposed-development-only",
+      "filename": "holdout-single-angle-malaysia-can-v7.jpg",
+      "sourceSha256": "888748aa4a710a30c8c3dac008c0db85265e98da219312a094851fa2edd82111",
+      "submittedSha256": "a73de10cd0b272f64665c8027a12bb8ae27914f165975f0e168a2c18d82395e7",
+      "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-68",
+      "submittedBytes": 102612,
+      "kind": "behavior_and_perception",
+      "width": 827,
+      "height": 2048,
+      "baselineFilename": "holdout-single-angle-malaysia-can-v7.jpg",
+      "identicalTo1024Baseline": false,
+      "nextAction": "try_return_point",
+      "expectedFacts": {
+        "subject": "single_container",
+        "form": "can",
+        "material": "metal",
+        "prepackaged_beverage": true
+      }
+    },
+    {
+      "id": "holdout-glass-bottle-action-v17-en",
+      "sourceId": "holdout-glass-bottle-action-v17",
+      "locale": "en",
+      "channel": "blue_bin",
+      "status": "recyclable",
+      "partition": "exposed-development-only",
+      "nextAction": null,
+      "filename": "holdout-glass-bottle-action-v17.jpg",
+      "sourceSha256": "52a1458a3cc837e39693447cfd23847d5f42a5d241864cf8ce2fd7731c220b85",
+      "submittedSha256": "55e6c8c00d90c9dd45d360d08dca881b30c098a42979217518d4105cdc41a7f2",
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Mythos_001.jpg",
+      "submittedBytes": 115111,
+      "kind": "behavior_and_perception",
+      "width": 935,
+      "height": 2048,
+      "baselineFilename": "holdout-glass-bottle-action-v17.jpg",
+      "identicalTo1024Baseline": false,
+      "expectedFacts": {
+        "subject": "single_container",
+        "form": "bottle",
+        "material": "glass"
+      }
+    },
+    {
+      "id": "holdout-glass-sprite-action-v18-en",
+      "sourceId": "holdout-glass-sprite-action-v18",
+      "locale": "en",
+      "channel": "blue_bin",
+      "status": "recyclable",
+      "partition": "exposed-development-only",
+      "nextAction": null,
+      "filename": "holdout-glass-sprite-action-v18.jpg",
+      "sourceSha256": "061d36b3d80483e8802b2825f5a26ee194b79dfc8318987e08d79753754a10e4",
+      "submittedSha256": "a9a17a8ff50ffee5c69a4a2655fe700285fb66b47cfffbef2a35430d59371819",
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Sprite_bottle.JPG",
+      "submittedBytes": 43419,
+      "kind": "behavior_and_perception",
+      "width": 453,
+      "height": 867,
+      "baselineFilename": "holdout-glass-sprite-action-v18.jpg",
+      "identicalTo1024Baseline": true,
+      "expectedFacts": {
+        "subject": "single_container",
+        "form": "bottle",
+        "material": "glass"
+      }
+    },
+    {
+      "id": "holdout-multiple-containers-collage-v3-en",
+      "sourceId": "holdout-multiple-containers-collage-v3",
+      "nextAction": null,
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "partition": "exposed-development-only",
+      "filename": "holdout-multiple-containers-collage-v3.jpg",
+      "sourceSha256": "ed58f16ff0161e50bbd52f32d0cff1746a69c8ed5d3cc9493ada55f1e593860f",
+      "submittedSha256": "336a219d78f7bd3403b7c81231a4108b4db747aca80d20d82ac9b9ae2c5fd537",
+      "sourcePageUrl": "https://www.stomp.sg/stomping-ground/man-brings-10-empty-bottles-bcrs-machine-not-all-eligible-10-cent-refund-asks-whats-point",
+      "submittedBytes": 106595,
+      "kind": "behavior_and_perception",
+      "width": 960,
+      "height": 576,
+      "baselineFilename": "holdout-multiple-containers-collage-v3.jpg",
+      "identicalTo1024Baseline": true
+    },
+    {
+      "id": "holdout-single-can-mark-and-barcode-v15-en",
+      "sourceId": "holdout-single-can-mark-and-barcode-v15",
+      "locale": "en",
+      "channel": "return_point",
+      "status": "recyclable",
+      "requiredExactText": [
+        "S$0.10"
+      ],
+      "partition": "exposed-development-only",
+      "filename": "holdout-single-can-mark-and-barcode-v15.jpg",
+      "sourceSha256": "f72f485af9ee085e600890f9e6c82440496d2e115573433ca46da37b30334cbb",
+      "submittedSha256": "c188042add6b60c886742df83ea1960d9cba457be9cf0303b6de36a17d96d96d",
+      "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260730-9413074",
+      "submittedBytes": 207234,
+      "kind": "behavior_and_perception",
+      "width": 2048,
+      "height": 1427,
+      "baselineFilename": "holdout-single-can-mark-and-barcode-v15.jpg",
+      "identicalTo1024Baseline": false,
+      "nextAction": "return_container"
+    },
+    {
+      "id": "holdout-single-bottle-mark-and-barcode-v16-en",
+      "sourceId": "holdout-single-bottle-mark-and-barcode-v16",
+      "locale": "en",
+      "channel": "return_point",
+      "status": "recyclable",
+      "requiredExactText": [
+        "S$0.10"
+      ],
+      "partition": "exposed-development-only",
+      "filename": "holdout-single-bottle-mark-and-barcode-v16.jpg",
+      "sourceSha256": "175b5a332cb834b1d26032de3c4d131f60224928593c111436ae018374b5c21d",
+      "submittedSha256": "2130089964a9bc76685a6cc4887d6d6d12aa5626e3adb048057e67705500852a",
+      "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260903-9618188",
+      "submittedBytes": 72148,
+      "kind": "behavior_and_perception",
+      "width": 1140,
+      "height": 760,
+      "baselineFilename": "holdout-single-bottle-mark-and-barcode-v16.jpg",
+      "identicalTo1024Baseline": false,
+      "nextAction": "return_container"
+    },
+    {
+      "id": "official-mark-closeup-en",
+      "sourceId": "official-mark-closeup",
+      "locale": "en",
+      "channel": "return_point",
+      "status": "recyclable",
+      "requiredExactText": [
+        "S$0.10"
+      ],
+      "partition": "exposed-development-only",
+      "filename": "official-mark-closeup.jpg",
+      "sourceSha256": "7b81aaa06835332811ce7995aa2651ee25fddcfcdb3b66e99fc913426e434bf3",
+      "submittedSha256": "a297dce502129a06955bb799867c3c0558fa3d800ecda338bfc4a1c7e14da078",
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in",
+      "submittedBytes": 47695,
+      "kind": "behavior_and_perception",
+      "width": 690,
+      "height": 900,
+      "baselineFilename": "official-mark-closeup.jpg",
+      "identicalTo1024Baseline": true,
+      "nextAction": "return_container"
+    },
+    {
+      "id": "holdout-foreign-refund-mark-en",
+      "sourceId": "holdout-foreign-refund-mark",
+      "nextAction": null,
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "partition": "exposed-development-only",
+      "filename": "holdout-foreign-refund-mark.jpg",
+      "sourceSha256": "00508d4370d96adedc04c27690548ff242c955181e73b236b028865e3ae0fe63",
+      "submittedSha256": "e3046e82871e5059d4e105e935c735b82eb51cc44ffbb82c5a14f727655f85c9",
+      "sourcePageUrl": "https://note.com/ruka926/n/n9c58c8986304",
+      "submittedBytes": 174870,
+      "kind": "behavior_and_perception",
+      "width": 2000,
+      "height": 1125,
+      "baselineFilename": "holdout-foreign-refund-mark.jpg",
+      "identicalTo1024Baseline": false
+    },
+    {
+      "id": "holdout-standalone-mark-product-composite-v15-en",
+      "sourceId": "holdout-standalone-mark-product-composite-v15",
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "partition": "exposed-development-only",
+      "filename": "holdout-standalone-mark-product-composite-v15.jpg",
+      "sourceSha256": "e80cddca63bd640f47a2b5d809b88d474af1246ae551c5da057af911be3b59d2",
+      "submittedSha256": "f5420ab7d2b3c68f4cac045a0f0c379a47acbe52c355a5beda6426ab30b01f77",
+      "sourcePageUrl": "https://www.fairprice.com.sg/product/bcrs-jia-jia-herbal-tea-bottle-drink-original-500ml-13281525",
+      "submittedBytes": 94295,
+      "kind": "behavior_and_perception",
+      "width": 1600,
+      "height": 1600,
+      "baselineFilename": "holdout-standalone-mark-product-composite-v15.jpg",
+      "identicalTo1024Baseline": false,
+      "nextAction": "try_return_point"
+    },
+    {
+      "id": "holdout-water-bottle-front-action-v17-en",
+      "sourceId": "holdout-water-bottle-front-action-v17",
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "partition": "exposed-development-only",
+      "nextAction": "try_return_point",
+      "maxConfidence": 0.49,
+      "filename": "holdout-water-bottle-front-action-v17.jpg",
+      "sourceSha256": "0dfd5f7d9e4e0eba4be4700e261c8812fae2df30fdbe69273a0d48060d040c4f",
+      "submittedSha256": "b3a52ec1765c9e55ed741a9132cfc19ad339dadf92270361bb647ccb676a8d39",
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Evian_Bottle.jpg",
+      "submittedBytes": 101963,
+      "kind": "behavior_and_perception",
+      "width": 814,
+      "height": 2048,
+      "baselineFilename": "holdout-water-bottle-front-action-v17.jpg",
+      "identicalTo1024Baseline": false
+    },
+    {
+      "id": "holdout-plastic-sprite-action-v18-en",
+      "sourceId": "holdout-plastic-sprite-action-v18",
+      "locale": "en",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "partition": "exposed-development-only",
+      "nextAction": "try_return_point",
+      "filename": "holdout-plastic-sprite-action-v18.jpg",
+      "sourceSha256": "7a45348be466b921651eaaed2923680a38e7bd158b323917c674f05cae2e1127",
+      "submittedSha256": "35d7d4822bf69a3fc341f6fdb0de2b9f263815884a67cf61b5a76c0f388f69bc",
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Bouteille_de_sprite_en_2025.jpg",
+      "submittedBytes": 361696,
+      "kind": "behavior_and_perception",
+      "width": 1299,
+      "height": 2048,
+      "baselineFilename": "holdout-plastic-sprite-action-v18.jpg",
+      "identicalTo1024Baseline": false
+    },
+    {
+      "id": "control-full-can",
+      "filename": "control-full-can.jpg",
+      "sha256": "a86ad7d57bf0ec026021d7c329046a78ab57edd469130150a7ed3a7e573382de",
+      "page": "https://commons.wikimedia.org/wiki/File:Can_of_Coca_Cola_Life.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/47/Can_of_Coca_Cola_Life.jpg",
+      "author": "Vincedevries",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "kind": "behavior_and_perception",
+      "channel": null,
+      "status": "not_sure",
+      "maxConfidence": 0.49,
+      "nextAction": "try_return_point",
+      "expectedFacts": {
+        "subject": "single_container",
+        "form": "can",
+        "material": "metal",
+        "prepackaged_beverage": true
+      },
+      "rationale": "Full rim and bottom visible, 330 ml beverage can; visible face establishes no deposit eligibility.",
+      "sourceId": "control-full-can",
+      "locale": "en",
+      "partition": "new-developer-selected-control-not-blind",
+      "sourceSha256": "a86ad7d57bf0ec026021d7c329046a78ab57edd469130150a7ed3a7e573382de",
+      "submittedSha256": "9310f9766c8c70df7c7fb329a5f1f0364c7e5ea573813dedeba84dba2162962c",
+      "submittedBytes": 187444,
+      "width": 1495,
+      "height": 2048,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Can_of_Coca_Cola_Life.jpg",
+      "baselineFilename": null,
+      "identicalTo1024Baseline": null
+    },
+    {
+      "id": "control-real-pouch",
+      "filename": "control-real-pouch.jpg",
+      "sha256": "de6b74cf64c4ded11a9457065e070408a28ee147f2186ed3356909e3a75b5cce",
+      "page": "https://commons.wikimedia.org/wiki/File:Capri_Sun_pouch_standing.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Capri_Sun_pouch_standing.jpg",
+      "author": "Tamzin Hadasa Kelly",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "kind": "perception_and_bcrs_exclusion",
+      "nextAction": null,
+      "expectedFacts": {
+        "subject": "single_container",
+        "form": "pouch",
+        "material": "composite"
+      },
+      "rationale": "Actual flexible laminated drink pouch with seams and straw. This control tests form/material and exclusion from BCRS actions, not its final disposal channel.",
+      "sourceId": "control-real-pouch",
+      "locale": "en",
+      "partition": "new-developer-selected-control-not-blind",
+      "sourceSha256": "de6b74cf64c4ded11a9457065e070408a28ee147f2186ed3356909e3a75b5cce",
+      "submittedSha256": "24e36a7708a078a35706ccb50f670fa69d1699fd2390d7bfd6707fe018bb6f66",
+      "submittedBytes": 341784,
+      "width": 1536,
+      "height": 2048,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Capri_Sun_pouch_standing.jpg",
+      "baselineFilename": null,
+      "identicalTo1024Baseline": null
+    }
+  ],
+  "system": "Extract visual observations from one photograph. Do not recommend a recycling channel, an action, or a refund. Describe the physical container shown rather than a package usually associated with its brand. Do not use external information or assume missing surfaces are visible.\nOne intended foreground container counts as a single subject; several equally plausible containers count as multiple. Distinguish glass, plastic, metal, paper and composite packaging using visible physical features. Use unknown/null when the image cannot establish a fact. visible_damage is observed crushing, serious container damage, or damage to a visible product barcode. visible_soiling is visible dirt, grease or non-beverage contamination; ordinary beverage contents are not soiling and can be emptied.\nFor a possible deposit mark, transcribe only distinguishable characters, preserving question marks for unreadable characters. Do not complete a familiar logo from its shape, or turn a 10-cent amount into SG/RETURN. Mark text and graphics printed on a poster, a machine, outer packaging or separate artwork do not belong to the subject container. A linear product barcode is separate from a square 2D code. The target jurisdiction is Singapore. foreign_deposit_mark is true only when visible deposit markings identify a scheme outside Singapore; SG RETURN identifies Singapore and is not foreign. Country-of-manufacture text does not identify the deposit scheme.\nReturn only a JSON object with these exact fields and values:\n{\"item\":\"brief English object name\",\"subject\":\"single_container|multiple_containers|no_container|unclear\",\"form\":\"bottle|can|cup|carton|pouch|other|unknown\",\"material\":\"plastic|metal|glass|paper|composite|other|unknown\",\"prepackaged_beverage\":true,\"volume_ml\":null,\"visible_damage\":false,\"visible_soiling\":false,\"return_arrow_graphic_visible\":false,\"deposit_mark_text\":\"literal readable text, or empty string\",\"mark_on_subject_container\":false,\"foreign_deposit_mark\":false,\"linear_barcode_on_subject\":false}\nprepackaged_beverage is true, false or null; volume_ml is a visible numeric volume or null. All other booleans describe visible evidence, not assumptions.",
+  "factsSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "item": {
+        "type": "string",
+        "minLength": 1
+      },
+      "subject": {
+        "type": "string",
+        "enum": [
+          "single_container",
+          "multiple_containers",
+          "no_container",
+          "unclear"
+        ]
+      },
+      "form": {
+        "type": "string",
+        "enum": [
+          "bottle",
+          "can",
+          "cup",
+          "carton",
+          "pouch",
+          "other",
+          "unknown"
+        ]
+      },
+      "material": {
+        "type": "string",
+        "enum": [
+          "plastic",
+          "metal",
+          "glass",
+          "paper",
+          "composite",
+          "other",
+          "unknown"
+        ]
+      },
+      "prepackaged_beverage": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "volume_ml": {
+        "anyOf": [
+          {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "visible_damage": {
+        "type": "boolean"
+      },
+      "visible_soiling": {
+        "type": "boolean"
+      },
+      "return_arrow_graphic_visible": {
+        "type": "boolean"
+      },
+      "deposit_mark_text": {
+        "type": "string"
+      },
+      "mark_on_subject_container": {
+        "type": "boolean"
+      },
+      "foreign_deposit_mark": {
+        "type": "boolean"
+      },
+      "linear_barcode_on_subject": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "item",
+      "subject",
+      "form",
+      "material",
+      "prepackaged_beverage",
+      "volume_ml",
+      "visible_damage",
+      "visible_soiling",
+      "return_arrow_graphic_visible",
+      "deposit_mark_text",
+      "mark_on_subject_container",
+      "foreign_deposit_mark",
+      "linear_barcode_on_subject"
+    ],
+    "additionalProperties": false
+  },
+  "clientAndApiInput": {
+    "longestEdge": 2048,
+    "jpegQuality": 70,
+    "enlarge": false,
+    "steps": 2
+  },
+  "sourceHarnessSha256": "b382671afe6324f66ae9a7b09423b4016accd28074cea4dbbd182def1a65813a",
+  "sourceJurisdictionPlanSha256": "9b87a9fb5d9ead0ff2615c1cd2ff3f97c4298efba8fcd3745249c95aa48a8159",
+  "decisionSha256": "bce46a1d1bc36106ac51fa9b0cf32b4acb92c1582f3251dced179f7aca1cde07",
+  "screening": "Any unmet required action, false refund, wrong channel, final error, or can/pouch perception assertion means this candidate is not ready for full release evaluation. Existing release thresholds are unchanged."
+}

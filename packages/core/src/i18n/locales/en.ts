@@ -1,4 +1,17 @@
 const en = {
+  "result.nextAction": "Next step",
+  "action.return.title": "Empty it, then bring it to a Return Point",
+  "action.return.instruction": "Keep the container uncrushed and the label and barcode intact. Return it for S$0.10.",
+  "action.return.qualification": "Final acceptance is determined by the Return Point.",
+  "action.try.title": "Empty it and keep the container and label intact",
+  "action.try.instruction": "Next time you pass a Return Point, bring it along for a scan. Eligible containers receive S$0.10 when accepted.",
+  "action.try.qualification": "Refund eligibility is not yet confirmed. The Return Point makes the final acceptance decision.",
+  "action.check.title": "Check the container type",
+  "action.check.instruction": "If it is a plastic bottle or prepackaged cup, or a metal can, empty it, keep it intact, and bring it for a scan next time you pass a Return Point.",
+  "action.check.qualification": "The photo does not establish the container type. Glass bottles, cartons and pouches are not in the deposit scheme.",
+  "classify.cleanGlassReason": "A clean glass beverage bottle goes in the blue recycling bin.",
+  "classify.cleanGlassPreparation": "Empty, rinse and dry the bottle.",
+
   // Status labels
   'status.recyclable': 'Recyclable',
   'status.special_handling': 'Special Handling',
@@ -52,6 +65,7 @@ const en = {
   'home.cameraDeniedHint': 'Use the text input below to describe your item instead',
   'home.cameraUnavailable': 'Camera not available',
   'home.cameraUnavailableHint': 'Use the text input below to describe your item',
+  'home.cameraGuide': 'Keep the whole item in frame and take a clear photo.',
   'home.placeholderProminent': 'e.g. plastic bottle, old phone',
   'home.placeholderCompact': 'Type an item name...',
   'home.search': 'Search',
@@ -107,7 +121,7 @@ const en = {
   'bcrs.pointCount': '1,000+ Return Points island-wide',
   'bcrs.classifyReason': 'The official Singapore Deposit Mark and product barcode identify the BCRS return channel for this container. Prepare it for the S$0.10 refund; the Return Point makes the final acceptance decision.',
   'classify.notSureReason': 'There is not enough information to choose a recycling channel safely.',
-  'classify.notSurePreparation': 'Provide a clearer photo or description showing the whole item and any labels or markings. For a beverage container, photograph the label around the product barcode.',
+  'classify.notSurePreparation': 'Provide a clearer photo or description showing the whole item.',
 
   // Hazardous info card
   'hazardous.title': 'How to Dispose of Hazardous Waste',

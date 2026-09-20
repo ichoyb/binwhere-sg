@@ -14,9 +14,9 @@ export const BCRS_POLICY_SOURCE = {
 } as const;
 
 export const BCRS_BASELINE = {
-  id: 'sg-bcrs-v16',
-  reviewedAt: '2026-09-04',
-  holdoutRule: 'The v1-v15 holdouts were promoted to regression after evaluation. The asymmetric v16 release thresholds were frozen in the runner and baseline documentation before the v16 sources were selected. The exposed v15 positive miss remains development evidence and cannot release the revised candidate. Every complete run fails before any model call when two declared sources reach 0.995 perceptual similarity. The two v16 holdouts are previously unused real-network visuals selected, pixel-reviewed, truth-labelled and frozen before either was submitted to the production or candidate profile: one recent video frame shows a readable Singapore Deposit Mark and a visibly present linear product barcode on the same individual bottle; one real return-machine photograph hides the individual container inside the aperture, so marks printed on the machine cannot establish that container\'s eligibility. They are developer-visible, non-adaptive holdouts rather than an independently sealed or blinded evaluation set, and must not be used to revise and re-score the same candidate.',
+  id: 'sg-bcrs-v20',
+  reviewedAt: '2026-09-20',
+  holdoutRule: "The v1-v19 holdouts are regression cases and retain their labels. Existing 95% image-exactness, 90% confirmed-return recall and zero wrong-channel thresholds remain unchanged. Two fresh real photos were selected and pixel-reviewed after the candidate code was frozen and before either image was submitted to a model: a Return Right machine beside a cart containing many bagged beverage bottles, and a supermarket display containing many co-equal paper beverage cartons with visible product barcodes. Neither photo establishes one container as the subject, and neither may produce a confirmed or conditional return action. Both holdouts must remain not_sure with no next action and pass all safety assertions. Positive utility remains gated by the retained real-image confirmed-return regressions and the 90% recall threshold; no unsuitable image was relabelled as a fresh positive. These are developer-visible, frozen, non-adaptive checks, not sealed blind tests. Every complete run checks all sources for near duplicates at 0.995 before any model call.",
 } as const;
 
 export interface ExpectedClassification {
@@ -26,6 +26,8 @@ export interface ExpectedClassification {
   requiredExactText?: readonly string[];
   /** Safety cases using not_sure must stay below the prompt's confidence boundary. */
   maxConfidence?: number;
+  /** Candidate action policy; historical profiles retain their original wire output. */
+  nextAction?: 'return_container' | 'try_return_point' | 'check_container_type' | 'conditional_return' | null;
 }
 
 export interface BcrsTextCase extends ExpectedClassification {
@@ -65,6 +67,7 @@ const TEXT_SCENARIOS: readonly TextScenario[] = [
   },
   {
     id: 'official-mark-unknown',
+    nextAction: 'try_return_point',
     channel: null,
     status: 'not_sure',
     maxConfidence: 0.49,
@@ -73,6 +76,19 @@ const TEXT_SCENARIOS: readonly TextScenario[] = [
       zh: '这看起来是一个塑料饮料瓶，但现有信息无法看出它是否带有新加坡BCRS Deposit Mark。',
       ms: 'Ini kelihatan seperti botol minuman plastik, tetapi maklumat yang diberikan tidak menunjukkan sama ada botol ini mempunyai Deposit Mark BCRS Singapura.',
       ta: 'இது ஒரு பிளாஸ்டிக் பான பாட்டில் போலத் தெரிகிறது; ஆனால் இதில் சிங்கப்பூர் BCRS Deposit Mark உள்ளதா என்பதை வழங்கப்பட்ட தகவல் காட்டவில்லை.',
+    },
+  },
+  {
+    id: 'ordinary-water-bottle',
+    channel: null,
+    status: 'not_sure',
+    maxConfidence: 0.49,
+    nextAction: 'try_return_point',
+    inputs: {
+      en: 'empty plastic water bottle',
+      zh: '空的塑料矿泉水瓶',
+      ms: 'botol air minuman plastik kosong',
+      ta: 'காலியான பிளாஸ்டிக் குடிநீர் பாட்டில்',
     },
   },
 ];
@@ -87,6 +103,7 @@ export const BCRS_TEXT_CASES: readonly BcrsTextCase[] = TEXT_SCENARIOS.flatMap(
       status: scenario.status,
       requiredExactText: scenario.requiredExactText,
       maxConfidence: scenario.maxConfidence,
+      nextAction: scenario.nextAction,
     }),
   ),
 );
@@ -476,6 +493,96 @@ export const BCRS_IMAGE_SOURCES: readonly BcrsImageSource[] = [
     reviewedAt: '2026-09-04',
     provenance: 'Previously unused real photograph of a person using a return machine. The individual container is hidden by the hand and machine aperture; the machine\'s generic Deposit Mark and barcode instructions cannot establish that container\'s image-only eligibility.',
   },
+  {
+    "id": "holdout-water-bottle-front-action-v17",
+    "filename": "holdout-water-bottle-front-action-v17.jpg",
+    "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Evian_Bottle.jpg",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Evian_Bottle.jpg",
+    "sha256": "0dfd5f7d9e4e0eba4be4700e261c8812fae2df30fdbe69273a0d48060d040c4f",
+    "credit": "James Tamim, Wikimedia Commons",
+    "licence": "CC BY-SA 4.0; evaluation cache only, not redistributed",
+    "reviewedAt": "2026-09-19",
+    "provenance": "Previously unused real iPhone photograph of a single clear plastic Evian drinking-water bottle from the front. The front label shows evian and 50CL. The cap and bottle are intact, with smooth shoulders and no visible crushing; the curved grooves below the label are the moulded bottle design. The product barcode and Singapore Deposit Mark are not visible; the full back label is not shown. Visible water and fitted cap mean it is not an already-empty-container example. Original source image downloaded without cropping or edits. Reviewed after 1024px JPEG quality 70 and the production server sanitiser; those pixels preserve these observations."
+  },
+  {
+    "id": "holdout-glass-bottle-action-v17",
+    "filename": "holdout-glass-bottle-action-v17.jpg",
+    "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Mythos_001.jpg",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Mythos_001.jpg",
+    "sha256": "52a1458a3cc837e39693447cfd23847d5f42a5d241864cf8ce2fd7731c220b85",
+    "credit": "Phyrexian, Wikimedia Commons",
+    "licence": "Public domain (PD-self); evaluation cache only, not redistributed",
+    "reviewedAt": "2026-09-19",
+    "provenance": "Previously unused real camera photograph of a single green glass Mythos beer bottle with a crown cap. Thick glass walls/neck, the glass base, and beer label identify a glass beverage container. No breakage or foreign objects are visible. Source page describes an empty 33cl bottle; image alone does not prove full cleanliness. No crop or image edits applied. Reviewed after 1024px JPEG quality 70 and the production server sanitiser; those pixels preserve these observations."
+  },
+
+  {
+    id: 'holdout-plastic-sprite-action-v18',
+    filename: 'holdout-plastic-sprite-action-v18.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Bouteille_de_sprite_en_2025.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/c4/Bouteille_de_sprite_en_2025.jpg',
+    sha256: '7a45348be466b921651eaaed2923680a38e7bd158b323917c674f05cae2e1127',
+    credit: 'Mapswiki, Wikimedia Commons',
+    licence: 'CC0 1.0',
+    reviewedAt: '2026-09-19',
+    provenance: 'Previously unused real Samsung Galaxy A16 photograph of one intact plastic Sprite beverage bottle. The front label, plastic screw cap and moulded PET base are visible, with liquid and condensation; neither the product barcode nor a Singapore Deposit Mark is shown. No crushing is visible. One front view cannot establish mark absence. Reviewed after the Web 1024px JPEG quality 70 conversion and API sanitiser before any model call. No crop or image edits.',
+  },
+  {
+    id: 'holdout-glass-sprite-action-v18',
+    filename: 'holdout-glass-sprite-action-v18.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Sprite_bottle.JPG',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Sprite_bottle.JPG',
+    sha256: '061d36b3d80483e8802b2825f5a26ee194b79dfc8318987e08d79753754a10e4',
+    credit: 'Surachit, Wikimedia Commons',
+    licence: 'CC BY-SA 2.5',
+    reviewedAt: '2026-09-19',
+    provenance: 'Previously unused real Sony camera photograph of one open green glass Sprite bottle. Its thick glass lip/base, textured rigid glass body and 10 FL.OZ front label are visible; no breakage or contaminating contents are apparent. Glass follows ordinary recycling rules without a BCRS mark requirement. Reviewed after the Web JPEG conversion and API sanitiser before any model call. No crop or image edits.',
+  },
+  {
+    id: 'holdout-single-bottle-mark-barcode-v19',
+    filename: 'holdout-single-bottle-mark-barcode-v19.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:PET_bottles_with_BCRS_return_mark_and_barcode_on_a_sticker_JASWE.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/66/PET_bottles_with_BCRS_return_mark_and_barcode_on_a_sticker_JASWE.jpg',
+    sha256: 'dc8ea5f8f8fbd8e54fc08d648ceffc67bc0b1e99e3c899f03d8ebb3ddc045b46',
+    credit: 'Justanothersgwikieditor, Wikimedia Commons',
+    licence: 'CC BY-SA 4.0; evaluation cache only, not redistributed',
+    reviewedAt: '2026-09-20',
+    provenance: 'Previously unused Pixel 9 photograph. A deterministic crop selects the rightmost intact 500ml plastic tea bottle as the sole foreground subject. After the Web 2048px JPEG quality 70 conversion and API sanitiser, its sticker visibly reads 10¢ SG RETURN and shows a separate unobscured linear product barcode; the square 2D code is not used as barcode evidence. The container is not visibly crushed. Selected, transformed and pixel-reviewed before any model call.',
+    crop: { left: 3040, top: 0, width: 992, height: 2268 },
+  },
+  {
+    id: 'holdout-multiple-imported-cans-v19',
+    filename: 'holdout-multiple-imported-cans-v19.jpg',
+    sourcePageUrl: 'https://mothership.sg/2026/09/drink-containers-without-return-right-logo/',
+    imageUrl: 'https://static.mothership.sg/1/2026/09/donki-non-bcrs.jpg',
+    sha256: '475175ba7541d9aa957d52699635625edb09d26f0159ac8a6d76b7bacac58a4a',
+    credit: 'Mothership',
+    licence: 'Publisher-owned; evaluation cache only',
+    reviewedAt: '2026-09-20',
+    provenance: 'Previously unused real retail-shelf photograph containing several co-equal imported beverage cans, white import labels and a promotional sign. No individual can is the sole subject and no readable 10¢ SG RETURN mark plus product barcode is established on one selected container. It must not produce a confirmed or conditional return action. Reviewed after both production image transformations before any model call; no crop or image edits.',
+  },
+  {
+    id: 'holdout-return-machine-bottle-cart-v20',
+    filename: 'holdout-return-machine-bottle-cart-v20.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Bottles_collected_from_BCRS_Return_Right_Machine_20260915_174412.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/34/Bottles_collected_from_BCRS_Return_Right_Machine_20260915_174412.jpg',
+    sha256: 'f58eff74bafdf9ca2dcbe34b408e4348558025571a1b858298fa5f0dc57f22c1',
+    credit: 'ZKang123, Wikimedia Commons',
+    licence: 'CC BY-SA 4.0; evaluation cache only, not redistributed',
+    reviewedAt: '2026-09-20',
+    provenance: 'Previously unused real photograph taken on 15 September 2026. It shows a Return Right machine beside a cart containing many bagged beverage bottles. The machine instruction panel contains a generic Deposit Mark and barcode illustration, but no single physical container is the subject and no mark-to-barcode association can be established for one container. It must not produce a confirmed or conditional return action. Reviewed after the production image transformations before any model call; no crop or image edits.',
+  },
+  {
+    id: 'holdout-multiple-paper-cartons-v20',
+    filename: 'holdout-multiple-paper-cartons-v20.jpeg',
+    sourcePageUrl: 'https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/post-159670376',
+    imageUrl: 'https://i.imgur.com/qVDfjYY.jpeg',
+    sha256: 'b9452d445453cc434c26ea1af2794e9fdfb231064c61dea028590f548d9cb3af',
+    credit: 'HardwareZone user dexboi',
+    licence: 'Publisher-owned; evaluation cache only',
+    reviewedAt: '2026-09-20',
+    provenance: 'Previously unused real supermarket photograph published on 11 August 2026. It shows many co-equal paper beverage cartons, including several visible linear product barcodes, with no single container selected. A barcode by itself must not be treated as BCRS eligibility, and the image must not produce a confirmed or conditional return action. Reviewed after the production image transformations before any model call; no crop or image edits.',
+  },
 ];
 
 export interface BcrsImageCase extends ExpectedClassification {
@@ -498,6 +605,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'small-mark-wide-shot-en',
     sourceId: 'official-marked-pair',
+    nextAction: null,
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -507,6 +615,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'small-mark-bottle-shot-en',
     sourceId: 'official-marked-bottle',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -516,6 +625,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'mark-not-visible-bottle-en',
     sourceId: 'mark-not-visible-bottle',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -525,6 +635,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'individual-can-mark-not-visible-en',
     sourceId: 'individual-can-mark-not-visible',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -542,6 +653,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-singapore-mark-closeup-en',
     sourceId: 'holdout-singapore-mark-closeup',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -551,6 +663,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-foreign-refund-mark-en',
     sourceId: 'holdout-foreign-refund-mark',
+    nextAction: null,
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -560,6 +673,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-single-sideways-marked-can-en',
     sourceId: 'holdout-single-sideways-marked-can',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -569,6 +683,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-multiple-marked-containers-en',
     sourceId: 'holdout-multiple-marked-containers',
+    nextAction: null,
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -578,6 +693,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-single-clear-marked-bottle-v3-en',
     sourceId: 'holdout-single-clear-marked-bottle-v3',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -587,6 +703,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-multiple-containers-collage-v3-en',
     sourceId: 'holdout-multiple-containers-collage-v3',
+    nextAction: null,
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -605,6 +722,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-single-angle-no-mark-v4-en',
     sourceId: 'holdout-single-angle-no-mark-v4',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -614,6 +732,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-single-marked-can-v5-en',
     sourceId: 'holdout-single-marked-can-v5',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -623,6 +742,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-single-angle-foreign-can-v5-en',
     sourceId: 'holdout-single-angle-foreign-can-v5',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -641,6 +761,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-single-angle-malaysia-bottle-v6-en',
     sourceId: 'holdout-single-angle-malaysia-bottle-v6',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -659,6 +780,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-single-angle-malaysia-can-v7-en',
     sourceId: 'holdout-single-angle-malaysia-can-v7',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -677,6 +799,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-single-angle-coke-can-v8-en',
     sourceId: 'holdout-single-angle-coke-can-v8',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -695,6 +818,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-single-angle-malaysia-can-v10-en',
     sourceId: 'holdout-single-angle-malaysia-can-v10',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -704,6 +828,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-outer-pack-mark-individual-can-unknown-v11-en',
     sourceId: 'holdout-outer-pack-mark-individual-can-unknown-v11',
+    nextAction: null,
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -713,6 +838,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-traveller-mark-and-barcode-v13-en',
     sourceId: 'holdout-traveller-mark-and-barcode-v13',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -722,6 +848,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-hand-obscured-bottle-v13-en',
     sourceId: 'holdout-hand-obscured-bottle-v13',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -740,6 +867,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-multiple-containers-shelf-v14-en',
     sourceId: 'holdout-multiple-containers-shelf-v14',
+    nextAction: null,
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -758,6 +886,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     id: 'holdout-standalone-mark-product-composite-v15-en',
     sourceId: 'holdout-standalone-mark-product-composite-v15',
+    nextAction: 'conditional_return',
     locale: 'en',
     channel: null,
     status: 'not_sure',
@@ -771,15 +900,94 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     channel: 'return_point',
     status: 'recyclable',
     requiredExactText: ['S$0.10'],
-    partition: 'holdout',
+    partition: 'regression',
   },
   {
     id: 'holdout-container-obscured-at-machine-v16-en',
     sourceId: 'holdout-container-obscured-at-machine-v16',
+    nextAction: null,
+    locale: 'en',
+    channel: null,
+    status: 'not_sure',
+    maxConfidence: 0.49,
+    partition: 'regression',
+  },
+  {
+    "id": "holdout-water-bottle-front-action-v17-en",
+    "sourceId": "holdout-water-bottle-front-action-v17",
+    "locale": "en",
+    "channel": null,
+    "status": "not_sure",
+    "partition": "regression",
+    "nextAction": "try_return_point",
+    "maxConfidence": 0.49
+  },
+  {
+    "id": "holdout-glass-bottle-action-v17-en",
+    "sourceId": "holdout-glass-bottle-action-v17",
+    "locale": "en",
+    "channel": "blue_bin",
+    "status": "recyclable",
+    "partition": "regression",
+    "nextAction": null
+  },
+  {
+    id: 'holdout-plastic-sprite-action-v18-en',
+    sourceId: 'holdout-plastic-sprite-action-v18',
+    locale: 'en',
+    channel: null,
+    status: 'not_sure',
+    maxConfidence: 0.49,
+    partition: 'regression',
+    nextAction: 'try_return_point',
+  },
+  {
+    id: 'holdout-glass-sprite-action-v18-en',
+    sourceId: 'holdout-glass-sprite-action-v18',
+    locale: 'en',
+    channel: 'blue_bin',
+    status: 'recyclable',
+    partition: 'regression',
+    nextAction: null,
+  },
+  {
+    id: 'holdout-single-bottle-mark-barcode-v19-en',
+    sourceId: 'holdout-single-bottle-mark-barcode-v19',
+    locale: 'en',
+    channel: 'return_point',
+    status: 'recyclable',
+    requiredExactText: ['S$0.10'],
+    partition: 'regression',
+    nextAction: 'return_container',
+  },
+  {
+    id: 'holdout-multiple-imported-cans-v19-en',
+    sourceId: 'holdout-multiple-imported-cans-v19',
+    locale: 'en',
+    channel: null,
+    status: 'not_sure',
+    maxConfidence: 0.49,
+    partition: 'regression',
+    nextAction: null,
+  },
+  {
+    id: 'holdout-return-machine-bottle-cart-v20-en',
+    sourceId: 'holdout-return-machine-bottle-cart-v20',
     locale: 'en',
     channel: null,
     status: 'not_sure',
     maxConfidence: 0.49,
     partition: 'holdout',
+    nextAction: null,
+  },
+  {
+    id: 'holdout-multiple-paper-cartons-v20-en',
+    sourceId: 'holdout-multiple-paper-cartons-v20',
+    locale: 'en',
+    channel: null,
+    status: 'not_sure',
+    maxConfidence: 0.49,
+    partition: 'holdout',
+    nextAction: null,
   },
 ];

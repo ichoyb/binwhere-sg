@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 
 import { ApiError, isRetryable } from '../api-client';
+import {
+  hasDeterministicSingaporeMarkText,
+  markRegionsMatch,
+  type DepositMarkOcrResult,
+} from '../deposit-mark-ocr';
 import { ATTEMPT_MS, BUDGET_MS, classifyItem } from './provider';
 import { getClassifySystemPrompt } from './prompts/classify-system';
 import {
@@ -22,15 +27,47 @@ import { PRODUCTION_PROFILE } from '../../../scripts/phase0/baseline-profiles';
  * rather than trusted to be obviously correct.
  */
 
-const OK: ClassifyResult = {
+const MARK_REGION = { left: 0.2, top: 0.2, width: 0.2, height: 0.2 } as const;
+
+const EVIDENCE = {
+  beverage_product: 'prepackaged_beverage',
+  visible_container_count: 'one',
+  subject: 'single_prepackaged_beverage_container',
+  whole_container_visible: true,
+  form: 'can',
+  material: 'metal',
+  volume_ml: 500,
+  deposit_mark: 'singapore',
+  deposit_mark_text: '10¢ SG RETURN',
+  deposit_mark_region: MARK_REGION,
+  mark_on_subject_container: true,
+  linear_barcode_on_subject: true,
+  damaged: false,
+  contaminated: false,
+} as const;
+
+const OK = {
+  beverage_evidence: EVIDENCE,
   item: 'aluminium can',
   status: 'recyclable',
   confidence: 0.95,
   channel: 'return_point',
   reason: 'Has a Deposit Mark.',
-};
+} satisfies ClassifyResult & { beverage_evidence: typeof EVIDENCE };
 
 const TEST_JPEG_BASE64 = '/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAIDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AKpAB//Z';
+
+function ocrResult(hasSingaporeMarkText: boolean): DepositMarkOcrResult {
+  return {
+    lines: hasSingaporeMarkText
+      ? [
+          { text: 'SG', confidence: 0.99, source: 'mark_crop' },
+          { text: 'RETURN', confidence: 0.99, source: 'mark_crop' },
+        ]
+      : [{ text: '10¢', confidence: 0.99, source: 'full' }],
+    hasSingaporeMarkText,
+  };
+}
 
 /** Provider stub that plays back a scripted sequence of outcomes. */
 function stub(script: Array<'ok' | Error | number>): ClassifyProvider & { calls: number } {
@@ -81,15 +118,22 @@ async function withMockFetch(mock: typeof fetch, fn: () => Promise<void>) {
 
 async function main() {
   await runTest('BCRS prompt never turns an unknown mark into a blue-bin guess', async () => {
-    const prompt = getClassifySystemPrompt('en');
+    const prompt = getClassifySystemPrompt('en', 'image');
     assert.match(prompt, /Distinguish unknown from absent/);
-    assert.match(prompt, /one view in which the mark is not visible or readable is NOT proof/);
+    assert.match(prompt, /one view in which the mark is not visible or readable is NOT proof/i);
     assert.match(prompt, /return status "not_sure", channel null/);
     assert.match(prompt, /label at every orientation/);
     assert.match(prompt, /Product of Malaysia/);
     assert.match(prompt, /circular-arrow 10¢ shape alone is insufficient/);
     assert.match(prompt, /even when the image was taken beside a return machine/);
     assert.match(prompt, /Bottle, can and cup shapes are judged by the same material, volume and evidence rules/);
+    assert.match(prompt, /item and beverage_evidence must describe the same foreground object/);
+    assert.match(prompt, /beverage_product: prepackaged_beverage/);
+    assert.match(prompt, /visible_container_count: count physical product containers/);
+    assert.match(prompt, /transparent bag around it is wrapping, not a second container/);
+    assert.match(prompt, /loose or transparent bag around one visible container remains one subject/);
+    assert.match(prompt, /outer multipack packaging that visibly groups multiple containers/);
+    assert.match(prompt, /Every beverage_evidence field must contain one allowed scalar value/);
     assert.match(prompt, /square 2D traceability code[^\n]*cannot substitute/);
     assert.match(prompt, /separate linear EAN product barcode visibly present and unobscured/);
     assert.match(prompt, /Return Point performs the final scan/);
@@ -100,7 +144,10 @@ async function main() {
     assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /square 2D traceability code[^\n]*cannot substitute/);
     assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /Small text counts as direct pixel evidence/);
     assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /if either SG or RETURN is blurred or only inferred, use not_sure/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /visible callout line unambiguously connects a magnified inset/);
     assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /incidental out-of-focus background containers do not disqualify/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /loose or transparent bag around one visible container is still one subject/);
+    assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /multipack packaging groups multiple containers/);
     assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /Return Point performs the final scan/);
     assert.match(TOKENHUB_IMAGE_USER_INSTRUCTION, /do not mention blue_bin/);
     assert.doesNotMatch(prompt, /Deposit Mark is unknown[^\n]*prefer blue_bin/);
@@ -157,8 +204,13 @@ async function main() {
         ['string', 'null'],
       );
       assert.deepEqual(body.response_format.json_schema.schema.required, [
-        'item', 'status', 'confidence', 'channel', 'reason', 'preparation', 'tip',
+        'item', 'status', 'confidence', 'channel', 'reason', 'preparation', 'tip', 'beverage_evidence',
       ]);
+      const beverageEvidence = body.response_format.json_schema.schema.properties as unknown as {
+        beverage_evidence: { required: string[] };
+      };
+      assert.ok(beverageEvidence.beverage_evidence.required.includes('beverage_product'));
+      assert.ok(beverageEvidence.beverage_evidence.required.includes('visible_container_count'));
       return completionResponse(JSON.stringify(OK));
     }, async () => {
       const result = await new TokenHubProvider('test-key').classify(
@@ -188,7 +240,167 @@ async function main() {
       assert.equal(body.messages[1]?.content.filter((part) => part.type === 'image_url').length, 1);
       return completionResponse(JSON.stringify(OK));
     }, async () => {
-      await new TokenHubProvider('test-key').classify({ image: TEST_JPEG_BASE64 });
+      await new TokenHubProvider('test-key', { verifyBcrsImage: false })
+        .classify({ image: TEST_JPEG_BASE64 });
+    });
+  });
+
+  await runTest('Deposit Mark OCR requires literal SG and RETURN evidence', async () => {
+    assert.equal(hasDeterministicSingaporeMarkText([
+      { text: 'SG', source: 'mark_crop' },
+      { text: 'RETURN', source: 'mark_crop' },
+    ]), true);
+    assert.equal(hasDeterministicSingaporeMarkText([
+      { text: 'at State of Purchase in SG only', source: 'mark_crop' },
+      { text: 'RETURN', source: 'mark_crop' },
+    ]), true);
+    assert.equal(hasDeterministicSingaporeMarkText([
+      { text: 'SG', confidence: 0.8, source: 'full' },
+      { text: 'RETURH', confidence: 0.85, source: 'mark_crop' },
+    ]), false);
+    assert.equal(hasDeterministicSingaporeMarkText([
+      { text: 'SG', confidence: 0.8, source: 'mark_crop' },
+      { text: 'RETURH', confidence: 0.85, source: 'mark_crop' },
+    ]), true);
+    assert.equal(hasDeterministicSingaporeMarkText([
+      { text: 'SG', confidence: 0.99, source: 'mark_region' },
+      { text: 'RETURN', confidence: 0.99, source: 'mark_region' },
+    ]), true);
+    assert.equal(hasDeterministicSingaporeMarkText([
+      { text: 'SO', confidence: 0.81, source: 'mark_crop' },
+      { text: 'RETURN', confidence: 0.81, source: 'mark_crop' },
+    ]), true);
+    assert.equal(hasDeterministicSingaporeMarkText([
+      { text: 'SO', confidence: 0.79, source: 'mark_crop' },
+      { text: 'RETURN', confidence: 0.99, source: 'mark_crop' },
+    ]), false);
+    assert.equal(hasDeterministicSingaporeMarkText([
+      { text: 'SINGAPORE', confidence: 0.99, source: 'full' },
+      { text: 'RETURN', confidence: 0.99, source: 'full' },
+    ]), false);
+    assert.equal(hasDeterministicSingaporeMarkText([
+      { text: 'SG', confidence: 0.99, source: 'full' },
+      { text: 'RETURH', confidence: 0.99, source: 'full' },
+    ]), false);
+    assert.equal(markRegionsMatch(MARK_REGION, {
+      left: 0.22, top: 0.22, width: 0.16, height: 0.16,
+    }), true);
+    assert.equal(markRegionsMatch(MARK_REGION, {
+      left: 0.7, top: 0.7, width: 0.2, height: 0.2,
+    }), false);
+    assert.equal(markRegionsMatch(MARK_REGION, null), false);
+  });
+
+  await runTest('image refund claims require OCR and same-container association', async () => {
+    for (const [ocrHit, markOnSubject, barcodeOnSubject, expectedChannel] of [
+      [false, true, true, null],
+      [true, false, true, null],
+      [true, true, false, null],
+      [true, true, true, 'return_point'],
+    ] as const) {
+      let calls = 0;
+      await withMockFetch(async (_input, init) => {
+        calls += 1;
+        const body = JSON.parse(String(init?.body)) as {
+          max_tokens: number;
+          messages: Array<{ content: string | unknown[] }>;
+          response_format: { json_schema: { name: string } };
+        };
+        if (calls === 1) return completionResponse(JSON.stringify(OK));
+        assert.equal(body.response_format.json_schema.name, 'binwhere_bcrs_image_verification');
+        assert.equal(body.max_tokens, 256);
+        assert.match(body.messages[0]?.content as string, /Do not[^\n]*transcribe the Deposit Mark/);
+        return completionResponse(JSON.stringify({
+          mark_on_subject_container: markOnSubject,
+          deposit_mark_region: markOnSubject ? MARK_REGION : null,
+          linear_barcode_on_subject: barcodeOnSubject,
+        }));
+      }, async () => {
+        const result = await new TokenHubProvider('test-key', {
+          depositMarkOcr: async () => ocrResult(ocrHit),
+        }).classify({ image: TEST_JPEG_BASE64 });
+        assert.equal(calls, 2);
+        assert.equal(result.channel, expectedChannel);
+        assert.equal(result.next_action?.type, expectedChannel ? 'return_container' : 'try_return_point');
+      });
+    }
+  });
+
+  await runTest('verified image facts can promote a conservative model decision', async () => {
+    const modelResult = {
+      ...OK,
+      status: 'not_sure',
+      confidence: 0.4,
+      channel: null,
+    };
+    let calls = 0;
+    await withMockFetch(async () => {
+      calls += 1;
+      if (calls === 1) return completionResponse(JSON.stringify(modelResult));
+      return completionResponse(JSON.stringify({
+        mark_on_subject_container: true,
+        deposit_mark_region: MARK_REGION,
+        linear_barcode_on_subject: true,
+      }));
+    }, async () => {
+      const result = await new TokenHubProvider('test-key', {
+        depositMarkOcr: async () => ocrResult(true),
+      }).classify({ image: TEST_JPEG_BASE64 });
+      assert.equal(calls, 2);
+      assert.equal(result.channel, 'return_point');
+      assert.equal(result.status, 'recyclable');
+      assert.equal(result.next_action?.type, 'return_container');
+      assert.match(result.tip ?? '', /S\$0\.10/);
+    });
+  });
+
+  await runTest('image refund claims require OCR text inside the independently located mark', async () => {
+    let calls = 0;
+    await withMockFetch(async () => {
+      calls += 1;
+      if (calls === 1) return completionResponse(JSON.stringify(OK));
+      return completionResponse(JSON.stringify({
+        mark_on_subject_container: true,
+        deposit_mark_region: { left: 0.7, top: 0.7, width: 0.2, height: 0.2 },
+        linear_barcode_on_subject: true,
+      }));
+    }, async () => {
+      const result = await new TokenHubProvider('test-key', {
+        depositMarkOcr: async () => ocrResult(true),
+      }).classify({ image: TEST_JPEG_BASE64 });
+      assert.equal(calls, 2);
+      assert.equal(result.channel, null);
+      assert.equal(result.next_action?.type, 'try_return_point');
+    });
+  });
+
+  await runTest('a failed image verifier aborts its sibling OCR before retry', async () => {
+    let calls = 0;
+    let ocrAborted = false;
+    await withMockFetch(async () => {
+      calls += 1;
+      if (calls === 1) return completionResponse(JSON.stringify(OK));
+      return new Response(JSON.stringify({ error: { message: 'temporary failure' } }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }, async () => {
+      const provider = new TokenHubProvider('test-key', {
+        depositMarkOcr: async (_image, _region, signal) => new Promise((_resolve, reject) => {
+          const abort = () => {
+            ocrAborted = true;
+            reject(new Error('OCR aborted with verifier'));
+          };
+          if (signal?.aborted) abort();
+          else signal?.addEventListener('abort', abort, { once: true });
+        }),
+      });
+      await assert.rejects(
+        provider.classify({ image: TEST_JPEG_BASE64 }),
+        /TokenHub API error: 503/,
+      );
+      assert.equal(ocrAborted, true);
+      assert.equal(calls, 2);
     });
   });
 
@@ -203,17 +415,19 @@ async function main() {
       tip: '可以放入蓝色回收箱。',
     };
     await withMockFetch(
-      async () => completionResponse(JSON.stringify(modelResult)),
+      async () => completionResponse(JSON.stringify({ ...modelResult, beverage_evidence: { ...EVIDENCE, deposit_mark: 'unverified' } })),
       async () => {
         const result = await new TokenHubProvider('test-key').classify({ text: '饮料瓶', locale: 'zh' });
         assert.equal(result.status, 'not_sure');
         assert.equal(result.channel, null);
         assert.equal(result.confidence, 0.49);
-        assert.equal(result.reason, '现有信息不足，无法安全确定回收渠道。');
+        assert.equal(result.reason, '退款资格尚未确认，最终是否接收由退还点判定。');
         assert.deepEqual(result.preparation, [
-          '请提供更清晰的照片或描述，并完整展示物品及其标签或标识。饮料容器请拍清产品条码周围的标签。',
+          '下次顺路经过退还点时，带去扫描。符合条件并被接收后可退 S$0.10。',
         ]);
         assert.equal(result.tip, undefined);
+        assert.equal(result.next_action?.type, 'try_return_point');
+        assert.match(result.next_action?.qualification ?? '', /退款资格尚未确认/);
       },
     );
   });
@@ -301,6 +515,23 @@ async function main() {
     assert.match(event, /"model":"hy3"/);
   });
 
+  await runTest('text evidence is separate from pixel-reading instructions', async () => {
+    const text = getClassifySystemPrompt('en', 'text');
+    const image = getClassifySystemPrompt('en', 'image');
+    assert.match(text, /empty plastic water bottle/);
+    assert.doesNotMatch(text, /read both "SG" and "RETURN" directly/);
+    assert.match(image, /read both "SG" and "RETURN" directly/);
+    assert.match(image, /magnified inset is connected by a visible callout line/);
+  });
+
+  await runTest('missing structured evidence cannot silently remove next-step guidance', async () => {
+    const raw = { ...OK } as Record<string, unknown>;
+    delete raw.beverage_evidence;
+    await withMockFetch(async () => completionResponse(JSON.stringify(raw)), async () => {
+      await assert.rejects(new TokenHubProvider('test-key').classify({ text: 'water bottle' }), RetryableProviderError);
+    });
+  });
+
   await runTest('reasoning baseline records the known token signature without suppressing violations', async () => {
     for (const [reasoning, finish, expected] of [[1, 'stop', true], [2, 'stop', false], [1, 'length', false]] as const) {
       const lines: string[] = [];
@@ -311,7 +542,8 @@ async function main() {
           prompt_tokens: 100, completion_tokens: 150,
           completion_tokens_details: { reasoning_tokens: reasoning },
         }, finish), async () => {
-          await new TokenHubProvider('test-key').classify({ image: TEST_JPEG_BASE64 });
+          await new TokenHubProvider('test-key', { verifyBcrsImage: false })
+            .classify({ image: TEST_JPEG_BASE64 });
         });
       } finally { console.log = original; }
       const event = lines.find((line) => line.includes('"evt":"provider_contract"'));
@@ -472,6 +704,7 @@ async function main() {
     // latitude, since a text classify that slow is broken rather than busy.
     assert.ok(ATTEMPT_MS({ image: 'x' }) > ATTEMPT_MS({ text: 'can' }));
     assert.ok(BUDGET_MS({ image: 'x' }) > BUDGET_MS({ text: 'can' }));
+    assert.ok(BUDGET_MS({ image: 'x' }) > ATTEMPT_MS({ image: 'x' }));
     assert.ok(BUDGET_MS({ text: 'can' }) > ATTEMPT_MS({ text: 'can' }), 'budget must allow a retry');
   });
 

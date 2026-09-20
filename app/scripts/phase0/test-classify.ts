@@ -30,6 +30,7 @@ import {
 } from '../../src/lib/ai/providers/tokenhub';
 import type { ClassifyProvider, ClassifyResult } from '../../src/lib/ai/types';
 import {
+  CANDIDATE_PROFILE,
   PRODUCTION_PROFILE,
   profileDigest,
   selectProfile,
@@ -392,7 +393,7 @@ function printReport(report: ProviderReport): void {
 async function main() {
   const profile = selectProfile(parseArg('profile'));
   const truthSetDigest = TEXT_TRUTH_SET_DIGEST;
-  const productionBaseline = profile.id === 'candidate-working-tree'
+  const productionBaseline = profile.id === CANDIDATE_PROFILE.id
     ? readProductionBaseline(truthSetDigest)
     : undefined;
 

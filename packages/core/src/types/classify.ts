@@ -10,6 +10,17 @@ import {
 export const MAX_CLASSIFY_IMAGE_BASE64_LENGTH = 7_000_000;
 export const MAX_CLASSIFY_TEXT_LENGTH = 500;
 
+/** A next step is separate from a confirmed disposal channel. */
+export const NextActionSchema = z.object({
+  type: z.enum(['return_container', 'try_return_point', 'check_container_type']),
+  channel: z.literal('return_point'),
+  title: z.string().trim().min(1),
+  instruction: z.string().trim().min(1),
+  qualification: z.string().trim().min(1),
+});
+
+export type NextAction = z.infer<typeof NextActionSchema>;
+
 export const CHANNEL_STATUS: Record<ChannelType, Exclude<ClassifyStatus, 'not_sure'>> = {
   blue_bin: 'recyclable',
   return_point: 'recyclable',
@@ -42,10 +53,21 @@ export const ClassifyResultShapeSchema = z.object({
   }),
   /** Extra tip for the user */
   tip: z.string().trim().optional().transform((v) => (v && v.length > 0 ? v : undefined)),
+  next_action: NextActionSchema.optional(),
 });
 
 /** Runtime schema for an internally consistent AI classification result. */
 export const ClassifyResultSchema = ClassifyResultShapeSchema.superRefine((result, ctx) => {
+  const action = result.next_action;
+  if (action && (action.type === 'return_container'
+    ? result.status !== 'recyclable' || result.channel !== 'return_point'
+    : result.status !== 'not_sure' || result.channel !== null)) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['next_action'],
+      message: 'An unconfirmed action requires a null channel; a return action requires confirmed return_point',
+    });
+  }
   if (result.channel === null) {
     if (result.status !== 'not_sure') {
       ctx.addIssue({

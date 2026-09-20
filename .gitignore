@@ -42,6 +42,7 @@ app/data/geo-snapshot.staging-*/
 
 # Phase 0 test results
 app/scripts/phase0/results/*.json
+app/scripts/phase0/results/image-routes-20260920/
 app/scripts/phase0/fixtures/cache/
 
 # vercel

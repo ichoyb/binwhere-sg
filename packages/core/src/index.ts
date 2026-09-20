@@ -34,9 +34,11 @@ export {
 export type {
   ClassifyResult,
   ClassifyRequest,
+  NextAction,
 } from './types/classify';
 export {
   ClassifyResultSchema,
+  NextActionSchema,
   ClassifyResultShapeSchema,
   CHANNEL_STATUS,
   ClassifyRequestSchema,
@@ -87,6 +89,18 @@ export {
 } from './bcrs';
 export type { ReturnPointOpeningHours } from './bcrs';
 export { mapItemToAcceptedItem } from './donation-mapping';
+export {
+  BeverageEvidenceSchema,
+  BEVERAGE_EVIDENCE_JSON_SCHEMA,
+  applyBeverageActionPolicy,
+  buildNextAction,
+  getDestinationChannel,
+  getResultShareText,
+  hasConfirmedReturnEvidence,
+  hasExplicitForeignDepositText,
+  hasReadableSingaporeMarkText,
+} from './next-action';
+export type { BeverageEvidence, BeverageInputMode } from './next-action';
 
 // Pre-classified categories
 export type { CategoryItem, ItemCategory } from './data/item-categories';

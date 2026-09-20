@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-04T07:55:10.249Z",
+  "timestamp": "2026-09-20T06:36:30.563Z",
   "baseline": {
     "id": "sg-consumer-text-v4",
     "reviewedAt": "2026-09-04",
@@ -18,7 +18,7 @@
   "profile": {
     "id": "production-0a5852f",
     "revision": "0a5852f18a8b119d0a649f491ef781df94e5e2d3",
-    "digest": "44253b3ceaab2d2a0cd61265435133027c600a31bcbfc2212e1e77b20b78bec3"
+    "digest": "b03a8d1c59583db8c83b31d1bcee675b705eae222657fd0f2f141ed36cc13f58"
   },
   "models": {
     "text": "hy3"
@@ -102,10 +102,10 @@
           "accuracy": 0.9473684210526315
         }
       },
-      "avgConfidence": 0.9443023255813959,
-      "avgDurationMs": 2251.0348837209303,
-      "p50DurationMs": 2196,
-      "p95DurationMs": 2941,
+      "avgConfidence": 0.9419767441860473,
+      "avgDurationMs": 2397.360465116279,
+      "p50DurationMs": 2363,
+      "p95DurationMs": 2833,
       "errors": 0,
       "unsafeDiversions": 3,
       "results": [
@@ -122,7 +122,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1932
+          "durationMs": 2312
         },
         {
           "text": "empty PET water bottle with no Singapore BCRS Deposit Mark",
@@ -137,7 +137,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2330
+          "durationMs": 2733
         },
         {
           "text": "aluminum drink can with no Singapore BCRS Deposit Mark",
@@ -152,7 +152,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2584
+          "durationMs": 2230
         },
         {
           "text": "empty and rinsed glass jar",
@@ -167,7 +167,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1883
+          "durationMs": 2529
         },
         {
           "text": "clean, dry cardboard box, flattened",
@@ -182,7 +182,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2102
+          "durationMs": 2922
         },
         {
           "text": "empty, rinsed and flattened milk carton (Tetra Pak)",
@@ -193,11 +193,11 @@
           "actual": {
             "channel": "blue_bin",
             "status": "recyclable",
-            "confidence": 0.98
+            "confidence": 0.95
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2071
+          "durationMs": 2469
         },
         {
           "text": "office paper",
@@ -212,7 +212,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1728
+          "durationMs": 2110
         },
         {
           "text": "empty and rinsed shampoo bottle",
@@ -227,7 +227,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2123
+          "durationMs": 2281
         },
         {
           "text": "tin food can, rinsed",
@@ -242,7 +242,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2397
+          "durationMs": 2104
         },
         {
           "text": "clean plastic container",
@@ -257,7 +257,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1875
+          "durationMs": 2876
         },
         {
           "text": "glass wine bottle, empty and rinsed",
@@ -272,7 +272,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2311
+          "durationMs": 2456
         },
         {
           "text": "magazine",
@@ -287,7 +287,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2273
+          "durationMs": 2292
         },
         {
           "text": "empty and rinsed detergent bottle",
@@ -302,7 +302,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 3345
+          "durationMs": 2327
         },
         {
           "text": "clean plastic bag",
@@ -317,7 +317,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2012
+          "durationMs": 2239
         },
         {
           "text": "metal cookie tin",
@@ -332,7 +332,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2343
+          "durationMs": 2302
         },
         {
           "text": "empty aerosol can; fully used and nothing comes out when sprayed",
@@ -347,7 +347,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2057
+          "durationMs": 2781
         },
         {
           "text": "clean yogurt cup",
@@ -358,11 +358,11 @@
           "actual": {
             "channel": "blue_bin",
             "status": "recyclable",
-            "confidence": 0.95
+            "confidence": 0.9
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2193
+          "durationMs": 2341
         },
         {
           "text": "paper egg carton",
@@ -377,7 +377,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1958
+          "durationMs": 2408
         },
         {
           "text": "empty and rinsed glass sauce bottle",
@@ -392,7 +392,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2177
+          "durationMs": 2438
         },
         {
           "text": "clean aluminum foil",
@@ -407,7 +407,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2161
+          "durationMs": 2279
         },
         {
           "text": "broken laptop that cannot be reused",
@@ -418,11 +418,11 @@
           "actual": {
             "channel": "ewaste",
             "status": "special_handling",
-            "confidence": 0.98
+            "confidence": 0.95
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2514
+          "durationMs": 2648
         },
         {
           "text": "broken smartphone",
@@ -437,7 +437,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2771
+          "durationMs": 2703
         },
         {
           "text": "broken CRT TV that cannot be reused",
@@ -452,7 +452,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2240
+          "durationMs": 2280
         },
         {
           "text": "broken desktop computer that cannot be reused",
@@ -467,7 +467,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2227
+          "durationMs": 2539
         },
         {
           "text": "broken printer that cannot be reused",
@@ -482,7 +482,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2239
+          "durationMs": 2940
         },
         {
           "text": "broken tablet (iPad)",
@@ -497,7 +497,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2481
+          "durationMs": 2631
         },
         {
           "text": "broken desktop monitor that cannot be reused",
@@ -512,7 +512,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2993
+          "durationMs": 2203
         },
         {
           "text": "broken washing machine that cannot be reused",
@@ -527,7 +527,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2196
+          "durationMs": 2521
         },
         {
           "text": "broken refrigerator",
@@ -542,7 +542,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 3021
+          "durationMs": 2085
         },
         {
           "text": "broken air conditioner unit that cannot be reused",
@@ -557,7 +557,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2941
+          "durationMs": 2227
         },
         {
           "text": "used AA batteries",
@@ -572,7 +572,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2159
+          "durationMs": 2543
         },
         {
           "text": "old lithium-ion battery from laptop",
@@ -587,7 +587,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2201
+          "durationMs": 2480
         },
         {
           "text": "button cell battery",
@@ -602,7 +602,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2827
+          "durationMs": 2499
         },
         {
           "text": "used 9-volt household battery with terminals taped",
@@ -617,7 +617,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2896
+          "durationMs": 2320
         },
         {
           "text": "rechargeable AAA batteries",
@@ -632,7 +632,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1738
+          "durationMs": 2194
         },
         {
           "text": "fluorescent tube",
@@ -647,7 +647,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2188
+          "durationMs": 2329
         },
         {
           "text": "CFL compact fluorescent light bulb",
@@ -662,7 +662,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2503
+          "durationMs": 2417
         },
         {
           "text": "LED light bulb",
@@ -677,7 +677,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2247
+          "durationMs": 2372
         },
         {
           "text": "broken fluorescent lamp",
@@ -692,7 +692,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2224
+          "durationMs": 2470
         },
         {
           "text": "energy-saving light bulb",
@@ -707,7 +707,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2393
+          "durationMs": 2833
         },
         {
           "text": "clean, dry old t-shirts with normal wear and no stains or tears",
@@ -722,7 +722,7 @@
           },
           "channelMatch": false,
           "statusMatch": false,
-          "durationMs": 1955
+          "durationMs": 2479
         },
         {
           "text": "clean, dry used shoes with normal wear, still intact",
@@ -737,7 +737,7 @@
           },
           "channelMatch": false,
           "statusMatch": false,
-          "durationMs": 1942
+          "durationMs": 2347
         },
         {
           "text": "clean, dry used curtains with no mould or stains",
@@ -752,7 +752,7 @@
           },
           "channelMatch": true,
           "statusMatch": false,
-          "durationMs": 2366
+          "durationMs": 2145
         },
         {
           "text": "clean, dry used bed sheets without tears or stains",
@@ -767,7 +767,7 @@
           },
           "channelMatch": false,
           "statusMatch": false,
-          "durationMs": 2280
+          "durationMs": 2214
         },
         {
           "text": "clean, dry used handbag with normal wear, still intact",
@@ -782,7 +782,7 @@
           },
           "channelMatch": false,
           "statusMatch": false,
-          "durationMs": 2204
+          "durationMs": 2384
         },
         {
           "text": "leftover paint can",
@@ -797,7 +797,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2238
+          "durationMs": 2821
         },
         {
           "text": "insect spray can (partially full)",
@@ -812,7 +812,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2629
+          "durationMs": 2242
         },
         {
           "text": "used lead-acid car battery",
@@ -827,25 +827,10 @@
           },
           "channelMatch": false,
           "statusMatch": true,
-          "durationMs": 2331
+          "durationMs": 2348
         },
         {
           "text": "used motor oil",
-          "expected": {
-            "channel": "hazardous",
-            "status": "special_handling"
-          },
-          "actual": {
-            "channel": "hazardous",
-            "status": "special_handling",
-            "confidence": 0.95
-          },
-          "channelMatch": true,
-          "statusMatch": true,
-          "durationMs": 1763
-        },
-        {
-          "text": "partly full bottle of corrosive drain cleaner in its original labelled container",
           "expected": {
             "channel": "hazardous",
             "status": "special_handling"
@@ -857,7 +842,22 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2786
+          "durationMs": 2186
+        },
+        {
+          "text": "partly full bottle of corrosive drain cleaner in its original labelled container",
+          "expected": {
+            "channel": "hazardous",
+            "status": "special_handling"
+          },
+          "actual": {
+            "channel": "hazardous",
+            "status": "special_handling",
+            "confidence": 0.95
+          },
+          "channelMatch": true,
+          "statusMatch": true,
+          "durationMs": 2478
         },
         {
           "text": "broken sofa that cannot be reused",
@@ -872,7 +872,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1990
+          "durationMs": 2329
         },
         {
           "text": "broken wooden table",
@@ -887,7 +887,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2035
+          "durationMs": 2452
         },
         {
           "text": "used mattress that cannot be reused",
@@ -902,7 +902,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2166
+          "durationMs": 2355
         },
         {
           "text": "broken bookshelf",
@@ -917,7 +917,7 @@
           },
           "channelMatch": false,
           "statusMatch": false,
-          "durationMs": 4221
+          "durationMs": 2505
         },
         {
           "text": "broken bicycle that cannot be reused and is too large for a waste bin",
@@ -932,7 +932,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2123
+          "durationMs": 3203
         },
         {
           "text": "clean, dry winter jacket in good condition",
@@ -947,7 +947,7 @@
           },
           "channelMatch": false,
           "statusMatch": false,
-          "durationMs": 2501
+          "durationMs": 2338
         },
         {
           "text": "used books in good condition",
@@ -962,7 +962,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2222
+          "durationMs": 2194
         },
         {
           "text": "working blender",
@@ -977,7 +977,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2028
+          "durationMs": 2505
         },
         {
           "text": "children's toys, still working",
@@ -992,7 +992,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2377
+          "durationMs": 2819
         },
         {
           "text": "clean, dry backpack in good condition",
@@ -1007,7 +1007,7 @@
           },
           "channelMatch": false,
           "statusMatch": false,
-          "durationMs": 1958
+          "durationMs": 2393
         },
         {
           "text": "used tissue paper",
@@ -1022,7 +1022,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1939
+          "durationMs": 2121
         },
         {
           "text": "food waste (leftover rice)",
@@ -1037,7 +1037,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1797
+          "durationMs": 1994
         },
         {
           "text": "styrofoam food container",
@@ -1052,7 +1052,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2219
+          "durationMs": 2086
         },
         {
           "text": "dirty plastic bag with food stains",
@@ -1067,7 +1067,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2175
+          "durationMs": 2355
         },
         {
           "text": "broken ceramic mug",
@@ -1082,7 +1082,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2027
+          "durationMs": 2379
         },
         {
           "text": "used paper towel",
@@ -1093,11 +1093,11 @@
           "actual": {
             "channel": "general_waste",
             "status": "not_recyclable",
-            "confidence": 0.99
+            "confidence": 1
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1654
+          "durationMs": 2225
         },
         {
           "text": "used and soiled toilet paper, not the clean cardboard tube",
@@ -1112,7 +1112,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1723
+          "durationMs": 2291
         },
         {
           "text": "broken mirror",
@@ -1127,7 +1127,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1959
+          "durationMs": 2387
         },
         {
           "text": "disposable chopsticks (used)",
@@ -1142,7 +1142,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1736
+          "durationMs": 2250
         },
         {
           "text": "cigarette butts",
@@ -1157,7 +1157,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2287
+          "durationMs": 2078
         },
         {
           "text": "pizza box with grease stains",
@@ -1172,7 +1172,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2470
+          "durationMs": 2560
         },
         {
           "text": "half-eaten takeaway container",
@@ -1187,7 +1187,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2163
+          "durationMs": 2494
         },
         {
           "text": "broken electronic toy with a built-in battery that cannot be removed",
@@ -1202,7 +1202,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2678
+          "durationMs": 2555
         },
         {
           "text": "pyrex glass baking dish",
@@ -1217,7 +1217,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2026
+          "durationMs": 2197
         },
         {
           "text": "old working iPhone in good condition",
@@ -1228,11 +1228,11 @@
           "actual": {
             "channel": "donation",
             "status": "consider_donating",
-            "confidence": 0.9
+            "confidence": 0.95
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2048
+          "durationMs": 2073
         },
         {
           "text": "plastic straw",
@@ -1247,7 +1247,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1910
+          "durationMs": 1971
         },
         {
           "text": "empty peanut butter jar (not rinsed)",
@@ -1262,7 +1262,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2430
+          "durationMs": 2363
         },
         {
           "text": "old clothes that are torn and heavily stained",
@@ -1277,7 +1277,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2023
+          "durationMs": 2555
         },
         {
           "text": "clean and dry bubble wrap",
@@ -1292,7 +1292,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2083
+          "durationMs": 2311
         },
         {
           "text": "used incandescent light bulb",
@@ -1307,7 +1307,7 @@
           },
           "channelMatch": false,
           "statusMatch": false,
-          "durationMs": 2315
+          "durationMs": 2399
         },
         {
           "text": "prescription glasses in good reusable condition",
@@ -1322,7 +1322,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1492
+          "durationMs": 2464
         },
         {
           "text": "completely empty, dry, all-metal paint can with no liquid paint",
@@ -1337,7 +1337,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2848
+          "durationMs": 2206
         },
         {
           "text": "coffee capsule (Nespresso)",
@@ -1348,11 +1348,11 @@
           "actual": {
             "channel": "general_waste",
             "status": "not_recyclable",
-            "confidence": 0.85
+            "confidence": 0.7
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 2422
+          "durationMs": 2538
         },
         {
           "text": "broken power bank that cannot be reused",
@@ -1367,7 +1367,7 @@
           },
           "channelMatch": false,
           "statusMatch": true,
-          "durationMs": 2336
+          "durationMs": 2470
         },
         {
           "text": "expired household medicine pills",
@@ -1382,7 +1382,7 @@
           },
           "channelMatch": false,
           "statusMatch": false,
-          "durationMs": 2163
+          "durationMs": 2488
         },
         {
           "text": "wet cardboard",
@@ -1397,7 +1397,7 @@
           },
           "channelMatch": true,
           "statusMatch": true,
-          "durationMs": 1697
+          "durationMs": 1963
         }
       ]
     }

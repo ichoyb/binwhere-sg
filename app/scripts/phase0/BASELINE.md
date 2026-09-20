@@ -12,10 +12,11 @@ conditions hold:
   and a SHA-256 digest in the result;
 - descriptions contain the condition-changing fact, while deliberately missing
   BCRS evidence is labelled `not_sure` rather than guessed;
-- all 33 real network-image sources match their pinned SHA-256 digests. Every
-  submitted fixture then passes through the Web client contract (auto-rotate,
-  at most 1024 px, JPEG quality 70, white background) and the API's production
-  sanitiser; no source bypasses either stage;
+- all 41 real network-image sources match their pinned SHA-256 digests. Every
+  submitted fixture then passes through the profile-specific Web client contract
+  (auto-rotate, historical production at most 1024 px or candidate at most 2048 px,
+  JPEG quality 70, white background) and the API's production sanitiser; no source
+  bypasses either stage;
 - image truth is assigned from the submitted pixels after that production image
   path. A source page proves provenance only: it cannot supply a mark, barcode,
   material or condition that the model could not see in the submitted image;
@@ -61,14 +62,16 @@ The candidate may proceed only when both runs are valid and all of these gates p
 | BCRS image exactness | at least 95% of real-image cases pass exactly |
 | BCRS refund recall | at least 90% of image cases with reviewed `return_point` truth are found |
 | BCRS wrong direction | zero results sent to a wrong non-null channel; a safe `not_sure` is the only permitted image miss |
-| BCRS holdout safety | every previously unused holdout has zero provider error, wrong non-null channel, false refund direction or unknown-mark blue-bin leakage |
+| BCRS holdout safety | every previously unused holdout passes all classification and next-action assertions, with zero provider error, wrong non-null channel, false refund direction or unknown-mark blue-bin leakage |
 | False refund direction | zero non-eligible/unknown cases sent to `return_point` |
 | Unknown-mark disposal | zero `not_sure` responses that mention a blue-bin channel before mark absence is established |
 
 The BCRS thresholds are asymmetric on purpose. A false `return_point` or another
 wrong disposal channel gives the user unsafe or false instructions and has zero
-tolerance. An image-only `not_sure` asks for better evidence and is recoverable, so
-it is permitted only within the 95% image-exact and 90% refund-recall floors. This
+tolerance. An image-only `not_sure` retains unconfirmed eligibility. Identified beverage
+containers can now receive a separate conditional `next_action`; that does not
+change the classification truth. Image misses remain bounded by the 95%
+image-exact and 90% refund-recall floors. This
 prevents both dangerous guessing and a useless classifier that abstains on every
 hard image. The thresholds must be frozen before selecting the next holdouts; an
 already exposed holdout remains development evidence and cannot release the
@@ -122,8 +125,8 @@ and exploratory runs remain under the gitignored `results/` directory. A candida
 run also requires a complete, zero-error production baseline with an exact profile
 identity from the preceding 24 hours.
 
-`sg-bcrs-v16` contains 48 exact assertions: 12 four-language text cases and 36
-real-image cases drawn from the 33 sources above, including two current holdouts.
+`sg-bcrs-v20` contains 60 exact assertions: 16 four-language text cases and 44
+real-image cases drawn from the 41 sources above, including two current holdouts.
 Before any model call, the runner compares the pixels produced by the complete
 production image path and rejects any declared source pair with perceptual
 similarity >= 0.995. This prevents one underlying photograph from appearing in
@@ -144,3 +147,112 @@ next truth-set version promotes it to the regression partition and introduces a
 new truth-labelled holdout before the next candidate run. A failed holdout may
 guide the next candidate, but it cannot be reused as evidence that the revised
 candidate generalises.
+
+
+## 2026-09-19: action guidance (BCRS v17–v18)
+
+The public response adds optional `next_action`. `channel`, `status`, confidence
+and existing v1 prose keep their meanings. For an identified, potentially in-scope
+single beverage container with unverified eligibility and no observed damage,
+`try_return_point` recommends preparing it and scanning it on a future passing
+visit, with an explicit unconfirmed-refund qualification. It does not promise a
+refund or a blue bin beside a return point. Confirmed return classifications have
+`return_container`. Other routing retains its existing behaviour.
+
+Text and image evidence instructions are separate, in the same classification
+call. Structured observations, not the translated item name or confidence score,
+drive the shared action rule. The profile digest covers both prompts, observation
+schema, action copy and the shared action implementation.
+
+v17 adds four ordinary-water-bottle descriptions and two fresh real image
+holdouts, bringing the suite to 16 text and 38 image cases (35 original images).
+The v16 holdouts become regression cases. The two new holdouts are a front-facing
+intact Evian plastic bottle with no visible barcode/SG mark, and a green glass
+Mythos bottle. Both were reviewed after the Web and server JPEG processing path
+before any paid model call. An initially proposed Kirkland photo was rejected
+before model evaluation because visible shoulder dents made its damage truth
+ambiguous. No generated images are used.
+
+The first v17 candidate failed the unchanged release gate: 16/16 text and 35/38
+images, with two wrong non-null channels and only one of two holdouts passing.
+A label close-up was guessed to be a flexible coffee pouch, a standalone marketing
+mark was mistaken for a mark on the bottle, and the glass holdout incorrectly
+inherited the unknown-deposit rule. These truth labels were not changed.
+
+The revised input instructions scope deposit uncertainty to plastic/metal drink
+containers, distinguish visible physical packaging from brand lettering, and
+require both mark and barcode on the container surface. v18 promotes both exposed
+v17 holdouts to regression and adds two newly reviewed real photos: an intact
+plastic Sprite bottle front and an open glass Sprite bottle. Both passed the
+production image pipeline and pixel review before any model call. The suite now
+has 16 text cases, 40 image cases and 37 original images. Explicit negative action
+assertions also cover the established foreign mark, multiple subjects, outer
+packaging and a hidden/unidentified container. No release threshold was relaxed.
+
+Candidate assertions require trial actions for the unknown-mark and ordinary
+water-bottle text cases and the new plastic-bottle holdout. Confirmed returns must
+have the confirmed action, and known non-return channels must not gain a return
+action. Every emitted action must retain the exact four-language application copy
+including the refund qualification. Both new holdouts must pass their complete
+classification and action assertions. Existing classification thresholds are
+unchanged. Historical `production-0a5852f` calls intentionally have no next-action
+output; their paired baseline measures the original classification contract.
+This frozen historical profile is not the current live production revision; its
+comparison is not a live-production A/B measurement.
+
+Provider reasoning telemetry keeps reporting every nonzero reasoning count as a
+contract violation. A separate `matchesRecordedBaseline` field identifies the
+reviewed 2026-09-05 Kimi signature (one reasoning token, `finish=stop`). It is not a
+health verdict; larger reasoning counts, other models or a truncated finish do
+not match it. The required setting remains `thinking: {type:'disabled'}`.
+
+The final v18 candidate remains **not release eligible**: answerable text passed
+86/86; BCRS text passed 16/16 and images passed 38/40, including both fresh
+holdouts and all 12 confirmed-return image positives. Two regression images went
+to wrong non-null channels (a blurred mark to `return_point`, and a can-label
+close-up to `general_waste`). The zero-wrong-channel gate therefore failed.
+Recording the results was rejected by `release-evidence.ts`; the previous
+`release-evidence/current.json` is deliberately unchanged and does not validate
+these edits. Full Web `test:unit` remains blocked at that evidence check. No
+threshold or reviewed truth label was weakened to obtain a green result.
+
+## 2026-09-20: independent image evidence (BCRS v19–v20)
+
+v19 promoted the v18 holdouts and froze a real marked-bottle positive plus a
+multiple-imported-can safety photo. The candidate kept every zero-tolerance safety
+metric at zero, passed all 16 text cases and 39/42 image cases, but reached only
+11/13 confirmed-return positives and one of two holdouts. Its 92.9% image exactness
+and 84.6% return recall remained below the unchanged 95% and 90% gates. Those
+results were diagnostic only and were not recorded as release evidence.
+
+The remaining positive misses shared one boundary: the primary classification
+found the marked container, while a second probabilistic transcription could not
+read the small `SG RETURN` letters reliably. Offline product-registry lookup is not
+available, and a decoded EAN cannot prove scheme membership. The final candidate
+therefore separates the two remaining facts: one constrained image-model call
+checks only that a possible circular mark and a separate linear barcode are on the
+same foreground container, while local PP-OCRv6 reads the submitted pixels for
+literal `SG` and `RETURN` evidence. A confirmed return requires both checks to
+agree with the primary container facts. Any disagreement remains an unconfirmed
+action; OCR text or a barcode shape alone can never establish eligibility.
+
+v20 promotes both exposed v19 images to regression and freezes two new real safety
+photos before any model call: a Return Right machine beside a cart of bagged
+bottles, and a supermarket display of many paper beverage cartons with visible
+product barcodes. Both must remain `not_sure` with no return action. No unsuitable
+photo was relabelled as a fresh positive; positive utility remains enforced by the
+retained real-image positives and the 90% recall gate. The 41 source hashes and the
+complete 1024px and 2048px processing paths pass the near-duplicate preflight; the
+closest pair is about 0.91 against the 0.995 rejection limit.
+
+The frozen final candidate passed the complete paired evaluation. Core text was
+86/86 with no regression against production. BCRS was 58/60 overall: text 16/16,
+images 42/44 (95.5%), confirmed-return recall 12/13 (92.3%), and fresh holdouts
+2/2. Wrong non-null channels, false `return_point`, uncertain blue-bin mentions,
+and provider errors were all zero. The two misses were bounded utility misses: one
+single-can image omitted its conditional action in the complete run, and one
+marked bottle beside a receipt remained conditional instead of confirmed. Neither
+claimed a wrong channel or refund. The unchanged 95% image and 90% recall gates
+therefore passed, and the complete results were recorded in
+`release-evidence/current.json` against candidate profile digest
+`5b31906e0febba831ad028d3a5390ba03b357a32fc513ae126206f6a07792c46`.

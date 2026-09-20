@@ -6,7 +6,7 @@
 
 import sharp from 'sharp';
 import pLimit from 'p-limit';
-import { MAX_CLASSIFY_IMAGE_BASE64_LENGTH } from '@binwhere/core';
+import { IMAGE_MAX_SIZE, MAX_CLASSIFY_IMAGE_BASE64_LENGTH } from '@binwhere/core';
 import { HttpError } from './http-utils';
 
 // --- Constants ---
@@ -19,7 +19,7 @@ export const MAX_JSON_BODY_BYTES = 8_000_000;
 
 /** Output-affecting contract bound into classification release evidence. */
 export const IMAGE_SANITIZATION_CONTRACT = {
-  version: 1,
+  version: 2,
   allowedFormats: ['jpeg', 'png', 'webp'],
   allowedDataUriMimes: ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
   maxDecodedBytes: 5 * 1024 * 1024,
@@ -27,7 +27,7 @@ export const IMAGE_SANITIZATION_CONTRACT = {
   maxInputPixels: 8_000_000,
   output: {
     format: 'jpeg',
-    maxDimension: 1024,
+    maxDimension: IMAGE_MAX_SIZE,
     fit: 'inside',
     withoutEnlargement: true,
     autoOrient: true,

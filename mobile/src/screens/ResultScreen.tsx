@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {
   CHANNEL_DISPLAY_CONFIG,
+  getResultShareText,
   LOW_CONFIDENCE_THRESHOLD,
   STATUS_CONFIG,
   formatDistance,
@@ -54,6 +55,7 @@ export function ResultScreen({
   onViewNearby,
   onRequestLocation,
 }: Props) {
+  const action = result.next_action;
   const status = STATUS_CONFIG[result.status];
   const channel = result.channel;
   const channelCfg = channel ? CHANNEL_DISPLAY_CONFIG[channel] : null;
@@ -112,15 +114,7 @@ export function ResultScreen({
   const isBcrs = channel === 'return_point';
 
   const shareResult = async () => {
-    const lines = [
-      `${statusLabel}: ${result.item}`,
-      result.reason,
-      instruction,
-      ...(result.preparation ?? []).map((step, index) => `${index + 1}. ${step}`),
-      result.tip ? `${t(locale, 'result.tip')}${result.tip}` : null,
-      'https://binwhere.sg',
-    ].filter((line): line is string => !!line);
-    await Share.share({ message: lines.join('\n\n') });
+    await Share.share({ message: getResultShareText(result, locale) });
   };
 
   return (
@@ -136,19 +130,30 @@ export function ResultScreen({
 
       <View style={[styles.statusHeader, { backgroundColor: status.bgColor }]}>
         <Text style={[styles.statusLabel, { color: status.textColor }]}>
-          {statusLabel}
+          {action ? t(locale, 'result.nextAction') : statusLabel}
         </Text>
         <Text style={[styles.itemName, { color: status.textColor }]}>{result.item}</Text>
-        {result.confidence < LOW_CONFIDENCE_THRESHOLD ? (
+        {!action && result.confidence < LOW_CONFIDENCE_THRESHOLD ? (
           <Text style={styles.lowConf}>{t(locale, 'result.lowConfidence')}</Text>
         ) : null}
       </View>
+
+      {action ? (
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>{action.title}</Text>
+          <Text style={styles.reason}>{action.instruction}</Text>
+          <Text style={styles.reason}>{action.qualification}</Text>
+          <Pressable onPress={onViewNearby} style={styles.secondaryBtn}>
+            <Text style={styles.secondaryBtnText}>{t(locale, 'bcrs.findNearby')}</Text>
+          </Pressable>
+        </View>
+      ) : null}
 
       {capturedImage ? (
         <Image source={{ uri: capturedImage }} style={styles.capture} resizeMode="cover" />
       ) : null}
 
-      <View style={styles.card}>
+      {!action && <View style={styles.card}>
         <Text style={styles.reason}>{result.reason}</Text>
         {channelLabel ? (
           <View
@@ -188,7 +193,7 @@ export function ResultScreen({
             {result.tip}
           </Text>
         ) : null}
-      </View>
+      </View>}
 
       {isBcrs ? (
         <View style={[styles.card, { backgroundColor: '#E8F8EF', borderColor: '#B8E6C8' }]}>

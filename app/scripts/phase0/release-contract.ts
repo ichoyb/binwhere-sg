@@ -53,7 +53,8 @@ export const BCRS_TRUTH_SET_DIGEST = createHash('sha256').update(JSON.stringify(
 })).digest('hex');
 
 export function resultText(result: ClassifyResult): string {
-  return [result.item, result.reason, ...(result.preparation ?? []), result.tip]
+  return [result.item, result.reason, ...(result.preparation ?? []), result.tip,
+    result.next_action?.title, result.next_action?.instruction, result.next_action?.qualification]
     .filter((value): value is string => Boolean(value))
     .join('\n');
 }
@@ -78,8 +79,31 @@ export function checkBcrsResult(
   expected: ExpectedClassification,
   result: ClassifyResult,
   locale: Locale,
+  checkActions = false,
 ): string[] {
   const failures: string[] = [];
+  if (checkActions) {
+    const expectedAction = expected.channel === 'return_point' ? 'return_container'
+      : expected.channel !== null ? null : expected.nextAction;
+    const actualAction = result.next_action?.type ?? null;
+    const actionMatches = expectedAction === 'conditional_return'
+      ? actualAction === 'try_return_point' || actualAction === 'check_container_type'
+      : actualAction === expectedAction;
+    if (expectedAction !== undefined && !actionMatches) {
+      failures.push(`next_action expected ${expectedAction}, got ${actualAction}`);
+    }
+    const action = result.next_action;
+    if (action) {
+      const kind = action.type === 'return_container'
+        ? 'return'
+        : action.type === 'try_return_point' ? 'try' : 'check';
+      if (action.title !== t(locale, `action.${kind}.title`) ||
+        action.instruction !== t(locale, `action.${kind}.instruction`) ||
+        action.qualification !== t(locale, `action.${kind}.qualification`)) {
+        failures.push('next_action must retain application-owned instructions and refund qualification');
+      }
+    }
+  }
   if (result.channel !== expected.channel) {
     failures.push(`channel expected ${expected.channel ?? 'null'}, got ${result.channel ?? 'null'}`);
   }

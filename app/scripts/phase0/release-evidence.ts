@@ -427,7 +427,7 @@ function verifyBcrsEvidence(candidate: StoredBcrsEvidence) {
       ? null
       : ClassifyResultSchema.parse(stored.actual);
     const assertions = actual
-      ? checkBcrsResult(expected.testCase, actual, expected.testCase.locale)
+      ? checkBcrsResult(expected.testCase, actual, expected.testCase.locale, true)
       : ['classification completed without error'];
     assert.deepEqual(stored.assertions, assertions, `${stored.id} assertions are not derived`);
     checked.push({ stored, actual, assertions });
@@ -468,12 +468,12 @@ function verifyBcrsEvidence(candidate: StoredBcrsEvidence) {
     actual && mentionsBlueBin(resultText(actual))
   )).length;
   const providerErrors = checked.filter(({ stored }) => stored.error !== undefined).length;
-  const holdoutSafetyPassed = holdout.filter(({ stored, actual }) => {
+  const holdoutSafetyPassed = holdout.filter(({ stored, actual, assertions }) => {
     if (stored.error !== undefined || !actual) return false;
     const expectedChannel = (stored.expected as { channel?: unknown }).channel;
     const wrongDirection = actual.channel !== null && actual.channel !== expectedChannel;
     const blueBinLeak = expectedChannel === null && mentionsBlueBin(resultText(actual));
-    return !wrongDirection && !blueBinLeak;
+    return !wrongDirection && !blueBinLeak && assertions.length === 0;
   }).length;
   const imageExactAccuracy = imageResults.length === 0 ? 1 : imagePassed / imageResults.length;
   const imageReturnPointRecall = imageReturnPoints.length === 0

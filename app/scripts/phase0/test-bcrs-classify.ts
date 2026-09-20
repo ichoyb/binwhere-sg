@@ -24,7 +24,6 @@ import * as path from 'node:path';
 import sharp from 'sharp';
 
 import {
-  IMAGE_MAX_SIZE,
   IMAGE_QUALITY,
   type ClassifyResult,
   type Locale,
@@ -49,6 +48,7 @@ import {
   type ExpectedClassification,
 } from './bcrs-test-cases';
 import {
+  CANDIDATE_PROFILE,
   PRODUCTION_PROFILE,
   profileDigest,
   selectProfile,
@@ -242,7 +242,11 @@ async function loadSource(source: BcrsImageSource): Promise<Buffer> {
   return downloadSource(source);
 }
 
-async function composeFixture(source: BcrsImageSource, raw: Buffer): Promise<Buffer> {
+async function composeFixture(
+  source: BcrsImageSource,
+  raw: Buffer,
+  maxDimension: number,
+): Promise<Buffer> {
   let submittedPhoto = raw;
   if (source.crop) {
     submittedPhoto = await sharp(raw)
@@ -251,12 +255,12 @@ async function composeFixture(source: BcrsImageSource, raw: Buffer): Promise<Buf
   }
 
   // Every real user photo reaches the API only after the Web client has converted
-  // it to a <=1024px JPEG at 70% quality. The API then sanitises and re-encodes it
+  // it to a JPEG at the shared maximum dimension and 70% quality. The API then sanitises and re-encodes it
   // a second time below. Running every fixture through both stages is essential:
   // the small Deposit Mark and barcode are exactly what resampling can erase.
   return sharp(submittedPhoto)
     .rotate()
-    .resize(IMAGE_MAX_SIZE, IMAGE_MAX_SIZE, { fit: 'inside', withoutEnlargement: true })
+    .resize(maxDimension, maxDimension, { fit: 'inside', withoutEnlargement: true })
     .flatten({ background: '#ffffff' })
     .jpeg({ quality: Math.round(IMAGE_QUALITY * 100) })
     .toBuffer();
@@ -265,14 +269,16 @@ async function composeFixture(source: BcrsImageSource, raw: Buffer): Promise<Buf
 async function loadCleanImage(
   source: BcrsImageSource,
   cleanImages: Map<string, string>,
+  maxDimension: number,
 ): Promise<string> {
-  const cached = cleanImages.get(source.id);
+  const cacheKey = `${source.id}:${maxDimension}`;
+  const cached = cleanImages.get(cacheKey);
   if (cached) return cached;
 
   const raw = await loadSource(source);
-  const fixture = await composeFixture(source, raw);
+  const fixture = await composeFixture(source, raw, maxDimension);
   const image = await validateAndSanitizeImage(fixture.toString('base64'));
-  cleanImages.set(source.id, image);
+  cleanImages.set(cacheKey, image);
   return image;
 }
 
@@ -300,6 +306,7 @@ async function assertDistinctImageSources(
   selected: ReturnType<typeof selectCases>,
   sources: ReadonlyMap<string, BcrsImageSource>,
   cleanImages: Map<string, string>,
+  maxDimension: number,
 ): Promise<ImageSimilarityPair | null> {
   const sourceIds = [...new Set(selected.flatMap((entry) => (
     entry.mode === 'image' ? [entry.testCase.sourceId] : []
@@ -309,7 +316,7 @@ async function assertDistinctImageSources(
   for (const sourceId of sourceIds) {
     const source = sources.get(sourceId);
     if (!source) throw new Error(`Missing image source: ${sourceId}`);
-    const image = await loadCleanImage(source, cleanImages);
+    const image = await loadCleanImage(source, cleanImages, maxDimension);
     fingerprints.set(sourceId, await perceptualFingerprint(image));
   }
 
@@ -361,7 +368,7 @@ async function main() {
   const results: RegressionResult[] = [];
   const truthSetDigest = BCRS_TRUTH_SET_DIGEST;
 
-  if (profile.id === 'candidate-working-tree' && completeSuite) {
+  if (profile.id === CANDIDATE_PROFILE.id && completeSuite) {
     assertProductionBaseline(
       truthSetDigest,
       selected.map(({ testCase }) => testCase.id),
@@ -376,7 +383,7 @@ async function main() {
   console.log(`Date: ${new Date().toISOString()}\n`);
 
   const closestImagePair = completeSuite
-    ? await assertDistinctImageSources(selected, sources, cleanImages)
+    ? await assertDistinctImageSources(selected, sources, cleanImages, profile.imageMaxSize)
     : null;
   if (closestImagePair) {
     console.log(
@@ -398,7 +405,7 @@ async function main() {
       } else {
         source = sources.get(entry.testCase.sourceId);
         if (!source) throw new Error(`Missing image source: ${entry.testCase.sourceId}`);
-        image = await loadCleanImage(source, cleanImages);
+        image = await loadCleanImage(source, cleanImages, profile.imageMaxSize);
       }
 
       const result = await classifyItem(
@@ -406,7 +413,7 @@ async function main() {
         provider,
         profile.executionPolicy,
       );
-      const assertions = checkBcrsResult(entry.testCase, result, entry.testCase.locale);
+      const assertions = checkBcrsResult(entry.testCase, result, entry.testCase.locale, profile.providerOptions.nextActions);
       const durationMs = Date.now() - startedAt;
       results.push({
         id: entry.testCase.id,
@@ -497,7 +504,8 @@ async function main() {
       result.actual.channel !== result.expected.channel;
     const blueBinLeak = result.expected.channel === null &&
       mentionsBlueBin(resultText(result.actual));
-    return !wrongDirection && !blueBinLeak;
+    return !wrongDirection && !blueBinLeak &&
+      (!profile.providerOptions.nextActions || result.assertions.length === 0);
   }).length;
   const assertionsPass = measurementValid && passed === results.length &&
     falseReturnPoints === 0 && notSureBlueBinMentions === 0;
@@ -526,7 +534,7 @@ async function main() {
       image: profile.providerOptions.visionModel ?? TOKENHUB_VISION_MODEL,
     },
     policySource: BCRS_POLICY_SOURCE,
-    imagePipeline: 'web <=1024px JPEG quality 70, then production server sanitiser',
+    imagePipeline: `web <=${profile.imageMaxSize}px JPEG quality ${Math.round(IMAGE_QUALITY * 100)}, then production server sanitiser`,
     imageIndependence: {
       nearDuplicateSimilarityLimit: BCRS_GATE_THRESHOLDS.nearDuplicateSimilarityLimit,
       closestPair: closestImagePair,

@@ -1,6 +1,19 @@
 import type en from './en';
 
 const ms: Record<keyof typeof en, string> = {
+  "result.nextAction": "Langkah seterusnya",
+  "action.return.title": "Kosongkan, kemudian bawa ke pusat pemulangan",
+  "action.return.instruction": "Jangan kemekkan bekas. Kekalkan label dan kod bar dalam keadaan baik. Pulangkan untuk mendapatkan S$0.10.",
+  "action.return.qualification": "Penerimaan akhir ditentukan oleh pusat pemulangan.",
+  "action.try.title": "Kosongkan bekas dan kekalkan bekas serta label",
+  "action.try.instruction": "Apabila anda melalui pusat pemulangan, bawa bekas untuk diimbas. Bekas yang layak mendapat S$0.10 apabila diterima.",
+  "action.try.qualification": "Kelayakan bayaran balik belum disahkan. Pusat pemulangan menentukan penerimaan akhir.",
+  "action.check.title": "Pastikan jenis bekas",
+  "action.check.instruction": "Jika ini botol plastik, cawan plastik prabungkus atau tin logam, kosongkan dan jangan kemekkan; bawa untuk diimbas apabila anda melalui pusat pemulangan.",
+  "action.check.qualification": "Foto ini belum mengesahkan jenis bekas. Botol kaca, karton dan pek kantung tidak termasuk dalam skim deposit.",
+  "classify.cleanGlassReason": "Botol minuman kaca yang bersih dimasukkan ke dalam tong kitar semula biru.",
+  "classify.cleanGlassPreparation": "Kosongkan, bilas dan keringkan botol.",
+
   // Status labels
   'status.recyclable': 'Boleh Dikitar Semula',
   'status.special_handling': 'Pengendalian Khas',
@@ -52,6 +65,7 @@ const ms: Record<keyof typeof en, string> = {
   'home.cameraDeniedHint': 'Gunakan input teks di bawah untuk menerangkan item anda',
   'home.cameraUnavailable': 'Kamera tidak tersedia',
   'home.cameraUnavailableHint': 'Gunakan input teks di bawah untuk menerangkan item anda',
+  'home.cameraGuide': 'Pastikan seluruh item berada dalam bingkai dan ambil foto yang jelas.',
   'home.placeholderProminent': 'cth. botol plastik, telefon lama',
   'home.placeholderCompact': 'Taip nama item...',
   'home.search': 'Cari',
@@ -147,7 +161,7 @@ const ms: Record<keyof typeof en, string> = {
   'bcrs.pointCount': '1,000+ Pusat Pulangan di seluruh pulau',
   'bcrs.classifyReason': 'Deposit Mark rasmi Singapura dan kod bar produk mengenal pasti saluran pemulangan BCRS untuk bekas ini. Sediakan bekas untuk bayaran balik S$0.10; Pusat Pulangan membuat keputusan penerimaan akhir.',
   'classify.notSureReason': 'Maklumat yang ada belum mencukupi untuk memilih saluran kitar semula dengan selamat.',
-  'classify.notSurePreparation': 'Berikan foto atau penerangan yang lebih jelas yang menunjukkan keseluruhan item serta sebarang label atau tanda. Untuk bekas minuman, ambil gambar label di sekeliling kod bar produk.',
+  'classify.notSurePreparation': 'Berikan foto atau penerangan yang lebih jelas yang menunjukkan keseluruhan item.',
 };
 
 export default ms;

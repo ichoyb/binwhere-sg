@@ -183,7 +183,7 @@ export const CHANNEL_DISPLAY_CONFIG: Record<ChannelType, {
 
 export const LOW_CONFIDENCE_THRESHOLD = 0.6;
 export const MAX_HISTORY_ITEMS = 10;
-export const IMAGE_MAX_SIZE = 1024;
+export const IMAGE_MAX_SIZE = 2048;
 export const IMAGE_QUALITY = 0.7;
 
 /**

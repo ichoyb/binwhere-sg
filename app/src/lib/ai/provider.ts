@@ -33,10 +33,10 @@ export interface ClassificationExecutionPolicy {
   validateResultSemantics: boolean;
 }
 
-/** Runtime policy used by the working-tree candidate and, once deployed, production. */
+/** Runtime policy used by the source-bound candidate and, once deployed, production. */
 export const DEFAULT_EXECUTION_POLICY: ClassificationExecutionPolicy = {
   textAttemptMs: 8_000,
-  imageAttemptMs: 20_000,
+  imageAttemptMs: 40_000,
   textBudgetMs: 20_000,
   imageBudgetMs: 42_000,
   minAttemptMs: 3_000,
@@ -64,9 +64,12 @@ export const ATTEMPT_MS = (
  *
  * The client does not repeat a completed classification failure, so this bounds all
  * provider work for one request. End-to-end latency also includes request upload and
- * image sanitisation. Observed valid image generations can cross the old 15s attempt
- * boundary. Twenty seconds keeps one attempt bounded, while the 42s budget permits
- * one slow call to abort and retry without allowing unbounded provider work.
+ * image sanitisation. The action path runs a primary vision classification followed
+ * by independent mark/barcode verification and local OCR. A valid primary generation
+ * can itself approach 20s, so the 40s attempt limit covers the complete transaction.
+ * The 42s total still bounds user wait. A reproduced fast cold-start failure leaves
+ * enough budget for a second attempt, while a genuinely hung transaction cannot
+ * multiply into another long attempt.
  */
 export const BUDGET_MS = (
   request: ClassifyRequest,

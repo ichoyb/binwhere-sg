@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getDestinationChannel } from '@binwhere/core';
 import dynamic from 'next/dynamic';
 import type { ClassifyResult } from '@/lib/ai/types';
 import type { Locale } from '@/lib/i18n/types';
@@ -22,10 +23,11 @@ interface NearbyListPageProps {
 
 export default function NearbyListPage({ result, userLocation, onBack, locale }: NearbyListPageProps) {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  const nearbyChannel = result.channel ? CHANNEL_TO_NEARBY[result.channel] : null;
+  const destination = getDestinationChannel(result);
+  const nearbyChannel = destination ? CHANNEL_TO_NEARBY[destination] : null;
   const { points, loading, error } = useNearby(userLocation, nearbyChannel);
 
-  const channelLabel = result.channel ? t(locale, `channel.${result.channel}` as TranslationKey) : t(locale, 'channel.blue_bin');
+  const channelLabel = destination ? t(locale, `channel.${destination}` as TranslationKey) : '';
 
   return (
     <div className="min-h-full bg-bg">
@@ -38,6 +40,7 @@ export default function NearbyListPage({ result, userLocation, onBack, locale }:
         </div>
       </div>
 
+      {result.next_action && <p className="px-4 pt-4 text-body text-gray-600">{result.next_action.qualification}</p>}
       {viewMode === 'list' ? (
         <div className="px-4 py-4 space-y-2">
           {loading && (
@@ -90,7 +93,7 @@ export default function NearbyListPage({ result, userLocation, onBack, locale }:
               <NearbyMapView
                 points={points}
                 userLocation={userLocation}
-                channel={result.channel ?? null}
+                channel={destination}
                 locale={locale}
               />
             </div>

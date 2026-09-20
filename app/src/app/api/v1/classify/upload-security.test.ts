@@ -6,6 +6,7 @@ import { ApiErrorResponseSchema } from '@binwhere/core';
 
 import { POST } from './route';
 import {
+  IMAGE_SANITIZATION_CONTRACT,
   MAX_IMAGE_BASE64_LENGTH,
   MAX_JSON_BODY_BYTES,
   validateAndSanitizeImage,
@@ -96,10 +97,28 @@ async function main() {
       );
       const metadata = await sharp(clean).metadata();
       assert.equal(metadata.format, 'jpeg');
-      assert.ok((metadata.width ?? 0) <= 1024);
-      assert.ok((metadata.height ?? 0) <= 1024);
+      assert.ok((metadata.width ?? 0) <= IMAGE_SANITIZATION_CONTRACT.output.maxDimension);
+      assert.ok((metadata.height ?? 0) <= IMAGE_SANITIZATION_CONTRACT.output.maxDimension);
       assert.equal(metadata.exif, undefined);
     }
+  });
+
+  await runTest('sanitiser preserves detail up to the classification dimension contract', async () => {
+    const source = await sharp({
+      create: {
+        width: 3000,
+        height: 1200,
+        channels: 3,
+        background: { r: 10, g: 80, b: 140 },
+      },
+    }).jpeg().toBuffer();
+    const clean = Buffer.from(
+      await validateAndSanitizeImage(source.toString('base64')),
+      'base64',
+    );
+    const metadata = await sharp(clean).metadata();
+    assert.equal(metadata.width, IMAGE_SANITIZATION_CONTRACT.output.maxDimension);
+    assert.equal(metadata.height, 819);
   });
 
   await runTest('unsupported data URI MIME is rejected', async () => {

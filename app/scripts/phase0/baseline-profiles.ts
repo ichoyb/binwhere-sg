@@ -1,16 +1,24 @@
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
-import { CHANNEL_STATUS, type Locale } from '@binwhere/core';
+import { CHANNEL_STATUS, IMAGE_MAX_SIZE, type Locale } from '@binwhere/core';
 
 import { LOCALE_LANGUAGE_NAME } from '../../src/lib/i18n';
 import { getClassifySystemPrompt } from '../../src/lib/ai/prompts/classify-system';
 import {
   STRICT_CLASSIFY_RESPONSE_FORMAT,
+  ACTION_CLASSIFY_RESPONSE_FORMAT,
+  BCRS_IMAGE_VERIFICATION_PROMPT,
+  BCRS_IMAGE_VERIFICATION_RESPONSE_FORMAT,
+  BCRS_IMAGE_VERIFICATION_ATTEMPTS,
+  BCRS_IMAGE_VERIFICATION_MAX_TOKENS,
   TOKENHUB_MAX_TOKENS,
   TOKENHUB_IMAGE_USER_INSTRUCTION,
   TOKENHUB_THINKING_DISABLED,
   type TokenHubProviderOptions,
 } from '../../src/lib/ai/providers/tokenhub';
+import { DEPOSIT_MARK_OCR_CONTRACT } from '../../src/lib/deposit-mark-ocr';
 import {
   DEFAULT_EXECUTION_POLICY,
   PRODUCTION_0A5852F_EXECUTION_POLICY,
@@ -20,6 +28,31 @@ import { t } from '../../src/lib/i18n';
 
 const PRODUCTION_REVISION = '0a5852f18a8b119d0a649f491ef781df94e5e2d3';
 const LOCALES: readonly Locale[] = ['en', 'zh', 'ms', 'ta'];
+
+function fileDigest(path: string) {
+  return createHash('sha256').update(readFileSync(path)).digest('hex');
+}
+
+const CANDIDATE_EXECUTION_SOURCE_PATHS = {
+  retryController: join(__dirname, '../../src/lib/ai/provider.ts'),
+  tokenHubProvider: join(__dirname, '../../src/lib/ai/providers/tokenhub.ts'),
+  classifyRoute: join(__dirname, '../../src/app/api/v1/classify/route.ts'),
+  imageSanitizer: join(__dirname, '../../src/lib/image-security.ts'),
+  resultContract: join(__dirname, '../../../packages/core/src/types/classify.ts'),
+  actionPolicy: join(__dirname, '../../../packages/core/src/next-action.ts'),
+  ocrController: join(__dirname, '../../src/lib/deposit-mark-ocr.ts'),
+  ocrWorker: join(__dirname, '../../ocr/deposit-mark-worker.mjs'),
+} as const;
+
+function candidateExecutionSourceDigests() {
+  return Object.fromEntries(Object.entries(CANDIDATE_EXECUTION_SOURCE_PATHS)
+    .map(([name, path]) => [name, fileDigest(path)]));
+}
+
+const CANDIDATE_EXECUTION_SOURCE_DIGESTS = candidateExecutionSourceDigests();
+const CANDIDATE_SOURCE_REVISION = `source-${createHash('sha256')
+  .update(JSON.stringify(CANDIDATE_EXECUTION_SOURCE_DIGESTS))
+  .digest('hex')}`;
 
 /** Exact classify system prompt deployed by production revision 0a5852f. */
 const PRODUCTION_BASE_PROMPT = `You are a recycling assistant for Singapore. Given an image or text description of an item, classify it into the correct recycling channel according to NEA (National Environment Agency) guidelines.
@@ -95,6 +128,7 @@ Keep responses concise and practical.`;
 export interface ClassificationProfile {
   id: string;
   revision: string;
+  imageMaxSize: number;
   providerOptions: TokenHubProviderOptions;
   executionPolicy: ClassificationExecutionPolicy;
 }
@@ -102,6 +136,7 @@ export interface ClassificationProfile {
 export const PRODUCTION_PROFILE: ClassificationProfile = {
   id: 'production-0a5852f',
   revision: PRODUCTION_REVISION,
+  imageMaxSize: 1024,
   providerOptions: {
     getSystemPrompt: getProductionSystemPrompt,
     imageUserInstruction: '',
@@ -113,13 +148,16 @@ export const PRODUCTION_PROFILE: ClassificationProfile = {
     strictResponseSchema: false,
     enforceNotSurePolicy: false,
     validateResultSemantics: false,
+    nextActions: false,
+    verifyBcrsImage: false,
   },
   executionPolicy: PRODUCTION_0A5852F_EXECUTION_POLICY,
 };
 
 export const CANDIDATE_PROFILE: ClassificationProfile = {
-  id: 'candidate-working-tree',
-  revision: 'working-tree',
+  id: 'candidate-source-bound',
+  revision: CANDIDATE_SOURCE_REVISION,
+  imageMaxSize: IMAGE_MAX_SIZE,
   providerOptions: {
     getSystemPrompt: getClassifySystemPrompt,
     imageUserInstruction: TOKENHUB_IMAGE_USER_INSTRUCTION,
@@ -131,6 +169,8 @@ export const CANDIDATE_PROFILE: ClassificationProfile = {
     strictResponseSchema: true,
     enforceNotSurePolicy: true,
     validateResultSemantics: true,
+    nextActions: true,
+    verifyBcrsImage: true,
   },
   executionPolicy: DEFAULT_EXECUTION_POLICY,
 };
@@ -147,6 +187,7 @@ export function profileDigest(profile: ClassificationProfile): string {
   const payload = {
     prompts: Object.fromEntries(LOCALES.map((locale) => [locale, getPrompt(locale)])),
     imageUserInstruction: profile.providerOptions.imageUserInstruction,
+    imageMaxSize: profile.imageMaxSize,
     temperature: profile.providerOptions.textTemperature === profile.providerOptions.visionTemperature
       ? profile.providerOptions.textTemperature
       : {
@@ -159,6 +200,7 @@ export function profileDigest(profile: ClassificationProfile): string {
     strictResponseSchema: profile.providerOptions.strictResponseSchema,
     enforceNotSurePolicy: profile.providerOptions.enforceNotSurePolicy,
     validateResultSemantics: profile.providerOptions.validateResultSemantics,
+    verifyBcrsImage: profile.providerOptions.verifyBcrsImage,
     requestContract: {
       maxTokens: TOKENHUB_MAX_TOKENS,
       thinking: TOKENHUB_THINKING_DISABLED,
@@ -193,5 +235,39 @@ export function profileDigest(profile: ClassificationProfile): string {
     },
     executionPolicy: profile.executionPolicy,
   };
-  return createHash('sha256').update(JSON.stringify(payload)).digest('hex');
+  const actionContract = profile.providerOptions.nextActions ? {
+    executionSourceDigests: CANDIDATE_EXECUTION_SOURCE_DIGESTS,
+    policySourceDigest: createHash('sha256').update(
+      readFileSync(join(__dirname, '../../../packages/core/src/next-action.ts')),
+    ).digest('hex'),
+    textPrompts: Object.fromEntries(LOCALES.map((locale) => [locale, getPrompt(locale, 'text')])),
+    imagePrompts: Object.fromEntries(LOCALES.map((locale) => [locale, getPrompt(locale, 'image')])),
+    responseFormat: ACTION_CLASSIFY_RESPONSE_FORMAT,
+    imageVerification: profile.providerOptions.verifyBcrsImage ? {
+      model: profile.providerOptions.visionModel,
+      prompt: BCRS_IMAGE_VERIFICATION_PROMPT,
+      responseFormat: BCRS_IMAGE_VERIFICATION_RESPONSE_FORMAT,
+      maxTokens: BCRS_IMAGE_VERIFICATION_MAX_TOKENS,
+      temperature: profile.providerOptions.visionTemperature,
+      thinking: TOKENHUB_THINKING_DISABLED,
+      policy: 'association-and-deterministic-text-must-agree',
+      attempts: BCRS_IMAGE_VERIFICATION_ATTEMPTS,
+      literalText: {
+        contract: DEPOSIT_MARK_OCR_CONTRACT,
+        sourceDigests: {
+          controller: fileDigest(join(__dirname, '../../src/lib/deposit-mark-ocr.ts')),
+          worker: fileDigest(join(__dirname, '../../ocr/deposit-mark-worker.mjs')),
+          detector: fileDigest(join(__dirname, '../../ocr/models/PP-OCRv6_det_small.onnx')),
+          recognizer: fileDigest(join(__dirname, '../../ocr/models/PP-OCRv6_rec_small.onnx')),
+          dictionary: fileDigest(join(__dirname, '../../ocr/models/ppocrv6_dict.txt')),
+        },
+      },
+    } : false,
+    copy: Object.fromEntries(LOCALES.map((locale) => [locale, [
+      'action.return.title', 'action.return.instruction', 'action.return.qualification',
+      'action.try.title', 'action.try.instruction', 'action.try.qualification',
+      'action.check.title', 'action.check.instruction', 'action.check.qualification',
+    ].map((key) => t(locale, key as Parameters<typeof t>[1]))])),
+  } : undefined;
+  return createHash('sha256').update(JSON.stringify({ ...payload, actionContract })).digest('hex');
 }

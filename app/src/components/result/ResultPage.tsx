@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getDestinationChannel } from '@binwhere/core';
 import dynamic from 'next/dynamic';
 import type { ClassifyResult } from '@/lib/ai/types';
 import type { Locale } from '@/lib/i18n/types';
@@ -58,10 +59,13 @@ export default function ResultPage({
   userLocation,
   geoLoading,
   onScanAgain,
+  onViewNearby,
   onRequestLocation,
   locale,
 }: ResultPageProps) {
-  const nearbyChannel = result.channel ? CHANNEL_TO_NEARBY[result.channel] : null;
+  const action = result.next_action;
+  const destination = getDestinationChannel(result);
+  const nearbyChannel = destination ? CHANNEL_TO_NEARBY[destination] : null;
   const isHazardous = result.channel === 'hazardous';
   const isBcrsReturn = result.channel === 'return_point';
   const isInSingapore = userLocation
@@ -158,12 +162,12 @@ export default function ResultPage({
 
         {/* Status content */}
         <div className="relative px-4 pt-3 pb-4 flex flex-col items-center text-center">
-          <StatusIcon status={result.status} size={44} />
+          {!action && <StatusIcon status={result.status} size={44} />}
           <span
             className="inline-block mt-2 px-3 py-0.5 rounded-full text-caption font-semibold text-center"
             style={{ backgroundColor: `${config.color}20`, color: config.textColor, maxWidth: '90%' }}
           >
-            {t(locale, `status.${result.status}` as TranslationKey)}
+            {action ? t(locale, 'result.nextAction') : t(locale, `status.${result.status}` as TranslationKey)}
           </span>
           <h2 className="text-lg font-bold mt-1.5 line-clamp-2" style={{ color: config.textColor }}>
             {result.item}
@@ -178,8 +182,23 @@ export default function ResultPage({
 
       {/* Content cards */}
       <div className="px-4 pb-6 space-y-2.5 mt-2">
+        {action && (
+          <div className="bg-white rounded-card p-4 border border-gray-100 space-y-3">
+            <h3 className="text-lg font-bold text-gray-900">{action.title}</h3>
+            <p className="text-body text-gray-700 leading-relaxed">{action.instruction}</p>
+            <p className="text-body text-gray-600 leading-relaxed">{action.qualification}</p>
+            <button
+              onClick={() => {
+                if (!userLocation) onRequestLocation?.();
+                else if (isInSingapore) onViewNearby?.();
+              }}
+              disabled={!!userLocation && !isInSingapore}
+              className="w-full px-4 py-3 min-h-btn rounded-btn bg-nea-green text-white font-semibold disabled:opacity-50"
+            >{t(locale, 'bcrs.findNearby')}</button>
+          </div>
+        )}
         {/* Combined: Reason + Disposal + Preparation */}
-        <div className="bg-white rounded-card p-4 border border-gray-100 space-y-3">
+        {!action && <div className="bg-white rounded-card p-4 border border-gray-100 space-y-3">
           <p className="text-body text-gray-600 leading-relaxed">{result.reason}</p>
 
           {/* Disposal instruction tag */}
@@ -214,13 +233,13 @@ export default function ResultPage({
               </ul>
             </div>
           )}
-        </div>
+        </div>}
 
         {/* Low confidence warning */}
-        <ConfidenceBadge confidence={result.confidence} locale={locale} />
+        {!action && <ConfidenceBadge confidence={result.confidence} locale={locale} />}
 
         {/* Tip */}
-        {!isBcrsReturn && result.tip && (
+        {!action && !isBcrsReturn && result.tip && (
           <div className="bg-white rounded-card p-4 border border-gray-100">
             <p className="text-body text-gray-600">
               <span className="font-medium text-gray-700">{t(locale, 'result.tip')}</span>
@@ -259,7 +278,7 @@ export default function ResultPage({
                 <NearbyMapView
                   points={points}
                   userLocation={userLocation}
-                  channel={result.channel ?? null}
+                  channel={destination}
                   locale={locale}
                 />
               </div>

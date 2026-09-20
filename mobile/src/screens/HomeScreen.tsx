@@ -153,6 +153,7 @@ export function HomeScreen({
               facing="back"
               mode="picture"
             />
+            <Text style={styles.cameraGuide}>{t(locale, 'home.cameraGuide')}</Text>
             <View style={styles.cameraActions}>
               <Pressable
                 onPress={camera.stop}
@@ -345,6 +346,20 @@ const styles = StyleSheet.create({
   },
   cameraWrap: { borderRadius: radii.card, overflow: 'hidden' },
   camera: { width: '100%', height: 320, backgroundColor: '#000' },
+  cameraGuide: {
+    position: 'absolute',
+    top: spacing.sm,
+    left: spacing.sm,
+    right: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 8,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    color: colors.white,
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   cameraActions: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -1,5 +1,6 @@
 import {
   CHANNEL_TO_NEARBY,
+  getDestinationChannel,
   mapItemToAcceptedItem,
   type ClassifyResult,
   type NearbyChannel,
@@ -16,8 +17,9 @@ export function getNearbyTarget(result: ClassifyResult): NearbyTarget | null {
     return { channel: 'donation', acceptedItem: 'Furniture' };
   }
 
-  if (!result.channel) return null;
-  const channel = CHANNEL_TO_NEARBY[result.channel];
+  const destination = getDestinationChannel(result);
+  if (!destination) return null;
+  const channel = CHANNEL_TO_NEARBY[destination];
   if (!channel) return null;
 
   const acceptedItem = channel === 'donation'

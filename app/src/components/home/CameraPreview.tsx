@@ -167,6 +167,11 @@ export default function CameraPreview({ videoRef, status, onStart, onBcrsEntry, 
         muted
         className="w-full h-full object-cover"
       />
+      {status === 'active' && (
+        <p className="absolute left-3 right-3 top-3 rounded-full bg-black/65 px-4 py-2 text-center text-sm font-medium text-white">
+          {t(locale, 'home.cameraGuide')}
+        </p>
+      )}
       {status === 'requesting' && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80">
           <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
