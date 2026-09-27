@@ -11,7 +11,8 @@
     "export:ios": "expo export --platform ios",
     "typecheck": "tsc --noEmit",
     "test:unit": "tsx src/api/client.test.ts && tsx src/lib/history.test.ts && tsx src/lib/core-smoke.test.ts && tsx src/lib/scrub.test.ts && tsx ../packages/core/scripts/next-action.test.ts && tsx ../packages/core/scripts/v1-contract.ts --check",
-    "test:live": "tsx src/api/classify-live.test.ts"
+    "test:live": "tsx src/api/classify-live.test.ts",
+    "eas-build-pre-install": "npm ci --prefix ../packages/core"
   },
   "dependencies": {
     "@binwhere/core": "file:../packages/core",
