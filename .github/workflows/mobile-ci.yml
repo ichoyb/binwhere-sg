@@ -1,0 +1,66 @@
+name: Mobile CI
+
+on:
+  pull_request:
+    paths:
+      - mobile/**
+      - packages/core/**
+      - .nvmrc
+      - .github/workflows/mobile-ci.yml
+  push:
+    branches:
+      - master
+    paths:
+      - mobile/**
+      - packages/core/**
+      - .nvmrc
+      - .github/workflows/mobile-ci.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify Mobile
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            mobile/package-lock.json
+            packages/core/package-lock.json
+
+      # The same script EAS runs before installing, so CI exercises the build hook itself.
+      - name: Install core locked dependencies
+        run: npm run eas-build-pre-install
+
+      - name: Install mobile locked dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Run unit and contract tests
+        run: npm run test:unit
+
+      # JS-only bundle, the step where core's dependencies are resolved. It needs no macOS.
+      - name: Bundle iOS JavaScript
+        run: npm run export:ios
