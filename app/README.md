@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BinWhere Web
 
-## Getting Started
+This directory contains the Next.js Web client and the production API for
+`binwhere.sg`. Shared contracts and domain policy live in `../packages/core`;
+the native client consumes the versioned `/api/v1/*` endpoints from this app.
 
-First, run the development server:
+## Local setup
+
+Use the Node.js 24 version pinned by the repository. Install the linked core
+package before the Web package, then prepare the selected geo snapshot offline:
 
 ```bash
+cd ../packages/core
+npm ci
+cd ../../app
+npm ci
+npm run prebuild
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`npm run prebuild` does not refresh upstream data. An explicit data update uses
+`npm run data:refresh` and must be reviewed and committed separately; see
+[`docs/geo-data-release.md`](../docs/geo-data-release.md).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Verification
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm exec tsc -- --noEmit
+npm run test:unit
+npm run build
+npm run package:web
+```
 
-## Learn More
+The paid classification gates are explicit release checks:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run test:classify
+npm run test:classify:bcrs
+npm run test:release-evidence
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The production package is the sanitised `.next/deploy` tree created by
+`package:web`. It includes the local Deposit Mark OCR runtime and selected geo
+snapshot while rejecting env files, keys, Git metadata and mobile source.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Web production is not deployed through Vercel or from a developer machine. A
+Web-relevant push to `master` runs
+[`deploy-web-production.yml`](../.github/workflows/deploy-web-production.yml),
+which builds a verified immutable artifact and deploys it to the Singapore EC2
+host through private S3 and SSM. See
+[`docs/web-production-runbook.md`](../docs/web-production-runbook.md).

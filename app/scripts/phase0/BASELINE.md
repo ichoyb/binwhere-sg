@@ -245,14 +245,18 @@ retained real-image positives and the 90% recall gate. The 41 source hashes and 
 complete 1024px and 2048px processing paths pass the near-duplicate preflight; the
 closest pair is about 0.91 against the 0.995 rejection limit.
 
-The frozen final candidate passed the complete paired evaluation. Core text was
-86/86 with no regression against production. BCRS was 58/60 overall: text 16/16,
-images 42/44 (95.5%), confirmed-return recall 12/13 (92.3%), and fresh holdouts
-2/2. Wrong non-null channels, false `return_point`, uncertain blue-bin mentions,
-and provider errors were all zero. The two misses were bounded utility misses: one
-single-can image omitted its conditional action in the complete run, and one
-marked bottle beside a receipt remained conditional instead of confirmed. Neither
-claimed a wrong channel or refund. The unchanged 95% image and 90% recall gates
-therefore passed, and the complete results were recorded in
-`release-evidence/current.json` against candidate profile digest
-`5b31906e0febba831ad028d3a5390ba03b357a32fc513ae126206f6a07792c46`.
+The release candidate that shipped passed the complete paired evaluation. Core
+text was 86/86 with no regression against production. BCRS was 59/60 overall:
+text 16/16, images 43/44 (97.7%), confirmed-return recall 12/13 (92.3%), and fresh
+holdouts 2/2. Wrong non-null channels, false `return_point`, uncertain blue-bin
+mentions, and provider errors were all zero. The one miss was bounded and safe: a
+marked bottle beside a receipt remained conditional instead of confirmed, so it
+did not claim a wrong channel or refund. The unchanged 95% image and 90% recall
+gates therefore passed. The complete results are recorded in
+`release-evidence/current.json` against source-bound profile digest
+`af69c1ad55c521479ec058a94a7ef1bab9774becfe78570f7954faa1bb6c3d98`.
+
+This evidence shipped in `master` commit `1053b67` on 2026-09-21. Both the
+independent Web CI and the production build/SSM deployment completed successfully;
+post-deploy text and image requests returned the conditional `try_return_point`
+action while preserving `channel=null` for unconfirmed eligibility.
