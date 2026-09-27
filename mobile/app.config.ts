@@ -19,13 +19,11 @@ function resolveEnvironment(raw: string | undefined): AppEnvironment {
 }
 
 /**
- * EAS project id, printed by `eas init` once the Expo account exists. It is a
- * public identifier, not a secret, so it belongs in this file rather than in
- * env; the env override only exists so it can be tried before being pasted.
- * While empty, every `eas` command refuses to run — the right failure, since a
- * build must be linked to a known project.
+ * EAS project @ichoyb/binwhere. A public identifier, not a secret, so it lives
+ * here rather than in env: every `eas` command and build links to the same
+ * project no matter which machine runs it.
  */
-const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? '';
+const EAS_PROJECT_ID = 'f26eb035-da32-4693-bdc1-637a8156db42';
 
 const BUNDLE_ID = 'sg.binwhere.app';
 
@@ -182,6 +180,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         : {}),
     },
     plugins,
-    ...(EAS_PROJECT_ID ? { extra: { eas: { projectId: EAS_PROJECT_ID } } } : {}),
+    extra: { eas: { projectId: EAS_PROJECT_ID } },
   };
 };
