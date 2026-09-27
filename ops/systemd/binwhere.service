@@ -18,6 +18,9 @@ Restart=on-failure
 RestartSec=5s
 TimeoutStopSec=30s
 KillSignal=SIGTERM
+# Next.js exits 143 (128 + SIGTERM) after a graceful shutdown; without this every
+# planned stop, including each deploy restart, is recorded as a failed unit.
+SuccessExitStatus=143
 UMask=0027
 
 CapabilityBoundingSet=
