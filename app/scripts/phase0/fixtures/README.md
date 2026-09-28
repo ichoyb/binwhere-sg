@@ -3,13 +3,12 @@
 The live regression gate uses real photographs published on the web. It does not
 use generated or synthetic images.
 
-The `sg-bcrs-v20` source manifest lives in `../bcrs-test-cases.ts`. Its 41 sources
-feed 44 image assertions. Every source records its page, credit, licence or usage
-boundary, review date, and SHA-256 digest. The test runner downloads bytes into
-`fixtures/cache/`, verifies the digest, applies the Web client contract (auto-rotate,
-at most 2048 px, JPEG quality 70, white background), and then applies the API's
-production sanitiser. A changed remote file fails the gate and must be reviewed
-before its digest is updated.
+The source manifest lives in `../bcrs-test-cases.ts`. Every source records its
+page, credit, licence or usage boundary, review date, and SHA-256 digest. The test
+runner downloads bytes into `fixtures/cache/`, verifies the digest, applies the Web
+client contract (auto-rotate, at most 2048 px, JPEG quality 70, white background),
+and then applies the API's production sanitiser. A changed remote file fails the
+gate and must be reviewed before its digest is updated.
 
 Before any model request in a complete run, the runner compares the pixels after
 both production image stages. If any declared source pair reaches 0.995 perceptual

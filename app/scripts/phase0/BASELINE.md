@@ -260,3 +260,10 @@ This evidence shipped in `master` commit `1053b67` on 2026-09-21. Both the
 independent Web CI and the production build/SSM deployment completed successfully;
 post-deploy text and image requests returned the conditional `try_return_point`
 action while preserving `channel=null` for unconfirmed eligibility.
+
+The route experiments behind the 2026-09-19 and 2026-09-20 entries (scripts,
+frozen plans and research notes) were removed from the working tree after this
+release. Restore them from the same commit:
+`git show 1053b67:app/scripts/phase0/image-routes/` lists the scripts, and the
+notes are `docs/research/2026-09-19-image-action-routes.md` and
+`docs/research/2026-09-20-image-action-experiments.md`.
