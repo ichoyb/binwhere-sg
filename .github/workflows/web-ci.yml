@@ -50,10 +50,10 @@ jobs:
         run: npm ci
 
       - name: Audit production dependencies
-        run: npm audit --omit=dev --audit-level=high
+        run: npm run audit:production
 
       - name: Audit build dependencies
-        run: npm audit --audit-level=high
+        run: npm run audit:build
 
       - name: Lint
         run: npm run lint
