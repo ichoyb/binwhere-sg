@@ -40,10 +40,10 @@ app/src/data/.generated-staging-*/
 app/src/data/generated.staging-*/
 app/data/geo-snapshot.staging-*/
 
-# Phase 0 test results
-app/scripts/phase0/results/*.json
-app/scripts/phase0/results/image-routes-20260920/
-app/scripts/phase0/fixtures/cache/
+# Classification evaluation: paid-run outputs, and fixture photos that must never be committed
+app/scripts/classify-eval/results/*
+!app/scripts/classify-eval/results/.gitkeep
+app/scripts/classify-eval/fixtures/cache/
 
 # vercel
 .vercel

@@ -66,6 +66,15 @@ export function initReporting(): void {
     enableCaptureFailedRequests: false,
     attachScreenshot: false,
     attachViewHierarchy: false,
+    // The native iOS SDK records its own breadcrumb for every request, with
+    // the query string (the user's lat/lng) in `http.query`. Native crash
+    // reports never pass through beforeSend, and the SDK's dedupe keeps that
+    // breadcrumb in JS events too, because its query-less url never matches
+    // ours. So stop it at the source. JS fetch/XHR breadcrumbs, which
+    // beforeBreadcrumb scrubs, already cover the same requests. Any other
+    // native HTTP instrumentation (e.g. the Sentry Android Gradle Plugin's
+    // OkHttp support) has to be turned off the same way.
+    enableNetworkBreadcrumbs: false,
     maxBreadcrumbs: 30,
     beforeBreadcrumb: (breadcrumb) => scrubBreadcrumb(breadcrumb),
     beforeSend: (event) => scrubEvent(event),

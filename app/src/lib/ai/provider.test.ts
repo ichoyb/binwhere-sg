@@ -15,7 +15,7 @@ import {
   type TokenHubProviderOptions,
 } from './providers/tokenhub';
 import type { ClassifyProvider, ClassifyRequest, ClassifyResult } from './types';
-import { PRODUCTION_PROFILE } from '../../../scripts/phase0/baseline-profiles';
+import { PRODUCTION_PROFILE } from '../../../scripts/classify-eval/baseline-profiles';
 
 /**
  * Tests for the TokenHub request boundary and the retry policy that replaced the
