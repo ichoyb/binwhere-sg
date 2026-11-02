@@ -1,16 +1,20 @@
 import type en from './en';
 
 const ms: Record<keyof typeof en, string> = {
+  "classify.contaminatedBeveragePreparation": "Masukkan bekas ini ke dalam sampah biasa.",
+  "classify.contaminatedBeverageReason": "Kotoran atau sisa yang tidak boleh dibilas menjadikan bekas ini tidak sesuai untuk kitar semula atau bayaran balik.",
+  "classify.excludedBeveragePreparation": "Kosongkan dan bilas bekas ini, kemudian masukkan ke dalam tong kitar semula biru.",
+  "classify.excludedBeverageReason": "Bekas minuman yang kemek, mempunyai kod bar rosak, berkapasiti di luar 150ml-3L, tiada Deposit Mark atau dibeli di luar Singapura tidak boleh dipulangkan untuk bayaran balik, tetapi masih boleh dikitar semula.",
   "result.nextAction": "Langkah seterusnya",
-  "action.return.title": "Kosongkan, kemudian bawa ke pusat pemulangan",
-  "action.return.instruction": "Jangan kemekkan bekas. Kekalkan label dan kod bar dalam keadaan baik. Pulangkan untuk mendapatkan S$0.10.",
-  "action.return.qualification": "Penerimaan akhir ditentukan oleh pusat pemulangan.",
+  "action.return.title": "Pulangkan untuk S$0.10 jika bekas ini mempunyai Deposit Mark",
+  "action.return.instruction": "Jika anda membelinya di Singapura dan bekas ini mempunyai Deposit Mark (10¢ SG RETURN), kosongkan, jangan kemekkan, pastikan kod bar utuh dan bawa ke Pusat Pulangan.",
+  "action.return.qualification": "Pusat Pulangan mengimbas kod bar untuk menentukan sama ada bekas ini diterima. Tanpa Deposit Mark atau jika dibeli di luar Singapura, bilas dan masukkan ke dalam tong kitar semula biru.",
   "action.try.title": "Kosongkan bekas dan kekalkan bekas serta label",
   "action.try.instruction": "Apabila anda melalui pusat pemulangan, bawa bekas untuk diimbas. Bekas yang layak mendapat S$0.10 apabila diterima.",
   "action.try.qualification": "Kelayakan bayaran balik belum disahkan. Pusat pemulangan menentukan penerimaan akhir.",
-  "action.check.title": "Pastikan jenis bekas",
-  "action.check.instruction": "Jika ini botol plastik, cawan plastik prabungkus atau tin logam, kosongkan dan jangan kemekkan; bawa untuk diimbas apabila anda melalui pusat pemulangan.",
-  "action.check.qualification": "Foto ini belum mengesahkan jenis bekas. Botol kaca, karton dan pek kantung tidak termasuk dalam skim deposit.",
+  "action.check.title": "Semak jenis bekas ini",
+  "action.check.instruction": "Botol, tin dan cawan minuman plastik atau logam berkapasiti 150ml-3L yang mempunyai Deposit Mark (10¢ SG RETURN) boleh dipulangkan untuk S$0.10. Jika bekas anda memenuhi syarat ini, kosongkan, pastikan bekas utuh dan bawa ke Pusat Pulangan.",
+  "action.check.qualification": "Maklumat yang diberikan tidak menunjukkan bentuk atau bahan bekas ini. Botol kaca, karton dan pek kantung tidak termasuk dalam skim deposit.",
   "classify.cleanGlassReason": "Botol minuman kaca yang bersih dimasukkan ke dalam tong kitar semula biru.",
   "classify.cleanGlassPreparation": "Kosongkan, bilas dan keringkan botol.",
 
@@ -159,7 +163,7 @@ const ms: Record<keyof typeof en, string> = {
   'bcrs.machineOffline': 'Offline',
   'bcrs.machineMaintenance': 'Penyelenggaraan',
   'bcrs.pointCount': '1,000+ Pusat Pulangan di seluruh pulau',
-  'bcrs.classifyReason': 'Deposit Mark rasmi Singapura dan kod bar produk mengenal pasti saluran pemulangan BCRS untuk bekas ini. Sediakan bekas untuk bayaran balik S$0.10; Pusat Pulangan membuat keputusan penerimaan akhir.',
+  "bcrs.classifyReason": "Bekas minuman jenis ini termasuk dalam skim deposit. Jika anda membelinya di Singapura dan bekas ini mempunyai Deposit Mark (10¢ SG RETURN), pulangkan di Pusat Pulangan untuk S$0.10; mesin mengimbas kod bar untuk membuat keputusan. Tanpa Deposit Mark atau jika dibeli di luar Singapura, bilas dan masukkan ke dalam tong kitar semula biru.",
   'classify.notSureReason': 'Maklumat yang ada belum mencukupi untuk memilih saluran kitar semula dengan selamat.',
   'classify.notSurePreparation': 'Berikan foto atau penerangan yang lebih jelas yang menunjukkan keseluruhan item.',
 };

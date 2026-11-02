@@ -1,226 +1,137 @@
 import { z } from 'zod';
-import { t, type Locale } from './i18n';
-import type { ClassifyResult, NextAction } from './types/classify';
+import { t, type Locale, type TranslationKey } from './i18n';
+import { ClassifyResultSchema, type ClassifyResult, type NextAction } from './types/classify';
 
-/** Internal observations, extracted in the same call as classification. */
+/** Facts reported by the classifier; mark presence never proves refund acceptance. */
 export const BeverageEvidenceSchema = z.object({
-  /** Product identity is independent of whether the photo establishes package geometry. */
-  beverage_product: z.enum(['prepackaged_beverage', 'other', 'unclear']),
-  /** Count visible physical product containers, excluding bags and other wrapping layers. */
-  visible_container_count: z.enum(['one', 'multiple', 'unclear']),
-  subject: z.enum(['single_prepackaged_beverage_container', 'other', 'unclear']),
-  /** Whether enough of the object is visible to establish its physical container form. */
-  whole_container_visible: z.boolean(),
+  beverage_product: z.enum(['prepackaged_beverage', 'other', 'unknown']),
+  visible_container_count: z.enum(['one', 'multiple', 'unknown']),
+  subject: z.enum(['single_prepackaged_beverage_container', 'outer_packaging', 'no_container', 'other', 'unknown']),
   form: z.enum(['bottle', 'can', 'carton', 'pouch', 'cup', 'other', 'unknown']),
   material: z.enum(['plastic', 'metal', 'glass', 'paper', 'composite', 'other', 'unknown']),
-  volume_ml: z.number().positive().nullable(),
-  deposit_mark: z.enum(['singapore', 'absent', 'foreign', 'unverified']),
-  /** Exact text actually supplied by the user or read from the mark; empty when unreadable. */
-  deposit_mark_text: z.string(),
-  mark_on_subject_container: z.boolean(),
-  linear_barcode_on_subject: z.boolean(),
-  /** Observed crushing, severe container damage or damaged product barcode. */
+  volume_range: z.enum(['below_150ml', '150ml_to_3l', 'above_3l', 'unknown']),
+  /** True only for observed crushing or barcode damage; an unseen barcode is not damage. */
   damaged: z.boolean(),
-  /** Visible dirt, grease or non-beverage residue that makes ordinary recycling unsafe. */
+  /** Normal drink contents that can be emptied do not count as contamination. */
   contaminated: z.boolean(),
+  /** Readable 10¢ SG RETURN printed on the single drink container itself. */
+  singapore_mark: z.enum(['readable', 'unknown']),
+  /** Text-only explicit statements, never inferred from a photograph or foreign logo. */
+  explicitly_no_singapore_mark: z.boolean(),
+  purchased_outside_singapore: z.boolean(),
 });
 
 export type BeverageEvidence = z.infer<typeof BeverageEvidenceSchema>;
 export const BEVERAGE_EVIDENCE_JSON_SCHEMA = z.toJSONSchema(BeverageEvidenceSchema, { target: 'draft-7' });
-
 export type BeverageInputMode = 'text' | 'image';
 
-const isEligibleContainerForm = (evidence: BeverageEvidence) =>
-  evidence.form === 'bottle' || evidence.form === 'can' || evidence.form === 'cup';
+const eligibleForm = (e: BeverageEvidence) => ['bottle', 'can', 'cup'].includes(e.form);
+const eligibleMaterial = (e: BeverageEvidence) => e.material === 'plastic' || e.material === 'metal';
+const singleDrink = (e: BeverageEvidence) => e.beverage_product === 'prepackaged_beverage'
+  && e.visible_container_count === 'one' && e.subject === 'single_prepackaged_beverage_container';
+const possibleCategory = (e: BeverageEvidence) => (eligibleForm(e) || e.form === 'unknown')
+  && (eligibleMaterial(e) || e.material === 'unknown');
+const textExclusion = (e: BeverageEvidence, mode: BeverageInputMode) => mode === 'text'
+  && (e.explicitly_no_singapore_mark || e.purchased_outside_singapore);
+const volumeExcluded = (e: BeverageEvidence) => e.volume_range === 'below_150ml' || e.volume_range === 'above_3l';
+const categoryGeometry = (e: BeverageEvidence) => (eligibleForm(e) && eligibleMaterial(e))
+  || (possibleCategory(e) && e.singapore_mark === 'readable');
 
-const isPlasticOrMetal = (evidence: BeverageEvidence) =>
-  evidence.material === 'plastic' || evidence.material === 'metal';
-
-const volumeCanQualify = (evidence: BeverageEvidence) =>
-  evidence.volume_ml === null || (evidence.volume_ml >= 150 && evidence.volume_ml <= 3000);
-
-/** Conditional guidance requires evidence that the user presented one container. */
-const isSingleBeverageCandidate = (evidence: BeverageEvidence) =>
-  (evidence.subject === 'single_prepackaged_beverage_container'
-    && evidence.beverage_product !== 'other'
-    && evidence.visible_container_count !== 'multiple')
-  || (evidence.beverage_product === 'prepackaged_beverage'
-    && evidence.visible_container_count === 'one'
-    && evidence.subject !== 'other');
-
-export function hasReadableSingaporeMarkText(text: string): boolean {
-  const normalized = text.toUpperCase();
-  const compact = normalized.replace(/\s+/g, '');
-  return compact.includes('10¢') && /\bSG\b/.test(normalized) && /\bRETURN\b/.test(normalized);
+// Shape and material identify the category. Capacity, like damage and contamination, can only
+// exclude: containers outside 150ml-3L never carry the Deposit Mark the user is told to check.
+function categoryEstablished(e: BeverageEvidence, mode: BeverageInputMode) {
+  return singleDrink(e) && categoryGeometry(e) && !e.damaged && !e.contaminated
+    && !volumeExcluded(e) && !textExclusion(e, mode);
 }
 
-/** A model label alone is not evidence that a blurred mark belongs to another scheme. */
-export function hasExplicitForeignDepositText(evidence: BeverageEvidence): boolean {
-  if (evidence.deposit_mark !== 'foreign' || hasReadableSingaporeMarkText(evidence.deposit_mark_text)) {
-    return false;
-  }
-  return /\bCA\s+CRV\b/i.test(evidence.deposit_mark_text)
-    || /\b(refund|deposit|collection|depot|participating|territor(?:y|ies)|pfand|pant|retur)\b/i
-      .test(evidence.deposit_mark_text);
-}
-
-function effectiveDepositMark(evidence: BeverageEvidence, mode: BeverageInputMode) {
-  if (evidence.deposit_mark === 'singapore') {
-    return mode === 'text' || hasReadableSingaporeMarkText(evidence.deposit_mark_text)
-      ? 'singapore' as const
-      : 'unverified' as const;
-  }
-  if (evidence.deposit_mark === 'foreign') {
-    return hasExplicitForeignDepositText(evidence) ? 'foreign' as const : 'unverified' as const;
-  }
-  // A single photograph can establish a visible mark, but cannot prove that no mark
-  // exists anywhere on the object. Explicit text can make that claim.
-  if (evidence.deposit_mark === 'absent' && mode === 'image') return 'unverified' as const;
-  return evidence.deposit_mark;
-}
-
-export function hasConfirmedReturnEvidence(evidence: BeverageEvidence, mode: BeverageInputMode) {
-  return evidence.beverage_product === 'prepackaged_beverage'
-    && evidence.visible_container_count === 'one'
-    && evidence.subject === 'single_prepackaged_beverage_container'
-    && isEligibleContainerForm(evidence)
-    && isPlasticOrMetal(evidence)
-    && volumeCanQualify(evidence)
-    && effectiveDepositMark(evidence, mode) === 'singapore'
-    && evidence.mark_on_subject_container
-    && evidence.linear_barcode_on_subject
-    && !evidence.damaged
-    && !evidence.contaminated;
-}
-
-function toUnconfirmed(result: ClassifyResult): ClassifyResult {
+/** Uncertainty has no disposal channel; all visible copy is owned by the application. */
+export function toUnconfirmed(result: ClassifyResult, locale: Locale): ClassifyResult {
   const classification = { ...result };
   delete classification.next_action;
   return {
-    ...classification,
-    status: 'not_sure',
-    channel: null,
+    ...classification, status: 'not_sure', channel: null,
     confidence: Math.min(result.confidence, 0.49),
+    reason: t(locale, 'classify.notSureReason'),
+    preparation: [t(locale, 'classify.notSurePreparation')], tip: undefined,
   };
 }
 
-/**
- * Resolve model observations into a classification and a useful user action.
- * The model identifies visual facts; application code owns channel safety and copy.
- */
-export function applyBeverageActionPolicy(
-  result: ClassifyResult,
-  evidence: BeverageEvidence,
-  locale: Locale,
-  mode: BeverageInputMode,
+function chooseChannel(
+  result: ClassifyResult, channel: 'return_point' | 'blue_bin' | 'general_waste',
+  locale: Locale, reason: TranslationKey, preparation: TranslationKey,
 ): ClassifyResult {
-  let classification = { ...result };
-  delete classification.next_action;
-
-  const confirmedReturn = hasConfirmedReturnEvidence(evidence, mode);
-  // The application derives the channel from verified facts. This also recovers a
-  // conservative model answer once independent image checks confirm the evidence.
-  if (confirmedReturn) {
-    classification = {
-      ...classification,
-      status: 'recyclable',
-      channel: 'return_point',
-    };
-  } else if (classification.channel === 'return_point') {
-    classification = toUnconfirmed(classification);
-  }
-
-  // Once form, material and cleanliness are established, a glass beverage bottle
-  // has a deterministic Singapore channel. Do not preserve a probabilistic model
-  // guess that sends the same observed object to general waste.
-  const cleanGlassBottle = evidence.beverage_product === 'prepackaged_beverage'
-    && evidence.visible_container_count === 'one'
-    && evidence.subject === 'single_prepackaged_beverage_container'
-    && evidence.form === 'bottle'
-    && evidence.material === 'glass'
-    && !evidence.damaged
-    && !evidence.contaminated;
-  if (cleanGlassBottle && (classification.channel === 'general_waste' || classification.channel === null)) {
-    classification = {
-      ...classification,
-      status: 'recyclable',
-      channel: 'blue_bin',
-      reason: t(locale, 'classify.cleanGlassReason'),
-      preparation: [t(locale, 'classify.cleanGlassPreparation')],
-      tip: undefined,
+  const status = channel === 'general_waste' ? 'not_recyclable' : 'recyclable';
+  if (channel === 'return_point') {
+    return {
+      ...result, channel, status, confidence: Math.max(0.5, result.confidence),
+      reason: t(locale, 'bcrs.classifyReason'),
+      preparation: ['bcrs.step1', 'bcrs.step2', 'bcrs.step3', 'bcrs.step4']
+        .map((key) => t(locale, key as TranslationKey)),
+      tip: t(locale, 'bcrs.refundAmount'),
     };
   }
+  if (result.channel === channel && result.status === status) return result;
+  return {
+    ...result, channel, status, confidence: Math.max(0.5, result.confidence),
+    reason: t(locale, reason), preparation: [t(locale, preparation)], tip: undefined,
+  };
+}
 
-  const mark = effectiveDepositMark(evidence, mode);
-  const modelChoseOrdinaryWaste = classification.channel === 'blue_bin'
-    || classification.channel === 'general_waste';
-  const partialBeverageImage = mode === 'image'
-    && isSingleBeverageCandidate(evidence)
-    && !evidence.whole_container_visible;
-  const unknownEligibilityBottleOrCan = isSingleBeverageCandidate(evidence)
-    && isEligibleContainerForm(evidence)
-    && isPlasticOrMetal(evidence)
-    && mark === 'unverified';
-  // A close crop that does not establish either package geometry or material
-  // cannot support a confident disposal channel. Keep it unclassified even when
-  // the model guesses a pouch or another ordinary-waste item from label artwork.
-  const incompletePackageEvidence = mode === 'image'
-    && !evidence.whole_container_visible
-    && mark === 'unverified'
-    && (evidence.form === 'unknown' || evidence.material === 'unknown');
-  if (modelChoseOrdinaryWaste
-    && (partialBeverageImage || unknownEligibilityBottleOrCan || incompletePackageEvidence)) {
-    classification = toUnconfirmed(classification);
+/** Ordered category policy shared by text and image classification. */
+export function applyBeverageActionPolicy(
+  result: ClassifyResult, evidence: BeverageEvidence, locale: Locale, mode: BeverageInputMode,
+): ClassifyResult {
+  const base = { ...result };
+  delete base.next_action;
+  let classification: ClassifyResult;
+  // Ambiguous scenes and outer packaging cannot describe one container.
+  if (evidence.visible_container_count === 'multiple'
+    || evidence.subject === 'outer_packaging' || evidence.subject === 'no_container') {
+    classification = toUnconfirmed(base, locale);
+  } else if (evidence.beverage_product === 'other' || evidence.subject === 'other') {
+    // Identified excluded products follow their ordinary channel (rule 5).
+    classification = base.channel === 'return_point' ? toUnconfirmed(base, locale) : base;
+  } else if (evidence.beverage_product === 'unknown' || evidence.visible_container_count === 'unknown'
+    || evidence.subject === 'unknown') {
+    classification = possibleCategory(evidence) || base.channel === 'return_point'
+      ? toUnconfirmed(base, locale) : base;
+  } else if (possibleCategory(evidence)) {
+    if (!categoryGeometry(evidence)) {
+      classification = toUnconfirmed(base, locale);
+    } else if (evidence.contaminated) {
+      classification = chooseChannel(base, 'general_waste', locale,
+        'classify.contaminatedBeverageReason', 'classify.contaminatedBeveragePreparation');
+    } else if (evidence.damaged || volumeExcluded(evidence) || textExclusion(evidence, mode)) {
+      classification = chooseChannel(base, 'blue_bin', locale,
+        'classify.excludedBeverageReason', 'classify.excludedBeveragePreparation');
+    } else {
+      classification = chooseChannel(base, 'return_point', locale, 'bcrs.classifyReason', 'bcrs.step1');
+    }
+  } else if (evidence.form === 'bottle' && evidence.material === 'glass'
+    && !evidence.damaged && !evidence.contaminated
+    && (base.channel === 'general_waste' || base.channel === null || base.channel === 'return_point')) {
+    classification = chooseChannel(base, 'blue_bin', locale,
+      'classify.cleanGlassReason', 'classify.cleanGlassPreparation');
+  } else {
+    classification = base.channel === 'return_point' ? toUnconfirmed(base, locale) : base;
   }
-
-  const nextAction = buildNextAction(classification, evidence, locale, mode);
-  if (!nextAction) return classification;
-
-  if (classification.status === 'not_sure') {
-    classification = {
-      ...classification,
-      reason: nextAction.qualification,
-      preparation: [nextAction.instruction],
-      tip: undefined,
-    };
-  }
-  return { ...classification, next_action: nextAction };
+  const action = buildNextAction(classification, evidence, locale, mode);
+  if (action) classification.next_action = action;
+  return ClassifyResultSchema.parse(classification);
 }
 
 export function buildNextAction(
-  result: ClassifyResult,
-  evidence: BeverageEvidence,
-  locale: Locale,
-  mode: BeverageInputMode = 'text',
+  result: ClassifyResult, evidence: BeverageEvidence, locale: Locale, mode: BeverageInputMode = 'text',
 ): NextAction | undefined {
-  const mark = effectiveDepositMark(evidence, mode);
-  const confirmed = result.channel === 'return_point'
-    && result.status === 'recyclable'
-    && hasConfirmedReturnEvidence(evidence, mode);
-  const canTry = result.channel === null && result.status === 'not_sure'
-    && isSingleBeverageCandidate(evidence)
-    && isEligibleContainerForm(evidence)
-    && isPlasticOrMetal(evidence)
-    && volumeCanQualify(evidence)
-    && (mark === 'unverified' || mark === 'singapore')
-    && !evidence.damaged
-    && !evidence.contaminated;
+  const confirmed = result.channel === 'return_point' && result.status === 'recyclable'
+    && categoryEstablished(evidence, mode);
   const needsTypeCheck = result.channel === null && result.status === 'not_sure'
-    && mode === 'image'
-    && isSingleBeverageCandidate(evidence)
-    && !evidence.whole_container_visible
-    && volumeCanQualify(evidence)
-    && mark !== 'absent'
-    && mark !== 'foreign'
-    && !evidence.damaged
-    && !evidence.contaminated;
-  if (!confirmed && !canTry && !needsTypeCheck) return undefined;
-  const kind = confirmed ? 'return' : canTry ? 'try' : 'check';
+    && singleDrink(evidence) && possibleCategory(evidence) && !categoryGeometry(evidence);
+  if (!confirmed && !needsTypeCheck) return undefined;
+  const kind = confirmed ? 'return' : 'check';
   return {
-    type: confirmed ? 'return_container' : canTry ? 'try_return_point' : 'check_container_type',
-    channel: 'return_point',
-    title: t(locale, `action.${kind}.title`),
-    instruction: t(locale, `action.${kind}.instruction`),
+    type: confirmed ? 'return_container' : 'check_container_type', channel: 'return_point',
+    title: t(locale, `action.${kind}.title`), instruction: t(locale, `action.${kind}.instruction`),
     qualification: t(locale, `action.${kind}.qualification`),
   };
 }

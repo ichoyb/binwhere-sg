@@ -6,6 +6,7 @@ import {
   type ClassifyResult,
 } from './types';
 import { RetryableProviderError, TokenHubProvider } from './providers/tokenhub';
+import { toUnconfirmed } from '@binwhere/core';
 
 /**
  * TokenHub is the only classify provider.
@@ -33,24 +34,29 @@ export interface ClassificationExecutionPolicy {
   validateResultSemantics: boolean;
 }
 
-/** Runtime policy used by the source-bound candidate and, once deployed, production. */
+/**
+ * Runtime policy used by the source-bound candidate and, once deployed, production.
+ *
+ * Text timings come from the international endpoint (86 calls without a timeout,
+ * 2026-10-26): about 2s to the first token, then 64 tokens/s for 180–230 output
+ * tokens; p95 7.3s, slowest 9.6s. Slow calls arrive in bursts, not with particular
+ * items: two items that timed out twice in a row at 8s answered in under 5s fifteen
+ * minutes later. A 12s attempt covers that tail, and the 25s budget fits a second
+ * full attempt.
+ *
+ * One image sample is one vision call. On the same endpoint (108 kimi-k3.1-pro
+ * calls at low reasoning effort under a 120s timeout, 2026-11-02) it took p50
+ * 13.0s, p90 16.1s, slowest 20.6s; a 30s attempt covers that.
+ */
 export const DEFAULT_EXECUTION_POLICY: ClassificationExecutionPolicy = {
-  textAttemptMs: 8_000,
-  imageAttemptMs: 40_000,
-  textBudgetMs: 20_000,
-  imageBudgetMs: 42_000,
+  textAttemptMs: 12_000,
+  imageAttemptMs: 30_000,
+  textBudgetMs: 25_000,
+  imageBudgetMs: 50_000,
   minAttemptMs: 3_000,
   maxAttempts: 3,
   retryBackoffMs: 500,
   validateResultSemantics: true,
-};
-
-/** Exact timeout policy deployed at revision 0a5852f. */
-export const PRODUCTION_0A5852F_EXECUTION_POLICY: ClassificationExecutionPolicy = {
-  ...DEFAULT_EXECUTION_POLICY,
-  imageAttemptMs: 15_000,
-  imageBudgetMs: 32_000,
-  validateResultSemantics: false,
 };
 
 /** How long one attempt may run before it is abandoned. */
@@ -64,12 +70,13 @@ export const ATTEMPT_MS = (
  *
  * The client does not repeat a completed classification failure, so this bounds all
  * provider work for one request. End-to-end latency also includes request upload and
- * image sanitisation. The action path runs a primary vision classification followed
- * by independent mark/barcode verification and local OCR. A valid primary generation
- * can itself approach 20s, so the 40s attempt limit covers the complete transaction.
- * The 42s total still bounds user wait. A reproduced fast cold-start failure leaves
- * enough budget for a second attempt, while a genuinely hung transaction cannot
- * multiply into another long attempt.
+ * image sanitisation. The native client sets no request timeout, and React Native on
+ * iOS sends through a default URLSession configuration, whose request timeout is 60s.
+ * An answer later than that reaches the user as a dropped connection rather than a
+ * classification failure, so the image budget stays at 50s. That leaves a 20s second
+ * attempt after a timed-out first one, enough for a typical image, and a full second
+ * attempt after a fast failure such as the cold-start 504. The same budget bounds the
+ * majority vote: a tiebreak sample runs only in the time the first two left.
  */
 export const BUDGET_MS = (
   request: ClassifyRequest,
@@ -81,15 +88,19 @@ export const BUDGET_MS = (
  *
  * The abort matters: a timeout that only stops *waiting* leaves the socket and the
  * upstream generation running, so a slow provider accumulates in-flight work behind
- * every request that gave up on it.
+ * every request that gave up on it. `cancel` stops the attempt early once its answer
+ * is no longer needed.
  */
 async function attempt(
   provider: ClassifyProvider,
   request: ClassifyRequest,
   ms: number,
+  cancel?: AbortSignal,
 ): Promise<ClassifyResult> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), ms);
+  const stop = () => controller.abort();
+  cancel?.addEventListener('abort', stop);
   try {
     return await provider.classify(request, controller.signal);
   } catch (err) {
@@ -99,18 +110,23 @@ async function attempt(
     throw err;
   } finally {
     clearTimeout(timer);
+    cancel?.removeEventListener('abort', stop);
   }
 }
 
+const validate = (result: ClassifyResult, policy: ClassificationExecutionPolicy) => (
+  policy.validateResultSemantics
+    ? ClassifyResultSchema.parse(result)
+    : ClassifyResultShapeSchema.parse(result)
+);
+
+/** What a user acts on. Two samples agree only when all of it matches. */
+const decision = (result: ClassifyResult) =>
+  `${result.status}/${result.channel ?? 'null'}/${result.next_action?.type ?? 'none'}`;
+
 /**
- * Classify an item, retrying transient failures until the budget is spent.
- *
- * The retry is not defensive padding — it covers a specific, reproduced behaviour:
- * a model that has been idle answers the first request with `504 504001` after
- * ~3.2s and serves the next one normally. With no second provider left to absorb
- * that, an un-retried cold start is a 500 for the first user after a quiet period,
- * and BinWhere's traffic is quiet enough for that to be the common case rather than
- * the rare one.
+ * Classify an item within its budget: text takes one sample, an image the majority
+ * of independent samples.
  */
 export async function classifyItem(
   request: ClassifyRequest,
@@ -121,28 +137,98 @@ export async function classifyItem(
   executionPolicy: ClassificationExecutionPolicy = DEFAULT_EXECUTION_POLICY,
 ): Promise<ClassifyResult> {
   const deadline = Date.now() + BUDGET_MS(request, executionPolicy);
+  return request.image
+    ? classifyImageByMajority(provider, request, executionPolicy, deadline)
+    : drawSample(provider, request, executionPolicy, deadline);
+}
+
+/**
+ * Classify an image by the majority of independent samples.
+ *
+ * The vendor fixes the vision model's temperature (1.0 for kimi-k3.1-pro), so one
+ * photo can draw different answers from different calls. On 2026-11-01 the previous
+ * model, kimi-k2.6, called the same tight crop of a canned coffee a "powder tin" for
+ * blue_bin in one run and a "sachet" for general_waste in the next, each at
+ * confidence 0.9 or more, and no prompt rule removes sampling noise. Two parallel
+ * samples that agree are returned;
+ * a disagreement draws a third, and without a majority the answer is not_sure. A
+ * sample that cannot be drawn fails the classification as a single call would,
+ * except the tiebreak: two disagreeing samples already show the answer is uncertain.
+ */
+async function classifyImageByMajority(
+  provider: ClassifyProvider,
+  request: ClassifyRequest,
+  executionPolicy: ClassificationExecutionPolicy,
+  deadline: number,
+): Promise<ClassifyResult> {
+  const cancel = new AbortController();
+  const draw = () => drawSample(provider, request, executionPolicy, deadline, cancel.signal);
+  try {
+    const samples = await Promise.all([draw(), draw()]);
+    if (decision(samples[0]) === decision(samples[1])) return samples[0];
+
+    console.warn(`[ai] Image samples disagree: ${samples.map(decision).join(' vs ')}`);
+    if (deadline - Date.now() >= executionPolicy.minAttemptMs) {
+      try {
+        const third = await draw();
+        const majority = samples.find((sample) => decision(sample) === decision(third));
+        if (majority) return majority;
+        samples.push(third);
+      } catch (err) {
+        console.warn(`[ai] Image tiebreak failed: ${(err as Error).message}`);
+      }
+    }
+
+    // A sample that already chose not_sure carries the application's own copy and,
+    // when its evidence allows, the check action.
+    console.warn(`[ai] Image samples have no majority (${samples.map(decision).join(', ')}); answering not_sure`);
+    return samples.find((sample) => sample.status === 'not_sure')
+      ?? validate(toUnconfirmed(samples[0], request.locale ?? 'en'), executionPolicy);
+  } finally {
+    // A failed sample leaves its sibling in flight; stop it rather than pay for it.
+    cancel.abort();
+  }
+}
+
+/**
+ * Draw one classification, retrying transient failures until the deadline.
+ *
+ * The retry is not defensive padding — it covers a specific, reproduced behaviour:
+ * a model that has been idle answers the first request with `504 504001` after
+ * ~3.2s and serves the next one normally. With no second provider left to absorb
+ * that, an un-retried cold start is a 500 for the first user after a quiet period,
+ * and BinWhere's traffic is quiet enough for that to be the common case rather than
+ * the rare one.
+ */
+async function drawSample(
+  provider: ClassifyProvider,
+  request: ClassifyRequest,
+  executionPolicy: ClassificationExecutionPolicy,
+  deadline: number,
+  cancel?: AbortSignal,
+): Promise<ClassifyResult> {
   let lastError: Error | undefined;
 
   for (let n = 1; n <= executionPolicy.maxAttempts; n += 1) {
     const remaining = deadline - Date.now();
-    if (n > 1 && remaining < executionPolicy.minAttemptMs) break;
+    if (cancel?.aborted || (n > 1 && remaining < executionPolicy.minAttemptMs)) break;
 
     try {
       const result = await attempt(
         provider,
         request,
         Math.min(ATTEMPT_MS(request, executionPolicy), remaining),
+        cancel,
       );
       if (n > 1) {
         // A retry that succeeds still means the first call failed. Say so, or the
         // provider degrades invisibly until it degrades past the budget too.
         console.warn(`[ai] Classify succeeded on attempt ${n} — previous attempt failed: ${lastError?.message}`);
       }
-      return executionPolicy.validateResultSemantics
-        ? ClassifyResultSchema.parse(result)
-        : ClassifyResultShapeSchema.parse(result);
+      return validate(result, executionPolicy);
     } catch (err) {
       lastError = err as Error;
+      if (cancel?.aborted) break;
       if (!(err instanceof RetryableProviderError)) {
         // A bad key, an exhausted balance, a model the account cannot call: retrying
         // cannot change the answer, and pretending otherwise buries the real cause.

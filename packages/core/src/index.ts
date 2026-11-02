@@ -96,9 +96,7 @@ export {
   buildNextAction,
   getDestinationChannel,
   getResultShareText,
-  hasConfirmedReturnEvidence,
-  hasExplicitForeignDepositText,
-  hasReadableSingaporeMarkText,
+  toUnconfirmed,
 } from './next-action';
 export type { BeverageEvidence, BeverageInputMode } from './next-action';
 

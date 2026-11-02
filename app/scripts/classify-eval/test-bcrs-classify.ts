@@ -17,19 +17,17 @@
  * gitignored cache, hash-pinned, and sanitised through the production pipeline.
  */
 
-import { createHash } from 'node:crypto';
 import * as dotenv from 'dotenv';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import sharp from 'sharp';
 
-import {
-  IMAGE_QUALITY,
-  type ClassifyResult,
-  type Locale,
-} from '@binwhere/core';
+import { IMAGE_QUALITY } from '@binwhere/core';
 
 import { classifyItem } from '../../src/lib/ai/provider';
+import { loadSource } from './image-fixtures';
+import { validateProductionBaseline } from './production-validation';
+import { scoreBcrsResults, type RegressionResult } from './scoring';
 import {
   TOKENHUB_TEXT_MODEL,
   TOKENHUB_VISION_MODEL,
@@ -45,10 +43,8 @@ import {
   type BcrsImageCase,
   type BcrsImageSource,
   type BcrsTextCase,
-  type ExpectedClassification,
 } from './bcrs-test-cases';
 import {
-  CANDIDATE_PROFILE,
   PRODUCTION_PROFILE,
   profileDigest,
   selectProfile,
@@ -57,49 +53,13 @@ import {
   BCRS_GATE_THRESHOLDS,
   BCRS_TRUTH_SET_DIGEST,
   checkBcrsResult,
-  mentionsBlueBin,
-  resultText,
 } from './release-contract';
 
 dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
-const CACHE_DIR = path.join(__dirname, 'fixtures', 'cache');
 const RESULTS_DIR = path.join(__dirname, 'results');
-const MAX_SOURCE_BYTES = 5 * 1024 * 1024;
-const SOURCE_DOWNLOAD_MS = 20_000;
 const CALL_SPACING_MS = 1_000;
-const MAX_BASELINE_PAIR_AGE_MS = 24 * 60 * 60 * 1000;
 const PERCEPTUAL_FINGERPRINT_SIZE = 64;
-
-type Mode = 'text' | 'image';
-
-interface RegressionResult {
-  id: string;
-  mode: Mode;
-  locale: Locale;
-  partition: 'regression' | 'holdout';
-  expected: ExpectedClassification;
-  actual: ClassifyResult | null;
-  assertions: string[];
-  durationMs: number;
-  sourcePageUrl?: string;
-  error?: string;
-}
-
-interface StoredProductionBaseline {
-  timestamp: string;
-  runKind: string;
-  truthSetDigest: string;
-  profile: { id: string; revision: string; digest: string };
-  gate: {
-    measurementValid: boolean;
-    completeSuite: boolean;
-    total: number;
-    holdoutTotal: number;
-    providerErrors: number;
-  };
-  results: Array<{ id: string }>;
-}
 
 interface ImageSimilarityPair {
   leftSourceId: string;
@@ -144,15 +104,7 @@ function selectCases(): Array<
   return selected;
 }
 
-function sha256(buffer: Buffer): string {
-  return createHash('sha256').update(buffer).digest('hex');
-}
-
-function assertProductionBaseline(
-  truthSetDigest: string,
-  expectedIds: readonly string[],
-  expectedHoldoutTotal: number,
-): void {
+function assertProductionBaseline(): void {
   const baselinePath = path.join(
     __dirname,
     'baselines',
@@ -160,86 +112,11 @@ function assertProductionBaseline(
     `${PRODUCTION_PROFILE.id}.json`,
   );
   if (!fs.existsSync(baselinePath)) {
-    throw new Error(`Production baseline is missing: ${baselinePath}. Run --profile=production first.`);
+    throw new Error(`Production baseline is missing: ${baselinePath}. Run baseline:production with the 5a19b7f worktree; see docs/classify-eval.md.`);
   }
 
-  const baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8')) as StoredProductionBaseline;
-  if (baseline.truthSetDigest !== truthSetDigest) {
-    throw new Error('Production BCRS baseline does not use the current frozen truth set.');
-  }
-  if (
-    baseline.profile.id !== PRODUCTION_PROFILE.id ||
-    baseline.profile.revision !== PRODUCTION_PROFILE.revision ||
-    baseline.profile.digest !== profileDigest(PRODUCTION_PROFILE)
-  ) {
-    throw new Error('Production BCRS baseline identity does not match the frozen production contract.');
-  }
-  const baselineIds = new Set(baseline.results.map((result) => result.id));
-  if (
-    baseline.runKind !== 'complete' ||
-    !baseline.gate.completeSuite ||
-    baseline.gate.total !== expectedIds.length ||
-    baseline.gate.holdoutTotal !== expectedHoldoutTotal ||
-    baseline.results.length !== expectedIds.length ||
-    baselineIds.size !== expectedIds.length ||
-    expectedIds.some((id) => !baselineIds.has(id))
-  ) {
-    throw new Error('Production BCRS baseline does not contain the complete current suite.');
-  }
-  if (!baseline.gate.measurementValid || baseline.gate.providerErrors !== 0) {
-    throw new Error('Production BCRS baseline is not a valid zero-provider-error measurement.');
-  }
-  const baselineTimestamp = Date.parse(baseline.timestamp);
-  if (
-    !Number.isFinite(baselineTimestamp) ||
-    Date.now() - baselineTimestamp > MAX_BASELINE_PAIR_AGE_MS ||
-    baselineTimestamp > Date.now() + 60_000
-  ) {
-    throw new Error('Production BCRS baseline is outside the 24-hour candidate comparison window.');
-  }
-}
-
-async function downloadSource(source: BcrsImageSource): Promise<Buffer> {
-  const response = await fetch(source.imageUrl, {
-    redirect: 'follow',
-    signal: AbortSignal.timeout(SOURCE_DOWNLOAD_MS),
-    headers: { 'User-Agent': 'BinWhere-BCRS-Regression/1.0' },
-  });
-  if (!response.ok) {
-    throw new Error(`Image download failed with HTTP ${response.status}: ${source.sourcePageUrl}`);
-  }
-
-  const contentLength = Number(response.headers.get('content-length'));
-  if (Number.isFinite(contentLength) && contentLength > MAX_SOURCE_BYTES) {
-    throw new Error(`Image source exceeds ${MAX_SOURCE_BYTES} bytes: ${source.id}`);
-  }
-
-  const buffer = Buffer.from(await response.arrayBuffer());
-  if (buffer.length > MAX_SOURCE_BYTES) {
-    throw new Error(`Downloaded image exceeds ${MAX_SOURCE_BYTES} bytes: ${source.id}`);
-  }
-  const actualHash = sha256(buffer);
-  if (actualHash !== source.sha256) {
-    throw new Error(
-      `Image source changed for ${source.id}: expected ${source.sha256}, received ${actualHash}. ` +
-      'Review the source again before updating the manifest.',
-    );
-  }
-
-  fs.mkdirSync(CACHE_DIR, { recursive: true });
-  fs.writeFileSync(path.join(CACHE_DIR, source.filename), buffer);
-  return buffer;
-}
-
-async function loadSource(source: BcrsImageSource): Promise<Buffer> {
-  const cachePath = path.join(CACHE_DIR, source.filename);
-  if (fs.existsSync(cachePath)) {
-    const cached = fs.readFileSync(cachePath);
-    if (sha256(cached) === source.sha256) return cached;
-    console.warn(`[fixture] Cached bytes failed hash verification; refreshing ${source.id}`);
-  }
-  console.log(`[fixture] Downloading real photo: ${source.id}`);
-  return downloadSource(source);
+  const baseline: unknown = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
+  validateProductionBaseline(baseline, 'bcrs', new Date().toISOString());
 }
 
 async function composeFixture(
@@ -350,6 +227,7 @@ async function assertDistinctImageSources(
 }
 
 async function main() {
+  const profile = selectProfile(parseArg('profile'));
   if (!process.env.TOKENHUB_API_KEY) {
     throw new Error('TOKENHUB_API_KEY not set in app/.env');
   }
@@ -361,19 +239,14 @@ async function main() {
     (testCase) => testCase.partition === 'holdout',
   ).length;
   const completeSuite = !diagnosticRun && selected.length === expectedTotal;
-  const profile = selectProfile(parseArg('profile'));
   const provider = new TokenHubProvider(undefined, profile.providerOptions);
   const sources = new Map(BCRS_IMAGE_SOURCES.map((source) => [source.id, source]));
   const cleanImages = new Map<string, string>();
   const results: RegressionResult[] = [];
   const truthSetDigest = BCRS_TRUTH_SET_DIGEST;
 
-  if (profile.id === CANDIDATE_PROFILE.id && completeSuite) {
-    assertProductionBaseline(
-      truthSetDigest,
-      selected.map(({ testCase }) => testCase.id),
-      expectedHoldoutTotal,
-    );
+  if (completeSuite) {
+    assertProductionBaseline();
   }
 
   console.log('BCRS exact classification gate');
@@ -456,69 +329,15 @@ async function main() {
     }
   }
 
-  const outputDirectory = profile.id === 'production-0a5852f' && completeSuite
-    ? path.join(__dirname, 'baselines', BCRS_BASELINE.id)
-    : RESULTS_DIR;
+  const outputDirectory = RESULTS_DIR;
   fs.mkdirSync(outputDirectory, { recursive: true });
-  const outputPath = profile.id === 'production-0a5852f' && completeSuite
-    ? path.join(outputDirectory, `${profile.id}.json`)
-    : path.join(outputDirectory, `bcrs-${Date.now()}.json`);
-  const passed = results.filter((result) => !result.error && result.assertions.length === 0).length;
-  const textResults = results.filter((result) => result.mode === 'text');
-  const imageResults = results.filter((result) => result.mode === 'image');
-  const textPassed = textResults.filter(
-    (result) => !result.error && result.assertions.length === 0,
-  ).length;
-  const imagePassed = imageResults.filter(
-    (result) => !result.error && result.assertions.length === 0,
-  ).length;
-  const imageReturnPointResults = imageResults.filter(
-    (result) => result.expected.channel === 'return_point',
-  );
-  const imageReturnPointsFound = imageReturnPointResults.filter(
-    (result) => !result.error && result.actual?.channel === 'return_point' &&
-      result.actual.status === 'recyclable',
-  ).length;
-  const imageExactAccuracy = imageResults.length === 0 ? 1 : imagePassed / imageResults.length;
-  const imageReturnPointRecall = imageReturnPointResults.length === 0
-    ? 1
-    : imageReturnPointsFound / imageReturnPointResults.length;
-  const holdout = results.filter((result) => result.partition === 'holdout');
-  const holdoutPassed = holdout.filter((result) => !result.error && result.assertions.length === 0).length;
-  const wrongChannelDirections = results.filter(
-    (result) => result.actual && result.actual.channel !== null &&
-      result.actual.channel !== result.expected.channel,
-  ).length;
-  const falseReturnPoints = results.filter(
-    (result) => result.expected.channel !== 'return_point' && result.actual?.channel === 'return_point',
-  ).length;
-  const notSureBlueBinMentions = results.filter(
-    (result) => result.expected.channel === null && result.actual &&
-      mentionsBlueBin(resultText(result.actual)),
-  ).length;
-  const providerErrors = results.filter((result) => Boolean(result.error)).length;
-  const measurementValid = providerErrors === 0;
-  const holdoutSafetyPassed = holdout.filter((result) => {
-    if (result.error || !result.actual) return false;
-    const wrongDirection = result.actual.channel !== null &&
-      result.actual.channel !== result.expected.channel;
-    const blueBinLeak = result.expected.channel === null &&
-      mentionsBlueBin(resultText(result.actual));
-    return !wrongDirection && !blueBinLeak &&
-      (!profile.providerOptions.nextActions || result.assertions.length === 0);
-  }).length;
-  const assertionsPass = measurementValid && passed === results.length &&
-    falseReturnPoints === 0 && notSureBlueBinMentions === 0;
-  const releaseEligible = completeSuite &&
-    holdout.length === expectedHoldoutTotal &&
-    measurementValid &&
-    textPassed === textResults.length &&
-    imageExactAccuracy >= BCRS_GATE_THRESHOLDS.imageExactAccuracy &&
-    imageReturnPointRecall >= BCRS_GATE_THRESHOLDS.imageReturnPointRecall &&
-    wrongChannelDirections === 0 &&
-    falseReturnPoints === 0 &&
-    notSureBlueBinMentions === 0 &&
-    holdoutSafetyPassed === holdout.length;
+  const outputPath = path.join(outputDirectory, `bcrs-${Date.now()}.json`);
+  const { gate, assertionsPass } = scoreBcrsResults(results, completeSuite, expectedHoldoutTotal,
+    profile.providerOptions.nextActions);
+  const { passed, measurementValid, releaseEligible, textPassed, textTotal, imagePassed, imageTotal,
+    imageExactAccuracy, imageReturnPointsFound, imageReturnPointTotal, imageReturnPointRecall,
+    holdoutPassed, holdoutTotal, holdoutSafetyPassed, wrongChannelDirections, falseReturnPoints,
+    notSureBlueBinMentions, providerErrors } = gate;
   fs.writeFileSync(outputPath, JSON.stringify({
     timestamp: new Date().toISOString(),
     runKind: completeSuite ? 'complete' : 'diagnostic',
@@ -540,40 +359,15 @@ async function main() {
       closestPair: closestImagePair,
     },
     sources: BCRS_IMAGE_SOURCES,
-    gate: {
-      measurementValid,
-      releaseEligible,
-      completeSuite,
-      passed,
-      total: results.length,
-      textPassed,
-      textTotal: textResults.length,
-      imagePassed,
-      imageTotal: imageResults.length,
-      imageExactAccuracy,
-      imageReturnPointsFound,
-      imageReturnPointTotal: imageReturnPointResults.length,
-      imageReturnPointRecall,
-      holdoutPassed,
-      holdoutTotal: holdout.length,
-      holdoutSafetyPassed,
-      wrongChannelDirections,
-      falseReturnPoints,
-      notSureBlueBinMentions,
-      providerErrors,
-      thresholds: {
-        imageExactAccuracy: BCRS_GATE_THRESHOLDS.imageExactAccuracy,
-        imageReturnPointRecall: BCRS_GATE_THRESHOLDS.imageReturnPointRecall,
-      },
-    },
+    gate,
     results,
   }, null, 2));
 
   console.log(`\nMeasurement: ${measurementValid ? 'VALID' : 'INVALID'} (provider errors=${providerErrors})`);
-  console.log(`Text exact: ${textPassed}/${textResults.length}`);
-  console.log(`Image exact: ${imagePassed}/${imageResults.length} (${(imageExactAccuracy * 100).toFixed(1)}%)`);
-  console.log(`Image return_point recall: ${imageReturnPointsFound}/${imageReturnPointResults.length} (${(imageReturnPointRecall * 100).toFixed(1)}%)`);
-  console.log(`Holdout exact: ${holdoutPassed}/${holdout.length}; safety: ${holdoutSafetyPassed}/${holdout.length}`);
+  console.log(`Text exact: ${textPassed}/${textTotal}`);
+  console.log(`Image exact: ${imagePassed}/${imageTotal} (${(imageExactAccuracy * 100).toFixed(1)}%)`);
+  console.log(`Image return_point recall: ${imageReturnPointsFound}/${imageReturnPointTotal} (${(imageReturnPointRecall * 100).toFixed(1)}%)`);
+  console.log(`Holdout exact: ${holdoutPassed}/${holdoutTotal}; safety: ${holdoutSafetyPassed}/${holdoutTotal}`);
   console.log(`Wrong non-null channel: ${wrongChannelDirections}`);
   console.log(`False return_point: ${falseReturnPoints}`);
   console.log(`not_sure responses mentioning blue_bin: ${notSureBlueBinMentions}`);

@@ -8,6 +8,7 @@
  */
 
 import assert from 'node:assert/strict';
+import { validateProductionBaseline } from './production-validation';
 import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -42,13 +43,13 @@ import {
   TEXT_SAFETY_CHANNELS,
   TEXT_TRUTH_SET_DIGEST,
   checkBcrsResult,
+  hasMinimumBcrsHoldouts,
   mentionsBlueBin,
   resultText,
 } from './release-contract';
 import { TEST_ITEMS, TEXT_BASELINE } from './test-items';
 
 const EVIDENCE_PATH = path.join(__dirname, 'release-evidence', 'current.json');
-const MAX_BASELINE_PAIR_AGE_MS = 24 * 60 * 60 * 1000;
 
 interface StoredProfile {
   id: string;
@@ -169,21 +170,12 @@ function parseTimestamp(value: string, label: string): number {
   return parsed;
 }
 
-function assertPairedTimestamps(
-  productionTimestamp: string,
-  candidateTimestamp: string,
-  label: string,
-) {
-  const delta = parseTimestamp(candidateTimestamp, `${label} candidate`) -
-    parseTimestamp(productionTimestamp, `${label} production baseline`);
-  assert.ok(delta >= 0, `${label} candidate predates its production baseline`);
-  assert.ok(
-    delta <= MAX_BASELINE_PAIR_AGE_MS,
-    `${label} candidate and production baseline are more than 24 hours apart`,
-  );
-}
-
-function assertProfile(actual: StoredProfile, expected: ClassificationProfile, label: string) {
+function assertProfile(actual: StoredProfile, expected: ClassificationProfile | typeof PRODUCTION_PROFILE, label: string) {
+  if (!('providerOptions' in expected)) {
+    assert.equal(actual.id, expected.id, `${label} production profile id differs`);
+    assert.equal(actual.revision, expected.revision, `${label} production revision differs`);
+    return;
+  }
   assert.deepEqual(actual, {
     id: expected.id,
     revision: expected.revision,
@@ -335,6 +327,7 @@ function verifyTextEvidence(candidate: StoredTextEvidence) {
   assert.ok(candidateDerived.gate.releaseEligible, 'Text candidate does not pass absolute gates');
 
   const production = loadTextProductionBaseline();
+  validateProductionBaseline(production, 'text', candidate.timestamp);
   assert.deepEqual(production.baseline, jsonValue(TEXT_BASELINE));
   assert.equal(production.truthSetDigest, TEXT_TRUTH_SET_DIGEST);
   assertProfile(production.profile, PRODUCTION_PROFILE, 'Text production baseline');
@@ -342,7 +335,6 @@ function verifyTextEvidence(candidate: StoredTextEvidence) {
   const productionDerived = deriveText(production.reports[0], 'Text production baseline');
   assertStoredTextMetrics(production.reports[0], productionDerived, 'Text production baseline');
   assert.equal(productionDerived.errors, 0, 'Text production baseline has provider errors');
-  assertPairedTimestamps(production.timestamp, candidate.timestamp, 'Text');
 
   const regressedExactCases = TEST_ITEMS
     .filter((item) => (
@@ -487,7 +479,8 @@ function verifyBcrsEvidence(candidate: StoredBcrsEvidence) {
     wrongChannelDirections === 0 &&
     falseReturnPoints === 0 &&
     notSureBlueBinMentions === 0 &&
-    holdoutSafetyPassed === holdout.length;
+    holdoutSafetyPassed === holdout.length &&
+    hasMinimumBcrsHoldouts(holdout.map(({ stored }) => stored.expected as { channel: ClassifyResult['channel'] }));
   const gate = {
     measurementValid,
     releaseEligible,
@@ -530,6 +523,7 @@ function verifyBcrsEvidence(candidate: StoredBcrsEvidence) {
   assert.ok(closest.similarity < BCRS_GATE_THRESHOLDS.nearDuplicateSimilarityLimit);
 
   const production = loadBcrsProductionBaseline();
+  validateProductionBaseline(production, 'bcrs', candidate.timestamp);
   assert.equal(production.runKind, 'complete');
   assert.deepEqual(production.baseline, jsonValue(BCRS_BASELINE));
   assert.equal(production.truthSetDigest, BCRS_TRUTH_SET_DIGEST);
@@ -552,7 +546,6 @@ function verifyBcrsEvidence(candidate: StoredBcrsEvidence) {
   const productionIds = new Set(production.results.map((result) => result.id));
   assert.equal(productionIds.size, expectedCases.length);
   for (const expected of expectedCases) assert.ok(productionIds.has(expected.testCase.id));
-  assertPairedTimestamps(production.timestamp, candidate.timestamp, 'BCRS');
 }
 
 function sharpPackageVersion(): string {

@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {
   getItemCategories,
   ITEM_CATEGORIES,
+  ClassifyResultSchema,
+  t,
   type ChannelType,
   type ClassifyStatus,
   type Locale,
@@ -18,15 +20,15 @@ interface PolicyExpectation {
 const POLICY_EXPECTATIONS: PolicyExpectation[] = [
   {
     categoryId: 'plastic',
-    itemName: 'PET Bottle',
-    channel: null,
-    status: 'not_sure',
+    itemName: 'PET drink bottle',
+    channel: 'return_point',
+    status: 'recyclable',
   },
   {
     categoryId: 'metal',
-    itemName: 'Aluminium Can',
-    channel: null,
-    status: 'not_sure',
+    itemName: 'Aluminium drink can',
+    channel: 'return_point',
+    status: 'recyclable',
   },
   {
     categoryId: 'electronics',
@@ -127,6 +129,30 @@ for (const locale of LOCALES) {
     allCopy,
     /periodic hazardous waste collection|定期举办有害废弃物回收活动|kempen pengumpulan sisa berbahaya secara berkala|அவ்வப்போது ஆபத்தான கழிவு சேகரிப்பு/,
   );
+}
+
+const drinkNames: Record<Locale, [string, string]> = {
+  en: ['PET drink bottle', 'Aluminium drink can'],
+  zh: ['PET 饮料瓶', '铝制饮料罐'],
+  ms: ['Botol minuman PET', 'Tin minuman aluminium'],
+  ta: ['PET பான பாட்டில்', 'அலுமினிய பான கேன்'],
+};
+for (const locale of LOCALES) {
+  const categories = getItemCategories(locale);
+  for (const [index, categoryId, sourceName] of [
+    [0, 'plastic', 'PET drink bottle'], [1, 'metal', 'Aluminium drink can'],
+  ] as const) {
+    const rendered = categories.find(({ id }) => id === categoryId)!.items[
+      findSourceItem(categoryId, sourceName).itemIndex
+    ];
+    assert.equal(rendered.name, drinkNames[locale][index], `${locale}: translated lookup must not fall back`);
+    assert.equal(rendered.result.item, drinkNames[locale][index]);
+    assert.equal(rendered.result.reason, t(locale, 'bcrs.classifyReason'));
+    assert.ok(rendered.result.reason.includes('S$0.10'));
+    assert.ok(rendered.result.reason.includes('10¢ SG RETURN'));
+    assert.equal(rendered.result.next_action, undefined);
+    assert.equal(ClassifyResultSchema.safeParse(rendered.result).success, true);
+  }
 }
 
 console.log('PASS reviewed disposal policy is consistent across all four locales');

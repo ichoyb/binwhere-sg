@@ -14,26 +14,18 @@ import {
   BeverageEvidenceSchema,
   BEVERAGE_EVIDENCE_JSON_SCHEMA,
   applyBeverageActionPolicy,
-  hasConfirmedReturnEvidence,
+  toUnconfirmed,
 } from '@binwhere/core';
-import {
-  NormalizedImageRegionSchema,
-  markRegionsMatch,
-  readDepositMarkText,
-  type DepositMarkOcrResult,
-  type NormalizedImageRegion,
-} from '@/lib/deposit-mark-ocr';
 
-const API_URL = 'https://tokenhub.tencentmaas.com/v1/chat/completions';
+const API_URL = 'https://tokenhub-intl.tencentcloudmaas.com/v1/chat/completions';
 
 export const TOKENHUB_IMAGE_USER_INSTRUCTION =
-  'For a plastic or metal beverage container, including a bottle, can or cup: inspect the label around the product barcode at every orientation, including sideways or upside down. Use return_point only when exactly one container is the clear subject, the official circular-arrow mark is distinguishable as "10¢ SG RETURN", and a separate linear EAN product barcode is visibly present and unobscured on that same container, unless the container is visibly crushed or the barcode is visibly damaged. Exactly one clear subject means one intended foreground container; incidental out-of-focus background containers do not disqualify it. Count physical containers rather than wrapping layers: a loose or transparent bag around one visible container is still one subject, while multipack packaging groups multiple containers. Treat the image as multiple-container ambiguity only when two or more containers are plausible co-equal subjects. Read both "SG" and "RETURN" directly from the submitted pixels: never reconstruct blurred characters from the familiar circular-arrow logo layout. Small text counts as direct pixel evidence when its letter shapes remain visually distinguishable after careful inspection; "too small" means the letters cannot actually be distinguished, not merely that the mark occupies a small part of the image. The circular-arrow 10¢ shape or return-machine context alone is insufficient; if either SG or RETURN is blurred or only inferred, use not_sure. If a visible callout line unambiguously connects a magnified inset to the mark printed on that container, set deposit_mark_region around the readable inset rather than the tiny original. The barcode digits need not be decoded from the photo, and emptying is a preparation step; the Return Point performs the final scan. A square 2D traceability code on a BCRS sticker is separate from the product barcode and cannot substitute for it; if only the square code is visible, use not_sure. "Product of" text and certification logos describe the product, not the deposit scheme: a container made outside Singapore is still eligible when its mark visibly reads "SG RETURN". For multiple plausible subjects, outer multipack packaging, an ambiguous or foreign mark, or a hidden product barcode, use not_sure with channel null and confidence below 0.5; record the available beverage_evidence and do not mention blue_bin.';
+  'Report the container facts in beverage_evidence for the single foreground object. Identify the product from its printed product text and physical form, never from the brand alone. Count physical containers, not loose wrapping; distinguish outer multipack packaging, including one container seen through multipack wrap, from one drink container. Use visible shape and material, and a readable capacity or visibly evident size; otherwise leave capacity unknown, which never excludes the container. Mark damage or contamination true only when observed. A readable 10¢ SG RETURN Deposit Mark printed on the drink container can fill an unknown shape or material; it never overrides known exclusions. Do not read or classify foreign deposit marks. Choose the channel by the container-category rules; the Return Point scans the barcode to decide acceptance.';
 
 export interface TokenHubProviderOptions {
   getSystemPrompt?: typeof getClassifySystemPrompt;
   imageUserInstruction?: string;
   textTemperature?: number;
-  visionTemperature?: number;
   ensureBcrsRefund?: boolean;
   textModel?: string;
   visionModel?: string;
@@ -41,12 +33,6 @@ export interface TokenHubProviderOptions {
   enforceNotSurePolicy?: boolean;
   validateResultSemantics?: boolean;
   nextActions?: boolean;
-  verifyBcrsImage?: boolean;
-  depositMarkOcr?: (
-    imageBase64: string,
-    region: NormalizedImageRegion | null,
-    signal?: AbortSignal,
-  ) => Promise<DepositMarkOcrResult>;
 }
 
 /**
@@ -77,26 +63,16 @@ export interface TokenHubProviderOptions {
 export const TOKENHUB_TEXT_MODEL = 'hy3';
 
 /**
- * Image classification. Kimi K2.6 remains the primary visual model after replacement
- * candidates failed the frozen action experiments. The v20 candidate adds one
- * constrained same-container association check plus local PP-OCRv6 literal-text
- * verification before confirming a refund. Its complete gate passed 42/44 image
- * assertions and 12/13 return-point positives, including both fresh holdouts, with
- * zero wrong channels, false return points, blue-bin leaks or provider errors.
- * TokenHub requires temperature 0.6 with K2.6 thinking disabled; occasional responses
- * still report one reasoning token and are logged as contract events.
+ * Image classification reports container facts in one model call.
+ *
+ * kimi-k2.6, which could turn thinking off, drifted on the thirteen hardest refund
+ * photos from 12/13 in September to 7/13 in October with no change on this side.
+ * Screened against four other image models on the sixteen hardest cases, two
+ * samples each, on 2026-11-02, this was the only one with neither a wrong channel
+ * nor a false return_point. It cannot answer without reasoning, so the vision request bounds
+ * that reasoning rather than asking for none.
  */
-export const TOKENHUB_VISION_MODEL = 'kimi-k2.6';
-
-/** Observed on the reviewed 2026-09-05 release; still a contract violation. */
-export const PROVIDER_REASONING_BASELINE = {
-  model: 'kimi-k2.6',
-  reviewedAt: '2026-09-05',
-  reasoning: 1,
-  finish: 'stop',
-} as const;
-
-export const TOKENHUB_MAX_TOKENS = 1024;
+export const TOKENHUB_VISION_MODEL = 'kimi-k3.1-pro';
 
 export const STRICT_CLASSIFY_RESPONSE_FORMAT = {
   type: 'json_schema',
@@ -146,62 +122,12 @@ export const ACTION_CLASSIFY_RESPONSE_FORMAT = {
       ...STRICT_CLASSIFY_RESPONSE_FORMAT.json_schema.schema,
       properties: {
         ...STRICT_CLASSIFY_RESPONSE_FORMAT.json_schema.schema.properties,
-        beverage_evidence: {
-          ...BEVERAGE_EVIDENCE_JSON_SCHEMA,
-          properties: {
-            ...BEVERAGE_EVIDENCE_JSON_SCHEMA.properties,
-            deposit_mark_region: z.toJSONSchema(
-              NormalizedImageRegionSchema.nullable(),
-              { target: 'draft-7' },
-            ),
-          },
-          required: [
-            ...(BEVERAGE_EVIDENCE_JSON_SCHEMA.required ?? []),
-            'deposit_mark_region',
-          ],
-        },
+        beverage_evidence: BEVERAGE_EVIDENCE_JSON_SCHEMA,
       },
       required: [...STRICT_CLASSIFY_RESPONSE_FORMAT.json_schema.schema.required, 'beverage_evidence'],
     },
   },
 } as const;
-
-export const BcrsImageVerificationSchema = z.object({
-  mark_on_subject_container: z.boolean(),
-  deposit_mark_region: NormalizedImageRegionSchema.nullable(),
-  linear_barcode_on_subject: z.boolean(),
-}).superRefine((value, context) => {
-  if (value.mark_on_subject_container !== (value.deposit_mark_region !== null)) {
-    context.addIssue({
-      code: 'custom',
-      path: ['deposit_mark_region'],
-      message: 'deposit_mark_region must be present exactly when a possible mark is on the subject',
-    });
-  }
-});
-
-export type BcrsImageVerification = z.infer<typeof BcrsImageVerificationSchema>;
-
-const DepositMarkRegionFieldSchema = z.object({
-  deposit_mark_region: NormalizedImageRegionSchema.nullable(),
-});
-
-export const BCRS_IMAGE_VERIFICATION_PROMPT = `Inspect one photograph only to verify where two visible objects are printed. Do not classify the item, recommend a channel, infer eligibility, transcribe the Deposit Mark or use outside knowledge.
-mark_on_subject_container is true only when a possible circular Deposit Mark is visibly printed on the individual foreground container. When true, deposit_mark_region must tightly bound only that possible circular mark in normalised image coordinates from 0 to 1. If a magnified inset is connected by a visible callout line to that printed mark, deposit_mark_region must instead tightly bound the readable mark inside the inset; an unconnected inset or standalone graphic does not count. Otherwise deposit_mark_region must be null. linear_barcode_on_subject is true only for a separate visible linear product barcode on that same container; a square 2D code is false.
-Return only the required JSON fields.`;
-
-export const BCRS_IMAGE_VERIFICATION_RESPONSE_FORMAT = {
-  type: 'json_schema',
-  json_schema: {
-    name: 'binwhere_bcrs_image_verification',
-    strict: true,
-    schema: z.toJSONSchema(BcrsImageVerificationSchema, { target: 'draft-7' }),
-  },
-} as const;
-
-/** One model call checks association; local OCR independently checks literal text. */
-export const BCRS_IMAGE_VERIFICATION_ATTEMPTS = 1;
-export const BCRS_IMAGE_VERIFICATION_MAX_TOKENS = 256;
 
 /**
  * Text classification is asked to answer without a chain-of-thought.
@@ -219,6 +145,29 @@ export const BCRS_IMAGE_VERIFICATION_MAX_TOKENS = 256;
  * instead of trusting the send.
  */
 export const TOKENHUB_THINKING_DISABLED = { type: 'disabled' } as const;
+
+export const TOKENHUB_TEXT_REQUEST = {
+  max_tokens: 1024,
+  thinking: TOKENHUB_THINKING_DISABLED,
+} as const;
+
+/**
+ * The vision model always reasons, so its request bounds that reasoning instead.
+ *
+ * TokenHub's Kimi guide (updated 2026-10-26) lists the K3 family as reasoning-only:
+ * effort is low, high or max, the output cap is `max_completion_tokens`, the
+ * temperature is fixed at 1.0 and `thinking` must not be sent. Sent anyway,
+ * `thinking: {type:'disabled'}` is accepted and the reasoning then arrives inside
+ * `content` (probed 2026-11-02), so this request carries neither `thinking` nor
+ * `temperature`. Over 108 calls at low effort the model spent 35–252 reasoning
+ * tokens and at most 658 output tokens in all; high effort spent 402–717 and took
+ * up to 27s against the 30s attempt. The cap only stops a runaway chain-of-thought
+ * from billing without end.
+ */
+export const TOKENHUB_VISION_REQUEST = {
+  reasoning_effort: 'low',
+  max_completion_tokens: 8192,
+} as const;
 
 interface TokenHubUsage {
   prompt_tokens?: number;
@@ -313,50 +262,30 @@ async function requestTokenHubText(
     );
   }
 
-  logUsage(String(body.model ?? 'unknown'), data?.usage, choice.finish_reason);
+  const model = String(body.model ?? 'unknown');
+  const thinkingDisabled =
+    (body.thinking as { type?: unknown } | undefined)?.type === TOKENHUB_THINKING_DISABLED.type;
+  logUsage(model, data?.usage, choice.finish_reason, thinkingDisabled);
+  if (choice.finish_reason !== 'stop') {
+    // Only an answer the model ended itself is complete. A cut-off one is how the
+    // S$0.10 once vanished: the JSON was truncated, not wrong, and nothing said so.
+    logEvent('provider_contract', {
+      provider: 'tokenhub',
+      model,
+      issue: 'unfinished_completion',
+      finish: choice.finish_reason ?? null,
+      out: data?.usage?.completion_tokens,
+      reasoning: data?.usage?.completion_tokens_details?.reasoning_tokens,
+    });
+    throw new RetryableProviderError(
+      `TokenHub did not finish the answer (finish_reason=${choice.finish_reason})`,
+    );
+  }
   const text = choice.message?.content;
   if (typeof text !== 'string') {
-    throw new RetryableProviderError(
-      `TokenHub returned no text content (finish_reason=${choice.finish_reason})`,
-    );
+    throw new RetryableProviderError('TokenHub returned no text content');
   }
   return text;
-}
-
-/** A separate visual task checks only same-container mark/barcode association. */
-export async function verifyBcrsImageEvidence(
-  apiKey: string,
-  image: string,
-  signal?: AbortSignal,
-): Promise<BcrsImageVerification> {
-  const text = await requestTokenHubText(apiKey, {
-    model: TOKENHUB_VISION_MODEL,
-    messages: [
-      { role: 'system', content: BCRS_IMAGE_VERIFICATION_PROMPT },
-      {
-        role: 'user',
-        content: [
-          { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${image}` } },
-          { type: 'text', text: 'Check only same-container Deposit Mark and linear barcode placement.' },
-        ],
-      },
-    ],
-    max_tokens: BCRS_IMAGE_VERIFICATION_MAX_TOKENS,
-    temperature: 0.6,
-    response_format: BCRS_IMAGE_VERIFICATION_RESPONSE_FORMAT,
-    thinking: TOKENHUB_THINKING_DISABLED,
-  }, signal);
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) {
-    throw new RetryableProviderError(`TokenHub verifier returned non-JSON: ${text.slice(0, 200)}`);
-  }
-  try {
-    return BcrsImageVerificationSchema.parse(JSON.parse(jsonMatch[0]));
-  } catch (err) {
-    throw new RetryableProviderError(
-      `TokenHub verifier returned invalid evidence: ${(err as Error).message}`,
-    );
-  }
 }
 
 export class TokenHubProvider implements ClassifyProvider {
@@ -372,7 +301,6 @@ export class TokenHubProvider implements ClassifyProvider {
       getSystemPrompt: options.getSystemPrompt ?? getClassifySystemPrompt,
       imageUserInstruction: options.imageUserInstruction ?? TOKENHUB_IMAGE_USER_INSTRUCTION,
       textTemperature: options.textTemperature ?? 0,
-      visionTemperature: options.visionTemperature ?? 0.6,
       ensureBcrsRefund: options.ensureBcrsRefund ?? true,
       textModel: options.textModel ?? TOKENHUB_TEXT_MODEL,
       visionModel: options.visionModel ?? TOKENHUB_VISION_MODEL,
@@ -380,8 +308,6 @@ export class TokenHubProvider implements ClassifyProvider {
       enforceNotSurePolicy: options.enforceNotSurePolicy ?? true,
       validateResultSemantics: options.validateResultSemantics ?? true,
       nextActions: options.nextActions ?? true,
-      verifyBcrsImage: options.verifyBcrsImage ?? true,
-      depositMarkOcr: options.depositMarkOcr ?? readDepositMarkText,
     };
   }
 
@@ -389,9 +315,6 @@ export class TokenHubProvider implements ClassifyProvider {
     const locale = request.locale ?? 'en';
     const langName = LOCALE_LANGUAGE_NAME[locale];
     const model = request.image ? this.options.visionModel : this.options.textModel;
-    const temperature = request.image
-      ? this.options.visionTemperature
-      : this.options.textTemperature;
 
     const textPrompt = request.text
       ? `Classify this item: ${request.text}\n\nRespond in ${langName}.`
@@ -414,21 +337,23 @@ export class TokenHubProvider implements ClassifyProvider {
         ]
       : textPrompt;
 
+    // Classification follows the prompt's channel rules; it does not sample around
+    // them, because a false return_point sends someone to claim a refund that does
+    // not exist. The vendor fixes the vision model's temperature, so classifyItem
+    // votes over independent image samples instead.
+    const sampling = request.image
+      ? TOKENHUB_VISION_REQUEST
+      : { ...TOKENHUB_TEXT_REQUEST, temperature: this.options.textTemperature };
     const text = await requestTokenHubText(this.apiKey, {
       model,
       messages: [
         { role: 'system', content: this.options.getSystemPrompt(locale, request.image ? 'image' : 'text') },
         { role: 'user', content: userContent },
       ],
-      max_tokens: TOKENHUB_MAX_TOKENS,
-      // Classification follows the prompt's channel rules; it does not sample
-      // around them. A false return_point sends someone to claim a refund that
-      // does not exist.
-      temperature,
       response_format: this.options.strictResponseSchema
         ? (this.options.nextActions ? ACTION_CLASSIFY_RESPONSE_FORMAT : STRICT_CLASSIFY_RESPONSE_FORMAT)
         : { type: 'json_object' },
-      thinking: TOKENHUB_THINKING_DISABLED,
+      ...sampling,
     }, signal);
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
@@ -439,7 +364,6 @@ export class TokenHubProvider implements ClassifyProvider {
 
     let result: ClassifyResult;
     let evidence: z.infer<typeof BeverageEvidenceSchema>;
-    let depositMarkRegion: NormalizedImageRegion | null = null;
     try {
       const resultSchema = this.options.validateResultSemantics
         ? ClassifyResultSchema
@@ -454,63 +378,12 @@ export class TokenHubProvider implements ClassifyProvider {
           ? ensureBcrsRefundText(policySafe, locale)
           : policySafe;
       }
-      const rawEvidence = (raw as { beverage_evidence: unknown }).beverage_evidence;
-      evidence = BeverageEvidenceSchema.parse(rawEvidence);
-      depositMarkRegion = DepositMarkRegionFieldSchema.parse(rawEvidence).deposit_mark_region;
+      evidence = BeverageEvidenceSchema.parse((raw as { beverage_evidence: unknown }).beverage_evidence);
       result = policySafe;
     } catch (err) {
       throw new RetryableProviderError(
         `TokenHub returned an invalid classification: ${(err as Error).message}`,
       );
-    }
-
-    if (request.image && this.options.verifyBcrsImage
-      && hasConfirmedReturnEvidence(evidence, 'image')) {
-      let verification: BcrsImageVerification;
-      let ocr: DepositMarkOcrResult;
-      const verificationController = new AbortController();
-      const forwardAbort = () => verificationController.abort();
-      if (signal?.aborted) forwardAbort();
-      else signal?.addEventListener('abort', forwardAbort, { once: true });
-      try {
-        try {
-          [verification, ocr] = await Promise.all([
-            verifyBcrsImageEvidence(
-              this.apiKey,
-              request.image,
-              verificationController.signal,
-            ),
-            this.options.depositMarkOcr(
-              request.image,
-              depositMarkRegion,
-              verificationController.signal,
-            ),
-          ]);
-        } catch (err) {
-          // A failed verifier or OCR result makes the sibling work useless. Abort
-          // it before the outer retry starts another paid classification attempt.
-          verificationController.abort();
-          throw err;
-        }
-      } catch (err) {
-        if (err instanceof RetryableProviderError) throw err;
-        throw new RetryableProviderError(`Deposit Mark verification failed: ${(err as Error).message}`);
-      } finally {
-        signal?.removeEventListener('abort', forwardAbort);
-      }
-      const verified = ocr.hasSingaporeMarkText
-        && verification.mark_on_subject_container
-        && markRegionsMatch(depositMarkRegion, verification.deposit_mark_region)
-        && verification.linear_barcode_on_subject;
-      evidence = {
-        ...evidence,
-        deposit_mark: verified ? 'singapore' : 'unverified',
-        deposit_mark_text: verified
-          ? evidence.deposit_mark_text
-          : ocr.lines.map((line) => line.text).join(' '),
-        mark_on_subject_container: evidence.mark_on_subject_container && verification.mark_on_subject_container,
-        linear_barcode_on_subject: evidence.linear_barcode_on_subject && verification.linear_barcode_on_subject,
-      };
     }
 
     // Channel safety, actions and their copy are application-owned, never accepted
@@ -521,27 +394,15 @@ export class TokenHubProvider implements ClassifyProvider {
       locale,
       request.image ? 'image' : 'text',
     );
-    return this.options.ensureBcrsRefund
+    return ClassifyResultSchema.parse(this.options.ensureBcrsRefund
       ? ensureBcrsRefundText(decided, locale)
-      : decided;
+      : decided);
   }
 }
 
-/**
- * `not_sure` means the application has not established any disposal channel.
- * Model prose is not allowed to weaken that structured decision with a suggested
- * channel, so uncertainty copy is owned by the application in every locale.
- */
+/** A model's own not_sure gets the same application-owned copy as a policy downgrade. */
 function enforceNotSurePolicy(result: ClassifyResult, locale: Locale): ClassifyResult {
-  if (result.status !== 'not_sure') return result;
-  return {
-    ...result,
-    confidence: Math.min(result.confidence, 0.49),
-    channel: null,
-    reason: t(locale, 'classify.notSureReason'),
-    preparation: [t(locale, 'classify.notSurePreparation')],
-    tip: undefined,
-  };
+  return result.status === 'not_sure' ? toUnconfirmed(result, locale) : result;
 }
 
 /** BCRS instructions are statutory/product copy and must not be improvised by a model. */
@@ -606,17 +467,20 @@ async function formatApiError(res: Response): Promise<string> {
  *  - cached_tokens: on the text path the ~1.1k system prompt is identical on every
  *    call and the gateway caches it automatically — measured 896-1024 of 1109, so
  *    input is close to free after the first request. If that collapses to zero,
- *    input cost has quietly multiplied. It reads 0 on the image path and always
- *    has: the photo is part of the prompt, so no two image requests share a
- *    prefix, so image input cost must be read from every response.
+ *    input cost has quietly multiplied. On the image path only the prompt before
+ *    the photo can be shared — 48% of input across 108 kimi-k3.1-pro calls on
+ *    2026-11-02 — so image input cost must be read from every response.
  *  - reasoning_tokens: billed as output whether or not anything reads them, and the
- *    mechanism behind every truncated-JSON defect this classifier has had. The
- *    request asks for none, so any nonzero reading is the provider overriding us.
+ *    mechanism behind every truncated-JSON defect this classifier has had. A request
+ *    that disables thinking asks for none, so any nonzero reading there is the
+ *    provider overriding us. The vision model always reasons; low effort and the
+ *    output cap bound it, and this count is the record of what it spent.
  */
 function logUsage(
   model: string,
   usage: TokenHubUsage | undefined,
   finishReason: string | undefined,
+  thinkingDisabled: boolean,
 ) {
   if (!usage) return;
   const cached = usage.prompt_tokens_details?.cached_tokens ?? 0;
@@ -625,7 +489,7 @@ function logUsage(
     `[ai] tokenhub ${model} in=${usage.prompt_tokens} (cached ${cached}) out=${usage.completion_tokens}` +
       ` reasoning=${reasoning} finish=${finishReason}`,
   );
-  if (reasoning > 0) {
+  if (thinkingDisabled && reasoning > 0) {
     console.warn(`[ai] ${model} spent ${reasoning} reasoning tokens — it is billed as output and eats max_tokens`);
     // The request set TOKENHUB_THINKING_DISABLED, so a nonzero count is the provider
     // declining it: a silent vendor-side change to a model chosen *because* it did
@@ -641,10 +505,6 @@ function logUsage(
       out: usage.completion_tokens,
       finish: finishReason ?? null,
       expectedReasoning: 0,
-      baselineReviewedAt: PROVIDER_REASONING_BASELINE.reviewedAt,
-      matchesRecordedBaseline: model === PROVIDER_REASONING_BASELINE.model
-        && reasoning === PROVIDER_REASONING_BASELINE.reasoning
-        && finishReason === PROVIDER_REASONING_BASELINE.finish,
     });
   }
 }

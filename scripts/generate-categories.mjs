@@ -13,7 +13,7 @@
  * by node, outside the Next build and its path aliases.
  */
 
-const API_URL = 'https://tokenhub.tencentmaas.com/v1/chat/completions';
+const API_URL = 'https://tokenhub-intl.tencentcloudmaas.com/v1/chat/completions';
 
 /** Same text model the live classifier uses, so the drafts match what users get. */
 const MODEL = 'hy3';

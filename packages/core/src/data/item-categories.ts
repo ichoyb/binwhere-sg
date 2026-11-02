@@ -1,4 +1,5 @@
 import type { ClassifyResult } from '../types/classify';
+import { t } from '../i18n';
 
 export interface CategoryItem {
   name: string;
@@ -131,15 +132,15 @@ export const ITEM_CATEGORIES: ItemCategory[] = [
     icon: '\u267B\uFE0F',
     items: [
       {
-        name: 'PET Bottle',
+        name: 'PET drink bottle',
         result: {
-          item: 'PET Bottle',
-          status: 'not_sure',
-          confidence: 0.45,
-          channel: null,
-          reason: 'A PET beverage bottle may belong to BCRS, but this item selection does not establish whether the individual bottle carries the Singapore Deposit Mark.',
-          preparation: ['Keep the bottle empty and uncrushed', 'Check or photograph the label around the product barcode so the Deposit Mark can be verified'],
-          tip: 'Confirm the Deposit Mark before choosing a recycling channel.',
+          item: 'PET drink bottle',
+          status: 'recyclable',
+          confidence: 0.95,
+          channel: 'return_point',
+          reason: t('en', 'bcrs.classifyReason'),
+          preparation: [t('en', 'bcrs.step1'), t('en', 'bcrs.step2'), t('en', 'bcrs.step3'), t('en', 'bcrs.step4')],
+          tip: t('en', 'bcrs.refundAmount'),
         },
       },
       {
@@ -222,15 +223,15 @@ export const ITEM_CATEGORIES: ItemCategory[] = [
     icon: '\u{1F527}',
     items: [
       {
-        name: 'Aluminium Can',
+        name: 'Aluminium drink can',
         result: {
-          item: 'Aluminium Can',
-          status: 'not_sure',
-          confidence: 0.45,
-          channel: null,
-          reason: 'An aluminium beverage can may belong to BCRS, but this item selection does not establish whether the individual can carries the Singapore Deposit Mark.',
-          preparation: ['Keep the can empty and uncrushed', 'Check or photograph the label around the product barcode so the Deposit Mark can be verified'],
-          tip: 'Confirm the Deposit Mark before choosing a recycling channel.',
+          item: 'Aluminium drink can',
+          status: 'recyclable',
+          confidence: 0.95,
+          channel: 'return_point',
+          reason: t('en', 'bcrs.classifyReason'),
+          preparation: [t('en', 'bcrs.step1'), t('en', 'bcrs.step2'), t('en', 'bcrs.step3'), t('en', 'bcrs.step4')],
+          tip: t('en', 'bcrs.refundAmount'),
         },
       },
       {

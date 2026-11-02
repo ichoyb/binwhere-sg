@@ -82,16 +82,17 @@ console.log('All core smoke tests passed');
 
 run('an unconfirmed bottle can navigate to return points without claiming a channel', () => {
   const result: ClassifyResult = {
-    item: 'plastic bottle', status: 'not_sure', channel: null, confidence: 0.3, reason: 'Unknown mark',
+    item: 'drink bottle', status: 'not_sure', channel: null, confidence: 0.3, reason: 'Unknown material',
   };
   result.next_action = buildNextAction(result, {
     beverage_product: 'prepackaged_beverage',
     visible_container_count: 'one',
-    subject: 'single_prepackaged_beverage_container', whole_container_visible: true,
-    form: 'bottle', material: 'plastic', volume_ml: null,
-    deposit_mark: 'unverified', deposit_mark_text: '', mark_on_subject_container: false,
-    linear_barcode_on_subject: false, damaged: false, contaminated: false,
+    subject: 'single_prepackaged_beverage_container',
+    form: 'bottle', material: 'unknown', volume_range: 'unknown',
+    singapore_mark: 'unknown', explicitly_no_singapore_mark: false, purchased_outside_singapore: false,
+    damaged: false, contaminated: false,
   }, 'en');
   assert.deepEqual(getNearbyTarget(result), { channel: 'return_point' });
   assert.equal(result.channel, null);
+  assert.equal(result.next_action?.type, 'check_container_type');
 });

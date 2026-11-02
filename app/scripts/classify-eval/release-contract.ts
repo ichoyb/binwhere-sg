@@ -37,6 +37,8 @@ export const BCRS_GATE_THRESHOLDS = {
   imageExactAccuracy: 0.95,
   imageReturnPointRecall: 0.90,
   nearDuplicateSimilarityLimit: 0.995,
+  minHoldoutReturnPoints: 2,
+  minHoldoutOtherChannels: 2,
 } as const;
 
 export const TEXT_TRUTH_SET_DIGEST = createHash('sha256')
@@ -46,11 +48,18 @@ export const TEXT_TRUTH_SET_DIGEST = createHash('sha256')
 export const BCRS_TRUTH_SET_DIGEST = createHash('sha256').update(JSON.stringify({
   baseline: BCRS_BASELINE,
   policySource: BCRS_POLICY_SOURCE,
-  nearDuplicateSimilarityLimit: BCRS_GATE_THRESHOLDS.nearDuplicateSimilarityLimit,
+  thresholds: BCRS_GATE_THRESHOLDS,
   textCases: BCRS_TEXT_CASES,
   imageSources: BCRS_IMAGE_SOURCES,
   imageCases: BCRS_IMAGE_CASES,
 })).digest('hex');
+
+/** Counts reviewed truth, never a model prediction, toward holdout coverage. */
+export function hasMinimumBcrsHoldouts(holdout: readonly Pick<ExpectedClassification, 'channel'>[]): boolean {
+  const returnPoints = holdout.filter(({ channel }) => channel === 'return_point').length;
+  return returnPoints >= BCRS_GATE_THRESHOLDS.minHoldoutReturnPoints
+    && holdout.length - returnPoints >= BCRS_GATE_THRESHOLDS.minHoldoutOtherChannels;
+}
 
 export function resultText(result: ClassifyResult): string {
   return [result.item, result.reason, ...(result.preparation ?? []), result.tip,
@@ -86,9 +95,7 @@ export function checkBcrsResult(
     const expectedAction = expected.channel === 'return_point' ? 'return_container'
       : expected.channel !== null ? null : expected.nextAction;
     const actualAction = result.next_action?.type ?? null;
-    const actionMatches = expectedAction === 'conditional_return'
-      ? actualAction === 'try_return_point' || actualAction === 'check_container_type'
-      : actualAction === expectedAction;
+    const actionMatches = actualAction === expectedAction;
     if (expectedAction !== undefined && !actionMatches) {
       failures.push(`next_action expected ${expectedAction}, got ${actualAction}`);
     }
@@ -125,7 +132,7 @@ export function checkBcrsResult(
     failures.push(`response does not contain a reliable ${locale} language signal`);
   }
   if (expected.channel === null && mentionsBlueBin(prose)) {
-    failures.push('not_sure response mentions a blue-bin channel before Deposit Mark absence is established');
+    failures.push('not_sure response mentions a blue-bin channel before its container category is established');
   }
   if (expected.channel === 'return_point') {
     const expectedPreparation = [

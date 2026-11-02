@@ -1,11 +1,3 @@
 {
-  "exceptions": [
-    {
-      "id": "GHSA-wq5f-xc86-pv6w",
-      "package": "sharp",
-      "scopes": ["production", "build"],
-      "expires": "2026-11-30",
-      "reason": "CVE-2026-96889 in the bundled librsvg is reachable only through SVG input. Classify uploads must pass a JPEG, PNG or WebP magic-byte check before sharp reads them, Cloudflare blocks /_next/image, and Next's image optimizer has its own patched copy. Upgrading the app's sharp changes the image pipeline that the classification release evidence is bound to, so it ships with the next paid evidence run: the TokenHub international migration."
-    }
-  ]
+  "exceptions": []
 }

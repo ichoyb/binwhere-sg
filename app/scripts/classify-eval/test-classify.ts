@@ -12,14 +12,16 @@
  *
  * Usage:
  *   npm run test:classify
- *   npm run test:classify -- --profile=production
+ *   npm run baseline:production -- --worktree=<absolute-path> --output=<absolute-path>
  * Requires: TOKENHUB_API_KEY in .env
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
-import { TEST_ITEMS, TEXT_BASELINE, getItemsByChannel, type TestItem } from './test-items';
+import { validateProductionBaseline } from './production-validation';
+import { scoreTextResults, serializeTextReport, evaluateReport, type TestResult, type ProviderReport } from './scoring';
+import { TEST_ITEMS, TEXT_BASELINE } from './test-items';
 import {
   classifyItem,
   type ClassificationExecutionPolicy,
@@ -28,48 +30,19 @@ import {
   TOKENHUB_TEXT_MODEL,
   TokenHubProvider,
 } from '../../src/lib/ai/providers/tokenhub';
-import type { ClassifyProvider, ClassifyResult } from '../../src/lib/ai/types';
+import type { ClassifyProvider } from '../../src/lib/ai/types';
 import {
-  CANDIDATE_PROFILE,
   PRODUCTION_PROFILE,
   profileDigest,
   selectProfile,
 } from './baseline-profiles';
 import {
   TEXT_GATE_THRESHOLDS,
-  TEXT_SAFETY_CHANNELS,
   TEXT_TRUTH_SET_DIGEST,
 } from './release-contract';
 
 // Load .env from app directory
 dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
-
-interface TestResult {
-  item: TestItem;
-  result: ClassifyResult | null;
-  error?: string;
-  channelMatch: boolean;
-  statusMatch: boolean;
-  durationMs: number;
-}
-
-interface ProviderReport {
-  provider: string;
-  totalItems: number;
-  channelAccuracy: number;
-  statusAccuracy: number;
-  exactAccuracy: number;
-  notSureCount: number;
-  notSureRate: number;
-  perChannel: Record<string, { total: number; correct: number; accuracy: number }>;
-  avgConfidence: number;
-  avgDurationMs: number;
-  p50DurationMs: number;
-  p95DurationMs: number;
-  errors: number;
-  unsafeDiversions: number;
-  results: TestResult[];
-}
 
 interface StoredReport {
   totalItems: number;
@@ -106,100 +79,25 @@ interface BaselineComparison {
   pass: boolean;
 }
 
-const MAX_BASELINE_PAIR_AGE_MS = 24 * 60 * 60 * 1000;
-
-function evaluateReport(report: ProviderReport) {
-  const exactPass = report.exactAccuracy >= TEXT_GATE_THRESHOLDS.exactAccuracy;
-  const channelPass = report.channelAccuracy >= TEXT_GATE_THRESHOLDS.channelAccuracy;
-  const statusPass = report.statusAccuracy >= TEXT_GATE_THRESHOLDS.statusAccuracy;
-  const notSurePass = report.notSureRate < TEXT_GATE_THRESHOLDS.maxUnexpectedNotSureRate;
-  const perChannelPass = Object.values(report.perChannel).every(
-    (stats) => stats.accuracy >= TEXT_GATE_THRESHOLDS.perChannelAccuracy,
-  );
-  const errorsPass = report.errors <= TEXT_GATE_THRESHOLDS.maxProviderErrors;
-  const safetyPass = report.unsafeDiversions <= TEXT_GATE_THRESHOLDS.maxUnsafeDiversions;
-  return {
-    exactPass,
-    channelPass,
-    statusPass,
-    perChannelPass,
-    notSurePass,
-    errorsPass,
-    safetyPass,
-    measurementValid: errorsPass,
-    releaseEligible: exactPass && channelPass && statusPass && perChannelPass &&
-      notSurePass && errorsPass && safetyPass,
-  };
-}
-
 function parseArg(name: string): string | undefined {
   return process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 }
 
-function percentile(values: number[], ratio: number): number {
-  if (values.length === 0) return 0;
-  const sorted = [...values].sort((a, b) => a - b);
-  return sorted[Math.ceil(sorted.length * ratio) - 1];
-}
-
-function readProductionBaseline(truthSetDigest: string): StoredBaseline {
+function readProductionBaseline(): StoredBaseline {
   const baselinePath = path.join(
     __dirname,
     'baselines',
     TEXT_BASELINE.id,
-    'production-0a5852f.json',
+    `${PRODUCTION_PROFILE.id}.json`,
   );
   if (!fs.existsSync(baselinePath)) {
     throw new Error(
-      `Production baseline is missing: ${baselinePath}. Run --profile=production first.`,
+      `Production baseline is missing: ${baselinePath}. Run baseline:production with the 5a19b7f worktree; see docs/classify-eval.md.`,
     );
   }
 
   const baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8')) as StoredBaseline;
-  if (baseline.truthSetDigest !== truthSetDigest) {
-    throw new Error(
-      `Production baseline uses truth set ${baseline.truthSetDigest}, current is ${truthSetDigest}. ` +
-      'Re-run --profile=production before evaluating this candidate.',
-    );
-  }
-  if (baseline.reports.length !== 1) {
-    throw new Error('Production baseline must contain exactly one provider report.');
-  }
-  const expectedProfileDigest = profileDigest(PRODUCTION_PROFILE);
-  if (
-    baseline.profile.id !== PRODUCTION_PROFILE.id ||
-    baseline.profile.revision !== PRODUCTION_PROFILE.revision ||
-    baseline.profile.digest !== expectedProfileDigest
-  ) {
-    throw new Error('Production baseline profile identity does not match the frozen production contract.');
-  }
-  const report = baseline.reports[0];
-  if (
-    baseline.testSetSize !== TEST_ITEMS.length ||
-    report.totalItems !== TEST_ITEMS.length ||
-    report.results.length !== TEST_ITEMS.length
-  ) {
-    throw new Error('Production baseline does not contain the complete current text suite.');
-  }
-  const expectedTexts = new Set(TEST_ITEMS.map((item) => item.text));
-  const baselineTexts = new Set(report.results.map((result) => result.text));
-  if (
-    baselineTexts.size !== expectedTexts.size ||
-    [...expectedTexts].some((text) => !baselineTexts.has(text))
-  ) {
-    throw new Error('Production baseline case IDs do not match the complete current text suite.');
-  }
-  if (report.errors !== 0 || baseline.gates.length !== 1 || !baseline.gates[0].measurementValid) {
-    throw new Error('Production baseline is not a valid zero-provider-error measurement.');
-  }
-  const baselineTimestamp = Date.parse(baseline.timestamp);
-  if (
-    !Number.isFinite(baselineTimestamp) ||
-    Date.now() - baselineTimestamp > MAX_BASELINE_PAIR_AGE_MS ||
-    baselineTimestamp > Date.now() + 60_000
-  ) {
-    throw new Error('Production baseline is outside the 24-hour candidate comparison window.');
-  }
+  validateProductionBaseline(baseline, 'text', new Date().toISOString());
   return baseline;
 }
 
@@ -259,14 +157,6 @@ async function testProvider(
   console.log('='.repeat(60));
 
   const results: TestResult[] = [];
-  let channelCorrect = 0;
-  let statusCorrect = 0;
-  let exactCorrect = 0;
-  let notSureCount = 0;
-  let totalConfidence = 0;
-  let totalDuration = 0;
-  let errorCount = 0;
-  let unsafeDiversions = 0;
 
   for (let i = 0; i < TEST_ITEMS.length; i++) {
     const item = TEST_ITEMS[i];
@@ -279,20 +169,6 @@ async function testProvider(
 
       const channelMatch = result.channel === item.expectedChannel;
       const statusMatch = result.status === item.expectedStatus;
-
-      if (channelMatch) channelCorrect++;
-      if (statusMatch) statusCorrect++;
-      if (channelMatch && statusMatch) exactCorrect++;
-      if (result.status === 'not_sure') notSureCount++;
-      if (
-        TEXT_SAFETY_CHANNELS.has(item.expectedChannel) &&
-        result.channel !== null &&
-        result.channel !== item.expectedChannel
-      ) {
-        unsafeDiversions++;
-      }
-      totalConfidence += result.confidence;
-      totalDuration += duration;
 
       const icon = channelMatch ? 'OK' : 'XX';
       console.log(
@@ -307,7 +183,6 @@ async function testProvider(
       await new Promise((r) => setTimeout(r, 1000));
     } catch (error) {
       const duration = Date.now() - startTime;
-      errorCount++;
       console.log(
         `  [${String(i + 1).padStart(2)}/${TEST_ITEMS.length}] ERR "${item.text}" -> ${(error as Error).message.slice(0, 80)}`,
       );
@@ -324,38 +199,7 @@ async function testProvider(
     }
   }
 
-  // Per-channel stats
-  const perChannel: Record<string, { total: number; correct: number; accuracy: number }> = {};
-  const byChannel = getItemsByChannel();
-  for (const [channel, items] of Array.from(byChannel)) {
-    const channelResults = results.filter((r) => r.item.expectedChannel === channel);
-    const correct = channelResults.filter((r) => r.channelMatch).length;
-    perChannel[channel] = {
-      total: items.length,
-      correct,
-      accuracy: items.length > 0 ? correct / items.length : 0,
-    };
-  }
-
-  const report: ProviderReport = {
-    provider: provider.name,
-    totalItems: TEST_ITEMS.length,
-    channelAccuracy: channelCorrect / TEST_ITEMS.length,
-    statusAccuracy: statusCorrect / TEST_ITEMS.length,
-    exactAccuracy: exactCorrect / TEST_ITEMS.length,
-    notSureCount,
-    notSureRate: notSureCount / TEST_ITEMS.length,
-    perChannel,
-    avgConfidence: totalConfidence / (TEST_ITEMS.length - errorCount || 1),
-    avgDurationMs: totalDuration / (TEST_ITEMS.length - errorCount || 1),
-    p50DurationMs: percentile(results.filter((result) => result.result).map((result) => result.durationMs), 0.5),
-    p95DurationMs: percentile(results.filter((result) => result.result).map((result) => result.durationMs), 0.95),
-    errors: errorCount,
-    unsafeDiversions,
-    results,
-  };
-
-  return report;
+  return scoreTextResults(results);
 }
 
 function printReport(report: ProviderReport): void {
@@ -393,9 +237,7 @@ function printReport(report: ProviderReport): void {
 async function main() {
   const profile = selectProfile(parseArg('profile'));
   const truthSetDigest = TEXT_TRUTH_SET_DIGEST;
-  const productionBaseline = profile.id === CANDIDATE_PROFILE.id
-    ? readProductionBaseline(truthSetDigest)
-    : undefined;
+  const productionBaseline = readProductionBaseline();
 
   console.log(`Classification Accuracy Gate`);
   console.log(`Baseline: ${TEXT_BASELINE.id} (${truthSetDigest})`);
@@ -415,18 +257,12 @@ async function main() {
   );
   reports.push(report);
   printReport(report);
-  const comparison = productionBaseline
-    ? compareWithProduction(report, productionBaseline)
-    : undefined;
+  const comparison = compareWithProduction(report, productionBaseline);
 
   // Save results to JSON
-  const outputDirectory = profile.id === 'production-0a5852f'
-    ? path.join(__dirname, 'baselines', TEXT_BASELINE.id)
-    : path.join(__dirname, 'results');
+  const outputDirectory = path.join(__dirname, 'results');
   fs.mkdirSync(outputDirectory, { recursive: true });
-  const outputPath = profile.id === 'production-0a5852f'
-    ? path.join(outputDirectory, `${profile.id}.json`)
-    : path.join(outputDirectory, `classify-${Date.now()}.json`);
+  const outputPath = path.join(outputDirectory, `classify-${Date.now()}.json`);
   const output = {
     timestamp: new Date().toISOString(),
     baseline: TEXT_BASELINE,
@@ -441,18 +277,7 @@ async function main() {
     testSetSize: TEST_ITEMS.length,
     gates: reports.map((entry) => evaluateReport(entry)),
     comparison,
-    reports: reports.map((r) => ({
-      ...r,
-      results: r.results.map((tr) => ({
-        text: tr.item.text,
-        expected: { channel: tr.item.expectedChannel, status: tr.item.expectedStatus },
-        actual: tr.result ? { channel: tr.result.channel, status: tr.result.status, confidence: tr.result.confidence } : null,
-        channelMatch: tr.channelMatch,
-        statusMatch: tr.statusMatch,
-        durationMs: tr.durationMs,
-        error: tr.error,
-      })),
-    })),
+    reports: reports.map(serializeTextReport),
   };
   fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
   console.log(`\nResults saved to: ${outputPath}`);

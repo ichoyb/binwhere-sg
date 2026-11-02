@@ -1,4 +1,5 @@
 import type { Locale } from '../i18n/types';
+import { t } from '../i18n';
 
 interface ItemTranslation {
   name: string;
@@ -71,11 +72,11 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
     plastic: {
       label: '塑料',
       items: {
-        'PET Bottle': {
-          name: 'PET 塑料瓶',
-          reason: 'PET 饮料瓶可能属于 BCRS，但仅选择这一物品类型，无法确定该瓶是否带有新加坡 Deposit Mark。',
-          preparation: ['保持瓶子已清空且未压扁', '检查或拍清产品条码周围的标签，以确认 Deposit Mark'],
-          tip: '确认 Deposit Mark 后再选择回收渠道。',
+        'PET drink bottle': {
+          name: 'PET 饮料瓶',
+          reason: t('zh', 'bcrs.classifyReason'),
+          preparation: [t('zh', 'bcrs.step1'), t('zh', 'bcrs.step2'), t('zh', 'bcrs.step3'), t('zh', 'bcrs.step4')],
+          tip: t('zh', 'bcrs.refundAmount'),
         },
         'Plastic Container': {
           name: '塑料容器',
@@ -118,11 +119,11 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
     metal: {
       label: '金属',
       items: {
-        'Aluminium Can': {
-          name: '铝罐',
-          reason: '铝制饮料罐可能属于 BCRS，但仅选择这一物品类型，无法确定该罐是否带有新加坡 Deposit Mark。',
-          preparation: ['保持罐子已清空且未压扁', '检查或拍清产品条码周围的标签，以确认 Deposit Mark'],
-          tip: '确认 Deposit Mark 后再选择回收渠道。',
+        'Aluminium drink can': {
+          name: '铝制饮料罐',
+          reason: t('zh', 'bcrs.classifyReason'),
+          preparation: [t('zh', 'bcrs.step1'), t('zh', 'bcrs.step2'), t('zh', 'bcrs.step3'), t('zh', 'bcrs.step4')],
+          tip: t('zh', 'bcrs.refundAmount'),
         },
         'Tin Can': {
           name: '锡罐',
@@ -460,11 +461,11 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
     plastic: {
       label: 'Plastik',
       items: {
-        'PET Bottle': {
-          name: 'Botol PET',
-          reason: 'Botol minuman PET mungkin termasuk dalam BCRS, tetapi pemilihan jenis item ini sahaja tidak membuktikan sama ada botol tersebut mempunyai Deposit Mark Singapura.',
-          preparation: ['Pastikan botol kosong dan tidak kemek', 'Periksa atau ambil gambar label di sekeliling kod bar produk untuk mengesahkan Deposit Mark'],
-          tip: 'Sahkan Deposit Mark sebelum memilih saluran kitar semula.',
+        'PET drink bottle': {
+          name: 'Botol minuman PET',
+          reason: t('ms', 'bcrs.classifyReason'),
+          preparation: [t('ms', 'bcrs.step1'), t('ms', 'bcrs.step2'), t('ms', 'bcrs.step3'), t('ms', 'bcrs.step4')],
+          tip: t('ms', 'bcrs.refundAmount'),
         },
         'Plastic Container': {
           name: 'Bekas Plastik',
@@ -507,11 +508,11 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
     metal: {
       label: 'Logam',
       items: {
-        'Aluminium Can': {
-          name: 'Tin Aluminium',
-          reason: 'Tin minuman aluminium mungkin termasuk dalam BCRS, tetapi pemilihan jenis item ini sahaja tidak membuktikan sama ada tin tersebut mempunyai Deposit Mark Singapura.',
-          preparation: ['Pastikan tin kosong dan tidak kemek', 'Periksa atau ambil gambar label di sekeliling kod bar produk untuk mengesahkan Deposit Mark'],
-          tip: 'Sahkan Deposit Mark sebelum memilih saluran kitar semula.',
+        'Aluminium drink can': {
+          name: 'Tin minuman aluminium',
+          reason: t('ms', 'bcrs.classifyReason'),
+          preparation: [t('ms', 'bcrs.step1'), t('ms', 'bcrs.step2'), t('ms', 'bcrs.step3'), t('ms', 'bcrs.step4')],
+          tip: t('ms', 'bcrs.refundAmount'),
         },
         'Tin Can': {
           name: 'Tin Besi',
@@ -849,11 +850,11 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
     plastic: {
       label: 'பிளாஸ்டிக்',
       items: {
-        'PET Bottle': {
-          name: 'PET பாட்டில்',
-          reason: 'PET பானப் பாட்டில் BCRS-இல் இருக்கலாம்; ஆனால் இந்தப் பொருள் வகையை மட்டும் தேர்ந்தெடுத்ததால் அந்தப் பாட்டிலில் சிங்கப்பூர் Deposit Mark உள்ளதா என்பது உறுதியாகவில்லை.',
-          preparation: ['பாட்டிலை காலியாகவும் நசுக்காமலும் வைத்திருக்கவும்', 'Deposit Mark-ஐ உறுதிசெய்ய தயாரிப்பு பார்கோடைச் சுற்றியுள்ள லேபிளைச் சரிபார்க்கவும் அல்லது படம் எடுக்கவும்'],
-          tip: 'மறுசுழற்சி வழியைத் தேர்வதற்கு முன் Deposit Mark-ஐ உறுதிசெய்யவும்.',
+        'PET drink bottle': {
+          name: 'PET பான பாட்டில்',
+          reason: t('ta', 'bcrs.classifyReason'),
+          preparation: [t('ta', 'bcrs.step1'), t('ta', 'bcrs.step2'), t('ta', 'bcrs.step3'), t('ta', 'bcrs.step4')],
+          tip: t('ta', 'bcrs.refundAmount'),
         },
         'Plastic Container': {
           name: 'பிளாஸ்டிக் கொள்கலன்',
@@ -896,11 +897,11 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
     metal: {
       label: 'உலோகம்',
       items: {
-        'Aluminium Can': {
-          name: 'அலுமினியக் கேன்',
-          reason: 'அலுமினிய பானக் கேன் BCRS-இல் இருக்கலாம்; ஆனால் இந்தப் பொருள் வகையை மட்டும் தேர்ந்தெடுத்ததால் அந்தக் கேனில் சிங்கப்பூர் Deposit Mark உள்ளதா என்பது உறுதியாகவில்லை.',
-          preparation: ['கேனை காலியாகவும் நசுக்காமலும் வைத்திருக்கவும்', 'Deposit Mark-ஐ உறுதிசெய்ய தயாரிப்பு பார்கோடைச் சுற்றியுள்ள லேபிளைச் சரிபார்க்கவும் அல்லது படம் எடுக்கவும்'],
-          tip: 'மறுசுழற்சி வழியைத் தேர்வதற்கு முன் Deposit Mark-ஐ உறுதிசெய்யவும்.',
+        'Aluminium drink can': {
+          name: 'அலுமினிய பான கேன்',
+          reason: t('ta', 'bcrs.classifyReason'),
+          preparation: [t('ta', 'bcrs.step1'), t('ta', 'bcrs.step2'), t('ta', 'bcrs.step3'), t('ta', 'bcrs.step4')],
+          tip: t('ta', 'bcrs.refundAmount'),
         },
         'Tin Can': {
           name: 'டின் கேன்',
