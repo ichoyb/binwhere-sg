@@ -10,7 +10,7 @@
     "export:android": "expo export --platform android",
     "export:ios": "expo export --platform ios",
     "typecheck": "tsc --noEmit",
-    "test:unit": "tsx eas.test.ts && tsx src/api/client.test.ts &&tsx src/lib/history.test.ts && tsx src/lib/core-smoke.test.ts && tsx src/lib/scrub.test.ts && tsx ../packages/core/scripts/next-action.test.ts && tsx ../packages/core/scripts/v1-contract.ts --check",
+    "test:unit": "tsx eas.test.ts && tsx app.config.test.ts && tsx src/api/client.test.ts && tsx src/lib/history.test.ts && tsx src/lib/core-smoke.test.ts && tsx src/lib/scrub.test.ts && tsx ../packages/core/scripts/next-action.test.ts && tsx ../packages/core/scripts/v1-contract.ts --check",
     "test:live": "tsx src/api/classify-live.test.ts",
     "eas-build-pre-install": "npm ci --prefix ../packages/core"
   },

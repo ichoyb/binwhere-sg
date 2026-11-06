@@ -57,8 +57,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   // A production binary lives on users' phones long after the build machine is
   // gone. Refuse to produce one that cannot report its own crashes or
-  // symbolicate them.
-  if (environment === 'production') {
+  // symbolicate them. Only the EAS builder (EAS_BUILD=true) produces one, and
+  // only it is sure to hold the EAS variables: eas-cli first reads this config
+  // locally with just the profile's `env`, to find the project whose EAS
+  // variables it then loads.
+  if (environment === 'production' && process.env.EAS_BUILD === 'true') {
     const missing = [
       ['EXPO_PUBLIC_SENTRY_DSN', sentryDsn],
       ['SENTRY_ORG', sentryOrg],
