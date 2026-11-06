@@ -6,9 +6,6 @@ mobile/dist/
 *.p8
 *.p12
 *.mobileprovision
-.pnp
-.pnp.js
-.yarn/install-state.gz
 
 # testing
 coverage/
@@ -45,9 +42,6 @@ app/scripts/classify-eval/results/*
 !app/scripts/classify-eval/results/.gitkeep
 app/scripts/classify-eval/fixtures/cache/
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -57,4 +51,3 @@ next-env.d.ts
 
 # claude
 .claude/
-SingapoRecycle.md

@@ -32,12 +32,6 @@ export const DATASET_IDS = {
   RETURN_POINTS: 'return_points',
 } as const;
 
-/** Cache TTL defaults */
-export const CACHE_TTL = {
-  /** GeoJSON datasets: 24 hours */
-  GEOJSON_MS: 24 * 60 * 60 * 1000,
-} as const;
-
 /** Singapore bounding box for coordinate validation */
 export const SG_BOUNDS = {
   LAT_MIN: 1.15,

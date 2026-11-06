@@ -32,7 +32,7 @@ export const CLASSIFY_LIMITS: RateLimitConfig = {
   ],
 };
 
-/** /api/v1/nearby, /api/chat — basic protection */
+/** /api/v1/nearby — basic protection */
 export const DEFAULT_LIMITS: RateLimitConfig = {
   perIp: [
     { windowMs: MINUTE, max: 10 },  // 10 req/min per IP
