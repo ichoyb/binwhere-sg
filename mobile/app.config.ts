@@ -107,6 +107,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         // app does not have.
         locationAlwaysAndWhenInUsePermission: false,
         locationAlwaysPermission: false,
+        // By default the plugin also declares motion activity, compiling
+        // CoreMotion in, and a temporary precise-location purpose. The app
+        // uses neither, and neither string is localized.
+        motionUsagePermission: false,
+        locationFullAccuracyPermission: false,
       },
     ],
   ];
