@@ -20,7 +20,7 @@ import {
 import { t } from '../../src/lib/i18n';
 
 /** Actual deployment from 2026-11-06; execution uses its own installed dependencies. */
-export const PRODUCTION_REVISION = '5719b02f893048d9734a0edd65f0a08a2b64b26a';
+export const PRODUCTION_REVISION = 'b533bdb96f6042311013b95a36031957b6096681';
 const PRODUCTION_SHORT_REVISION = PRODUCTION_REVISION.slice(0, 7);
 const LOCALES: readonly Locale[] = ['en', 'zh', 'ms', 'ta'];
 
@@ -71,7 +71,7 @@ export const CANDIDATE_PROFILE: ClassificationProfile = {
     textTemperature: 0,
     ensureBcrsRefund: true,
     textModel: 'hy3',
-    visionModel: 'kimi-k3.1-pro',
+    visionModel: 'kimi-k3.1-pro-highspeed',
     strictResponseSchema: true,
     enforceNotSurePolicy: true,
     validateResultSemantics: true,

@@ -44,9 +44,10 @@ export interface ClassificationExecutionPolicy {
  * minutes later. A 12s attempt covers that tail, and the 25s budget fits a second
  * full attempt.
  *
- * One image sample is one vision call. On the same endpoint (108 kimi-k3.1-pro
- * calls at low reasoning effort under a 120s timeout, 2026-11-02) it took p50
- * 13.0s, p90 16.1s, slowest 20.6s; a 30s attempt covers that.
+ * One image sample is one vision call. The highspeed tier in use took p50 7.4s, p90
+ * 8.9s and at most 9.2s over 32 calls (2026-11-06); the standard tier took p50 13.0s,
+ * p90 16.1s and at most 20.6s over 108 (2026-11-02). Only 32 highspeed calls have been
+ * seen, so the attempt stays at 30s, which also covers the standard tier's slowest.
  */
 export const DEFAULT_EXECUTION_POLICY: ClassificationExecutionPolicy = {
   textAttemptMs: 12_000,
@@ -76,7 +77,7 @@ export const ATTEMPT_MS = (
  * classification failure, so the image budget stays at 50s. That leaves a 20s second
  * attempt after a timed-out first one, enough for a typical image, and a full second
  * attempt after a fast failure such as the cold-start 504. The same budget bounds the
- * majority vote: a tiebreak sample runs only in the time the first two left.
+ * majority vote, whose samples all run in parallel.
  */
 export const BUDGET_MS = (
   request: ClassifyRequest,
@@ -142,18 +143,25 @@ export async function classifyItem(
     : drawSample(provider, request, executionPolicy, deadline);
 }
 
+/** Independent samples drawn for one photo; any two that agree decide it. */
+const IMAGE_SAMPLES = 3;
+
 /**
  * Classify an image by the majority of independent samples.
  *
- * The vendor fixes the vision model's temperature (1.0 for kimi-k3.1-pro), so one
+ * The vendor fixes the vision model's temperature (1.0 for the K3 family), so one
  * photo can draw different answers from different calls. On 2026-11-01 the previous
  * model, kimi-k2.6, called the same tight crop of a canned coffee a "powder tin" for
  * blue_bin in one run and a "sachet" for general_waste in the next, each at
- * confidence 0.9 or more, and no prompt rule removes sampling noise. Two parallel
- * samples that agree are returned;
- * a disagreement draws a third, and without a majority the answer is not_sure. A
- * sample that cannot be drawn fails the classification as a single call would,
- * except the tiebreak: two disagreeing samples already show the answer is uncertain.
+ * confidence 0.9 or more, and no prompt rule removes sampling noise.
+ *
+ * All three samples start together and the first two that agree are the answer, which
+ * is the same answer as waiting for a majority of three. Drawing the tiebreak only
+ * after a disagreement added 15–19s to 2 of the 9 photos the app sent on 2026-11-06,
+ * and waiting for both of two samples meant the slower one set the pace. Without a
+ * majority the answer is not_sure. One sample that cannot be drawn leaves the other
+ * two to decide; with fewer than two samples there is no vote, so the classification
+ * fails as a single call would.
  */
 async function classifyImageByMajority(
   provider: ClassifyProvider,
@@ -162,30 +170,53 @@ async function classifyImageByMajority(
   deadline: number,
 ): Promise<ClassifyResult> {
   const cancel = new AbortController();
-  const draw = () => drawSample(provider, request, executionPolicy, deadline, cancel.signal);
   try {
-    const samples = await Promise.all([draw(), draw()]);
-    if (decision(samples[0]) === decision(samples[1])) return samples[0];
-
-    console.warn(`[ai] Image samples disagree: ${samples.map(decision).join(' vs ')}`);
-    if (deadline - Date.now() >= executionPolicy.minAttemptMs) {
-      try {
-        const third = await draw();
-        const majority = samples.find((sample) => decision(sample) === decision(third));
-        if (majority) return majority;
-        samples.push(third);
-      } catch (err) {
-        console.warn(`[ai] Image tiebreak failed: ${(err as Error).message}`);
+    return await new Promise<ClassifyResult>((resolve, reject) => {
+      const samples: ClassifyResult[] = [];
+      let failed = 0;
+      let lastError: Error | undefined;
+      let decided = false;
+      const settle = () => {
+        if (decided) return;
+        const agreed = samples.find((sample, index) => samples.some(
+          (other, otherIndex) => otherIndex !== index && decision(other) === decision(sample)));
+        if (agreed) {
+          decided = true;
+          if (samples.some((sample) => decision(sample) !== decision(agreed))) {
+            console.warn(`[ai] Image samples disagree (${samples.map(decision).join(', ')}); answering the majority`);
+          }
+          resolve(agreed);
+          return;
+        }
+        if (samples.length + failed < IMAGE_SAMPLES) return;
+        decided = true;
+        if (samples.length < 2) {
+          reject(lastError ?? new Error('AI service temporarily unavailable. Please try again.'));
+          return;
+        }
+        // A sample that already chose not_sure carries the application's own copy and,
+        // when its evidence allows, the check action.
+        console.warn(`[ai] Image samples have no majority (${samples.map(decision).join(', ')}); answering not_sure`);
+        resolve(samples.find((sample) => sample.status === 'not_sure')
+          ?? validate(toUnconfirmed(samples[0], request.locale ?? 'en'), executionPolicy));
+      };
+      for (let n = 0; n < IMAGE_SAMPLES; n += 1) {
+        drawSample(provider, request, executionPolicy, deadline, cancel.signal).then(
+          (sample) => {
+            samples.push(sample);
+            settle();
+          },
+          (err: Error) => {
+            if (!decided) console.warn(`[ai] Image sample failed: ${err.message}`);
+            failed += 1;
+            lastError = err;
+            settle();
+          },
+        );
       }
-    }
-
-    // A sample that already chose not_sure carries the application's own copy and,
-    // when its evidence allows, the check action.
-    console.warn(`[ai] Image samples have no majority (${samples.map(decision).join(', ')}); answering not_sure`);
-    return samples.find((sample) => sample.status === 'not_sure')
-      ?? validate(toUnconfirmed(samples[0], request.locale ?? 'en'), executionPolicy);
+    });
   } finally {
-    // A failed sample leaves its sibling in flight; stop it rather than pay for it.
+    // Once two samples agree, the third is no longer needed; stop it rather than pay for it.
     cancel.abort();
   }
 }

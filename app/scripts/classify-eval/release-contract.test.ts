@@ -19,15 +19,15 @@ assert.equal(hasMinimumBcrsHoldouts([yes, no, no, no]), false);
 assert.equal(hasMinimumBcrsHoldouts([yes, yes, yes, no]), false);
 assert.equal(hasMinimumBcrsHoldouts([yes, yes, no, glass]), true);
 assert.equal(hasMinimumBcrsHoldouts([yes, yes, no, no, glass]), true);
-assert.equal(BCRS_BASELINE.id, 'sg-bcrs-v23');
-assert.equal(BCRS_IMAGE_CASES.length, 73);
+assert.equal(BCRS_BASELINE.id, 'sg-bcrs-v24');
+assert.equal(BCRS_IMAGE_CASES.length, 79);
 assert.equal(BCRS_TEXT_CASES.length, 32);
-assert.equal(new Set(BCRS_IMAGE_CASES.map(({ id }) => id)).size, 73);
+assert.equal(new Set(BCRS_IMAGE_CASES.map(({ id }) => id)).size, 79);
 assert.equal(new Set(BCRS_TEXT_CASES.map(({ id }) => id)).size, 32);
 // Selected and pixel-reviewed on 2026-11-06, after candidate code and labels froze.
 const holdoutSources = [
-  'holdout-diet-pepsi-can-on-table-v23', 'holdout-milk-tea-plastic-bottle-v23', 'holdout-pepsi-max-can-at-desk-v23',
-  'holdout-cracked-phone-screen-v23', 'holdout-compact-fluorescent-bulb-v23',
+  'holdout-water-bottle-on-glass-dish-v24', 'holdout-sierra-mist-can-on-driftwood-v24', 'holdout-canada-dry-can-v24',
+  'holdout-discarded-face-mask-v24', 'holdout-buckfast-glass-bottle-on-lawn-v24', 'holdout-empty-cardboard-box-v24',
 ];
 const sources = new Set(BCRS_IMAGE_SOURCES.map(({ id }) => id));
 for (const testCase of BCRS_IMAGE_CASES) {

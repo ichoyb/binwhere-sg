@@ -94,15 +94,15 @@ export function HomeScreen({
     setError(null);
     setLoading(true);
     try {
-      const uri = await camera.capture();
-      if (!uri) {
+      const photo = await camera.capture();
+      if (!photo) {
         setError(getFriendlyError('Classification failed', locale));
         return;
       }
-      const base64 = await prepareImageForClassify(uri);
+      const base64 = await prepareImageForClassify(photo);
       camera.stop();
       const result = await classifyItem({ image: base64, locale });
-      onClassified(result, uri);
+      onClassified(result, photo.uri);
     } catch (e) {
       setError(
         e instanceof ApiError

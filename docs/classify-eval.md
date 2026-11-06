@@ -2,14 +2,15 @@
 
 评测代码位于 `app/scripts/classify-eval/`。运行环境为 Node v24.22.1。
 离线 CI 不调用模型；付费运行必须先获得用户批准。本文的生产身份对应
-2026-11-06 实际部署的 `5719b02f893048d9734a0edd65f0a08a2b64b26a`。
+2026-11-06 实际部署的 `b533bdb96f6042311013b95a36031957b6096681`。
 
 ## 当前真值与判定
 
-`sg-consumer-text-v4` 有 86 条文字用例；`sg-bcrs-v23` 有 32 条四语文字用例，
-以及来自 69 个 SHA-256 固定来源的 73 条图片用例。其中 5 条是 holdout：代码和标签冻结后于
-2026-11-06 选定并逐像素复核，3 张回收点（桌上开封的铝罐、印 310ml 的塑料奶茶瓶、立在键盘和
-显示器前的细长罐），2 张非饮料（碎屏手机、节能灯）。其余都是 regression。
+`sg-consumer-text-v4` 有 86 条文字用例；`sg-bcrs-v24` 有 32 条四语文字用例，
+以及来自 75 个 SHA-256 固定来源的 79 条图片用例。其中 6 条是 holdout：代码和标签冻结后于
+2026-11-06 选定并逐像素复核，3 张回收点（立在玻璃盘上的塑料水瓶、浮木上印 355 mL 的罐、
+白底上的单个罐），3 张非回收点（路面上用过的口罩、草地上印 75cl 的空玻璃酒瓶、空纸箱）。
+其余都是 regression。
 
 判定依据：2026-10-01 起，在新加坡销售的受管制饮料都必须印押金标志和条码，是否退款由回收机
 扫码比对 BCRS Ltd 的注册库决定，境外购买的即使印有标志也不退。所以照片里拍没拍到标志既不必要
@@ -69,7 +70,7 @@ check 动作都不提蓝色回收箱。四语应用文案均绑定在候选摘�
 
 ## 实际部署版本的生产基线
 
-`PRODUCTION_PROFILE` 只记录 `production-5719b02` 及完整 revision。
+`PRODUCTION_PROFILE` 只记录 `production-b533bdb` 及完整 revision。
 候选运行器拒绝 `--profile=production`，生产执行入口为 `baseline:production`。
 worktree 路径是必填参数，没有默认值。worktree 在仓库外，由 owner 创建并安装自己的依赖。
 部署版本原样运行，不打补丁：已跟踪文件不得有任何改动，超时也按部署值。
@@ -112,8 +113,8 @@ CI 不读取旧 git 对象、worktree 或 fixture 缓存，不比较受 git 配�
 `production-scoring.ts` 使用当前真值、`checkBcrsResult` 和候选共用的 `scoring.ts` 评分。
 付费有效结果写为以下两份文件，沿用原有字段并新增 `source`：
 
-- `baselines/sg-consumer-text-v4/production-5719b02.json`
-- `baselines/sg-bcrs-v23/production-5719b02.json`
+- `baselines/sg-consumer-text-v4/production-b533bdb.json`
+- `baselines/sg-bcrs-v24/production-b533bdb.json`
 
 `timestamp` 永远取子进程结束时间。重新评分旧原始输出不会刷新 24 小时窗口。
 原始输出包含运行时核对、清单摘要、模块路径、版本、模型名、执行策略、图片处理记录、
@@ -134,8 +135,8 @@ CI 不读取旧 git 对象、worktree 或 fixture 缓存，不比较受 git 配�
 
 ```bash
 REPO=$(git rev-parse --show-toplevel)
-WT=/private/tmp/binwhere-production-5719b02
-git -C "$REPO" worktree add --detach "$WT" 5719b02f893048d9734a0edd65f0a08a2b64b26a
+WT=/private/tmp/binwhere-production-b533bdb
+git -C "$REPO" worktree add --detach "$WT" b533bdb96f6042311013b95a36031957b6096681
 (cd "$WT/packages/core" && npm ci) && (cd "$WT/app" && npm ci)
 ```
 

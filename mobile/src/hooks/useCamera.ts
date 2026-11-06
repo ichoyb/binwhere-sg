@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
+import type { CapturedPhoto } from '../lib/image-prep';
 
 export type CameraUiStatus =
   | 'idle'
@@ -44,7 +45,7 @@ export function useCamera() {
     setActive(false);
   }, []);
 
-  const capture = useCallback(async (): Promise<string | null> => {
+  const capture = useCallback(async (): Promise<CapturedPhoto | null> => {
     if (!cameraRef.current || busy) return null;
     setBusy(true);
     try {
@@ -57,7 +58,8 @@ export function useCamera() {
         quality: 0.8,
         skipProcessing: false,
       });
-      return photo?.uri ?? null;
+      // With processing on, the reported size already reflects the photo's orientation.
+      return photo ? { uri: photo.uri, width: photo.width, height: photo.height } : null;
     } catch {
       return null;
     } finally {

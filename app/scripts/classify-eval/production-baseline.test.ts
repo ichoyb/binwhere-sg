@@ -90,8 +90,8 @@ const missedHoldout = structuredClone(raw);
 const otherHoldoutId = BCRS_IMAGE_CASES.find((entry) => entry.partition === 'holdout' && entry.channel !== 'return_point')!.id;
 missedHoldout.results.find(({ id }) => id === otherHoldoutId)!.result = answer('return_point', 'recyclable');
 assert.equal(scoreProductionRaw(missedHoldout).bcrs.gate.releaseEligible, false, 'A false return point on a holdout fails the release gate');
-assert.equal(PRODUCTION_PROFILE.id, 'production-5719b02');
-assert.equal(PRODUCTION_REVISION, '5719b02f893048d9734a0edd65f0a08a2b64b26a');
+assert.equal(PRODUCTION_PROFILE.id, 'production-b533bdb');
+assert.equal(PRODUCTION_REVISION, 'b533bdb96f6042311013b95a36031957b6096681');
 
 const failures: Array<[string, (value: ProductionRawOutput) => void]> = [
   ['revision', (value) => { value.source.preflight.revision = '0'.repeat(40); }],

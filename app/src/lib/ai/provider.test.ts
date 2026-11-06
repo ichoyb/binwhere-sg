@@ -41,14 +41,16 @@ const EVIDENCE = {
   contaminated: false,
 } as const;
 
-const OK = {
+/** A model answer: everything but the status, which follows from the channel. */
+const MODEL_OK = {
   beverage_evidence: EVIDENCE,
   item: 'aluminium can',
-  status: 'recyclable',
   confidence: 0.95,
   channel: 'return_point',
   reason: 'Has a Deposit Mark.',
-} satisfies ClassifyResult & { beverage_evidence: typeof EVIDENCE };
+} satisfies Omit<ClassifyResult, 'status'> & { beverage_evidence: typeof EVIDENCE };
+
+const OK = { ...MODEL_OK, status: 'recyclable' } satisfies ClassifyResult & { beverage_evidence: typeof EVIDENCE };
 
 const TEST_JPEG_BASE64 = '/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAIDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AKpAB//Z';
 
@@ -206,14 +208,14 @@ async function main() {
         ['string', 'null'],
       );
       assert.deepEqual(body.response_format.json_schema.schema.required, [
-        'item', 'status', 'confidence', 'channel', 'reason', 'preparation', 'tip', 'beverage_evidence',
+        'item', 'confidence', 'channel', 'reason', 'preparation', 'tip', 'beverage_evidence',
       ]);
       const beverageEvidence = body.response_format.json_schema.schema.properties as unknown as {
         beverage_evidence: { required: string[] };
       };
       assert.ok(beverageEvidence.beverage_evidence.required.includes('beverage_product'));
       assert.ok(beverageEvidence.beverage_evidence.required.includes('visible_container_count'));
-      return completionResponse(JSON.stringify(OK));
+      return completionResponse(JSON.stringify(MODEL_OK));
     }, async () => {
       const result = await new TokenHubProvider('test-key').classify(
         { text: 'can', locale: 'zh' },
@@ -236,7 +238,7 @@ async function main() {
         max_completion_tokens?: number;
         messages: Array<{ content: Array<{ type: string }> }>;
       };
-      assert.equal(body.model, 'kimi-k3.1-pro');
+      assert.equal(body.model, 'kimi-k3.1-pro-highspeed');
       // The K3 family always reasons: `thinking: disabled` is accepted and then
       // leaks the reasoning into content, and the vendor fixes the temperature.
       assert.equal(body.reasoning_effort, 'low');
@@ -246,7 +248,7 @@ async function main() {
       assert.equal(body.max_tokens, undefined);
       assert.ok(Array.isArray(body.messages[1]?.content));
       assert.equal(body.messages[1]?.content.filter((part) => part.type === 'image_url').length, 1);
-      return completionResponse(JSON.stringify(OK));
+      return completionResponse(JSON.stringify(MODEL_OK));
     }, async () => {
       await new TokenHubProvider('test-key')
         .classify({ image: TEST_JPEG_BASE64 });
@@ -259,7 +261,7 @@ async function main() {
       await withMockFetch(async () => {
         calls += 1;
         assert.equal(calls, 1, 'a verifier call must not follow classification');
-        return completionResponse(JSON.stringify({ ...OK, beverage_evidence: { ...EVIDENCE, ...patch } }));
+        return completionResponse(JSON.stringify({ ...MODEL_OK, beverage_evidence: { ...EVIDENCE, ...patch } }));
       }, async () => {
         const result = await new TokenHubProvider('test-key').classify({ image: TEST_JPEG_BASE64 });
         assert.equal(result.channel, 'return_point');
@@ -272,7 +274,7 @@ async function main() {
   await runTest('policy promotes an ordinary drink category and replaces contradictory model prose', async () => {
     for (const request of [{ text: 'water bottle' }, { image: TEST_JPEG_BASE64 }]) {
       await withMockFetch(async () => completionResponse(JSON.stringify({
-        ...OK, channel: 'blue_bin', reason: 'FOREIGN SCHEME GUESS', preparation: ['CRUSH IT'], tip: 'MODEL TIP',
+        ...MODEL_OK, channel: 'blue_bin', reason: 'FOREIGN SCHEME GUESS', preparation: ['CRUSH IT'], tip: 'MODEL TIP',
       })), async () => {
         const result = await new TokenHubProvider('test-key').classify(request);
         assert.equal(result.channel, 'return_point');
@@ -286,7 +288,7 @@ async function main() {
 
   await runTest('unknown category facts keep all uncertain copy free of a disposal channel', async () => {
     await withMockFetch(async () => completionResponse(JSON.stringify({
-      ...OK, status: 'not_sure', confidence: 0.9, channel: null,
+      ...MODEL_OK, confidence: 0.9, channel: null,
       reason: 'Use blue recycling bin', preparation: ['Blue bin'], tip: '蓝色回收箱',
       beverage_evidence: { ...EVIDENCE, form: 'unknown' },
     })), async () => {
@@ -303,9 +305,9 @@ async function main() {
 
   await runTest('production is identity only and cannot execute candidate provider code', async () => {
     assert.deepEqual(Object.keys(PRODUCTION_PROFILE).sort(), ['id', 'revision']);
-    assert.equal(PRODUCTION_PROFILE.id, 'production-5719b02');
-    assert.match(PRODUCTION_PROFILE.revision, /^5719b02/);
-    assert.throws(() => selectProfile('production'), /5719b02.*worktree.*baseline:production/);
+    assert.equal(PRODUCTION_PROFILE.id, 'production-b533bdb');
+    assert.match(PRODUCTION_PROFILE.revision, /^b533bdb/);
+    assert.throws(() => selectProfile('production'), /b533bdb.*worktree.*baseline:production/);
     assert.equal(selectProfile(), CANDIDATE_PROFILE);
     assert.match(profileDigest(CANDIDATE_PROFILE), /^[a-f0-9]{64}$/);
     assert.throws(() => selectProfile('other'), /Invalid/);
@@ -314,7 +316,7 @@ async function main() {
   await runTest('core supplies the full refund copy even without TokenHub refund normalization', async () => {
     const outputs: ClassifyResult[] = [];
     await withMockFetch(async () => completionResponse(JSON.stringify({
-      ...OK, preparation: ['MODEL STEP'], tip: 'MODEL TIP',
+      ...MODEL_OK, preparation: ['MODEL STEP'], tip: 'MODEL TIP',
     })), async () => {
       for (const ensureBcrsRefund of [false, true]) {
         const result = await new TokenHubProvider('test-key', { ensureBcrsRefund }).classify({ text: 'drink', locale: 'zh' });
@@ -344,7 +346,7 @@ async function main() {
       assert.equal(body.reasoning_effort, undefined);
       assert.equal(body.temperature, 0);
       assert.equal(body.max_tokens, 1024);
-      return completionResponse(JSON.stringify(OK));
+      return completionResponse(JSON.stringify(MODEL_OK));
     }, async () => {
       await new TokenHubProvider('test-key').classify({ text: 'can' });
     });
@@ -362,7 +364,7 @@ async function main() {
     console.info = () => {};
     try {
       await withMockFetch(
-        async () => completionResponse(JSON.stringify(OK), {
+        async () => completionResponse(JSON.stringify(MODEL_OK), {
           prompt_tokens: 1109,
           completion_tokens: 536,
           completion_tokens_details: { reasoning_tokens: 445 },
@@ -393,7 +395,7 @@ async function main() {
   });
 
   await runTest('missing structured evidence cannot silently remove next-step guidance', async () => {
-    const raw = { ...OK } as Record<string, unknown>;
+    const raw = { ...MODEL_OK } as Record<string, unknown>;
     delete raw.beverage_evidence;
     await withMockFetch(async () => completionResponse(JSON.stringify(raw)), async () => {
       await assert.rejects(new TokenHubProvider('test-key').classify({ text: 'water bottle' }), RetryableProviderError);
@@ -408,7 +410,7 @@ async function main() {
       console.warn = () => {};
       console.info = () => {};
       try {
-        await withMockFetch(async () => completionResponse(JSON.stringify(OK), {
+        await withMockFetch(async () => completionResponse(JSON.stringify(MODEL_OK), {
           prompt_tokens: 4000, completion_tokens: reasoning + 250,
           completion_tokens_details: { reasoning_tokens: reasoning },
         }), async () => {
@@ -424,7 +426,7 @@ async function main() {
 
   await runTest('only an answer the model finished itself is accepted, on both paths', async () => {
     const body = (choice: Record<string, unknown>, usage?: unknown) => () => new Response(JSON.stringify({
-      choices: [{ message: { content: JSON.stringify(OK) }, ...choice }],
+      choices: [{ message: { content: JSON.stringify(MODEL_OK) }, ...choice }],
       ...(usage === undefined ? {} : { usage }),
     }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     // Parseable JSON is not enough: a completion cut off at the cap is not an
@@ -473,7 +475,7 @@ async function main() {
         const sampling = Object.fromEntries(Object.entries(sent)
           .filter(([key]) => !['model', 'messages', 'response_format'].includes(key)));
         assert.deepEqual(sampling, JSON.parse(JSON.stringify(expected)));
-        return completionResponse(JSON.stringify(OK));
+        return completionResponse(JSON.stringify(MODEL_OK));
       }, async () => {
         await new TokenHubProvider('test-key', options).classify(request);
       });
@@ -539,18 +541,26 @@ async function main() {
     );
   });
 
-  await runTest('TokenHub rejects an inconsistent status and channel as retryable', async () => {
-    const inconsistent = {
-      ...OK,
-      status: 'special_handling',
-      channel: 'return_point',
+  await runTest('TokenHub derives the status from the channel', async () => {
+    const laptop = {
+      ...MODEL_OK, item: 'laptop', channel: 'ewaste', reason: 'ICT equipment.',
+      beverage_evidence: { ...EVIDENCE, beverage_product: 'other', subject: 'other', form: 'other', material: 'other' },
     };
+    for (const [answer, status] of [[laptop, 'special_handling'], [{ ...laptop, channel: null, confidence: 0.3 }, 'not_sure']] as const) {
+      await withMockFetch(async () => completionResponse(JSON.stringify(answer)), async () => {
+        assert.equal((await new TokenHubProvider('test-key').classify({ text: 'laptop' })).status, status);
+      });
+    }
+  });
+
+  await runTest('an answer that states its own status ignored the schema and is retried', async () => {
+    // A stated status could contradict the channel; it is rejected, never overwritten.
     await withMockFetch(
-      async () => completionResponse(JSON.stringify(inconsistent)),
+      async () => completionResponse(JSON.stringify({ ...MODEL_OK, status: 'special_handling' })),
       async () => {
         await assert.rejects(
           new TokenHubProvider('test-key').classify({ text: 'can' }),
-          (err: unknown) => err instanceof RetryableProviderError,
+          (err: unknown) => err instanceof RetryableProviderError && /status is derived/.test(err.message),
         );
       },
     );
@@ -579,7 +589,7 @@ async function main() {
     try {
       await withMockFetch(async () => {
         calls += 1;
-        return completionResponse(JSON.stringify(OK), undefined, calls === 1 ? 'length' : 'stop');
+        return completionResponse(JSON.stringify(MODEL_OK), undefined, calls === 1 ? 'length' : 'stop');
       }, async () => {
         const result = await classifyItem({ text: 'can' }, new TokenHubProvider('test-key'),
           { ...DEFAULT_EXECUTION_POLICY, retryBackoffMs: 0 });
@@ -659,11 +669,13 @@ async function main() {
   const blueBin: ClassifyResult = { ...OK, channel: 'blue_bin', reason: 'Clean metal can.' };
   const generalWaste: ClassifyResult = { ...OK, status: 'not_recyclable', channel: 'general_waste', reason: 'Sachet.' };
 
-  await runTest('an image returns two agreeing samples without a tiebreak', async () => {
-    const provider = stub(['ok', 'ok', 'ok']);
+  await runTest('an image answers as soon as two of three parallel samples agree', async () => {
+    const provider = stub(['ok', 'ok', 5_000]);
+    const started = Date.now();
     const result = await classifyItem({ image: 'x' }, provider);
     assert.equal(result.channel, 'return_point');
-    assert.equal(provider.calls, 2);
+    assert.equal(provider.calls, 3, 'all samples start together');
+    assert.ok(Date.now() - started < 1_000, 'the slowest sample must not hold the answer');
   });
 
   await runTest('text still takes a single sample', async () => {
@@ -689,16 +701,31 @@ async function main() {
     assert.equal(preferred.reason, 'Size unknown.');
   });
 
-  await runTest('an image fails like a single classification when a sample fails permanently', async () => {
-    const provider = stub(['ok', new Error('TokenHub API error: 401')]);
-    await assert.rejects(classifyItem({ image: 'x' }, provider));
+  await runTest('one sample that cannot be drawn leaves the other two to decide', async () => {
+    const agreeing = stub(['ok', new Error('TokenHub API error: 401'), 'ok']);
+    assert.equal((await classifyItem({ image: 'x' }, agreeing)).channel, 'return_point');
+    let calls = 0;
+    const split: ClassifyProvider = {
+      name: 'split',
+      async classify() {
+        calls += 1;
+        if (calls === 3) throw new Error('TokenHub API error: 401');
+        return calls === 1 ? OK : blueBin;
+      },
+    };
+    assert.equal((await classifyItem({ image: 'x' }, split)).status, 'not_sure');
+  });
+
+  await runTest('an image fails like a single classification when fewer than two samples can be drawn', async () => {
+    const failure = new Error('TokenHub API error: 401');
+    await assert.rejects(classifyItem({ image: 'x' }, stub([failure, failure, 'ok'])));
   });
 
   await runTest('an image vote stays inside the image budget', async () => {
     const policy = {
       ...DEFAULT_EXECUTION_POLICY, imageAttemptMs: 40, imageBudgetMs: 100, minAttemptMs: 10, retryBackoffMs: 0,
     };
-    const provider = stub(Array.from({ length: 8 }, () => 1_000));
+    const provider = stub(Array.from({ length: 12 }, () => 1_000));
     const started = Date.now();
     await assert.rejects(classifyItem({ image: 'x' }, provider, policy));
     assert.ok(Date.now() - started <= policy.imageBudgetMs + 100, 'the vote must end at the image budget');

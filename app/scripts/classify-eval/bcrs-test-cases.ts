@@ -16,9 +16,9 @@ export const BCRS_POLICY_SOURCE = {
 } as const;
 
 export const BCRS_BASELINE = {
-  id: 'sg-bcrs-v23',
+  id: 'sg-bcrs-v24',
   reviewedAt: '2026-11-06',
-  holdoutRule: "All previously exposed images, including the seven v22 holdouts, are regression cases. After candidate code and labels are frozen, select new pixel-reviewed holdouts with at least two return_point truths and at least two non-return_point truths. Each holdout must pass every classification, action and safety assertion with zero provider errors. Apply the ordered v23 rules to the submitted pixels: an identified non-beverage keeps its ordinary channel in any scene, and drinks follow the container-category rules. Image exactness remains at least 95%, return-point recall at least 90%, and wrong non-null channels and false return points remain zero tolerance. Reject near-duplicate source pairs at 0.995 before any model call. These checks are developer-visible, frozen and non-adaptive, not sealed blind tests.",
+  holdoutRule: "All previously exposed images, including the five v23 holdouts, are regression cases. After candidate code and labels are frozen, select new pixel-reviewed holdouts with at least two return_point truths and at least two non-return_point truths. Each holdout must pass every classification, action and safety assertion with zero provider errors. Apply the ordered v23 rules to the submitted pixels: an identified non-beverage keeps its ordinary channel in any scene, and drinks follow the container-category rules. Image exactness remains at least 95%, return-point recall at least 90%, and wrong non-null channels and false return points remain zero tolerance. Reject near-duplicate source pairs at 0.995 before any model call. These checks are developer-visible, frozen and non-adaptive, not sealed blind tests.",
 } as const;
 
 export interface ExpectedClassification {
@@ -943,6 +943,72 @@ export const BCRS_IMAGE_SOURCES: readonly BcrsImageSource[] = [
     reviewedAt: '2026-11-06',
     provenance: "One compact fluorescent bulb with folded tubes and a screw base lies on a black background. Every used bulb goes to lighting collection.",
   },
+  {
+    id: 'holdout-water-bottle-on-glass-dish-v24',
+    filename: 'holdout-water-bottle-on-glass-dish-v24.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Plastic_Water_Bottle.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Plastic_Water_Bottle.jpg',
+    sha256: 'e588d3c9eba03b2ff8477b55fb46e7e9b17886a29a699a3846c70d01507d44a7',
+    credit: 'Kykywinks, Wikimedia Commons',
+    licence: 'CC BY-SA 4.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One capped, intact clear plastic water bottle with a ridged body stands on a pressed-glass dish on a wooden table; the dish is its stand, not a drink container. No capacity is printed, and nothing visible puts the bottle outside 150ml-3L.",
+  },
+  {
+    id: 'holdout-sierra-mist-can-on-driftwood-v24',
+    filename: 'holdout-sierra-mist-can-on-driftwood-v24.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Can_of_Diet_Sierra_Mist_lemon-lime_soda,_2011.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/9f/Can_of_Diet_Sierra_Mist_lemon-lime_soda%2C_2011.jpg',
+    sha256: '2af83dc86a90dfe37701c6b5b23ae565fe098475dba0313c7cc3c27f670ca7e7',
+    credit: 'DimiTalen, Wikimedia Commons',
+    licence: 'CC0 1.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One intact Diet Sierra Mist lemon-lime soda can printed 12 FL OZ (355 mL) stands on driftwood with the sea behind it; nothing else in frame is a container.",
+  },
+  {
+    id: 'holdout-canada-dry-can-v24',
+    filename: 'holdout-canada-dry-can-v24.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Canada_Dry_ginger_ale_can.jpg',
+    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Canada_Dry_ginger_ale_can.jpg/1920px-Canada_Dry_ginger_ale_can.jpg',
+    sha256: '6c13b6d51ca6ff2bf4f5f930fa0bce8a9288331d27b5bedd90b5cc9bce4af706',
+    credit: 'Fmvh, Wikimedia Commons',
+    licence: 'CC BY-SA 4.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One intact Canada Dry ginger ale drink can stands alone on a plain white background. No capacity is printed on the visible side; the complete standard can outline establishes an ordinary in-range can.",
+  },
+  {
+    id: 'holdout-discarded-face-mask-v24',
+    filename: 'holdout-discarded-face-mask-v24.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Discarded_face_mask_along_the_pavement_in_Clarendon.jpg',
+    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Discarded_face_mask_along_the_pavement_in_Clarendon.jpg/1920px-Discarded_face_mask_along_the_pavement_in_Clarendon.jpg',
+    sha256: '7f966ec963e13cac3f01dd0ed38be85ad63b9bd8c7763a31a55642f301d46617',
+    credit: 'Ser Amantio di Nicolao, Wikimedia Commons',
+    licence: 'CC BY-SA 3.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One used disposable surgical face mask lies on brick paving with its ear loops spread; nothing else is in frame. A used mask goes to general waste.",
+  },
+  {
+    id: 'holdout-buckfast-glass-bottle-on-lawn-v24',
+    filename: 'holdout-buckfast-glass-bottle-on-lawn-v24.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Photo_of_an_empty_bottle_of_Buckfast_Tonic_Wine.JPG',
+    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Photo_of_an_empty_bottle_of_Buckfast_Tonic_Wine.JPG/1920px-Photo_of_an_empty_bottle_of_Buckfast_Tonic_Wine.JPG',
+    sha256: '193d5a393d28c1bdf205f2f698c659f63030b19fca51110fa4e1139b9fa70765',
+    credit: 'Daniel Naczk, Wikimedia Commons',
+    licence: 'CC BY-SA 4.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One empty, intact, uncapped green glass Buckfast Tonic Wine bottle printed 75cl lies on a lawn with no visible contamination. Glass is outside the deposit category, so the clean bottle goes to the blue bin.",
+  },
+  {
+    id: 'holdout-empty-cardboard-box-v24',
+    filename: 'holdout-empty-cardboard-box-v24.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Box.agr.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Box.agr.jpg',
+    sha256: '385f42408d114bad1cfc06adf773a64b1902779c9a4515da07413fbac0a13530',
+    credit: 'ArnoldReinhold, Wikimedia Commons',
+    licence: 'CC BY-SA 3.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One empty, clean corrugated cardboard box stands open on a carpet, seen from above. Clean, dry cardboard goes to the blue bin.",
+  },
 ];
 
 export interface BcrsImageCase extends ExpectedClassification {
@@ -1677,7 +1743,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "return_point",
     "status": "recyclable",
-    "partition": "holdout",
+    "partition": "regression",
     "nextAction": "return_container",
     "requiredExactText": [
       "S$0.10"
@@ -1689,7 +1755,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "return_point",
     "status": "recyclable",
-    "partition": "holdout",
+    "partition": "regression",
     "nextAction": "return_container",
     "requiredExactText": [
       "S$0.10"
@@ -1701,7 +1767,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "return_point",
     "status": "recyclable",
-    "partition": "holdout",
+    "partition": "regression",
     "nextAction": "return_container",
     "requiredExactText": [
       "S$0.10"
@@ -1713,7 +1779,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "ewaste",
     "status": "special_handling",
-    "partition": "holdout"
+    "partition": "regression"
   },
   {
     "id": "holdout-compact-fluorescent-bulb-v23-en",
@@ -1721,6 +1787,66 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "lighting",
     "status": "special_handling",
+    "partition": "regression"
+  },
+  {
+    "id": "holdout-water-bottle-on-glass-dish-v24-en",
+    "sourceId": "holdout-water-bottle-on-glass-dish-v24",
+    "locale": "en",
+    "channel": "return_point",
+    "status": "recyclable",
+    "partition": "holdout",
+    "nextAction": "return_container",
+    "requiredExactText": [
+      "S$0.10"
+    ]
+  },
+  {
+    "id": "holdout-sierra-mist-can-on-driftwood-v24-en",
+    "sourceId": "holdout-sierra-mist-can-on-driftwood-v24",
+    "locale": "en",
+    "channel": "return_point",
+    "status": "recyclable",
+    "partition": "holdout",
+    "nextAction": "return_container",
+    "requiredExactText": [
+      "S$0.10"
+    ]
+  },
+  {
+    "id": "holdout-canada-dry-can-v24-en",
+    "sourceId": "holdout-canada-dry-can-v24",
+    "locale": "en",
+    "channel": "return_point",
+    "status": "recyclable",
+    "partition": "holdout",
+    "nextAction": "return_container",
+    "requiredExactText": [
+      "S$0.10"
+    ]
+  },
+  {
+    "id": "holdout-discarded-face-mask-v24-en",
+    "sourceId": "holdout-discarded-face-mask-v24",
+    "locale": "en",
+    "channel": "general_waste",
+    "status": "not_recyclable",
+    "partition": "holdout"
+  },
+  {
+    "id": "holdout-buckfast-glass-bottle-on-lawn-v24-en",
+    "sourceId": "holdout-buckfast-glass-bottle-on-lawn-v24",
+    "locale": "en",
+    "channel": "blue_bin",
+    "status": "recyclable",
+    "partition": "holdout"
+  },
+  {
+    "id": "holdout-empty-cardboard-box-v24-en",
+    "sourceId": "holdout-empty-cardboard-box-v24",
+    "locale": "en",
+    "channel": "blue_bin",
+    "status": "recyclable",
     "partition": "holdout"
   }
 ];

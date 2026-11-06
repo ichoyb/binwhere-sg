@@ -40,23 +40,14 @@ const BASE_PROMPT = `You are a recycling assistant for Singapore. Given an image
 17. **An intact, uncontaminated single prepackaged plastic/metal drink bottle, can or cup that rule 16 does not exclude → return_point / recyclable.** Its capacity need not be known, and a visible Deposit Mark or product barcode is not required to choose this category. Emptying is preparation. State S$0.10 conditionally: purchase in Singapore and the Deposit Mark are required for a refund; the Return Point scans the barcode and decides acceptance.
 18. **Unknown shape or material:** for one identified prepackaged drink, if shape or material is unknown, a readable 10¢ SG RETURN Deposit Mark printed on that drink container can fill only those unknown facts. It cannot override known glass, carton, pouch, out-of-range capacity, damage, contamination, multiple objects or an excluded product. A standalone mark, poster, loose sticker or return machine is not a mark on the drink container. Otherwise use not_sure / null / confidence below 0.5; the application provides check_container_type. A not_sure response must not mention or recommend blue_bin at all.
 19. **Excluded products follow ordinary recycling rules.** Glass, cartons, pouches, non-beverages, powdered drinks, food for special medical purposes and freshly prepared drinks cannot use return_point. An undamaged, uncontaminated single glass beverage bottle → blue_bin. Damaged or contaminated glass follows ordinary rules. Do not read foreign deposit marks or use them to decide the channel; classify the container category instead.
-20. **When in doubt**, return status "not_sure" with confidence < 0.5 and channel null. Do NOT guess.
-
-## Status Guide
-
-- "recyclable" (green) → Can be recycled via the specified channel
-- "special_handling" (orange) → Needs special disposal (e-waste, hazardous, bulky)
-- "consider_donating" (blue) → Item is in good condition, consider donating first
-- "not_recyclable" (gray) → Goes to general waste
-- "not_sure" (light gray) → Cannot determine with confidence
+20. **When in doubt**, return channel null with confidence < 0.5; the application shows that as not sure. Do NOT guess.
 
 ## Output Format
 
-Respond ONLY with a valid JSON object (no markdown, no explanation):
+Respond ONLY with a valid JSON object (no markdown, no explanation). The application derives the status from the channel, so do not return one:
 
 {
   "item": "identified item name",
-  "status": "recyclable|special_handling|consider_donating|not_recyclable|not_sure",
   "confidence": 0.0-1.0,
   "channel": "channel_name or null if not_sure",
   "reason": "brief explanation",
@@ -113,7 +104,7 @@ ${EVIDENCE_INSTRUCTION}
 
 You MUST respond in ${langName}.
 All JSON text fields (item, reason, preparation, tip) MUST be in ${langName}.
-The "status" and "channel" fields MUST remain exactly as shown in English (e.g. "recyclable", "blue_bin"). Do NOT translate enum values.
+The "channel" field MUST remain exactly as shown in English (e.g. "blue_bin"). Do NOT translate enum values.
 Currency amounts, numbers and units are NOT translated: write "S$0.10" and "150ml-3L" verbatim in Latin characters in every language. Never convert an amount to another currency or numeral system.
 Keep responses concise and practical.`;
 }

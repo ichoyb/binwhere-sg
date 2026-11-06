@@ -13,8 +13,10 @@ import { z } from 'zod';
 import {
   BeverageEvidenceSchema,
   BEVERAGE_EVIDENCE_JSON_SCHEMA,
+  CHANNEL_STATUS,
   applyBeverageActionPolicy,
   toUnconfirmed,
+  type ChannelType,
 } from '@binwhere/core';
 
 const API_URL = 'https://tokenhub-intl.tencentcloudmaas.com/v1/chat/completions';
@@ -68,11 +70,16 @@ export const TOKENHUB_TEXT_MODEL = 'hy3';
  * kimi-k2.6, which could turn thinking off, drifted on the thirteen hardest refund
  * photos from 12/13 in September to 7/13 in October with no change on this side.
  * Screened against four other image models on the sixteen hardest cases, two
- * samples each, on 2026-11-02, this was the only one with neither a wrong channel
- * nor a false return_point. It cannot answer without reasoning, so the vision request bounds
- * that reasoning rather than asking for none.
+ * samples each, on 2026-11-02, kimi-k3.1-pro was the only one with neither a wrong
+ * channel nor a false return_point. It cannot answer without reasoning, so the vision
+ * request bounds that reasoning rather than asking for none.
+ *
+ * This is its highspeed tier, at twice the price per token. On sixteen evaluation
+ * photos, two interleaved rounds each (2026-11-06), both tiers answered 32/32 correctly
+ * with identical decisions and token counts, but a highspeed call took p50 7.4s and
+ * p90 8.9s against 14.4s and 17.4s, decoding at 91 tokens/s against 39.
  */
-export const TOKENHUB_VISION_MODEL = 'kimi-k3.1-pro';
+export const TOKENHUB_VISION_MODEL = 'kimi-k3.1-pro-highspeed';
 
 export const STRICT_CLASSIFY_RESPONSE_FORMAT = {
   type: 'json_schema',
@@ -84,10 +91,6 @@ export const STRICT_CLASSIFY_RESPONSE_FORMAT = {
       additionalProperties: false,
       properties: {
         item: { type: 'string', minLength: 1 },
-        status: {
-          type: 'string',
-          enum: ['recyclable', 'special_handling', 'consider_donating', 'not_recyclable', 'not_sure'],
-        },
         confidence: { type: 'number', minimum: 0, maximum: 1 },
         channel: {
           type: ['string', 'null'],
@@ -109,7 +112,7 @@ export const STRICT_CLASSIFY_RESPONSE_FORMAT = {
         preparation: { type: 'array', items: { type: 'string' } },
         tip: { type: 'string' },
       },
-      required: ['item', 'status', 'confidence', 'channel', 'reason', 'preparation', 'tip'],
+      required: ['item', 'confidence', 'channel', 'reason', 'preparation', 'tip'],
     },
   },
 } as const;
@@ -369,7 +372,7 @@ export class TokenHubProvider implements ClassifyProvider {
         ? ClassifyResultSchema
         : ClassifyResultShapeSchema;
       const raw: unknown = JSON.parse(jsonMatch[0]);
-      const parsed = resultSchema.parse(raw);
+      const parsed = resultSchema.parse(withDerivedStatus(raw));
       const policySafe = this.options.enforceNotSurePolicy
         ? enforceNotSurePolicy(parsed, locale)
         : parsed;
@@ -398,6 +401,25 @@ export class TokenHubProvider implements ClassifyProvider {
       ? ensureBcrsRefundText(decided, locale)
       : decided);
   }
+}
+
+/**
+ * Status is a function of the channel, so the model is never asked for it.
+ *
+ * When the model also wrote it, the two could disagree, and every disagreement cost a
+ * full retry: one in 73 image cases on 2026-11-06 took 42s that way. A status in the
+ * answer now means the provider ignored the response schema, so it is rejected rather
+ * than overwritten.
+ */
+function withDerivedStatus(raw: unknown): unknown {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return raw;
+  if ('status' in raw) throw new Error('status is derived from the channel; the response schema has none');
+  const { channel } = raw as { channel?: unknown };
+  const status = channel === null ? 'not_sure'
+    : typeof channel === 'string' && Object.hasOwn(CHANNEL_STATUS, channel)
+      ? CHANNEL_STATUS[channel as ChannelType]
+      : undefined;
+  return { ...raw, status };
 }
 
 /** A model's own not_sure gets the same application-owned copy as a policy downgrade. */
