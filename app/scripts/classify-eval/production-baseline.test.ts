@@ -11,8 +11,8 @@ import { PRODUCTION_PROFILE, PRODUCTION_REVISION } from './baseline-profiles';
 import { BCRS_BASELINE, BCRS_IMAGE_CASES, BCRS_IMAGE_SOURCES, BCRS_TEXT_CASES } from './bcrs-test-cases';
 import { TEST_ITEMS, TEXT_BASELINE } from './test-items';
 import { CURRENT_MANIFEST_DIGEST, currentManifestCases, exportProductionManifest, manifestDigest } from './production-manifest';
-import { PRODUCTION_DEPENDENCIES, PRODUCTION_LOCKFILES, PRODUCTION_MODULE_PATHS, PRODUCTION_NODE_VERSION,
-  PRODUCTION_PATCH_PATH, PRODUCTION_TOKENHUB_BLOB, PRODUCTION_TOKENHUB_PATH, productionPatchDigest } from './production-contract';
+import { PRODUCTION_DEPENDENCIES, PRODUCTION_LOCKFILES, PRODUCTION_MODELS, PRODUCTION_MODULE_PATHS,
+  PRODUCTION_NODE_VERSION } from './production-contract';
 import { validateProductionBaseline, validateProductionRaw } from './production-validation';
 import { scoreProductionRaw, writeProductionBaselines } from './production-scoring';
 import { loadSource } from './image-fixtures';
@@ -57,12 +57,11 @@ const sourceIds = [...new Set(portableCases.flatMap((entry) => entry.image ? [en
 const raw: ProductionRawOutput = {
   schemaVersion: 1,
   source: {
-    preflight: { revision: PRODUCTION_REVISION, trackedChanges: [PRODUCTION_TOKENHUB_PATH],
-      tokenhubBlob: PRODUCTION_TOKENHUB_BLOB, lockfiles: { ...PRODUCTION_LOCKFILES },
-      checks: { head: true, trackedChanges: true, tokenhubBlob: true, lockfiles: true } },
-    patchSha256: productionPatchDigest(), executionPolicy: { ...DEFAULT_EXECUTION_POLICY },
+    preflight: { revision: PRODUCTION_REVISION, trackedChanges: [], lockfiles: { ...PRODUCTION_LOCKFILES },
+      checks: { head: true, trackedChanges: true, lockfiles: true } },
+    executionPolicy: { ...DEFAULT_EXECUTION_POLICY },
     manifestDigest: CURRENT_MANIFEST_DIGEST, modulePaths: { ...PRODUCTION_MODULE_PATHS },
-    dependencies: { ...PRODUCTION_DEPENDENCIES }, nodeVersion: PRODUCTION_NODE_VERSION,
+    dependencies: { ...PRODUCTION_DEPENDENCIES }, models: { ...PRODUCTION_MODELS }, nodeVersion: PRODUCTION_NODE_VERSION,
     policyFieldsMatch: true, dryRun: false, startedAt: '2026-10-26T16:00:00.000Z', endedAt: '2026-10-26T16:20:00.000Z',
     imagePipeline: { maxSize: 2048, quality: 0.7 },
     preparedImages: sourceIds.map((sourceId) => ({ sourceId, sha256: 'a'.repeat(64) })),
@@ -88,20 +87,19 @@ assert.equal(scored.text.reports[0].exactAccuracy, 1);
 assert.equal(scored.bcrs.gate.passed, BCRS_TEXT_CASES.length + BCRS_IMAGE_CASES.length);
 assert.equal(scored.bcrs.gate.releaseEligible, true, 'A clean run including the fresh holdouts passes the release gate');
 const missedHoldout = structuredClone(raw);
-const glassHoldout = missedHoldout.results.find(({ id }) => id === 'holdout-tiger-glass-beer-bottle-v22-en')!;
-glassHoldout.result = answer('return_point', 'recyclable');
+const otherHoldoutId = BCRS_IMAGE_CASES.find((entry) => entry.partition === 'holdout' && entry.channel !== 'return_point')!.id;
+missedHoldout.results.find(({ id }) => id === otherHoldoutId)!.result = answer('return_point', 'recyclable');
 assert.equal(scoreProductionRaw(missedHoldout).bcrs.gate.releaseEligible, false, 'A false return point on a holdout fails the release gate');
-assert.equal(PRODUCTION_PROFILE.id, 'production-5a19b7f');
-assert.equal(PRODUCTION_REVISION, '5a19b7f0854ac15a63263996692601eaaa5554b0');
+assert.equal(PRODUCTION_PROFILE.id, 'production-5719b02');
+assert.equal(PRODUCTION_REVISION, '5719b02f893048d9734a0edd65f0a08a2b64b26a');
 
 const failures: Array<[string, (value: ProductionRawOutput) => void]> = [
   ['revision', (value) => { value.source.preflight.revision = '0'.repeat(40); }],
-  ['patch', (value) => { value.source.patchSha256 = '0'.repeat(64); }],
-  ['blob', (value) => { value.source.preflight.tokenhubBlob = '0'.repeat(40); }],
   ['manifest', (value) => { value.source.manifestDigest = '0'.repeat(64); }],
   ['Node', (value) => { value.source.nodeVersion = 'v22.0.0'; }],
   ['tracked changes', (value) => { value.source.preflight.trackedChanges.push('app/src/lib/ai/provider.ts'); }],
   ['image preparation', (value) => { value.source.preparedImages.pop(); }],
+  ['models', (value) => { value.source.models.image = 'kimi-k2.6'; }],
 ];
 for (const file of Object.keys(PRODUCTION_LOCKFILES)) failures.push([`lockfile ${file}`, (value) => { value.source.preflight.lockfiles[file] = '0'.repeat(64); }]);
 for (const name of Object.keys(PRODUCTION_DEPENDENCIES) as Array<keyof typeof PRODUCTION_DEPENDENCIES>) {
@@ -198,12 +196,6 @@ for (const statement of worker.statements) {
   assert.ok(ts.isStringLiteral(statement.moduleSpecifier) && statement.moduleSpecifier.text.startsWith('node:'),
     'Worker runtime imports must be Node builtins');
 }
-const patchLines = readFileSync(PRODUCTION_PATCH_PATH, 'utf8').split('\n')
-  .filter((line) => /^[+-]/.test(line) && !/^(?:---|\+\+\+)/.test(line));
-assert.deepEqual(patchLines, [
-  "-const API_URL = 'https://tokenhub.tencentmaas.com/v1/chat/completions';",
-  "+const API_URL = 'https://tokenhub-intl.tencentcloudmaas.com/v1/chat/completions';",
-]);
 
 async function checkFiles() {
   const directory = mkdtempSync(join(tmpdir(), 'binwhere-production-test-'));
@@ -211,7 +203,6 @@ async function checkFiles() {
   try {
     const dryRun = structuredClone(raw);
     dryRun.source.dryRun = true;
-    dryRun.source.ocrDiagnostic = { lines: [] };
     for (const entry of dryRun.results) entry.result = null;
     validateProductionRaw(dryRun, true);
     assert.throws(() => scoreProductionRaw(dryRun), /Dry-run/);
@@ -222,7 +213,7 @@ async function checkFiles() {
     }
     const written = writeProductionBaselines(raw, join(directory, 'baselines'));
     assert.equal(written.length, 2);
-    assert.ok(written.every((file) => file.endsWith('/production-5a19b7f.json')));
+    assert.ok(written.every((file) => file.endsWith(`/${PRODUCTION_PROFILE.id}.json`)));
     assert.equal(JSON.parse(readFileSync(written[0], 'utf8')).timestamp, raw.source.endedAt);
     const cache = join(directory, 'cache');
     mkdirSync(cache);

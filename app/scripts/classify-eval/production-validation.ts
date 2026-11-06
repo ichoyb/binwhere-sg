@@ -9,8 +9,7 @@ import { BCRS_TRUTH_SET_DIGEST, TEXT_TRUTH_SET_DIGEST, BCRS_GATE_THRESHOLDS } fr
 import { TEST_ITEMS } from './test-items';
 import { CURRENT_MANIFEST_DIGEST, currentManifestCases } from './production-manifest';
 import {
-  PRODUCTION_DEPENDENCIES, PRODUCTION_LOCKFILES, PRODUCTION_MODULE_PATHS,
-  PRODUCTION_NODE_VERSION, PRODUCTION_TOKENHUB_BLOB, PRODUCTION_TOKENHUB_PATH, productionPatchDigest,
+  PRODUCTION_DEPENDENCIES, PRODUCTION_LOCKFILES, PRODUCTION_MODELS, PRODUCTION_MODULE_PATHS, PRODUCTION_NODE_VERSION,
 } from './production-contract';
 import type { ProductionRawOutput, ProductionSource } from './production-types';
 
@@ -20,14 +19,13 @@ const MAX_PAIR_AGE_MS = 24 * 60 * 60 * 1000;
 export function validateProductionSource(source: ProductionSource, allowDryRun = false): void {
   assert.ok(source, 'Production source record is missing');
   assert.equal(source.preflight.revision, PRODUCTION_REVISION, 'Production revision mismatch');
-  assert.deepEqual(source.preflight.trackedChanges, [PRODUCTION_TOKENHUB_PATH], 'Production tracked changes mismatch');
-  assert.equal(source.preflight.tokenhubBlob, PRODUCTION_TOKENHUB_BLOB, 'Production tokenhub blob mismatch');
+  assert.deepEqual(source.preflight.trackedChanges, [], 'Production tracked changes mismatch');
   assert.deepEqual(source.preflight.lockfiles, PRODUCTION_LOCKFILES, 'Production lockfile SHA-256 mismatch');
   assert.deepEqual(source.preflight.checks,
-    { head: true, trackedChanges: true, tokenhubBlob: true, lockfiles: true }, 'Runtime preflight did not pass');
-  assert.equal(source.patchSha256, productionPatchDigest(), 'Production patch SHA-256 mismatch');
+    { head: true, trackedChanges: true, lockfiles: true }, 'Runtime preflight did not pass');
   assert.equal(source.manifestDigest, CURRENT_MANIFEST_DIGEST, 'Production manifest digest mismatch');
   assert.deepEqual(source.dependencies, PRODUCTION_DEPENDENCIES, 'Production dependency versions mismatch');
+  assert.deepEqual(source.models, PRODUCTION_MODELS, 'Production classifier models mismatch');
   assert.deepEqual(source.modulePaths, PRODUCTION_MODULE_PATHS, 'Production module paths mismatch');
   assert.equal(source.nodeVersion, PRODUCTION_NODE_VERSION, 'Production Node version mismatch');
   assert.equal(source.policyFieldsMatch, true, 'Production execution policy fields mismatch');
@@ -49,13 +47,12 @@ export function validateProductionSource(source: ProductionSource, allowDryRun =
     && pair.leftSourceId !== pair.rightSourceId && Number.isFinite(pair.similarity)
     && pair.similarity >= 0 && pair.similarity < BCRS_GATE_THRESHOLDS.nearDuplicateSimilarityLimit,
   'Production images failed independence check');
-  if (source.dryRun) assert.ok(source.ocrDiagnostic !== undefined, 'Dry-run is missing the real OCR diagnostic');
 }
 
 export function productionProfileDigest(source: ProductionSource): string {
   return createHash('sha256').update(JSON.stringify({
-    revision: source.preflight.revision, patch: source.patchSha256, blob: source.preflight.tokenhubBlob,
-    lockfiles: source.preflight.lockfiles, dependencies: source.dependencies, modules: source.modulePaths,
+    revision: source.preflight.revision, lockfiles: source.preflight.lockfiles,
+    dependencies: source.dependencies, models: source.models, modules: source.modulePaths,
     manifest: source.manifestDigest, policy: source.executionPolicy,
   })).digest('hex');
 }

@@ -45,12 +45,12 @@ export function scoreProductionRaw(raw: ProductionRawOutput) {
   return {
     text: {
       ...common, baseline: TEXT_BASELINE, truthSetDigest: TEXT_TRUTH_SET_DIGEST,
-      models: { text: 'hy3' }, thresholds: TEXT_GATE_THRESHOLDS, testSetSize: TEST_ITEMS.length,
+      models: { text: raw.source.models.text }, thresholds: TEXT_GATE_THRESHOLDS, testSetSize: TEST_ITEMS.length,
       gates: [evaluateReport(report)], reports: [serializeTextReport(report)],
     },
     bcrs: {
       ...common, runKind: 'complete', baseline: BCRS_BASELINE, truthSetDigest: BCRS_TRUTH_SET_DIGEST,
-      models: { text: 'hy3', image: 'kimi-k2.6' }, policySource: BCRS_POLICY_SOURCE,
+      models: raw.source.models, policySource: BCRS_POLICY_SOURCE,
       imagePipeline: `web <=${raw.source.imagePipeline.maxSize}px JPEG quality ${Math.round(raw.source.imagePipeline.quality * 100)}, then production server sanitiser`,
       imageIndependence: raw.source.imageIndependence, sources: BCRS_IMAGE_SOURCES, gate, results,
     },

@@ -47,7 +47,8 @@ for (const locale of VALID_LOCALES) {
       assert.equal(result.reason, t(locale, 'classify.notSureReason'));
       assert.equal(result.tip, undefined);
     }
-    // Excluded products precede unknown identity; ambiguous scenes precede both.
+    // Excluded products precede unknown identity. Ambiguous drink scenes precede excluded
+    // drink products, but never a non-beverage, which keeps its channel in every scene.
     for (const excluded of [{ beverage_product: 'other' }, { subject: 'other' }] as Partial<BeverageEvidence>[]) {
       for (const model of [modelBlue, modelWaste, { ...modelReturn, channel: 'ewaste', status: 'special_handling' } as ClassifyResult]) {
         const patch = { beverage_product: 'unknown', subject: 'unknown', visible_container_count: 'unknown',
@@ -57,10 +58,26 @@ for (const locale of VALID_LOCALES) {
         for (const scene of [{ visible_container_count: 'multiple' }, { subject: 'outer_packaging' },
           { subject: 'no_container' }] as Partial<BeverageEvidence>[]) {
           const result = decide({ ...patch, ...scene }, model);
-          assert.equal(result.channel, null);
-          assert.equal(result.next_action, undefined);
+          if (excluded.beverage_product === 'other') {
+            assert.deepEqual(result, model, JSON.stringify(scene));
+          } else {
+            assert.equal(result.channel, null);
+            assert.equal(result.next_action, undefined);
+          }
+          assert.equal(decide({ ...patch, ...scene }).channel, null);
         }
       }
+    }
+    // Evidence the vision model reported for photos of a laptop, a rack of clothes and a
+    // bicycle on 2026-11-06; each confident answer used to be rewritten to not_sure.
+    for (const [observed, model] of [
+      [{ visible_container_count: 'unknown', material: 'other' }, { channel: 'ewaste', status: 'special_handling' }],
+      [{ visible_container_count: 'one', material: 'other' }, { channel: 'textile', status: 'recyclable' }],
+      [{ visible_container_count: 'unknown', material: 'metal' }, { channel: 'donation', status: 'consider_donating' }],
+    ] as Array<[Partial<BeverageEvidence>, Pick<ClassifyResult, 'channel' | 'status'>]>) {
+      const answer = { ...modelReturn, ...model, confidence: 0.98 };
+      const evidence = { ...observed, beverage_product: 'other', subject: 'no_container', form: 'other' } as const;
+      assert.deepEqual(decide(evidence, answer), answer);
     }
     // Each unknown identity field blocks only a potentially in-scope geometry.
     for (const key of ['beverage_product', 'visible_container_count', 'subject'] as const) {

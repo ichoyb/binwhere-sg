@@ -26,7 +26,10 @@ async function main() {
   assert.equal(realpathSync(process.cwd()), join(root, 'app'), 'Worker cwd must be worktree/app');
   const manifest = JSON.parse(readFileSync(arg('manifest'), 'utf8')) as ProductionManifest;
   const context = JSON.parse(readFileSync(arg('context'), 'utf8')) as ProductionContext & {
-    expected: { modulePaths: Record<string, string>; dependencies: Record<string, string>; nodeVersion: string };
+    expected: {
+      modulePaths: Record<string, string>; dependencies: Record<string, string>;
+      models: Record<string, string>; nodeVersion: string;
+    };
   };
   assert.equal(manifest.schemaVersion, 1);
   // Keep this wire digest identical to production-manifest.ts without importing candidate runtime code.
@@ -42,7 +45,6 @@ async function main() {
     provider: appRequire.resolve(join(root, 'app/src/lib/ai/provider.ts')),
     tokenhub: appRequire.resolve(join(root, 'app/src/lib/ai/providers/tokenhub.ts')),
     imageSecurity: appRequire.resolve(join(root, 'app/src/lib/image-security.ts')),
-    depositMarkOcr: appRequire.resolve(join(root, 'app/src/lib/deposit-mark-ocr.ts')),
   };
   const modulePaths = Object.fromEntries(Object.entries(resolved).map(([name, file]) => [name,
     relative(root, realpathSync(file)),
@@ -53,9 +55,8 @@ async function main() {
   const provider = appRequire(resolved.provider) as typeof import('../../src/lib/ai/provider');
   const tokenhub = appRequire(resolved.tokenhub) as typeof import('../../src/lib/ai/providers/tokenhub');
   const { validateAndSanitizeImage } = appRequire(resolved.imageSecurity) as typeof import('../../src/lib/image-security');
-  const { readDepositMarkText } = appRequire(resolved.depositMarkOcr) as {
-    readDepositMarkText: (image: string, region: null) => Promise<unknown>;
-  };
+  const models = { text: tokenhub.TOKENHUB_TEXT_MODEL, image: tokenhub.TOKENHUB_VISION_MODEL };
+  assert.deepEqual(models, context.expected.models, 'Deployed classifier models differ from the production record');
   const zodVersion = (file: string) => {
     const zod = appRequire(file) as typeof import('zod');
     const { major, minor, patch } = zod.string()._zod.version;
@@ -70,7 +71,7 @@ async function main() {
   const images = new Map<string, string>();
   const preparedImages: ProductionSource['preparedImages'] = [];
 
-  // The transformation sequence is copied from 5a19b7f composeFixture/loadCleanImage.
+  // The transformation sequence is copied from the deployed composeFixture/loadCleanImage.
   async function loadCleanImage(image: NonNullable<ProductionManifest['cases'][number]['image']>) {
     const cacheKey = `${image.sourceId}:${core.IMAGE_MAX_SIZE}`;
     const cached = images.get(cacheKey);
@@ -116,7 +117,6 @@ async function main() {
     }
   }
   assert.ok(closestPair && closestPair.similarity < 0.995, 'Production image sources are near duplicates');
-  const ocrDiagnostic = dryRun ? await readDepositMarkText(images.values().next().value!, null) : undefined;
   // Production route uses default TokenHub options; no evaluation profile options are injected.
   const classifier = dryRun ? undefined : new tokenhub.TokenHubProvider();
   const results: ProductionRawOutput['results'] = [];
@@ -136,16 +136,16 @@ async function main() {
   const output: ProductionRawOutput = {
     schemaVersion: 1,
     source: {
-      preflight: context.preflight, patchSha256: context.patchSha256, executionPolicy: context.executionPolicy,
-      manifestDigest: manifest.digest, modulePaths, dependencies, nodeVersion: process.version,
+      preflight: context.preflight, executionPolicy: context.executionPolicy,
+      manifestDigest: manifest.digest, modulePaths, dependencies, models, nodeVersion: process.version,
       policyFieldsMatch: true, dryRun, startedAt, endedAt: new Date().toISOString(),
       imagePipeline: { maxSize: core.IMAGE_MAX_SIZE, quality: core.IMAGE_QUALITY }, preparedImages,
-      imageIndependence: { nearDuplicateSimilarityLimit: 0.995, closestPair }, ocrDiagnostic,
+      imageIndependence: { nearDuplicateSimilarityLimit: 0.995, closestPair },
     },
     results,
   };
   writeFileSync(arg('output'), JSON.stringify(output, null, 2));
-  // The deployed OCR pool retains workers after inference, so writing the artifact is followed by exit.
+  // The parent waits for this process, so idle keep-alive sockets must not hold it open.
   process.exit(0);
 }
 

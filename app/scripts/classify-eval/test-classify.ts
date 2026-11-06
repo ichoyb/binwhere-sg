@@ -92,7 +92,7 @@ function readProductionBaseline(): StoredBaseline {
   );
   if (!fs.existsSync(baselinePath)) {
     throw new Error(
-      `Production baseline is missing: ${baselinePath}. Run baseline:production with the 5a19b7f worktree; see docs/classify-eval.md.`,
+      `Production baseline is missing: ${baselinePath}. Run baseline:production with the ${PRODUCTION_PROFILE.revision.slice(0, 7)} worktree; see docs/classify-eval.md.`,
     );
   }
 

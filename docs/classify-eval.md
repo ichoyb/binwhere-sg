@@ -2,14 +2,14 @@
 
 评测代码位于 `app/scripts/classify-eval/`。运行环境为 Node v24.22.1。
 离线 CI 不调用模型；付费运行必须先获得用户批准。本文的生产身份对应
-2026-10-25 实际部署的 `5a19b7f0854ac15a63263996692601eaaa5554b0`。
+2026-11-06 实际部署的 `5719b02f893048d9734a0edd65f0a08a2b64b26a`。
 
 ## 当前真值与判定
 
-`sg-consumer-text-v4` 有 86 条文字用例；`sg-bcrs-v22` 有 32 条四语文字用例，
-以及来自 58 个 SHA-256 固定来源的 61 条图片用例。其中 7 条是 holdout：代码和标签冻结后于
-2026-11-02 选定并逐像素复核，3 张回收点（铝罐、手持塑料瓶、即饮咖啡短罐），4 张非回收点
-（玻璃啤酒瓶、屋顶形纸盒、洗发水瓶、带吸管的砖形纸盒）。其余都是 regression。
+`sg-consumer-text-v4` 有 86 条文字用例；`sg-bcrs-v23` 有 32 条四语文字用例，
+以及来自 69 个 SHA-256 固定来源的 73 条图片用例。其中 5 条是 holdout：代码和标签冻结后于
+2026-11-06 选定并逐像素复核，3 张回收点（桌上开封的铝罐、印 310ml 的塑料奶茶瓶、立在键盘和
+显示器前的细长罐），2 张非饮料（碎屏手机、节能灯）。其余都是 regression。
 
 判定依据：2026-10-01 起，在新加坡销售的受管制饮料都必须印押金标志和条码，是否退款由回收机
 扫码比对 BCRS Ltd 的注册库决定，境外购买的即使印有标志也不退。所以照片里拍没拍到标志既不必要
@@ -17,20 +17,23 @@
 
 BCRS core 按以下顺序处理模型事实：
 
-1. 多个并列容器、外包装、没有容器：`not_sure`，不给动作。单个容器外的松散包装不增加容器数。
-2. 产品或主体已识别为 `other`：保留模型普通渠道；模型的 `return_point` 改为 `not_sure`。
-3. 产品、容器数量或主体有 `unknown`：形状为瓶、罐、杯或未知，同时材质为塑料、金属或未知时，
+1. 产品已识别为非饮料（`beverage_product: other`）：不论画面里有多个物体、外包装还是没有容器，
+   都保留模型普通渠道；模型的 `return_point` 改为 `not_sure`。电脑、衣物、电池堆都走这一条。
+2. 饮料或未识别产品的多个并列容器、外包装、没有容器：`not_sure`，不给动作。单个容器外的松散
+   包装不增加容器数。
+3. 主体已识别为 `other`：保留模型普通渠道；模型的 `return_point` 改为 `not_sure`。
+4. 产品、容器数量或主体有 `unknown`：形状为瓶、罐、杯或未知，同时材质为塑料、金属或未知时，
    给 `not_sure`，不给动作。其他形状或材质保留模型普通渠道，`return_point` 改为 `not_sure`。
-4. 已确定的单个预包装饮料按容器类别判断：塑料或金属瓶、罐、杯脏污时给 `general_waste`；
+5. 已确定的单个预包装饮料按容器类别判断：塑料或金属瓶、罐、杯脏污时给 `general_waste`；
    否则损坏、条码损坏、写明或看得出容量不在 150ml–3L，或文字明确说没有新加坡押金标志、在境外
    购买时，给 `blue_bin`；其余给 `return_point` 和 `return_container`。容量和损坏、脏污一样只用于
    排除，容量未知不影响回收点：不在 150ml–3L 的容器不印押金标志，回收点文案已要求用户先看标志。
-5. 已确定的单个饮料若形状或材质未知，主体上可读的 `10¢ SG RETURN` 仅填补这两项，不能覆盖已知
+6. 已确定的单个饮料若形状或材质未知，主体上可读的 `10¢ SG RETURN` 仅填补这两项，不能覆盖已知
    排除条件；没有这项证据时给 `not_sure` 和 `check_container_type`。
-6. 单个未损坏、未脏污的玻璃饮料瓶：模型给 `general_waste`、null 或 `return_point` 时改为
+7. 单个未损坏、未脏污的玻璃饮料瓶：模型给 `general_waste`、null 或 `return_point` 时改为
    `blue_bin`，使用 `classify.cleanGlass*`；模型其他普通渠道保持不变。损坏或脏污的玻璃瓶
    保留普通渠道，`return_point` 改为 `not_sure`。
-7. 纸盒、软袋、非饮料、粉状饮料、特殊医疗用途食品、现做饮品等按普通规则处理，不能给 `return_point`。
+8. 纸盒、软袋、非饮料、粉状饮料、特殊医疗用途食品、现做饮品等按普通规则处理，不能给 `return_point`。
 
 容量只取用户写明的、容器上印出的或画面中看得出的大小，否则为未知，模型不按产品常见规格推断；
 提示词不含评测输入示例。图片有印出的容量，或有完整外形、手或已知物体作尺寸参照时，才能看出
@@ -66,10 +69,10 @@ check 动作都不提蓝色回收箱。四语应用文案均绑定在候选摘�
 
 ## 实际部署版本的生产基线
 
-`PRODUCTION_PROFILE` 只记录 `production-5a19b7f` 及完整 revision。
+`PRODUCTION_PROFILE` 只记录 `production-5719b02` 及完整 revision。
 候选运行器拒绝 `--profile=production`，生产执行入口为 `baseline:production`。
 worktree 路径是必填参数，没有默认值。worktree 在仓库外，由 owner 创建并安装自己的依赖。
-唯一源码补丁是 `patches/production-5a19b7f.patch`，只把 TokenHub 地址改为国际站；超时不打补丁。
+部署版本原样运行，不打补丁：已跟踪文件不得有任何改动，超时也按部署值。
 
 编排脚本 `run-production.ts` 导出当前全部输入到仓库外临时目录。图片携带当前缓存的
 绝对路径、SHA-256 和裁切；逐个验摘要，缺失或不符直接失败，不下载。清单摘要只包含
@@ -77,8 +80,9 @@ id、模式、locale、文字、来源 SHA-256、裁切，绝对路径不进入�
 
 子进程使用 `<worktree>/app/node_modules/.bin/tsx`，cwd 是 `<worktree>/app`。
 脚本没有主干运行时模块导入；用 worktree 的 `createRequire` 锚点解析 sharp、app/core 各自的
-zod、`@binwhere/core`、provider、TokenHub、image-security 和 deposit-mark-ocr。
-模块的实际相对路径、sharp 0.35.4、两份 zod 4.6.7 和 Node 版本均记入输出。
+zod、`@binwhere/core`、provider、TokenHub 和 image-security。
+模块的实际相对路径、sharp 0.35.5、两份 zod 4.6.7、部署版本的文字和图片模型名
+（`hy3`、`kimi-k3.1-pro`）以及 Node 版本均记入输出。
 
 生产路由使用默认 `new TokenHubProvider()`，没有评测选项。主干完整序列化当前
 `DEFAULT_EXECUTION_POLICY`；子进程先比对它与部署版本默认策略的字段集合，再作为
@@ -90,11 +94,10 @@ zod、`@binwhere/core`、provider、TokenHub、image-security 和 deposit-mark-o
 | 核对项 | 运行时 | 浅克隆 CI / 候选配对 / 发布检查 |
 | --- | --- | --- |
 | HEAD | 启动子进程前读取，必须等于完整部署 revision | 来源记录与 `PRODUCTION_REVISION` 比较 |
-| 已跟踪改动 | porcelain 只能列出 `app/src/lib/ai/providers/tokenhub.ts` | 核对记录中的文件列表及通过状态 |
-| TokenHub blob | `git hash-object` 必须为 `06a5cfc1e0eec0824b3c91fda6c249d90d6babd8` | 核对已提交的预期 blob 常量 |
+| 已跟踪改动 | porcelain 必须为空 | 核对记录中的空列表及通过状态 |
 | 两份 lockfile | 对 worktree 文件计算 SHA-256 | 核对已提交摘要常量 |
-| 补丁 | 对主干补丁文件计算 SHA-256，写入原始输出 | 重新计算已提交补丁文件的 SHA-256 |
 | 模块及依赖 | 实际解析路径、加载版本必须匹配部署常量 | 核对来源记录 |
+| 模型 | 部署版本导出的文字和图片模型名必须匹配记录常量 | 核对来源记录 |
 | 清单 | 导出验图片摘要，子进程重算清单摘要 | 仅从当前真值重算，无需缓存 |
 | 执行策略 | 字段集合必须匹配部署版本 | 整组数值必须等于主干当前默认值 |
 | 有效性 | 每条结果或错误、耗时及开始结束时间均记录 | 完整、零错误、非空跑、24 小时内 |
@@ -102,24 +105,23 @@ zod、`@binwhere/core`、provider、TokenHub、image-security 和 deposit-mark-o
 CI 不读取旧 git 对象、worktree 或 fixture 缓存，不比较受 git 配置影响的 diff 文本。
 两份 lockfile 常量分别是：
 
-- app：`e998a8edace813bdc33880ba629ab670c96f8af4fe66d3472a7033595fc1e7dd`
+- app：`92d6ddaedafafb51665044a5e02b527822983d7785adc33dd2079ed82a7acede`
 - core：`465985793d7630bd7ff724bbbcaf67423611c8037a90c06b221eff8550b95941`
 
 `production-validation.ts` 是两个候选运行器及 `release-evidence.ts` 共用的校验模块。
 `production-scoring.ts` 使用当前真值、`checkBcrsResult` 和候选共用的 `scoring.ts` 评分。
 付费有效结果写为以下两份文件，沿用原有字段并新增 `source`：
 
-- `baselines/sg-consumer-text-v4/production-5a19b7f.json`
-- `baselines/sg-bcrs-v22/production-5a19b7f.json`
+- `baselines/sg-consumer-text-v4/production-5719b02.json`
+- `baselines/sg-bcrs-v23/production-5719b02.json`
 
 `timestamp` 永远取子进程结束时间。重新评分旧原始输出不会刷新 24 小时窗口。
-原始输出包含运行时核对、清单和补丁摘要、模块路径、版本、执行策略、图片处理记录、
+原始输出包含运行时核对、清单摘要、模块路径、版本、模型名、执行策略、图片处理记录、
 是否空跑、开始结束时间，以及每条用例的结果或错误和耗时。
 
 空跑不需要密钥，不调用模型、不联网；它完成身份核对、模块加载、所有图片的两段处理、
-近重复检查、策略字段核对，并对一张清洗后的图片实际调用
-`readDepositMarkText(image, null)`，诊断 worktree 的 OCR worker 和本地模型加载。
-子进程写完输出后显式退出。空跑结果可核对格式和身份，但评分写入函数及基线校验器都拒绝它。
+近重复检查和策略字段核对。子进程写完输出后显式退出。空跑结果可核对格式和身份，
+但评分写入函数及基线校验器都拒绝它。
 
 密钥由编排脚本按现有运行器方式读取主干 `app/.env`，仅通过子进程环境变量
 `TOKENHUB_API_KEY` 传递。不得复制 `.env` 到 worktree，不得把密钥写入产物或日志。
@@ -128,14 +130,12 @@ CI 不读取旧 git 对象、worktree 或 fixture 缓存，不比较受 git 配�
 
 以下命令在仓库的 `app/` 下执行，Node 必须是 `.nvmrc` 指定的 v24.22.1。worktree 建在仓库目录之外。
 
-建 worktree、打补丁、装依赖（先 core 后 app）：
+建 worktree、装依赖（先 core 后 app）：
 
 ```bash
 REPO=$(git rev-parse --show-toplevel)
-WT=/private/tmp/binwhere-production-5a19b7f
-git -C "$REPO" worktree add --detach "$WT" 5a19b7f0854ac15a63263996692601eaaa5554b0
-git -C "$WT" apply "$REPO/app/scripts/classify-eval/patches/production-5a19b7f.patch"
-git -C "$WT" hash-object app/src/lib/ai/providers/tokenhub.ts  # 06a5cfc1e0eec0824b3c91fda6c249d90d6babd8
+WT=/private/tmp/binwhere-production-5719b02
+git -C "$REPO" worktree add --detach "$WT" 5719b02f893048d9734a0edd65f0a08a2b64b26a
 (cd "$WT/packages/core" && npm ci) && (cd "$WT/app" && npm ci)
 ```
 
@@ -181,3 +181,6 @@ npm run test:release-evidence
 转为 regression。这些检查公开、冻结且不自适应，不声称是保密盲测。
 负例照片覆盖六类：压扁的罐、小于 150ml 的瓶、大于 3L 的瓶、饮料纸盒、非饮料塑料瓶和粉状饮料罐。
 软袋没有权威出处能确定唯一的普通渠道，现做饮品杯没有合适的照片，这两类不在清单里。
+非饮料照片覆盖电池堆、白炽灯泡、碎屏手机、用过的纸巾、路边丢弃的床垫和衣架上的衣物，
+衣物另有中文用例。外观完好的电脑、键盘、手机或自行车既可能该回收也可能该捐赠，照片分不出
+能否使用，不作为真值；电子产品只收屏幕碎裂这类看得出坏了的照片。

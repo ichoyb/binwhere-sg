@@ -84,12 +84,17 @@ export function applyBeverageActionPolicy(
   const base = { ...result };
   delete base.next_action;
   let classification: ClassifyResult;
-  // Ambiguous scenes and outer packaging cannot describe one container.
-  if (evidence.visible_container_count === 'multiple'
+  if (evidence.beverage_product === 'other') {
+    // A non-beverage is outside the scheme whatever the scene, so the drink-scene checks
+    // below never apply to it: a laptop reported as no_container, or a pile of batteries,
+    // keeps its ordinary channel (rule 5).
+    classification = base.channel === 'return_point' ? toUnconfirmed(base, locale) : base;
+  } else if (evidence.visible_container_count === 'multiple'
     || evidence.subject === 'outer_packaging' || evidence.subject === 'no_container') {
+    // Ambiguous drink scenes and outer packaging cannot describe one container.
     classification = toUnconfirmed(base, locale);
-  } else if (evidence.beverage_product === 'other' || evidence.subject === 'other') {
-    // Identified excluded products follow their ordinary channel (rule 5).
+  } else if (evidence.subject === 'other') {
+    // Identified excluded drink products follow their ordinary channel (rule 5).
     classification = base.channel === 'return_point' ? toUnconfirmed(base, locale) : base;
   } else if (evidence.beverage_product === 'unknown' || evidence.visible_container_count === 'unknown'
     || evidence.subject === 'unknown') {

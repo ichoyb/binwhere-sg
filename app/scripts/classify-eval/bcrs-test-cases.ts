@@ -3,7 +3,7 @@ import type { ChannelType, ClassifyStatus, Locale } from '@binwhere/core';
 export const BCRS_POLICY_SOURCE = {
   url: 'https://www.nea.gov.sg/our-services/waste-management/beverage-container-return-scheme/for-consumers',
   productApprovalGuideUrl: 'https://bcrs.sg/files/2026-02-17_Phase_3_Product_Approval_Guide.pdf',
-  reviewedAt: '2026-11-02',
+  reviewedAt: '2026-11-06',
   authority: 'National Environment Agency, Singapore',
   invariants: [
     'Route a single intact, uncontaminated prepackaged plastic or metal drink bottle, can or cup to return_point by container category. Capacity only excludes: a stated or visible capacity outside 150ml-3L routes to blue_bin, and an unknown capacity withholds nothing.',
@@ -11,14 +11,14 @@ export const BCRS_POLICY_SOURCE = {
     'A readable 10¢ SG RETURN mark on the drink container fills only an unknown shape or material, never known exclusions.',
     'Observed contamination takes priority over damage, out-of-range volume and explicit text exclusions; these route to general_waste and blue_bin respectively.',
     'Glass, cartons, pouches, non-beverages, powdered drinks, food for special medical purposes and freshly prepared drinks are outside the deposit category.',
-    'Multiple containers, outer packaging and scenes without an identifiable container stay not_sure with no action.',
+    'An identified non-beverage keeps its ordinary channel in any scene and is never return_point. For drinks and unidentified products, multiple containers, outer packaging and scenes without an identifiable container stay not_sure with no action.',
   ],
 } as const;
 
 export const BCRS_BASELINE = {
-  id: 'sg-bcrs-v22',
-  reviewedAt: '2026-11-02',
-  holdoutRule: "All previously exposed images, including the four v21 holdouts, are regression cases. After candidate code and labels are frozen, select new pixel-reviewed holdouts with at least two return_point truths and at least two non-return_point truths. Each holdout must pass every classification, action and safety assertion with zero provider errors. Apply the ordered v22 container-category rules to the submitted pixels. Image exactness remains at least 95%, return-point recall at least 90%, and wrong non-null channels and false return points remain zero tolerance. Reject near-duplicate source pairs at 0.995 before any model call. These checks are developer-visible, frozen and non-adaptive, not sealed blind tests.",
+  id: 'sg-bcrs-v23',
+  reviewedAt: '2026-11-06',
+  holdoutRule: "All previously exposed images, including the seven v22 holdouts, are regression cases. After candidate code and labels are frozen, select new pixel-reviewed holdouts with at least two return_point truths and at least two non-return_point truths. Each holdout must pass every classification, action and safety assertion with zero provider errors. Apply the ordered v23 rules to the submitted pixels: an identified non-beverage keeps its ordinary channel in any scene, and drinks follow the container-category rules. Image exactness remains at least 95%, return-point recall at least 90%, and wrong non-null channels and false return points remain zero tolerance. Reject near-duplicate source pairs at 0.995 before any model call. These checks are developer-visible, frozen and non-adaptive, not sealed blind tests.",
 } as const;
 
 export interface ExpectedClassification {
@@ -822,6 +822,127 @@ export const BCRS_IMAGE_SOURCES: readonly BcrsImageSource[] = [
     reviewedAt: '2026-11-02',
     provenance: "One intact 250 ml brick drink carton is seen from above with its wrapped straw attached to the side. Cartons are outside the deposit category and follow ordinary blue-bin recycling.",
   },
+  {
+    id: 'nonbeverage-used-batteries',
+    filename: 'nonbeverage-used-batteries.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Used_batteries.jpg',
+    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Used_batteries.jpg/1920px-Used_batteries.jpg',
+    sha256: '56720e0b42a80cc24edcacb51e3efb2c1e3ad7decbd5126d296a221ac55a88c1',
+    credit: 'Peter Fiskerstrand, Wikimedia Commons',
+    licence: 'CC BY-SA 4.0',
+    reviewedAt: '2026-11-06',
+    provenance: "A loose pile of used AA and AAA household batteries fills the frame. Batteries are not drink containers, so the pile is not an ambiguous drink scene; they go to battery e-waste collection.",
+  },
+  {
+    id: 'nonbeverage-incandescent-bulb',
+    filename: 'nonbeverage-incandescent-bulb.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Gluehlampe_01_KMJ.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Gluehlampe_01_KMJ.jpg',
+    sha256: 'f0edcced73a9c054f0b8a12dabfd9dcc7438e71b39928a1841241fbdd5c34540',
+    credit: 'KMJ (de.wikipedia), Wikimedia Commons',
+    licence: 'CC BY-SA 3.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One clear incandescent light bulb with a screw base stands on a plain background. Every used bulb goes to lighting collection, incandescent ones included.",
+  },
+  {
+    id: 'nonbeverage-shattered-phone',
+    filename: 'nonbeverage-shattered-phone.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Samsung_Galaxy_S2_shattered_screen.jpg',
+    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Samsung_Galaxy_S2_shattered_screen.jpg/1920px-Samsung_Galaxy_S2_shattered_screen.jpg',
+    sha256: 'fb03fc8511acd8a55484bf5feb7bd01f0c8082272e95c5d0495152020b22b973',
+    credit: 'Ashwin Kumar (Flickr), Wikimedia Commons',
+    licence: 'CC BY-SA 2.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One smartphone lies on a wooden surface with its screen shattered across its whole width. A visibly broken phone is e-waste, not a working device to donate.",
+  },
+  {
+    id: 'nonbeverage-used-tissue',
+    filename: 'nonbeverage-used-tissue.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Used_tissue_paper_on_the_ground.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/8e/Used_tissue_paper_on_the_ground.jpg',
+    sha256: '12fa8a902bcd1e566d47399baa8483c4ae329685183e4a04533a6cbdb8e69d17',
+    credit: 'ILoveCocomelon, Wikimedia Commons',
+    licence: 'CC BY-SA 4.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One crumpled used tissue lies on a carpet. Tissue paper is not recyclable and goes to general waste.",
+  },
+  {
+    id: 'nonbeverage-dumped-mattress',
+    filename: 'nonbeverage-dumped-mattress.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Mattress_dumped_next_to_Marsh_Road_-_geograph.org.uk_-_4238834.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/23/Mattress_dumped_next_to_Marsh_Road_-_geograph.org.uk_-_4238834.jpg',
+    sha256: 'e6bd61bf455f77cffb19ac6de72ca38ce0218526431d9aa8caf24873cfad9aab',
+    credit: 'Mat Fascione (Geograph), Wikimedia Commons',
+    licence: 'CC BY-SA 2.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One mattress has been dumped against roadside bushes and left outdoors. A used mattress that cannot be reused is bulky waste.",
+  },
+  {
+    id: 'nonbeverage-hanging-clothes',
+    filename: 'nonbeverage-hanging-clothes.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Hanging_shirts_and_jackets_(Unsplash).jpg',
+    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Hanging_shirts_and_jackets_%28Unsplash%29.jpg/1920px-Hanging_shirts_and_jackets_%28Unsplash%29.jpg',
+    sha256: '20b5f78ecbb1787988498300baa351de67a15aa498e6d2607a74d00e5aeee351',
+    credit: 'Crew (Unsplash), Wikimedia Commons',
+    licence: 'CC0 1.0',
+    reviewedAt: '2026-11-06',
+    provenance: "Clean shirts and jackets hang on a rail above folded trousers on a trunk; no drink container is present. Clean, dry, reusable clothes go to textile collection.",
+  },
+  {
+    id: 'holdout-diet-pepsi-can-on-table-v23',
+    filename: 'holdout-diet-pepsi-can-on-table-v23.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:An_opened_can_of_diet_pepsi_sitting_on_a_table.jpg',
+    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/An_opened_can_of_diet_pepsi_sitting_on_a_table.jpg/1920px-An_opened_can_of_diet_pepsi_sitting_on_a_table.jpg',
+    sha256: '0e5986c11d30b73734058e9df91d7e08bfc1087cb2fdac134ede96f7b3c18f7d',
+    credit: 'Bradley Gordon (Flickr), Wikimedia Commons',
+    licence: 'CC BY 2.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One opened, intact aluminium Diet Pepsi can stands on a table; the paper bag and folded map beside it are not drink containers. Its complete standard can outline establishes an ordinary in-range can.",
+  },
+  {
+    id: 'holdout-milk-tea-plastic-bottle-v23',
+    filename: 'holdout-milk-tea-plastic-bottle-v23.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:HK_drink_%E9%B4%BB%E7%A6%8F%E5%A0%82_Hung_Fook_Tong_Hong_Kong_Style_MilkTea_plastic_bottle_green_November_2020_SS2_01.jpg',
+    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/HK_drink_%E9%B4%BB%E7%A6%8F%E5%A0%82_Hung_Fook_Tong_Hong_Kong_Style_MilkTea_plastic_bottle_green_November_2020_SS2_01.jpg/1920px-HK_drink_%E9%B4%BB%E7%A6%8F%E5%A0%82_Hung_Fook_Tong_Hong_Kong_Style_MilkTea_plastic_bottle_green_November_2020_SS2_01.jpg',
+    sha256: '9b50c1e30863600eaaa10d34f09ce2af7bb62d23fc45928a4f5d43c2d23d735b',
+    credit: 'JUMBAIKTANGM LONA, Wikimedia Commons',
+    licence: 'CC BY-SA 4.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One capped, intact plastic bottle of milk tea printed 310 ml lies on a fabric seat. Normal drink contents are not contamination.",
+  },
+  {
+    id: 'holdout-pepsi-max-can-at-desk-v23',
+    filename: 'holdout-pepsi-max-can-at-desk-v23.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Pepsi_Max_can.jpg',
+    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Pepsi_Max_can.jpg/1920px-Pepsi_Max_can.jpg',
+    sha256: 'eae484e502eee26a24545da94a7d151115fa4349e7e38852433d05f80ea2bd6a',
+    credit: 'Ramolito, Wikimedia Commons',
+    licence: 'Public domain',
+    reviewedAt: '2026-11-06',
+    provenance: "One intact Pepsi Max drink can stands in the foreground under dim coloured light; the keyboard and monitor behind it are background, not the subject. Its complete slim-can outline establishes an ordinary in-range can.",
+  },
+  {
+    id: 'holdout-cracked-phone-screen-v23',
+    filename: 'holdout-cracked-phone-screen-v23.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Smartphone_cracked_screen.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Smartphone_cracked_screen.jpg',
+    sha256: '0456290568fc3073587d941270530b6992c8307cb9a2fd0ba73e0eaff91cf438',
+    credit: 'Sygmoral, Wikimedia Commons',
+    licence: 'CC BY-SA 4.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One smartphone is held up with cracks running across its screen glass. A visibly broken phone is e-waste, not a working device to donate.",
+  },
+  {
+    id: 'holdout-compact-fluorescent-bulb-v23',
+    filename: 'holdout-compact-fluorescent-bulb-v23.jpg',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Energiesparlampe_01a.jpg',
+    imageUrl: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/Energiesparlampe_01a.jpg/1920px-Energiesparlampe_01a.jpg',
+    sha256: '35042e7bf4e4aafdf3fe4bcd67842364628f6386ddfd8ca0ec340e5680faab50',
+    credit: 'Armin Kübelbeck (Kuebi), edit by Waugsberg, Wikimedia Commons',
+    licence: 'CC BY-SA 3.0',
+    reviewedAt: '2026-11-06',
+    provenance: "One compact fluorescent bulb with folded tubes and a screw base lies on a black background. Every used bulb goes to lighting collection.",
+  },
 ];
 
 export interface BcrsImageCase extends ExpectedClassification {
@@ -1432,7 +1553,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "return_point",
     "status": "recyclable",
-    "partition": "holdout",
+    "partition": "regression",
     "nextAction": "return_container",
     "requiredExactText": [
       "S$0.10"
@@ -1444,7 +1565,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "return_point",
     "status": "recyclable",
-    "partition": "holdout",
+    "partition": "regression",
     "nextAction": "return_container",
     "requiredExactText": [
       "S$0.10"
@@ -1456,7 +1577,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "return_point",
     "status": "recyclable",
-    "partition": "holdout",
+    "partition": "regression",
     "nextAction": "return_container",
     "requiredExactText": [
       "S$0.10"
@@ -1468,7 +1589,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "blue_bin",
     "status": "recyclable",
-    "partition": "holdout"
+    "partition": "regression"
   },
   {
     "id": "holdout-oat-milk-gable-carton-v22-en",
@@ -1476,7 +1597,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "blue_bin",
     "status": "recyclable",
-    "partition": "holdout"
+    "partition": "regression"
   },
   {
     "id": "holdout-shampoo-bottle-v22-en",
@@ -1484,7 +1605,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "blue_bin",
     "status": "recyclable",
-    "partition": "holdout"
+    "partition": "regression"
   },
   {
     "id": "holdout-drink-box-with-straw-v22-en",
@@ -1492,6 +1613,114 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
     "locale": "en",
     "channel": "blue_bin",
     "status": "recyclable",
+    "partition": "regression"
+  },
+  {
+    "id": "nonbeverage-used-batteries-en",
+    "sourceId": "nonbeverage-used-batteries",
+    "locale": "en",
+    "channel": "ewaste_battery",
+    "status": "special_handling",
+    "partition": "regression"
+  },
+  {
+    "id": "nonbeverage-incandescent-bulb-en",
+    "sourceId": "nonbeverage-incandescent-bulb",
+    "locale": "en",
+    "channel": "lighting",
+    "status": "special_handling",
+    "partition": "regression"
+  },
+  {
+    "id": "nonbeverage-shattered-phone-en",
+    "sourceId": "nonbeverage-shattered-phone",
+    "locale": "en",
+    "channel": "ewaste",
+    "status": "special_handling",
+    "partition": "regression"
+  },
+  {
+    "id": "nonbeverage-used-tissue-en",
+    "sourceId": "nonbeverage-used-tissue",
+    "locale": "en",
+    "channel": "general_waste",
+    "status": "not_recyclable",
+    "partition": "regression"
+  },
+  {
+    "id": "nonbeverage-dumped-mattress-en",
+    "sourceId": "nonbeverage-dumped-mattress",
+    "locale": "en",
+    "channel": "bulky_waste",
+    "status": "special_handling",
+    "partition": "regression"
+  },
+  {
+    "id": "nonbeverage-hanging-clothes-en",
+    "sourceId": "nonbeverage-hanging-clothes",
+    "locale": "en",
+    "channel": "textile",
+    "status": "recyclable",
+    "partition": "regression"
+  },
+  {
+    "id": "nonbeverage-hanging-clothes-zh",
+    "sourceId": "nonbeverage-hanging-clothes",
+    "locale": "zh",
+    "channel": "textile",
+    "status": "recyclable",
+    "partition": "regression"
+  },
+  {
+    "id": "holdout-diet-pepsi-can-on-table-v23-en",
+    "sourceId": "holdout-diet-pepsi-can-on-table-v23",
+    "locale": "en",
+    "channel": "return_point",
+    "status": "recyclable",
+    "partition": "holdout",
+    "nextAction": "return_container",
+    "requiredExactText": [
+      "S$0.10"
+    ]
+  },
+  {
+    "id": "holdout-milk-tea-plastic-bottle-v23-en",
+    "sourceId": "holdout-milk-tea-plastic-bottle-v23",
+    "locale": "en",
+    "channel": "return_point",
+    "status": "recyclable",
+    "partition": "holdout",
+    "nextAction": "return_container",
+    "requiredExactText": [
+      "S$0.10"
+    ]
+  },
+  {
+    "id": "holdout-pepsi-max-can-at-desk-v23-en",
+    "sourceId": "holdout-pepsi-max-can-at-desk-v23",
+    "locale": "en",
+    "channel": "return_point",
+    "status": "recyclable",
+    "partition": "holdout",
+    "nextAction": "return_container",
+    "requiredExactText": [
+      "S$0.10"
+    ]
+  },
+  {
+    "id": "holdout-cracked-phone-screen-v23-en",
+    "sourceId": "holdout-cracked-phone-screen-v23",
+    "locale": "en",
+    "channel": "ewaste",
+    "status": "special_handling",
+    "partition": "holdout"
+  },
+  {
+    "id": "holdout-compact-fluorescent-bulb-v23-en",
+    "sourceId": "holdout-compact-fluorescent-bulb-v23",
+    "locale": "en",
+    "channel": "lighting",
+    "status": "special_handling",
     "partition": "holdout"
   }
 ];

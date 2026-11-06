@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "recordedAt": "2026-11-02T08:31:41.103Z",
+  "recordedAt": "2026-11-06T11:38:13.555Z",
   "classificationImagePipeline": {
     "contract": {
       "webClient": {
@@ -45,7 +45,7 @@
     "digest": "377a30ac7fa4218fb0f217c4485131f572ed1a18995c7f8e511cbc33b3af0fb1"
   },
   "text": {
-    "timestamp": "2026-11-02T08:06:10.453Z",
+    "timestamp": "2026-11-06T11:20:43.283Z",
     "baseline": {
       "id": "sg-consumer-text-v4",
       "reviewedAt": "2026-09-04",
@@ -63,7 +63,7 @@
     "truthSetDigest": "7b626a74199d1b0d25327b0372324b2bc1f7a23280fb7d8f782596d49a5eabda",
     "profile": {
       "id": "candidate-source-bound",
-      "revision": "source-18fe0a70d4002362ce02ffa57cdd83627a6390516f5b9f38c846efbc0e63f78d",
+      "revision": "source-de0e7855d0c72202dabe6083c7c4ff0d3e7ddf6809590d8a53310824776fa4ad",
       "digest": "b42999dce229fbfad571b68855240e246453751f5aefcdf521f23ed0cb7319b5"
     },
     "models": {
@@ -93,7 +93,7 @@
       }
     ],
     "comparison": {
-      "productionProfile": "production-5a19b7f",
+      "productionProfile": "production-5719b02",
       "exactAccuracyDelta": 0,
       "channelAccuracyDelta": 0,
       "statusAccuracyDelta": 0,
@@ -158,10 +158,10 @@
             "accuracy": 1
           }
         },
-        "avgConfidence": 0.9565116279069777,
-        "avgDurationMs": 3102.8023255813955,
-        "p50DurationMs": 3051,
-        "p95DurationMs": 3807,
+        "avgConfidence": 0.9561627906976753,
+        "avgDurationMs": 4368.779069767442,
+        "p50DurationMs": 4333,
+        "p95DurationMs": 5424,
         "errors": 0,
         "unsafeDiversions": 0,
         "results": [
@@ -178,7 +178,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2770
+            "durationMs": 4646
           },
           {
             "text": "empty PET water bottle with no Singapore BCRS Deposit Mark",
@@ -193,7 +193,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3903
+            "durationMs": 4811
           },
           {
             "text": "aluminum drink can with no Singapore BCRS Deposit Mark",
@@ -208,7 +208,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3071
+            "durationMs": 4388
           },
           {
             "text": "empty and rinsed glass jar",
@@ -223,7 +223,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2848
+            "durationMs": 3810
           },
           {
             "text": "clean, dry cardboard box, flattened",
@@ -238,7 +238,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2942
+            "durationMs": 4213
           },
           {
             "text": "empty, rinsed and flattened milk carton (Tetra Pak)",
@@ -253,7 +253,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3289
+            "durationMs": 5775
           },
           {
             "text": "office paper",
@@ -268,7 +268,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2780
+            "durationMs": 4029
           },
           {
             "text": "empty and rinsed shampoo bottle",
@@ -279,11 +279,11 @@
             "actual": {
               "channel": "blue_bin",
               "status": "recyclable",
-              "confidence": 0.98
+              "confidence": 0.95
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3043
+            "durationMs": 4474
           },
           {
             "text": "tin food can, rinsed",
@@ -298,7 +298,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2805
+            "durationMs": 4074
           },
           {
             "text": "clean plastic container",
@@ -313,7 +313,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2969
+            "durationMs": 4075
           },
           {
             "text": "glass wine bottle, empty and rinsed",
@@ -328,7 +328,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2838
+            "durationMs": 4009
           },
           {
             "text": "magazine",
@@ -343,7 +343,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2925
+            "durationMs": 4681
           },
           {
             "text": "empty and rinsed detergent bottle",
@@ -354,11 +354,11 @@
             "actual": {
               "channel": "blue_bin",
               "status": "recyclable",
-              "confidence": 0.98
+              "confidence": 0.95
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2967
+            "durationMs": 4352
           },
           {
             "text": "clean plastic bag",
@@ -373,7 +373,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3138
+            "durationMs": 4047
           },
           {
             "text": "metal cookie tin",
@@ -388,7 +388,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2828
+            "durationMs": 4100
           },
           {
             "text": "empty aerosol can; fully used and nothing comes out when sprayed",
@@ -403,7 +403,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3127
+            "durationMs": 4549
           },
           {
             "text": "clean yogurt cup",
@@ -418,7 +418,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2826
+            "durationMs": 3844
           },
           {
             "text": "paper egg carton",
@@ -433,7 +433,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3084
+            "durationMs": 4523
           },
           {
             "text": "empty and rinsed glass sauce bottle",
@@ -448,7 +448,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3072
+            "durationMs": 3388
           },
           {
             "text": "clean aluminum foil",
@@ -463,7 +463,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3015
+            "durationMs": 3644
           },
           {
             "text": "broken laptop that cannot be reused",
@@ -478,7 +478,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3390
+            "durationMs": 4891
           },
           {
             "text": "broken smartphone",
@@ -493,10 +493,25 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2789
+            "durationMs": 4605
           },
           {
             "text": "broken CRT TV that cannot be reused",
+            "expected": {
+              "channel": "ewaste",
+              "status": "special_handling"
+            },
+            "actual": {
+              "channel": "ewaste",
+              "status": "special_handling",
+              "confidence": 0.95
+            },
+            "channelMatch": true,
+            "statusMatch": true,
+            "durationMs": 5332
+          },
+          {
+            "text": "broken desktop computer that cannot be reused",
             "expected": {
               "channel": "ewaste",
               "status": "special_handling"
@@ -508,22 +523,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3275
-          },
-          {
-            "text": "broken desktop computer that cannot be reused",
-            "expected": {
-              "channel": "ewaste",
-              "status": "special_handling"
-            },
-            "actual": {
-              "channel": "ewaste",
-              "status": "special_handling",
-              "confidence": 0.95
-            },
-            "channelMatch": true,
-            "statusMatch": true,
-            "durationMs": 3197
+            "durationMs": 4203
           },
           {
             "text": "broken printer that cannot be reused",
@@ -534,11 +534,11 @@
             "actual": {
               "channel": "ewaste",
               "status": "special_handling",
-              "confidence": 0.95
+              "confidence": 0.98
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3078
+            "durationMs": 4404
           },
           {
             "text": "broken tablet (iPad)",
@@ -553,7 +553,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3679
+            "durationMs": 4583
           },
           {
             "text": "broken desktop monitor that cannot be reused",
@@ -568,7 +568,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3004
+            "durationMs": 4345
           },
           {
             "text": "broken washing machine that cannot be reused",
@@ -583,7 +583,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 4495
+            "durationMs": 5130
           },
           {
             "text": "broken refrigerator",
@@ -598,7 +598,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3189
+            "durationMs": 5450
           },
           {
             "text": "broken air conditioner unit that cannot be reused",
@@ -613,7 +613,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3180
+            "durationMs": 4799
           },
           {
             "text": "used AA batteries",
@@ -628,7 +628,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3010
+            "durationMs": 4629
           },
           {
             "text": "old lithium-ion battery from laptop",
@@ -643,7 +643,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2966
+            "durationMs": 4302
           },
           {
             "text": "button cell battery",
@@ -654,11 +654,11 @@
             "actual": {
               "channel": "ewaste_battery",
               "status": "special_handling",
-              "confidence": 0.98
+              "confidence": 0.95
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2556
+            "durationMs": 4025
           },
           {
             "text": "used 9-volt household battery with terminals taped",
@@ -673,7 +673,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3219
+            "durationMs": 4736
           },
           {
             "text": "rechargeable AAA batteries",
@@ -688,7 +688,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3031
+            "durationMs": 4254
           },
           {
             "text": "fluorescent tube",
@@ -703,10 +703,25 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2892
+            "durationMs": 5006
           },
           {
             "text": "CFL compact fluorescent light bulb",
+            "expected": {
+              "channel": "lighting",
+              "status": "special_handling"
+            },
+            "actual": {
+              "channel": "lighting",
+              "status": "special_handling",
+              "confidence": 1
+            },
+            "channelMatch": true,
+            "statusMatch": true,
+            "durationMs": 5123
+          },
+          {
+            "text": "LED light bulb",
             "expected": {
               "channel": "lighting",
               "status": "special_handling"
@@ -718,22 +733,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3621
-          },
-          {
-            "text": "LED light bulb",
-            "expected": {
-              "channel": "lighting",
-              "status": "special_handling"
-            },
-            "actual": {
-              "channel": "lighting",
-              "status": "special_handling",
-              "confidence": 0.99
-            },
-            "channelMatch": true,
-            "statusMatch": true,
-            "durationMs": 3039
+            "durationMs": 5042
           },
           {
             "text": "broken fluorescent lamp",
@@ -744,11 +744,11 @@
             "actual": {
               "channel": "lighting",
               "status": "special_handling",
-              "confidence": 0.95
+              "confidence": 0.98
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3807
+            "durationMs": 5144
           },
           {
             "text": "energy-saving light bulb",
@@ -763,7 +763,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3177
+            "durationMs": 5247
           },
           {
             "text": "clean, dry old t-shirts with normal wear and no stains or tears",
@@ -774,11 +774,11 @@
             "actual": {
               "channel": "textile",
               "status": "recyclable",
-              "confidence": 0.95
+              "confidence": 0.98
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3219
+            "durationMs": 4188
           },
           {
             "text": "clean, dry used shoes with normal wear, still intact",
@@ -793,7 +793,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3236
+            "durationMs": 4487
           },
           {
             "text": "clean, dry used curtains with no mould or stains",
@@ -808,7 +808,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3730
+            "durationMs": 4279
           },
           {
             "text": "clean, dry used bed sheets without tears or stains",
@@ -819,11 +819,11 @@
             "actual": {
               "channel": "textile",
               "status": "recyclable",
-              "confidence": 0.98
+              "confidence": 0.95
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3205
+            "durationMs": 3730
           },
           {
             "text": "clean, dry used handbag with normal wear, still intact",
@@ -838,7 +838,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3105
+            "durationMs": 4361
           },
           {
             "text": "leftover paint can",
@@ -853,7 +853,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3217
+            "durationMs": 3950
           },
           {
             "text": "insect spray can (partially full)",
@@ -868,7 +868,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3419
+            "durationMs": 4925
           },
           {
             "text": "used lead-acid car battery",
@@ -883,7 +883,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3189
+            "durationMs": 4820
           },
           {
             "text": "used motor oil",
@@ -898,7 +898,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3051
+            "durationMs": 4110
           },
           {
             "text": "partly full bottle of corrosive drain cleaner in its original labelled container",
@@ -913,7 +913,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3216
+            "durationMs": 5424
           },
           {
             "text": "broken sofa that cannot be reused",
@@ -928,7 +928,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2739
+            "durationMs": 4664
           },
           {
             "text": "broken wooden table",
@@ -943,7 +943,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2818
+            "durationMs": 4153
           },
           {
             "text": "used mattress that cannot be reused",
@@ -958,7 +958,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3132
+            "durationMs": 4429
           },
           {
             "text": "broken bookshelf",
@@ -973,7 +973,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2939
+            "durationMs": 4333
           },
           {
             "text": "broken bicycle that cannot be reused and is too large for a waste bin",
@@ -988,7 +988,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3211
+            "durationMs": 4689
           },
           {
             "text": "clean, dry winter jacket in good condition",
@@ -1003,7 +1003,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3176
+            "durationMs": 4614
           },
           {
             "text": "used books in good condition",
@@ -1018,7 +1018,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3151
+            "durationMs": 4817
           },
           {
             "text": "working blender",
@@ -1033,7 +1033,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3033
+            "durationMs": 4324
           },
           {
             "text": "children's toys, still working",
@@ -1048,7 +1048,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3285
+            "durationMs": 4788
           },
           {
             "text": "clean, dry backpack in good condition",
@@ -1063,7 +1063,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3201
+            "durationMs": 4326
           },
           {
             "text": "used tissue paper",
@@ -1078,7 +1078,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2969
+            "durationMs": 3747
           },
           {
             "text": "food waste (leftover rice)",
@@ -1089,11 +1089,11 @@
             "actual": {
               "channel": "general_waste",
               "status": "not_recyclable",
-              "confidence": 0.99
+              "confidence": 1
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3121
+            "durationMs": 3362
           },
           {
             "text": "styrofoam food container",
@@ -1108,7 +1108,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2853
+            "durationMs": 3561
           },
           {
             "text": "dirty plastic bag with food stains",
@@ -1123,7 +1123,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2750
+            "durationMs": 3544
           },
           {
             "text": "broken ceramic mug",
@@ -1138,7 +1138,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2809
+            "durationMs": 2996
           },
           {
             "text": "used paper towel",
@@ -1153,7 +1153,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2789
+            "durationMs": 3629
           },
           {
             "text": "used and soiled toilet paper, not the clean cardboard tube",
@@ -1168,7 +1168,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2760
+            "durationMs": 3218
           },
           {
             "text": "broken mirror",
@@ -1183,7 +1183,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3177
+            "durationMs": 3548
           },
           {
             "text": "disposable chopsticks (used)",
@@ -1198,7 +1198,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2731
+            "durationMs": 3730
           },
           {
             "text": "cigarette butts",
@@ -1213,7 +1213,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3141
+            "durationMs": 4195
           },
           {
             "text": "pizza box with grease stains",
@@ -1228,7 +1228,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3003
+            "durationMs": 3775
           },
           {
             "text": "half-eaten takeaway container",
@@ -1243,7 +1243,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2833
+            "durationMs": 3458
           },
           {
             "text": "broken electronic toy with a built-in battery that cannot be removed",
@@ -1258,7 +1258,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3231
+            "durationMs": 5474
           },
           {
             "text": "pyrex glass baking dish",
@@ -1273,7 +1273,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3097
+            "durationMs": 3680
           },
           {
             "text": "old working iPhone in good condition",
@@ -1288,7 +1288,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3157
+            "durationMs": 4333
           },
           {
             "text": "plastic straw",
@@ -1303,7 +1303,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2759
+            "durationMs": 3906
           },
           {
             "text": "empty peanut butter jar (not rinsed)",
@@ -1318,7 +1318,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2880
+            "durationMs": 4258
           },
           {
             "text": "old clothes that are torn and heavily stained",
@@ -1333,7 +1333,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2929
+            "durationMs": 3919
           },
           {
             "text": "clean and dry bubble wrap",
@@ -1344,11 +1344,11 @@
             "actual": {
               "channel": "blue_bin",
               "status": "recyclable",
-              "confidence": 0.95
+              "confidence": 0.98
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2592
+            "durationMs": 4307
           },
           {
             "text": "used incandescent light bulb",
@@ -1363,7 +1363,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3042
+            "durationMs": 5143
           },
           {
             "text": "prescription glasses in good reusable condition",
@@ -1374,11 +1374,11 @@
             "actual": {
               "channel": "donation",
               "status": "consider_donating",
-              "confidence": 0.95
+              "confidence": 0.9
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2699
+            "durationMs": 4835
           },
           {
             "text": "completely empty, dry, all-metal paint can with no liquid paint",
@@ -1393,7 +1393,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3822
+            "durationMs": 4590
           },
           {
             "text": "coffee capsule (Nespresso)",
@@ -1408,7 +1408,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2873
+            "durationMs": 3753
           },
           {
             "text": "broken power bank that cannot be reused",
@@ -1423,7 +1423,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 4945
+            "durationMs": 5108
           },
           {
             "text": "expired household medicine pills",
@@ -1438,7 +1438,7 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 3114
+            "durationMs": 5604
           },
           {
             "text": "wet cardboard",
@@ -1453,24 +1453,24 @@
             },
             "channelMatch": true,
             "statusMatch": true,
-            "durationMs": 2659
+            "durationMs": 3949
           }
         ]
       }
     ]
   },
   "bcrs": {
-    "timestamp": "2026-11-02T08:27:26.414Z",
+    "timestamp": "2026-11-06T11:37:36.784Z",
     "runKind": "complete",
     "baseline": {
-      "id": "sg-bcrs-v22",
-      "reviewedAt": "2026-11-02",
-      "holdoutRule": "All previously exposed images, including the four v21 holdouts, are regression cases. After candidate code and labels are frozen, select new pixel-reviewed holdouts with at least two return_point truths and at least two non-return_point truths. Each holdout must pass every classification, action and safety assertion with zero provider errors. Apply the ordered v22 container-category rules to the submitted pixels. Image exactness remains at least 95%, return-point recall at least 90%, and wrong non-null channels and false return points remain zero tolerance. Reject near-duplicate source pairs at 0.995 before any model call. These checks are developer-visible, frozen and non-adaptive, not sealed blind tests."
+      "id": "sg-bcrs-v23",
+      "reviewedAt": "2026-11-06",
+      "holdoutRule": "All previously exposed images, including the seven v22 holdouts, are regression cases. After candidate code and labels are frozen, select new pixel-reviewed holdouts with at least two return_point truths and at least two non-return_point truths. Each holdout must pass every classification, action and safety assertion with zero provider errors. Apply the ordered v23 rules to the submitted pixels: an identified non-beverage keeps its ordinary channel in any scene, and drinks follow the container-category rules. Image exactness remains at least 95%, return-point recall at least 90%, and wrong non-null channels and false return points remain zero tolerance. Reject near-duplicate source pairs at 0.995 before any model call. These checks are developer-visible, frozen and non-adaptive, not sealed blind tests."
     },
-    "truthSetDigest": "804ac7be2a52f6e8a2a515a91f3a490ce91256ce4b557396c30e7492479520d8",
+    "truthSetDigest": "d97943db798854daf65c0090b64bafd101a6c478065d40bd9a77cf7d1886f59c",
     "profile": {
       "id": "candidate-source-bound",
-      "revision": "source-18fe0a70d4002362ce02ffa57cdd83627a6390516f5b9f38c846efbc0e63f78d",
+      "revision": "source-de0e7855d0c72202dabe6083c7c4ff0d3e7ddf6809590d8a53310824776fa4ad",
       "digest": "b42999dce229fbfad571b68855240e246453751f5aefcdf521f23ed0cb7319b5"
     },
     "models": {
@@ -1480,7 +1480,7 @@
     "policySource": {
       "url": "https://www.nea.gov.sg/our-services/waste-management/beverage-container-return-scheme/for-consumers",
       "productApprovalGuideUrl": "https://bcrs.sg/files/2026-02-17_Phase_3_Product_Approval_Guide.pdf",
-      "reviewedAt": "2026-11-02",
+      "reviewedAt": "2026-11-06",
       "authority": "National Environment Agency, Singapore",
       "invariants": [
         "Route a single intact, uncontaminated prepackaged plastic or metal drink bottle, can or cup to return_point by container category. Capacity only excludes: a stated or visible capacity outside 150ml-3L routes to blue_bin, and an unknown capacity withholds nothing.",
@@ -1488,16 +1488,16 @@
         "A readable 10¢ SG RETURN mark on the drink container fills only an unknown shape or material, never known exclusions.",
         "Observed contamination takes priority over damage, out-of-range volume and explicit text exclusions; these route to general_waste and blue_bin respectively.",
         "Glass, cartons, pouches, non-beverages, powdered drinks, food for special medical purposes and freshly prepared drinks are outside the deposit category.",
-        "Multiple containers, outer packaging and scenes without an identifiable container stay not_sure with no action."
+        "An identified non-beverage keeps its ordinary channel in any scene and is never return_point. For drinks and unidentified products, multiple containers, outer packaging and scenes without an identifiable container stay not_sure with no action."
       ]
     },
     "imagePipeline": "web <=2048px JPEG quality 70, then production server sanitiser",
     "imageIndependence": {
       "nearDuplicateSimilarityLimit": 0.995,
       "closestPair": {
-        "leftSourceId": "holdout-glass-bottle-action-v17",
-        "rightSourceId": "holdout-glass-sprite-action-v18",
-        "similarity": 0.9103161381740196
+        "leftSourceId": "negative-small-cultured-milk-bottle",
+        "rightSourceId": "nonbeverage-used-tissue",
+        "similarity": 0.9175838694852941
       }
     },
     "sources": [
@@ -2180,25 +2180,146 @@
         "licence": "CC BY-SA 4.0",
         "reviewedAt": "2026-11-02",
         "provenance": "One intact 250 ml brick drink carton is seen from above with its wrapped straw attached to the side. Cartons are outside the deposit category and follow ordinary blue-bin recycling."
+      },
+      {
+        "id": "nonbeverage-used-batteries",
+        "filename": "nonbeverage-used-batteries.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Used_batteries.jpg",
+        "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Used_batteries.jpg/1920px-Used_batteries.jpg",
+        "sha256": "56720e0b42a80cc24edcacb51e3efb2c1e3ad7decbd5126d296a221ac55a88c1",
+        "credit": "Peter Fiskerstrand, Wikimedia Commons",
+        "licence": "CC BY-SA 4.0",
+        "reviewedAt": "2026-11-06",
+        "provenance": "A loose pile of used AA and AAA household batteries fills the frame. Batteries are not drink containers, so the pile is not an ambiguous drink scene; they go to battery e-waste collection."
+      },
+      {
+        "id": "nonbeverage-incandescent-bulb",
+        "filename": "nonbeverage-incandescent-bulb.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Gluehlampe_01_KMJ.jpg",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Gluehlampe_01_KMJ.jpg",
+        "sha256": "f0edcced73a9c054f0b8a12dabfd9dcc7438e71b39928a1841241fbdd5c34540",
+        "credit": "KMJ (de.wikipedia), Wikimedia Commons",
+        "licence": "CC BY-SA 3.0",
+        "reviewedAt": "2026-11-06",
+        "provenance": "One clear incandescent light bulb with a screw base stands on a plain background. Every used bulb goes to lighting collection, incandescent ones included."
+      },
+      {
+        "id": "nonbeverage-shattered-phone",
+        "filename": "nonbeverage-shattered-phone.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Samsung_Galaxy_S2_shattered_screen.jpg",
+        "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Samsung_Galaxy_S2_shattered_screen.jpg/1920px-Samsung_Galaxy_S2_shattered_screen.jpg",
+        "sha256": "fb03fc8511acd8a55484bf5feb7bd01f0c8082272e95c5d0495152020b22b973",
+        "credit": "Ashwin Kumar (Flickr), Wikimedia Commons",
+        "licence": "CC BY-SA 2.0",
+        "reviewedAt": "2026-11-06",
+        "provenance": "One smartphone lies on a wooden surface with its screen shattered across its whole width. A visibly broken phone is e-waste, not a working device to donate."
+      },
+      {
+        "id": "nonbeverage-used-tissue",
+        "filename": "nonbeverage-used-tissue.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Used_tissue_paper_on_the_ground.jpg",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Used_tissue_paper_on_the_ground.jpg",
+        "sha256": "12fa8a902bcd1e566d47399baa8483c4ae329685183e4a04533a6cbdb8e69d17",
+        "credit": "ILoveCocomelon, Wikimedia Commons",
+        "licence": "CC BY-SA 4.0",
+        "reviewedAt": "2026-11-06",
+        "provenance": "One crumpled used tissue lies on a carpet. Tissue paper is not recyclable and goes to general waste."
+      },
+      {
+        "id": "nonbeverage-dumped-mattress",
+        "filename": "nonbeverage-dumped-mattress.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Mattress_dumped_next_to_Marsh_Road_-_geograph.org.uk_-_4238834.jpg",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/23/Mattress_dumped_next_to_Marsh_Road_-_geograph.org.uk_-_4238834.jpg",
+        "sha256": "e6bd61bf455f77cffb19ac6de72ca38ce0218526431d9aa8caf24873cfad9aab",
+        "credit": "Mat Fascione (Geograph), Wikimedia Commons",
+        "licence": "CC BY-SA 2.0",
+        "reviewedAt": "2026-11-06",
+        "provenance": "One mattress has been dumped against roadside bushes and left outdoors. A used mattress that cannot be reused is bulky waste."
+      },
+      {
+        "id": "nonbeverage-hanging-clothes",
+        "filename": "nonbeverage-hanging-clothes.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Hanging_shirts_and_jackets_(Unsplash).jpg",
+        "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Hanging_shirts_and_jackets_%28Unsplash%29.jpg/1920px-Hanging_shirts_and_jackets_%28Unsplash%29.jpg",
+        "sha256": "20b5f78ecbb1787988498300baa351de67a15aa498e6d2607a74d00e5aeee351",
+        "credit": "Crew (Unsplash), Wikimedia Commons",
+        "licence": "CC0 1.0",
+        "reviewedAt": "2026-11-06",
+        "provenance": "Clean shirts and jackets hang on a rail above folded trousers on a trunk; no drink container is present. Clean, dry, reusable clothes go to textile collection."
+      },
+      {
+        "id": "holdout-diet-pepsi-can-on-table-v23",
+        "filename": "holdout-diet-pepsi-can-on-table-v23.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:An_opened_can_of_diet_pepsi_sitting_on_a_table.jpg",
+        "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/An_opened_can_of_diet_pepsi_sitting_on_a_table.jpg/1920px-An_opened_can_of_diet_pepsi_sitting_on_a_table.jpg",
+        "sha256": "0e5986c11d30b73734058e9df91d7e08bfc1087cb2fdac134ede96f7b3c18f7d",
+        "credit": "Bradley Gordon (Flickr), Wikimedia Commons",
+        "licence": "CC BY 2.0",
+        "reviewedAt": "2026-11-06",
+        "provenance": "One opened, intact aluminium Diet Pepsi can stands on a table; the paper bag and folded map beside it are not drink containers. Its complete standard can outline establishes an ordinary in-range can."
+      },
+      {
+        "id": "holdout-milk-tea-plastic-bottle-v23",
+        "filename": "holdout-milk-tea-plastic-bottle-v23.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:HK_drink_%E9%B4%BB%E7%A6%8F%E5%A0%82_Hung_Fook_Tong_Hong_Kong_Style_MilkTea_plastic_bottle_green_November_2020_SS2_01.jpg",
+        "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/HK_drink_%E9%B4%BB%E7%A6%8F%E5%A0%82_Hung_Fook_Tong_Hong_Kong_Style_MilkTea_plastic_bottle_green_November_2020_SS2_01.jpg/1920px-HK_drink_%E9%B4%BB%E7%A6%8F%E5%A0%82_Hung_Fook_Tong_Hong_Kong_Style_MilkTea_plastic_bottle_green_November_2020_SS2_01.jpg",
+        "sha256": "9b50c1e30863600eaaa10d34f09ce2af7bb62d23fc45928a4f5d43c2d23d735b",
+        "credit": "JUMBAIKTANGM LONA, Wikimedia Commons",
+        "licence": "CC BY-SA 4.0",
+        "reviewedAt": "2026-11-06",
+        "provenance": "One capped, intact plastic bottle of milk tea printed 310 ml lies on a fabric seat. Normal drink contents are not contamination."
+      },
+      {
+        "id": "holdout-pepsi-max-can-at-desk-v23",
+        "filename": "holdout-pepsi-max-can-at-desk-v23.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Pepsi_Max_can.jpg",
+        "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Pepsi_Max_can.jpg/1920px-Pepsi_Max_can.jpg",
+        "sha256": "eae484e502eee26a24545da94a7d151115fa4349e7e38852433d05f80ea2bd6a",
+        "credit": "Ramolito, Wikimedia Commons",
+        "licence": "Public domain",
+        "reviewedAt": "2026-11-06",
+        "provenance": "One intact Pepsi Max drink can stands in the foreground under dim coloured light; the keyboard and monitor behind it are background, not the subject. Its complete slim-can outline establishes an ordinary in-range can."
+      },
+      {
+        "id": "holdout-cracked-phone-screen-v23",
+        "filename": "holdout-cracked-phone-screen-v23.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Smartphone_cracked_screen.jpg",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Smartphone_cracked_screen.jpg",
+        "sha256": "0456290568fc3073587d941270530b6992c8307cb9a2fd0ba73e0eaff91cf438",
+        "credit": "Sygmoral, Wikimedia Commons",
+        "licence": "CC BY-SA 4.0",
+        "reviewedAt": "2026-11-06",
+        "provenance": "One smartphone is held up with cracks running across its screen glass. A visibly broken phone is e-waste, not a working device to donate."
+      },
+      {
+        "id": "holdout-compact-fluorescent-bulb-v23",
+        "filename": "holdout-compact-fluorescent-bulb-v23.jpg",
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Energiesparlampe_01a.jpg",
+        "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/Energiesparlampe_01a.jpg/1920px-Energiesparlampe_01a.jpg",
+        "sha256": "35042e7bf4e4aafdf3fe4bcd67842364628f6386ddfd8ca0ec340e5680faab50",
+        "credit": "Armin Kübelbeck (Kuebi), edit by Waugsberg, Wikimedia Commons",
+        "licence": "CC BY-SA 3.0",
+        "reviewedAt": "2026-11-06",
+        "provenance": "One compact fluorescent bulb with folded tubes and a screw base lies on a black background. Every used bulb goes to lighting collection."
       }
     ],
     "gate": {
       "measurementValid": true,
       "releaseEligible": true,
       "completeSuite": true,
-      "passed": 93,
-      "total": 93,
+      "passed": 105,
+      "total": 105,
       "textPassed": 32,
       "textTotal": 32,
-      "imagePassed": 61,
-      "imageTotal": 61,
+      "imagePassed": 73,
+      "imageTotal": 73,
       "imageExactAccuracy": 1,
-      "imageReturnPointsFound": 39,
-      "imageReturnPointTotal": 39,
+      "imageReturnPointsFound": 42,
+      "imageReturnPointTotal": 42,
       "imageReturnPointRecall": 1,
-      "holdoutPassed": 7,
-      "holdoutTotal": 7,
-      "holdoutSafetyPassed": 7,
+      "holdoutPassed": 5,
+      "holdoutTotal": 5,
+      "holdoutSafetyPassed": 5,
       "wrongChannelDirections": 0,
       "falseReturnPoints": 0,
       "notSureBlueBinMentions": 0,
@@ -2227,7 +2348,7 @@
         "actual": {
           "item": "Empty 500ml plastic beverage bottle with Singapore BCRS Deposit Mark",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 1,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -2246,7 +2367,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 2945
+        "durationMs": 4971
       },
       {
         "id": "official-mark-present-zh",
@@ -2285,7 +2406,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 3647
+        "durationMs": 5285
       },
       {
         "id": "official-mark-present-ms",
@@ -2324,7 +2445,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 3378
+        "durationMs": 5753
       },
       {
         "id": "official-mark-present-ta",
@@ -2363,7 +2484,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 4174
+        "durationMs": 6286
       },
       {
         "id": "official-mark-explicitly-absent-en",
@@ -2382,14 +2503,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "Single prepackaged metal drink can, 330ml (within 150ml-3L), clean and undamaged, but explicitly no Singapore Deposit Mark so not eligible for return_point; goes to blue bin.",
+          "reason": "Clean empty metal drink can without Singapore Deposit Mark goes to blue bin, not return_point.",
           "preparation": [
             "Ensure can is empty",
             "Rinse if needed and keep dry"
           ]
         },
         "assertions": [],
-        "durationMs": 2920
+        "durationMs": 4579
       },
       {
         "id": "official-mark-explicitly-absent-zh",
@@ -2408,14 +2529,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "单只预包装金属饮料罐，容量330ml在150ml-3L范围内，无损坏无污染，但明确无新加坡Deposit Mark，不符合return_point条件，空净后可投入蓝色回收箱",
+          "reason": "单只预包装金属饮料罐，容量330ml在150ml-3L范围内，无损坏无污染，但明确无新加坡Deposit Mark，不符合return_point条件，按普通可回收物归入蓝色回收箱。",
           "preparation": [
             "清空罐内残留物",
-            "保持罐体清洁干燥"
+            "保持罐体清洁干燥后放入蓝色回收箱"
           ]
         },
         "assertions": [],
-        "durationMs": 5053
+        "durationMs": 5010
       },
       {
         "id": "official-mark-explicitly-absent-ms",
@@ -2430,18 +2551,18 @@
           "status": "recyclable"
         },
         "actual": {
-          "item": "Tin minuman aluminium 330ml",
+          "item": "Tin minuman aluminium 330ml kosong dan bersih",
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "Tin aluminium kosong dan bersih tanpa Deposit Mark Singapura tidak layak untuk return_point, jadi masuk tong biru.",
+          "reason": "Tin aluminium kosong dan bersih tanpa Deposit Mark Singapura tidak layak untuk return_point, jadi masuk tong biru (blue_bin).",
           "preparation": [
-            "Pastikan tin kosong dan kering",
-            "Bilas jika perlu sebelum dibuang ke tong biru"
+            "Pastikan tin kosong sepenuhnya",
+            "Bilas jika perlu dan pastikan kering sebelum dibuang ke tong biru"
           ]
         },
         "assertions": [],
-        "durationMs": 3302
+        "durationMs": 5341
       },
       {
         "id": "official-mark-explicitly-absent-ta",
@@ -2460,14 +2581,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "காலியான மற்றும் சுத்தமான அலுமினிய பான கேன் நீல தொட்டிக்கு ஏற்றது; சிங்கப்பூர் Deposit Mark இல்லாததால் return_point அல்ல.",
+          "reason": "காலியான மற்றும் சுத்தமான அலுமினிய பான கேன் நீல தொட்டிக்கு ஏற்றது. சிங்கப்பூர் Deposit Mark இல்லாததால் return_point அல்ல.",
           "preparation": [
             "கேனை நன்கு கழுவி உலர விடவும்",
             "மறுசுழற்சி நீல தொட்டியில் போடவும்"
           ]
         },
         "assertions": [],
-        "durationMs": 3937
+        "durationMs": 5720
       },
       {
         "id": "official-mark-unknown-en",
@@ -2507,7 +2628,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 3199
+        "durationMs": 4718
       },
       {
         "id": "official-mark-unknown-zh",
@@ -2547,7 +2668,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 2720
+        "durationMs": 5700
       },
       {
         "id": "official-mark-unknown-ms",
@@ -2587,7 +2708,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 3453
+        "durationMs": 6529
       },
       {
         "id": "official-mark-unknown-ta",
@@ -2608,7 +2729,7 @@
         "actual": {
           "item": "பிளாஸ்டிக் பான பாட்டில்",
           "status": "recyclable",
-          "confidence": 0.9,
+          "confidence": 0.7,
           "channel": "return_point",
           "reason": "இந்த வகைப் பானக் கொள்கலன் வைப்புத்தொகைத் திட்டத்தில் உள்ளது. சிங்கப்பூரில் வாங்கிய இதில் Deposit Mark (10¢ SG RETURN) இருந்தால், திருப்பி அளிக்கும் இடம் ஒன்றில் திருப்பி அளித்து S$0.10 பெறலாம்; இயந்திரம் பார்கோடை ஸ்கேன் செய்து தீர்மானிக்கும். Deposit Mark இல்லாவிட்டால் அல்லது சிங்கப்பூருக்கு வெளியே வாங்கியிருந்தால், கழுவி நீல மறுசுழற்சி தொட்டியில் இடவும்.",
           "preparation": [
@@ -2627,7 +2748,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 5545
+        "durationMs": 7883
       },
       {
         "id": "ordinary-water-bottle-en",
@@ -2667,7 +2788,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 3059
+        "durationMs": 4457
       },
       {
         "id": "ordinary-water-bottle-zh",
@@ -2707,7 +2828,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 2810
+        "durationMs": 5850
       },
       {
         "id": "ordinary-water-bottle-ms",
@@ -2747,7 +2868,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 3219
+        "durationMs": 6098
       },
       {
         "id": "ordinary-water-bottle-ta",
@@ -2787,7 +2908,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 3899
+        "durationMs": 8236
       },
       {
         "id": "crushed-aluminium-can-en",
@@ -2807,14 +2928,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "Single prepackaged metal beverage can, crushed (damaged barcode per rule 16) so excluded from return_point; empty, clean and dry makes it eligible for blue bin.",
+          "reason": "Crushed aluminium drink can is damaged (crushed), so excluded from return_point; clean empty metal can goes to blue bin.",
           "preparation": [
-            "Ensure can is empty",
-            "Keep it clean and dry"
+            "Ensure can is empty, clean and dry",
+            "Place in blue recycling bin"
           ]
         },
         "assertions": [],
-        "durationMs": 2947
+        "durationMs": 5328
       },
       {
         "id": "crushed-aluminium-can-zh",
@@ -2834,15 +2955,16 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "铝制饮料罐为单一预包装饮料容器，容量330ml在150ml-3L范围内，但已压扁（损坏），不符合返退点条件，且干净干燥，归入蓝色回收箱。",
+          "reason": "铝制饮料罐为空且干净，容量330ml在150ml-3L范围内，虽已压扁（损坏）不符合返退点要求，但可作为干净金属回收至蓝色回收箱。",
           "preparation": [
             "清空罐内残留物",
-            "确保罐身干净干燥后放入蓝色回收箱"
+            "冲洗并保持干净干燥",
+            "压扁后放入蓝色回收箱"
           ],
-          "tip": "若罐上有新加坡Deposit Mark且在新加坡购买，未压扁时可获S$0.10退款，但压扁后返退点机器通常不接受。"
+          "tip": "若此罐带有新加坡Deposit Mark且于新加坡购买，因已压扁损坏条码可能无法通过返退点退回S$0.10，建议今后保持罐体完整以便退瓶退款。"
         },
         "assertions": [],
-        "durationMs": 3322
+        "durationMs": 5476
       },
       {
         "id": "crushed-aluminium-can-ms",
@@ -2858,18 +2980,18 @@
           "nextAction": null
         },
         "actual": {
-          "item": "Tin minuman aluminium 330ml",
+          "item": "Tin minuman aluminium 330ml yang dikemekkan",
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "Tin aluminium kosong dan bersih tetapi telah dikemekkan, jadi tidak layak untuk return_point dan dikitar semula melalui tong biru.",
+          "reason": "Tin aluminium kosong dan bersih tetapi dikemekkan, jadi tidak layak untuk return_point dan sebaliknya boleh dikitar semula melalui tong biru.",
           "preparation": [
-            "Kosongkan tin",
-            "Pastikan tin bersih dan kering sebelum dibuang ke tong biru"
+            "Pastikan tin kosong dan bersih",
+            "Keringkan sebelum masukkan ke tong biru"
           ]
         },
         "assertions": [],
-        "durationMs": 3234
+        "durationMs": 5608
       },
       {
         "id": "crushed-aluminium-can-ta",
@@ -2885,18 +3007,18 @@
           "nextAction": null
         },
         "actual": {
-          "item": "நசுக்கப்பட்ட, காலியான, சுத்தமான 330ml அலுமினிய பான கேன்",
+          "item": "நசுக்கப்பட்ட 330ml அலுமினிய பான கேன்",
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "கேன் நசுக்கப்பட்டிருந்தாலும் காலியான, சுத்தமான மற்றும் உலர்ந்த நிலையில் உள்ளது; எனவே BCRS வரும்புள்ளி அல்ல, நீல குப்பையில் மறுசுழற்சி செய்யலாம்.",
+          "reason": "கேன் நசுக்கப்பட்டிருந்தாலும் காலியானது மற்றும் சுத்தமானது; நசுக்கப்பட்ட பான கேன் திரும்பப் பெறும் மையத்தில் ஏற்றுக்கொள்ளப்படாது, எனவே நீல குப்பையில் மறுசுழற்சி செய்யவும்.",
           "preparation": [
             "கேனை முழுவதுமாக காலி செய்யவும்",
-            "சுத்தமாகவும் உலர்ந்தும் உறுதிப்படுத்தவும்"
+            "சுத்தமாகவும் உலர்ந்ததாகவும் உறுதிப்படுத்தவும்"
           ]
         },
         "assertions": [],
-        "durationMs": 3977
+        "durationMs": 7558
       },
       {
         "id": "five-litre-water-bottle-en",
@@ -2912,19 +3034,18 @@
           "nextAction": null
         },
         "actual": {
-          "item": "5L plastic drinking-water bottle",
+          "item": "Empty clean 5L plastic drinking-water bottle",
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "Empty clean plastic bottle above 3L is excluded from return_point and goes to blue bin as clean dry plastic recyclable.",
+          "reason": "Plastic drink bottle above 3L with no contamination or damage is excluded from return_point but recyclable via blue bin when clean and dry.",
           "preparation": [
-            "Empty the bottle",
-            "Rinse if needed and ensure clean and dry",
-            "Place in blue recycling bin"
+            "Ensure bottle is empty",
+            "Rinse if needed and keep clean and dry"
           ]
         },
         "assertions": [],
-        "durationMs": 3068
+        "durationMs": 4605
       },
       {
         "id": "five-litre-water-bottle-zh",
@@ -2944,14 +3065,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "容量5L超过BCRS返还点150ml-3L范围，且为空净塑料瓶，按NEA指南归入蓝色回收箱（干净干燥可回收物）。",
+          "reason": "容量高于3L，不属于BCRS返还点范围，但干净干燥的塑料瓶可投入蓝色回收箱",
           "preparation": [
-            "清空瓶内液体",
-            "确保瓶身干净干燥后投入蓝色回收箱"
+            "确保瓶子干净干燥",
+            "放入蓝色回收箱"
           ]
         },
         "assertions": [],
-        "durationMs": 3160
+        "durationMs": 4849
       },
       {
         "id": "five-litre-water-bottle-ms",
@@ -2967,18 +3088,18 @@
           "nextAction": null
         },
         "actual": {
-          "item": "Botol air minuman plastik 5L kosong dan bersih",
+          "item": "Botol air minuman plastik 5L",
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "Botol plastik minuman yang kosong dan bersih boleh dikitar semula dalam tong biru, tetapi kapasiti 5L melebihi had 3L untuk titik pulangan BCRS.",
+          "reason": "Botol plastik minuman yang kosong dan bersih boleh dikitar semula melalui tong biru. Kapasiti 5L melebihi had 3L untuk return_point, jadi tidak layak BCRS.",
           "preparation": [
-            "Pastikan botol kosong dan kering",
-            "Buang penutup jika tidak boleh dikitar semula atau ikut panduan tong biru"
+            "Pastikan botol kosong",
+            "Bilas jika perlu dan pastikan kering sebelum dibuang ke tong biru"
           ]
         },
         "assertions": [],
-        "durationMs": 3593
+        "durationMs": 5687
       },
       {
         "id": "five-litre-water-bottle-ta",
@@ -2998,14 +3119,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "5L கொள்ளளவு 3L ஐ விட அதிகம் என்பதால் return_point க்கு தகுதியில்லை; காலியான, சுத்தமான பிளாஸ்டிக் பாட்டில் நீல தொட்டிக்கு பொருந்தும்.",
+          "reason": "காலியான, சுத்தமான பிளாஸ்டிக் பாட்டில் நீல தொட்டிக்கு ஏற்றது; ஆனால் அளவு 3L ஐ விட அதிகமாக இருப்பதால் return_point கிடையாது.",
           "preparation": [
-            "பாட்டிலை மூடி உடன் காலியாக உள்ளதை உறுதிசெய்யவும்",
-            "ஈரமின்றி சுத்தமாக வைத்து நீல தொட்டியில் போடவும்"
+            "பாட்டிலை மூடி உடன் காலியாக வைக்கவும்",
+            "நீல மறுசுழற்சி தொட்டியில் போடவும்"
           ]
         },
         "assertions": [],
-        "durationMs": 4552
+        "durationMs": 7358
       },
       {
         "id": "hundred-ml-cultured-milk-bottle-en",
@@ -3025,14 +3146,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "Single prepackaged plastic beverage bottle below 150ml is excluded from return_point; empty and clean plastic bottle goes to blue bin.",
+          "reason": "Single prepackaged plastic beverage bottle below 150ml is excluded from return_point, so it goes to blue bin as clean dry plastic recyclable.",
           "preparation": [
             "Ensure bottle is empty",
             "Rinse if needed and keep clean and dry"
           ]
         },
         "assertions": [],
-        "durationMs": 3184
+        "durationMs": 4683
       },
       {
         "id": "hundred-ml-cultured-milk-bottle-zh",
@@ -3052,14 +3173,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "容量低于150ml，不属于BCRS返还点范围，但为空且干净的塑料饮料瓶，可作为干净干燥可回收物投入蓝色回收箱",
+          "reason": "容量为100ml，低于BCRS规定的150ml-3L范围，不符合return_point退费条件；但为空且干净的塑料饮料瓶，属干净干燥可回收物，应投入蓝色回收箱。",
           "preparation": [
             "清空瓶内残留液体",
             "确保瓶身干净干燥后放入蓝色回收箱"
           ]
         },
         "assertions": [],
-        "durationMs": 3405
+        "durationMs": 5252
       },
       {
         "id": "hundred-ml-cultured-milk-bottle-ms",
@@ -3075,18 +3196,19 @@
           "nextAction": null
         },
         "actual": {
-          "item": "Botol plastik minuman susu kultur 100ml",
+          "item": "Botol minuman susu kultur plastik 100ml kosong dan bersih",
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "Botol plastik minuman yang kosong dan bersih boleh dikitar semula dalam blue bin, tetapi kapasiti 100ml berada di bawah 150ml maka tidak layak untuk return_point.",
+          "reason": "Botol plastik kosong dan bersih boleh dikitar semula dalam tong biru, tetapi kapasiti 100ml berada di bawah 150ml maka tidak layak untuk return_point BCRS.",
           "preparation": [
-            "Pastikan botol kosong",
-            "Bilas jika perlu dan pastikan kering"
-          ]
+            "Pastikan botol benar-benar kosong",
+            "Pastikan botol kering sebelum dibuang ke tong biru"
+          ],
+          "tip": "Tong biru menerima botol plastik bersih dan kering, tetapi botol di bawah 150ml tidak layak untuk bayaran balik S$0.10 di Return Point."
         },
         "assertions": [],
-        "durationMs": 3351
+        "durationMs": 6024
       },
       {
         "id": "hundred-ml-cultured-milk-bottle-ta",
@@ -3106,13 +3228,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "காலியான மற்றும் சுத்தமான பிளாஸ்டிக் பான பாட்டில் நீல நிற பின்னில் மறுசுழற்சி செய்யப்படலாம், ஆனால் அளவு 150ml-3L வரம்பிற்கு கீழே என்பதால் திரும்பப் பெறும் மையத்திற்கு தகுதியற்றது.",
+          "reason": "காலியான, சுத்தமான பிளாஸ்டிக் பாட்டில் என்பதால் நீல குப்பையில் மறுசுழற்சி செய்யலாம். ஆனால் அளவு 100ml ஆக இருப்பதால் BCRS திட்டத்திற்கு தகுதியற்றது (150ml-3L வரம்பு).",
           "preparation": [
-            "பாட்டிலை காலியாகவும் உலர்ந்தும் உறுதிசெய்யவும்"
+            "பாட்டிலை முழுவதுமாக காலி செய்யவும்",
+            "சுத்தம் செய்து உலர வைக்கவும்"
           ]
         },
         "assertions": [],
-        "durationMs": 3768
+        "durationMs": 7607
       },
       {
         "id": "drink-can-bought-in-johor-bahru-en",
@@ -3132,14 +3255,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "Empty clean aluminium drink can is recyclable in blue bin, but purchased outside Singapore so not eligible for BCRS return_point refund.",
+          "reason": "Single prepackaged metal beverage can, 330ml (within 150ml-3L), undamaged and uncontaminated, but purchased outside Singapore so no BCRS refund; route to blue bin as clean metal recyclable.",
           "preparation": [
             "Ensure can is empty",
             "Rinse if needed and keep clean and dry"
           ]
         },
         "assertions": [],
-        "durationMs": 3054
+        "durationMs": 4961
       },
       {
         "id": "drink-can-bought-in-johor-bahru-zh",
@@ -3159,15 +3282,15 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "该饮料罐为单一预包装金属罐，容量330ml在150ml-3L范围内，空且干净无污染，但因明确在马来西亚新山购买（非新加坡购买），不符合BCRS退费条件，故归入蓝色回收箱。",
+          "reason": "该饮料罐为金属材质、容量330ml在150ml-3L范围内、空且干净，但因在马来西亚购买不属于新加坡BCRS返还点范围，故归入蓝色回收箱。",
           "preparation": [
-            "清空罐内残留饮料",
-            "保持罐子干净干燥后放入蓝色回收箱"
+            "清空罐内液体",
+            "确保罐子干净干燥后放入蓝色回收箱"
           ],
-          "tip": "因非新加坡购买且无新加坡Deposit Mark，无法在Return Point获得S$0.10退款，请直接投入蓝色回收箱。"
+          "tip": "由于不是在新加坡购买且未提及Deposit Mark，无法获得S$0.10退款，请直接投入蓝色回收箱。"
         },
         "assertions": [],
-        "durationMs": 3431
+        "durationMs": 5565
       },
       {
         "id": "drink-can-bought-in-johor-bahru-ms",
@@ -3187,14 +3310,15 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "Tin aluminium kosong dan bersih boleh dikitar semula di tong biru, tetapi dibeli di luar Singapura tanpa Tanda Deposit Singapura maka tidak layak untuk return_point.",
+          "reason": "Tin aluminium kosong dan bersih boleh dikitar semula melalui tong biru, tetapi dibeli di luar Singapura tanpa Tanda Deposit, jadi tidak layak untuk return_point.",
           "preparation": [
             "Pastikan tin kosong dan bersih",
-            "Keringkan sebelum masukkan ke tong biru"
-          ]
+            "Masukkan ke dalam tong biru"
+          ],
+          "tip": "Tin ini tidak layak untuk bayaran balik S$0.10 kerana dibeli di Malaysia dan tiada Tanda Deposit Singapura."
         },
         "assertions": [],
-        "durationMs": 3472
+        "durationMs": 5856
       },
       {
         "id": "drink-can-bought-in-johor-bahru-ta",
@@ -3214,14 +3338,14 @@
           "status": "recyclable",
           "confidence": 0.95,
           "channel": "blue_bin",
-          "reason": "சிங்கப்பூருக்கு வெளியே வாங்கப்பட்டதால் டெபாசிட் மார்க் இல்லை, எனவே return_point அல்ல; காலியான சுத்தமான உலோக கேன் blue_binக்கு பொருந்தும்.",
+          "reason": "சிங்கப்பூருக்கு வெளியே வாங்கப்பட்டதால் டெபாசிட் மார்க் இல்லை, எனவே திரும்பப் பெறும் மையத்திற்கு அல்ல; காலியான சுத்தமான உலோக கேன் நீல குப்பைக்கு ஏற்றது.",
           "preparation": [
-            "கேனை காலியாக்கவும்",
-            "சுத்தம் செய்து உலர விடவும்"
+            "கேனை காலியாக்கி சுத்தம் செய்யவும்",
+            "உலர விட்டு நீல குப்பையில் போடவும்"
           ]
         },
         "assertions": [],
-        "durationMs": 3717
+        "durationMs": 6997
       },
       {
         "id": "official-mark-closeup-en",
@@ -3241,9 +3365,9 @@
           ]
         },
         "actual": {
-          "item": "Suntory C.C. Lemon prepackaged drink container",
+          "item": "Suntory C.C. Lemon plastic drink bottle",
           "status": "recyclable",
-          "confidence": 0.96,
+          "confidence": 0.99,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -3262,7 +3386,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 14025,
+        "durationMs": 13843,
         "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
       },
       {
@@ -3283,9 +3407,9 @@
           ]
         },
         "actual": {
-          "item": "C.C. Lemon柠檬味饮料塑料瓶",
+          "item": "C.C. Lemon 柠檬味预包装饮料塑料瓶",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.97,
           "channel": "return_point",
           "reason": "这类饮料容器属于押金回收范围。在新加坡购买、印有押金标志（10¢ SG RETURN）的，可送到退还点退 S$0.10，能否退款由回收机扫描条形码决定。没有押金标志或在境外购买的，冲洗后放进蓝色回收箱。",
           "preparation": [
@@ -3304,7 +3428,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 14010,
+        "durationMs": 19076,
         "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
       },
       {
@@ -3346,7 +3470,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 22546,
+        "durationMs": 19420,
         "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
       },
       {
@@ -3367,9 +3491,9 @@
           ]
         },
         "actual": {
-          "item": "சி.சி. லெமன் நெகிழிப் பானப் போத்தல்",
+          "item": "சி.சி. லெமன் பிளாஸ்டிக் பானப் போத்தல்",
           "status": "recyclable",
-          "confidence": 0.97,
+          "confidence": 0.98,
           "channel": "return_point",
           "reason": "இந்த வகைப் பானக் கொள்கலன் வைப்புத்தொகைத் திட்டத்தில் உள்ளது. சிங்கப்பூரில் வாங்கிய இதில் Deposit Mark (10¢ SG RETURN) இருந்தால், திருப்பி அளிக்கும் இடம் ஒன்றில் திருப்பி அளித்து S$0.10 பெறலாம்; இயந்திரம் பார்கோடை ஸ்கேன் செய்து தீர்மானிக்கும். Deposit Mark இல்லாவிட்டால் அல்லது சிங்கப்பூருக்கு வெளியே வாங்கியிருந்தால், கழுவி நீல மறுசுழற்சி தொட்டியில் இடவும்.",
           "preparation": [
@@ -3388,7 +3512,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 21936,
+        "durationMs": 24399,
         "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
       },
       {
@@ -3407,7 +3531,7 @@
           "maxConfidence": 0.49
         },
         "actual": {
-          "item": "Coke Zero can and plastic water bottle",
+          "item": "Coke Zero can and 600ml plastic water bottle",
           "status": "not_sure",
           "confidence": 0.2,
           "channel": null,
@@ -3417,7 +3541,7 @@
           ]
         },
         "assertions": [],
-        "durationMs": 12300,
+        "durationMs": 20796,
         "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-deposit-vending-machine-6018216"
       },
       {
@@ -3438,7 +3562,7 @@
           ]
         },
         "actual": {
-          "item": "500ml clear plastic bottled water bottle",
+          "item": "500ml plastic drinking water bottle",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -3459,7 +3583,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 14821,
+        "durationMs": 13605,
         "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361"
       },
       {
@@ -3480,7 +3604,7 @@
           ]
         },
         "actual": {
-          "item": "Plastic water bottle",
+          "item": "Clear plastic bottled-water bottle",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -3501,7 +3625,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 15035,
+        "durationMs": 12347,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Bottle_of_Water.jpg"
       },
       {
@@ -3522,7 +3646,7 @@
           ]
         },
         "actual": {
-          "item": "Prepackaged beverage can with loose plastic wrapping",
+          "item": "Aluminium carbonated drink can",
           "status": "recyclable",
           "confidence": 0.96,
           "channel": "return_point",
@@ -3543,7 +3667,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 20054,
+        "durationMs": 21882,
         "sourcePageUrl": "https://mothership.sg/2026/07/ice-mountain-drinks-fairprice-bcrs-logo/"
       },
       {
@@ -3560,19 +3684,20 @@
           "partition": "regression"
         },
         "actual": {
-          "item": "Empty clear glass bottle",
+          "item": "Empty clear glass beverage bottle",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "blue_bin",
-          "reason": "An undamaged, uncontaminated glass bottle is accepted in the blue recycling bin. Glass containers are not eligible for the beverage container return scheme.",
+          "reason": "This is one intact, uncontaminated glass beverage bottle. Glass drink containers are not eligible for Return Point deposit returns and should be recycled in the blue bin when clean and dry.",
           "preparation": [
-            "Empty and rinse the bottle.",
-            "Let it dry before placing it in the blue recycling bin."
+            "Empty any remaining contents",
+            "Rinse the bottle and let it dry",
+            "Remove the cap and place the bottle in the blue recycling bin"
           ],
-          "tip": "Glass bottles and jars can be recycled, but ceramics, mirrors and Pyrex cannot."
+          "tip": "Metal caps can also go in the blue bin if clean and dry."
         },
         "assertions": [],
-        "durationMs": 19621,
+        "durationMs": 20250,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Clear_empty_glass_bottle.jpg"
       },
       {
@@ -3589,20 +3714,18 @@
           "partition": "regression"
         },
         "actual": {
-          "item": "Crushed 355 mL Coca-Cola aluminium can",
+          "item": "Crushed 355ml Coca-Cola metal drink can",
           "status": "recyclable",
           "confidence": 0.99,
           "channel": "blue_bin",
-          "reason": "This is a single prepackaged metal beverage can, but it is visibly crushed, so it goes in the blue recycling bin rather than a Return Point.",
+          "reason": "This is a single metal beverage can, but it is visibly crushed, so it is excluded from the Return Point channel and goes in the blue bin if clean and dry.",
           "preparation": [
-            "Empty any remaining contents",
-            "Rinse if needed and let it dry",
-            "Place it in the blue recycling bin"
-          ],
-          "tip": "Crushed cans are not eligible for the BCRS Return Point route."
+            "Empty any remaining drink.",
+            "Keep the can clean and dry and place it in a blue recycling bin."
+          ]
         },
         "assertions": [],
-        "durationMs": 19477,
+        "durationMs": 13151,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Crushed_Coke_Can_(3921080513).jpg"
       },
       {
@@ -3619,20 +3742,20 @@
           "partition": "regression"
         },
         "actual": {
-          "item": "Yakult 65ml fermented milk drink bottle",
+          "item": "65ml Yakult cultured milk drink bottle",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.99,
           "channel": "blue_bin",
-          "reason": "The single plastic drink bottle is printed as 65ml, below the 150ml BCRS minimum, so it belongs in the blue bin once clean and dry.",
+          "reason": "This single plastic drink bottle is printed as 65ml, below the 150ml-3L BCRS range, so it belongs in the blue bin rather than at a Return Point.",
           "preparation": [
-            "Empty the bottle",
-            "Rinse it and let it dry",
-            "Remove the foil seal before recycling"
+            "Empty the bottle completely.",
+            "Rinse it and let it dry.",
+            "Remove the foil lid before placing the clean, dry bottle in the blue bin."
           ],
-          "tip": "It is not eligible for a Return Point because its capacity is below 150ml."
+          "tip": "Only containers accepted by the Return Point qualify for the deposit scheme; this 65ml bottle is outside its size range."
         },
         "assertions": [],
-        "durationMs": 15863,
+        "durationMs": 18426,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Yakult_65ml_Vietnam.JPG"
       },
       {
@@ -3653,15 +3776,16 @@
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "blue_bin",
-          "reason": "A single intact plastic beverage bottle visibly larger than 3L, so it is outside the 150ml-3L deposit-container range and belongs in the blue bin once clean and dry.",
+          "reason": "This single intact plastic water bottle is visibly larger than 3L, so it is outside the 150ml-3L deposit-container range. Recycle it in the blue bin once clean and dry.",
           "preparation": [
-            "Empty the jug completely",
-            "Rinse and let it dry",
-            "Replace the cap and place it in the blue recycling bin"
-          ]
+            "Empty any remaining water.",
+            "Rinse the bottle and let it dry.",
+            "Place it in the blue recycling bin."
+          ],
+          "tip": "Containers above 3L are not accepted through the beverage container return scheme."
         },
         "assertions": [],
-        "durationMs": 43115,
+        "durationMs": 16454,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Garrafa_agua_8L.jpg"
       },
       {
@@ -3678,20 +3802,19 @@
           "partition": "regression"
         },
         "actual": {
-          "item": "Uni-President 200ml long-life milk carton",
+          "item": "200ml UHT milk Tetra Pak carton",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.99,
           "channel": "blue_bin",
-          "reason": "The printed product text identifies this as milk in a 200ml Tetra Pak carton. Beverage cartons are excluded from the deposit-return channel but are recyclable in Singapore's blue bin once clean and dry.",
+          "reason": "This is a single composite milk carton. Cartons are excluded from the beverage container deposit scheme, but clean and dry Tetra Pak cartons are accepted in Singapore's blue recycling bins.",
           "preparation": [
-            "Empty all milk from the carton.",
-            "Rinse the carton and let it dry.",
-            "Flatten it before placing it in the blue recycling bin."
-          ],
-          "tip": "Do not put the carton into a Return Point; only eligible plastic or metal drink containers are accepted there."
+            "Empty the carton completely.",
+            "Rinse it and let it dry.",
+            "Flatten it if possible before placing it in the blue bin."
+          ]
         },
         "assertions": [],
-        "durationMs": 21729,
+        "durationMs": 12281,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Uni-President_Milk_200ml_by_AGV_20250921.jpg"
       },
       {
@@ -3708,20 +3831,20 @@
           "partition": "regression"
         },
         "actual": {
-          "item": "Plastic soap dispenser bottle with pump",
+          "item": "Plastic liquid-soap pump bottle",
           "status": "recyclable",
-          "confidence": 0.97,
+          "confidence": 0.96,
           "channel": "blue_bin",
-          "reason": "Plastic shampoo, soap and detergent bottles, including those with pump heads, are accepted in the blue bin once empty and rinsed.",
+          "reason": "Empty soap or shampoo bottles, including those with pump heads, are accepted in the blue bin once rinsed, clean and dry.",
           "preparation": [
-            "Empty the bottle completely",
-            "Rinse it and let it dry",
-            "Place it in the blue recycling bin"
+            "Use up or empty the contents",
+            "Rinse the bottle and pump head",
+            "Let it dry before placing it in the blue bin"
           ],
-          "tip": "Reuse the pump bottle for refills if it is still in good condition."
+          "tip": "Consider refilling and reusing the pump bottle before recycling it."
         },
         "assertions": [],
-        "durationMs": 15146,
+        "durationMs": 15184,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Plastic_soap_bottle.jpg"
       },
       {
@@ -3738,20 +3861,20 @@
           "partition": "regression"
         },
         "actual": {
-          "item": "Milo powdered drink tin",
+          "item": "Nestlé Milo powdered drink tin",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "blue_bin",
-          "reason": "This is a metal tin for Milo powder, not an in-scope prepackaged beverage container. Empty, clean and dry metal containers can go in the blue recycling bin.",
+          "reason": "This is a metal tin for powdered Milo, not a prepackaged beverage container, so it is not eligible for the deposit return channel. Empty, clean and dry metal tins can go in the blue recycling bin.",
           "preparation": [
             "Empty out all remaining powder.",
-            "Rinse if needed and let the tin dry completely.",
-            "Place it in the blue recycling bin."
+            "Rinse or wipe the tin clean and let it dry completely.",
+            "Place the clean, dry tin in the blue recycling bin."
           ],
-          "tip": "Reuse the sturdy tin for storage if it is still in good condition."
+          "tip": "Do not take this tin to a Return Point; the S$0.10 deposit scheme applies only to eligible prepackaged drink containers."
         },
         "assertions": [],
-        "durationMs": 17826,
+        "durationMs": 18673,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Milo_tin_circa_2004.jpg"
       },
       {
@@ -3772,7 +3895,7 @@
           ]
         },
         "actual": {
-          "item": "Plastic bottled drinking water",
+          "item": "Clear plastic bottled-water bottle",
           "status": "recyclable",
           "confidence": 0.96,
           "channel": "return_point",
@@ -3793,7 +3916,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 14274,
+        "durationMs": 17340,
         "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361"
       },
       {
@@ -3835,7 +3958,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 16868,
+        "durationMs": 16491,
         "sourcePageUrl": "https://note.com/ruka926/n/n9c58c8986304"
       },
       {
@@ -3856,7 +3979,7 @@
           ]
         },
         "actual": {
-          "item": "Lemon iced tea beverage can",
+          "item": "Lemon iced tea can",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -3877,7 +4000,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 16235,
+        "durationMs": 12927,
         "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/a-map-of-waste-atms-new-website-launched-to-help-people-find-beverage-container-return-machines"
       },
       {
@@ -3896,7 +4019,7 @@
           "maxConfidence": 0.49
         },
         "actual": {
-          "item": "Assorted prepackaged drink bottles and cans",
+          "item": "Assorted prepackaged beverage bottles and cans",
           "status": "not_sure",
           "confidence": 0.2,
           "channel": null,
@@ -3906,7 +4029,7 @@
           ]
         },
         "assertions": [],
-        "durationMs": 13653,
+        "durationMs": 10182,
         "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/a-map-of-waste-atms-new-website-launched-to-help-people-find-beverage-container-return-machines"
       },
       {
@@ -3927,9 +4050,9 @@
           ]
         },
         "actual": {
-          "item": "Plastic beverage bottle being inserted into a Return Point",
+          "item": "Single clear plastic prepackaged beverage bottle",
           "status": "recyclable",
-          "confidence": 0.96,
+          "confidence": 0.97,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -3948,7 +4071,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 17375,
+        "durationMs": 15805,
         "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-nea-rebut-accusation-6321081"
       },
       {
@@ -3967,9 +4090,9 @@
           "maxConfidence": 0.49
         },
         "actual": {
-          "item": "Multiple beverage cans beside a Return Point and in a drinks chiller",
+          "item": "Beverage return machine and multiple drink cans",
           "status": "not_sure",
-          "confidence": 0.3,
+          "confidence": 0.2,
           "channel": null,
           "reason": "There is not enough information to choose a recycling channel safely.",
           "preparation": [
@@ -3977,7 +4100,7 @@
           ]
         },
         "assertions": [],
-        "durationMs": 17563,
+        "durationMs": 13802,
         "sourcePageUrl": "https://www.stomp.sg/stomping-ground/man-brings-10-empty-bottles-bcrs-machine-not-all-eligible-10-cent-refund-asks-whats-point"
       },
       {
@@ -3998,9 +4121,9 @@
           ]
         },
         "actual": {
-          "item": "Plastic bottled tea",
+          "item": "Prepackaged plastic bottled tea drink",
           "status": "recyclable",
-          "confidence": 0.99,
+          "confidence": 0.98,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -4019,7 +4142,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 20646,
+        "durationMs": 13644,
         "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
       },
       {
@@ -4040,9 +4163,9 @@
           ]
         },
         "actual": {
-          "item": "Coca-Cola soft drink can",
+          "item": "Coca-Cola beverage can",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.97,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -4061,7 +4184,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 15048,
+        "durationMs": 21325,
         "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
       },
       {
@@ -4082,49 +4205,7 @@
           ]
         },
         "actual": {
-          "item": "Prepackaged metal beverage can",
-          "status": "recyclable",
-          "confidence": 0.99,
-          "channel": "return_point",
-          "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-          "preparation": [
-            "Ensure the container is empty",
-            "Keep Deposit Mark and barcode intact",
-            "Insert one container at a time",
-            "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-          ],
-          "tip": "S$0.10 per container",
-          "next_action": {
-            "type": "return_container",
-            "channel": "return_point",
-            "title": "Return it for S$0.10 if it has the Deposit Mark",
-            "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-            "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-          }
-        },
-        "assertions": [],
-        "durationMs": 17300,
-        "sourcePageUrl": "https://www.asiaone.com/singapore/bcrs-drink-containers-no-return-mark-no-deposit"
-      },
-      {
-        "id": "holdout-single-angle-foreign-can-v5-en",
-        "mode": "image",
-        "locale": "en",
-        "partition": "regression",
-        "expected": {
-          "id": "holdout-single-angle-foreign-can-v5-en",
-          "sourceId": "holdout-single-angle-foreign-can-v5",
-          "locale": "en",
-          "channel": "return_point",
-          "status": "recyclable",
-          "partition": "regression",
-          "nextAction": "return_container",
-          "requiredExactText": [
-            "S$0.10"
-          ]
-        },
-        "actual": {
-          "item": "7UP carbonated lemon-lime drink can (320ml)",
+          "item": "Prepackaged beverage can",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -4145,7 +4226,49 @@
           }
         },
         "assertions": [],
-        "durationMs": 20451,
+        "durationMs": 14824,
+        "sourcePageUrl": "https://www.asiaone.com/singapore/bcrs-drink-containers-no-return-mark-no-deposit"
+      },
+      {
+        "id": "holdout-single-angle-foreign-can-v5-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "regression",
+        "expected": {
+          "id": "holdout-single-angle-foreign-can-v5-en",
+          "sourceId": "holdout-single-angle-foreign-can-v5",
+          "locale": "en",
+          "channel": "return_point",
+          "status": "recyclable",
+          "partition": "regression",
+          "nextAction": "return_container",
+          "requiredExactText": [
+            "S$0.10"
+          ]
+        },
+        "actual": {
+          "item": "7UP carbonated lemon drink can (320ml)",
+          "status": "recyclable",
+          "confidence": 0.99,
+          "channel": "return_point",
+          "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+          "preparation": [
+            "Ensure the container is empty",
+            "Keep Deposit Mark and barcode intact",
+            "Insert one container at a time",
+            "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+          ],
+          "tip": "S$0.10 per container",
+          "next_action": {
+            "type": "return_container",
+            "channel": "return_point",
+            "title": "Return it for S$0.10 if it has the Deposit Mark",
+            "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+            "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+          }
+        },
+        "assertions": [],
+        "durationMs": 12196,
         "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
       },
       {
@@ -4168,7 +4291,7 @@
         "actual": {
           "item": "Plastic bottle of chrysanthemum white tea",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.97,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -4187,7 +4310,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 15167,
+        "durationMs": 19141,
         "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-10-cent-deposit-errors-transition-6229386"
       },
       {
@@ -4208,9 +4331,9 @@
           ]
         },
         "actual": {
-          "item": "Aquavin Pure Drinking Water plastic bottle",
+          "item": "Aquavin 500ml plastic drinking water bottle",
           "status": "recyclable",
-          "confidence": 0.99,
+          "confidence": 0.98,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -4229,7 +4352,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 18126,
+        "durationMs": 12951,
         "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
       },
       {
@@ -4250,7 +4373,7 @@
           ]
         },
         "actual": {
-          "item": "Plastic bottle of pure drinking water",
+          "item": "500ml plastic drinking water bottle",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -4271,7 +4394,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 17005,
+        "durationMs": 13354,
         "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/the-beverage-container-return-scheme-is-so-easy-to-defraud.7185337/"
       },
       {
@@ -4292,7 +4415,7 @@
           ]
         },
         "actual": {
-          "item": "Nescafé low-fat milk coffee drink can",
+          "item": "Nescafe milk coffee drink can",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -4313,7 +4436,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 17394,
+        "durationMs": 13319,
         "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-68"
       },
       {
@@ -4334,9 +4457,9 @@
           ]
         },
         "actual": {
-          "item": "Prepackaged beverage in a plastic cup",
+          "item": "Plastic prepackaged drink cup",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.99,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -4355,7 +4478,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 18592,
+        "durationMs": 16657,
         "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-86"
       },
       {
@@ -4376,7 +4499,7 @@
           ]
         },
         "actual": {
-          "item": "Coca-Cola Y3000 beverage can (222ml)",
+          "item": "Y3000 Limited Edition futuristic-flavoured soft drink can (222ml)",
           "status": "recyclable",
           "confidence": 0.99,
           "channel": "return_point",
@@ -4397,7 +4520,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 15709,
+        "durationMs": 19613,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Can_of_Coca-Cola_Y3000.jpg"
       },
       {
@@ -4418,7 +4541,7 @@
           ]
         },
         "actual": {
-          "item": "100PLUS isotonic drink plastic bottle (500ml)",
+          "item": "100PLUS Isotonic Drink plastic bottle, 500ml",
           "status": "recyclable",
           "confidence": 0.99,
           "channel": "return_point",
@@ -4439,7 +4562,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 16454,
+        "durationMs": 12869,
         "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-3"
       },
       {
@@ -4460,7 +4583,7 @@
           ]
         },
         "actual": {
-          "item": "Nescafé coffee drink can (240ml)",
+          "item": "Nescafé canned coffee drink, 240ml aluminium can",
           "status": "recyclable",
           "confidence": 0.99,
           "channel": "return_point",
@@ -4481,7 +4604,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 16200,
+        "durationMs": 15422,
         "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-67"
       },
       {
@@ -4500,7 +4623,7 @@
           "maxConfidence": 0.49
         },
         "actual": {
-          "item": "Plastic-wrapped multipack of six 325ml sparkling drink cans",
+          "item": "Plastic-wrapped multipack of six 325ml sparkling drink cans, with one can visible",
           "status": "not_sure",
           "confidence": 0.2,
           "channel": null,
@@ -4510,7 +4633,7 @@
           ]
         },
         "assertions": [],
-        "durationMs": 13041,
+        "durationMs": 15459,
         "sourcePageUrl": "https://www.8world.com/singapore/fnn-can-drink-bcrs-deposit-logo-3226531"
       },
       {
@@ -4533,7 +4656,7 @@
         "actual": {
           "item": "Plastic bottled water",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.97,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -4552,7 +4675,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 15600,
+        "durationMs": 20676,
         "sourcePageUrl": "https://www.stomp.sg/trending-now/traveller-carries-plastic-bottle-7-day-trip-australia-brings-it-back-spore-claim-10-cent-refund"
       },
       {
@@ -4573,9 +4696,9 @@
           ]
         },
         "actual": {
-          "item": "Single plastic bottled tea drink",
+          "item": "Plastic bottled beverage",
           "status": "recyclable",
-          "confidence": 0.97,
+          "confidence": 0.95,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -4594,7 +4717,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 15774,
+        "durationMs": 13330,
         "sourcePageUrl": "https://vibes.8world.com/in-depth/frontline/bcrs-3242136"
       },
       {
@@ -4615,9 +4738,9 @@
           ]
         },
         "actual": {
-          "item": "Prepackaged green tea drink can",
+          "item": "Prepackaged beverage can",
           "status": "recyclable",
-          "confidence": 0.99,
+          "confidence": 0.98,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -4636,7 +4759,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 13742,
+        "durationMs": 16825,
         "sourcePageUrl": "https://www.8world.com/singapore/more-education-urged-to-improve-public-awareness-literacy-on-bcrs-3180601"
       },
       {
@@ -4655,7 +4778,7 @@
           "maxConfidence": 0.49
         },
         "actual": {
-          "item": "Multiple prepackaged drink bottles and cans on a store shelf",
+          "item": "Assorted prepackaged drink bottles and a can on a store shelf",
           "status": "not_sure",
           "confidence": 0.2,
           "channel": null,
@@ -4665,7 +4788,7 @@
           ]
         },
         "assertions": [],
-        "durationMs": 26398,
+        "durationMs": 17511,
         "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260620-9237023"
       },
       {
@@ -4686,7 +4809,7 @@
           ]
         },
         "actual": {
-          "item": "Ice Mountain drinking water can (300ml)",
+          "item": "300ml canned drinking water",
           "status": "recyclable",
           "confidence": 0.99,
           "channel": "return_point",
@@ -4707,7 +4830,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 17611,
+        "durationMs": 13536,
         "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260730-9413074"
       },
       {
@@ -4728,7 +4851,7 @@
           ]
         },
         "actual": {
-          "item": "Jia Jia Herbal Tea Original plastic bottle",
+          "item": "Jia Jia Original Herbal Tea plastic bottle",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -4749,7 +4872,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 12253,
+        "durationMs": 14072,
         "sourcePageUrl": "https://www.fairprice.com.sg/product/bcrs-jia-jia-herbal-tea-bottle-drink-original-500ml-13281525"
       },
       {
@@ -4770,9 +4893,9 @@
           ]
         },
         "actual": {
-          "item": "Plastic bottle of MILO iced beverage",
+          "item": "Plastic MILO bottled drink",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.99,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -4791,7 +4914,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 14768,
+        "durationMs": 14113,
         "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260903-9618188"
       },
       {
@@ -4812,7 +4935,7 @@
         "actual": {
           "item": "Beverage container return machine",
           "status": "not_sure",
-          "confidence": 0.15,
+          "confidence": 0.2,
           "channel": null,
           "reason": "There is not enough information to choose a recycling channel safely.",
           "preparation": [
@@ -4820,7 +4943,7 @@
           ]
         },
         "assertions": [],
-        "durationMs": 12341,
+        "durationMs": 13627,
         "sourcePageUrl": "https://vibes.8world.com/in-depth/frontline/bcrs-3242136"
       },
       {
@@ -4841,9 +4964,9 @@
           ]
         },
         "actual": {
-          "item": "Evian 50cl plastic bottled water",
+          "item": "Evian 500ml plastic water bottle",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.99,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -4862,7 +4985,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 14664,
+        "durationMs": 10629,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Evian_Bottle.jpg"
       },
       {
@@ -4879,20 +5002,20 @@
           "partition": "regression"
         },
         "actual": {
-          "item": "Glass Mythos lager beer bottle",
+          "item": "Mythos Hellenic lager beer in a green glass bottle",
           "status": "recyclable",
           "confidence": 0.99,
           "channel": "blue_bin",
-          "reason": "This is a single intact, uncontaminated glass beverage bottle. Glass drink containers are excluded from the Return Point scheme and can be recycled in the blue bin when clean and dry.",
+          "reason": "This is a single glass beverage bottle. Glass drink containers are excluded from the Return Point scheme but are accepted in the blue bin when empty, clean and dry.",
           "preparation": [
             "Empty any remaining beer",
             "Rinse the bottle and let it dry",
             "Place it in the blue recycling bin"
           ],
-          "tip": "The metal bottle cap can also go into the blue bin separately."
+          "tip": "Glass beverage bottles are not eligible for a BCRS deposit refund."
         },
         "assertions": [],
-        "durationMs": 17720,
+        "durationMs": 14246,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Mythos_001.jpg"
       },
       {
@@ -4913,7 +5036,7 @@
           ]
         },
         "actual": {
-          "item": "Sprite lemon-lime soft drink in a plastic bottle",
+          "item": "Sprite lemon-lime drink in a plastic bottle",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -4934,7 +5057,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 16130,
+        "durationMs": 15021,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Bouteille_de_sprite_en_2025.jpg"
       },
       {
@@ -4955,16 +5078,16 @@
           "status": "recyclable",
           "confidence": 0.99,
           "channel": "blue_bin",
-          "reason": "This is a single intact, uncontaminated glass beverage bottle. Glass containers are not eligible for return_point and should be recycled through the blue bin when clean and dry.",
+          "reason": "This is a single intact glass beverage bottle with a printed 10 fl oz capacity. Glass drink bottles are not accepted at BCRS Return Points but can go in the blue recycling bin.",
           "preparation": [
             "Empty the bottle.",
             "Rinse it and let it dry.",
-            "Place it in the blue recycling bin."
+            "Place it in the blue recycling bin; put the metal cap in separately if present."
           ],
-          "tip": "The printed 10 fl oz capacity is approximately 296ml, but glass bottles follow ordinary blue-bin recycling rules rather than the drink-container deposit channel."
+          "tip": "Glass bottles are excluded from the BCRS deposit-return scheme."
         },
         "assertions": [],
-        "durationMs": 14980,
+        "durationMs": 16193,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Sprite_bottle.JPG"
       },
       {
@@ -4985,9 +5108,9 @@
           ]
         },
         "actual": {
-          "item": "Ito En plastic bottle of Japanese green tea",
+          "item": "Plastic bottle of unsweetened Japanese green tea",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.99,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -5006,7 +5129,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 17210,
+        "durationMs": 18661,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:PET_bottles_with_BCRS_return_mark_and_barcode_on_a_sticker_JASWE.jpg"
       },
       {
@@ -5025,9 +5148,9 @@
           "maxConfidence": 0.49
         },
         "actual": {
-          "item": "Assorted prepackaged beverage cans on a store shelf",
+          "item": "Assorted canned alcoholic drinks on a store display",
           "status": "not_sure",
-          "confidence": 0.2,
+          "confidence": 0.45,
           "channel": null,
           "reason": "There is not enough information to choose a recycling channel safely.",
           "preparation": [
@@ -5035,7 +5158,7 @@
           ]
         },
         "assertions": [],
-        "durationMs": 13871,
+        "durationMs": 16521,
         "sourcePageUrl": "https://mothership.sg/2026/09/drink-containers-without-return-right-logo/"
       },
       {
@@ -5054,9 +5177,9 @@
           "maxConfidence": 0.49
         },
         "actual": {
-          "item": "Bag of assorted drink containers beside a Return Point",
+          "item": "Bag containing multiple empty plastic drink bottles",
           "status": "not_sure",
-          "confidence": 0.3,
+          "confidence": 0.25,
           "channel": null,
           "reason": "There is not enough information to choose a recycling channel safely.",
           "preparation": [
@@ -5064,7 +5187,7 @@
           ]
         },
         "assertions": [],
-        "durationMs": 17259,
+        "durationMs": 19408,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Bottles_collected_from_BCRS_Return_Right_Machine_20260915_174412.jpg"
       },
       {
@@ -5083,9 +5206,9 @@
           "maxConfidence": 0.49
         },
         "actual": {
-          "item": "Pokka Green Tea cartons",
+          "item": "Pokka Green Tea 1L cartons",
           "status": "not_sure",
-          "confidence": 0.3,
+          "confidence": 0.4,
           "channel": null,
           "reason": "There is not enough information to choose a recycling channel safely.",
           "preparation": [
@@ -5093,7 +5216,7 @@
           ]
         },
         "assertions": [],
-        "durationMs": 17968,
+        "durationMs": 12436,
         "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/post-159670376"
       },
       {
@@ -5135,7 +5258,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 16426,
+        "durationMs": 11403,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:A_PET_bottle_with_BCRS_return_mark_-_RSKY.jpg"
       },
       {
@@ -5156,7 +5279,7 @@
           ]
         },
         "actual": {
-          "item": "Coca-Cola beverage can",
+          "item": "Coca-Cola Original Taste prepackaged beverage can",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -5177,7 +5300,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 13002,
+        "durationMs": 14438,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Coca-Cola_Okinawa_can.jpg"
       },
       {
@@ -5198,7 +5321,7 @@
           ]
         },
         "actual": {
-          "item": "Prepackaged grape juice drink in a metal can",
+          "item": "Grape juice drink in a metal can",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -5219,7 +5342,7 @@
           }
         },
         "assertions": [],
-        "durationMs": 20371,
+        "durationMs": 13394,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Lotte_Squeeze_Grappe_Ade.jpg"
       },
       {
@@ -5240,9 +5363,9 @@
           ]
         },
         "actual": {
-          "item": "Prepackaged beer can",
+          "item": "Aluminium beer can",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.99,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -5261,28 +5384,28 @@
           }
         },
         "assertions": [],
-        "durationMs": 14067,
+        "durationMs": 21584,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Pilsner_Urquell_2-PANT.JPG"
       },
       {
         "id": "holdout-sarsi-can-v22-en",
         "mode": "image",
         "locale": "en",
-        "partition": "holdout",
+        "partition": "regression",
         "expected": {
           "id": "holdout-sarsi-can-v22-en",
           "sourceId": "holdout-sarsi-can-v22",
           "locale": "en",
           "channel": "return_point",
           "status": "recyclable",
-          "partition": "holdout",
+          "partition": "regression",
           "nextAction": "return_container",
           "requiredExactText": [
             "S$0.10"
           ]
         },
         "actual": {
-          "item": "Sarsi soft drink can",
+          "item": "F&N Sarsi carbonated drink can",
           "status": "recyclable",
           "confidence": 0.98,
           "channel": "return_point",
@@ -5303,21 +5426,21 @@
           }
         },
         "assertions": [],
-        "durationMs": 14011,
+        "durationMs": 14424,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Fnnsarsi.JPG"
       },
       {
         "id": "holdout-pocari-bottle-in-hand-v22-en",
         "mode": "image",
         "locale": "en",
-        "partition": "holdout",
+        "partition": "regression",
         "expected": {
           "id": "holdout-pocari-bottle-in-hand-v22-en",
           "sourceId": "holdout-pocari-bottle-in-hand-v22",
           "locale": "en",
           "channel": "return_point",
           "status": "recyclable",
-          "partition": "holdout",
+          "partition": "regression",
           "nextAction": "return_container",
           "requiredExactText": [
             "S$0.10"
@@ -5345,30 +5468,30 @@
           }
         },
         "assertions": [],
-        "durationMs": 14837,
+        "durationMs": 12501,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Pocari_Sweat_500ml_plastic_bottle_(53489565431).jpg"
       },
       {
         "id": "holdout-short-coffee-can-v22-en",
         "mode": "image",
         "locale": "en",
-        "partition": "holdout",
+        "partition": "regression",
         "expected": {
           "id": "holdout-short-coffee-can-v22-en",
           "sourceId": "holdout-short-coffee-can-v22",
           "locale": "en",
           "channel": "return_point",
           "status": "recyclable",
-          "partition": "holdout",
+          "partition": "regression",
           "nextAction": "return_container",
           "requiredExactText": [
             "S$0.10"
           ]
         },
         "actual": {
-          "item": "Sangaria Quality Coffee Black metal beverage can",
+          "item": "Sangaria Quality Coffee Black canned coffee",
           "status": "recyclable",
-          "confidence": 0.99,
+          "confidence": 0.98,
           "channel": "return_point",
           "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
           "preparation": [
@@ -5387,128 +5510,518 @@
           }
         },
         "assertions": [],
-        "durationMs": 16623,
+        "durationMs": 16008,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Can_of_Sangaria_Quality_Coffee_Black.png"
       },
       {
         "id": "holdout-tiger-glass-beer-bottle-v22-en",
         "mode": "image",
         "locale": "en",
-        "partition": "holdout",
+        "partition": "regression",
         "expected": {
           "id": "holdout-tiger-glass-beer-bottle-v22-en",
           "sourceId": "holdout-tiger-glass-beer-bottle-v22",
           "locale": "en",
           "channel": "blue_bin",
           "status": "recyclable",
-          "partition": "holdout"
+          "partition": "regression"
         },
         "actual": {
           "item": "Tiger lager beer glass bottle",
           "status": "recyclable",
-          "confidence": 0.98,
+          "confidence": 0.99,
           "channel": "blue_bin",
-          "reason": "This is a single intact, uncontaminated glass beverage bottle. Glass drink bottles are not accepted at BCRS Return Points but can go in the blue recycling bin when empty, clean and dry.",
+          "reason": "The label identifies a prepackaged lager beer in an intact, uncontaminated glass bottle. Glass drink bottles are excluded from the Return Point scheme but can be recycled in the blue bin.",
           "preparation": [
-            "Empty any remaining beer.",
-            "Rinse the bottle and let it dry.",
+            "Empty the bottle completely.",
+            "Rinse it and let it dry.",
             "Place it in the blue recycling bin."
           ],
-          "tip": "The label can remain on the bottle."
+          "tip": "Glass bottles are not accepted for a BCRS refund."
         },
         "assertions": [],
-        "durationMs": 19579,
+        "durationMs": 14699,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Tiger_Beer_Phuket_Thailand.jpg"
       },
       {
         "id": "holdout-oat-milk-gable-carton-v22-en",
         "mode": "image",
         "locale": "en",
-        "partition": "holdout",
+        "partition": "regression",
         "expected": {
           "id": "holdout-oat-milk-gable-carton-v22-en",
           "sourceId": "holdout-oat-milk-gable-carton-v22",
           "locale": "en",
           "channel": "blue_bin",
           "status": "recyclable",
-          "partition": "holdout"
+          "partition": "regression"
         },
         "actual": {
-          "item": "Oat milk carton, 946ml",
+          "item": "Oat milk carton (946ml)",
           "status": "recyclable",
           "confidence": 0.99,
           "channel": "blue_bin",
-          "reason": "This is a single beverage carton, so it is excluded from the deposit return scheme but can be recycled in the blue bin when clean and dry.",
+          "reason": "This is a single prepackaged oat milk carton. Beverage cartons are excluded from the Return Point scheme but are accepted in Singapore's blue recycling bins when clean and dry.",
           "preparation": [
-            "Empty the carton completely.",
-            "Rinse it to remove oat milk residue.",
-            "Let it dry, then flatten it before placing it in the blue bin."
+            "Empty all contents",
+            "Rinse the carton and let it dry",
+            "Flatten it to save space before placing it in the blue bin"
           ],
-          "tip": "Beverage cartons do not qualify for a Return Point refund."
+          "tip": "Do not take this carton to a Return Point; it is not an eligible plastic or metal drink container."
         },
         "assertions": [],
-        "durationMs": 21755,
+        "durationMs": 13527,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Oatly_Barista_Edition_1.jpg"
       },
       {
         "id": "holdout-shampoo-bottle-v22-en",
         "mode": "image",
         "locale": "en",
-        "partition": "holdout",
+        "partition": "regression",
         "expected": {
           "id": "holdout-shampoo-bottle-v22-en",
           "sourceId": "holdout-shampoo-bottle-v22",
           "locale": "en",
           "channel": "blue_bin",
           "status": "recyclable",
-          "partition": "holdout"
+          "partition": "regression"
         },
         "actual": {
-          "item": "Dove Intense Repair Nourishing Shampoo bottle (80 ml)",
+          "item": "Dove Intense Repair Nourishing Shampoo plastic bottle (80 ml)",
           "status": "recyclable",
           "confidence": 0.99,
           "channel": "blue_bin",
-          "reason": "This is a plastic shampoo bottle, not a beverage container. Shampoo bottles can go in the blue recycling bin once empty and rinsed.",
+          "reason": "This is a non-beverage shampoo bottle. Empty shampoo bottles are accepted in the blue bin once rinsed, clean and dry.",
           "preparation": [
             "Use up or empty the shampoo.",
-            "Rinse the bottle and let it dry.",
-            "Place it in the blue recycling bin."
-          ],
-          "tip": "The cap can remain attached for recycling."
+            "Rinse the bottle and cap to remove residue.",
+            "Let them dry, then place them in the blue bin."
+          ]
         },
         "assertions": [],
-        "durationMs": 13754,
+        "durationMs": 18704,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Dove_shampoo_bottle.jpg"
       },
       {
         "id": "holdout-drink-box-with-straw-v22-en",
         "mode": "image",
         "locale": "en",
-        "partition": "holdout",
+        "partition": "regression",
         "expected": {
           "id": "holdout-drink-box-with-straw-v22-en",
           "sourceId": "holdout-drink-box-with-straw-v22",
           "locale": "en",
           "channel": "blue_bin",
           "status": "recyclable",
-          "partition": "holdout"
+          "partition": "regression"
         },
         "actual": {
-          "item": "250ml prepackaged beverage Tetra Pak carton",
+          "item": "Hi Fresh 250ml Tetra Pak beverage carton",
           "status": "recyclable",
           "confidence": 0.99,
           "channel": "blue_bin",
-          "reason": "This is a single beverage carton. Drink cartons are excluded from the Return Point scheme, but empty, clean and dry Tetra Pak cartons are recyclable in Singapore's blue bin.",
+          "reason": "This single composite beverage carton is recyclable in Singapore's blue bin once empty, clean and dry. Cartons are not eligible for the Return Point deposit scheme.",
           "preparation": [
-            "Empty any remaining drink.",
-            "Rinse the carton and let it dry.",
-            "Place it in the blue recycling bin."
+            "Empty the carton completely",
+            "Rinse it and let it dry",
+            "Flatten it before placing it in the blue bin"
           ],
-          "tip": "Flatten the carton to save space."
+          "tip": "Keep the carton clean and dry to avoid contaminating other recyclables."
         },
         "assertions": [],
-        "durationMs": 15781,
+        "durationMs": 17693,
         "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Tetra_Brik_by_Tetra_Pak.jpg"
+      },
+      {
+        "id": "nonbeverage-used-batteries-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "regression",
+        "expected": {
+          "id": "nonbeverage-used-batteries-en",
+          "sourceId": "nonbeverage-used-batteries",
+          "locale": "en",
+          "channel": "ewaste_battery",
+          "status": "special_handling",
+          "partition": "regression"
+        },
+        "actual": {
+          "item": "Pile of used household batteries",
+          "status": "special_handling",
+          "confidence": 0.99,
+          "channel": "ewaste_battery",
+          "reason": "The image shows household batteries, including AA, AAA and 9V types, which are accepted by household battery collection schemes.",
+          "preparation": [
+            "Keep the batteries dry and prevent their terminals from touching.",
+            "Tape exposed terminals, especially on lithium and 9V batteries, to reduce short-circuit risk.",
+            "Take them to a household battery collection point."
+          ],
+          "tip": "Do not place batteries in blue recycling bins or general waste."
+        },
+        "assertions": [],
+        "durationMs": 42076,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Used_batteries.jpg"
+      },
+      {
+        "id": "nonbeverage-incandescent-bulb-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "regression",
+        "expected": {
+          "id": "nonbeverage-incandescent-bulb-en",
+          "sourceId": "nonbeverage-incandescent-bulb",
+          "locale": "en",
+          "channel": "lighting",
+          "status": "special_handling",
+          "partition": "regression"
+        },
+        "actual": {
+          "item": "Incandescent light bulb",
+          "status": "special_handling",
+          "confidence": 0.99,
+          "channel": "lighting",
+          "reason": "This is a used incandescent bulb with a visible filament and screw base. All common used bulbs and tubes should go through lighting collection, not the blue bin or general waste.",
+          "preparation": [
+            "Switch off the power and let the bulb cool completely.",
+            "Remove it carefully and keep it intact.",
+            "Place it in a designated used-bulb or lighting recycling collection point."
+          ],
+          "tip": "If a bulb breaks, ventilate the area and clean up the fragments carefully without using your bare hands."
+        },
+        "assertions": [],
+        "durationMs": 17623,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Gluehlampe_01_KMJ.jpg"
+      },
+      {
+        "id": "nonbeverage-shattered-phone-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "regression",
+        "expected": {
+          "id": "nonbeverage-shattered-phone-en",
+          "sourceId": "nonbeverage-shattered-phone",
+          "locale": "en",
+          "channel": "ewaste",
+          "status": "special_handling",
+          "partition": "regression"
+        },
+        "actual": {
+          "item": "Smartphone with a shattered screen",
+          "status": "special_handling",
+          "confidence": 0.99,
+          "channel": "ewaste",
+          "reason": "A mobile phone is regulated ICT equipment and should be recycled through an e-waste collection programme, even when broken. Its installed battery remains part of the device.",
+          "preparation": [
+            "Handle carefully and contain any loose glass fragments.",
+            "Back up and erase personal data if the phone still works, and remove SIM and memory cards.",
+            "Do not dismantle the phone or remove its battery.",
+            "Take it to a regulated e-waste collection point."
+          ],
+          "tip": "Do not place the phone in a blue recycling bin or the household battery bin."
+        },
+        "assertions": [],
+        "durationMs": 17164,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Samsung_Galaxy_S2_shattered_screen.jpg"
+      },
+      {
+        "id": "nonbeverage-used-tissue-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "regression",
+        "expected": {
+          "id": "nonbeverage-used-tissue-en",
+          "sourceId": "nonbeverage-used-tissue",
+          "locale": "en",
+          "channel": "general_waste",
+          "status": "not_recyclable",
+          "partition": "regression"
+        },
+        "actual": {
+          "item": "Crumpled tissue paper",
+          "status": "not_recyclable",
+          "confidence": 0.98,
+          "channel": "general_waste",
+          "reason": "Tissue paper is not recyclable in Singapore and should be disposed of as general waste.",
+          "preparation": [
+            "Place the tissue paper in the general waste bin."
+          ],
+          "tip": "Do not put tissue paper in the blue recycling bin, even if it appears clean."
+        },
+        "assertions": [],
+        "durationMs": 16074,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Used_tissue_paper_on_the_ground.jpg"
+      },
+      {
+        "id": "nonbeverage-dumped-mattress-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "regression",
+        "expected": {
+          "id": "nonbeverage-dumped-mattress-en",
+          "sourceId": "nonbeverage-dumped-mattress",
+          "locale": "en",
+          "channel": "bulky_waste",
+          "status": "special_handling",
+          "partition": "regression"
+        },
+        "actual": {
+          "item": "Discarded mattress",
+          "status": "special_handling",
+          "confidence": 0.98,
+          "channel": "bulky_waste",
+          "reason": "A mattress is too large for household recycling or waste bins and requires bulky-item disposal.",
+          "preparation": [
+            "Arrange bulky-item collection through your Town Council or appointed waste collector.",
+            "Keep it clear of walkways while awaiting collection."
+          ],
+          "tip": "Do not dump mattresses beside paths, vegetation or rubbish bins; illegal dumping can attract pests and enforcement action."
+        },
+        "assertions": [],
+        "durationMs": 19586,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Mattress_dumped_next_to_Marsh_Road_-_geograph.org.uk_-_4238834.jpg"
+      },
+      {
+        "id": "nonbeverage-hanging-clothes-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "regression",
+        "expected": {
+          "id": "nonbeverage-hanging-clothes-en",
+          "sourceId": "nonbeverage-hanging-clothes",
+          "locale": "en",
+          "channel": "textile",
+          "status": "recyclable",
+          "partition": "regression"
+        },
+        "actual": {
+          "item": "Clothes, including shirts, jackets and trousers",
+          "status": "recyclable",
+          "confidence": 0.98,
+          "channel": "textile",
+          "reason": "These appear to be clean, dry, reusable garments, which are accepted by dedicated textile collection channels.",
+          "preparation": [
+            "Ensure the clothes are clean and completely dry.",
+            "Place them in a bag and take them to a dedicated textile collection point."
+          ],
+          "tip": "Clothes in good condition can also be donated directly for reuse."
+        },
+        "assertions": [],
+        "durationMs": 16057,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Hanging_shirts_and_jackets_(Unsplash).jpg"
+      },
+      {
+        "id": "nonbeverage-hanging-clothes-zh",
+        "mode": "image",
+        "locale": "zh",
+        "partition": "regression",
+        "expected": {
+          "id": "nonbeverage-hanging-clothes-zh",
+          "sourceId": "nonbeverage-hanging-clothes",
+          "locale": "zh",
+          "channel": "textile",
+          "status": "recyclable",
+          "partition": "regression"
+        },
+        "actual": {
+          "item": "衣物（衬衫、牛仔裤和长裤）",
+          "status": "recyclable",
+          "confidence": 0.98,
+          "channel": "textile",
+          "reason": "图中是干净、可重复使用的衣物，应通过专门的纺织品回收渠道处理。",
+          "preparation": [
+            "确保衣物清洁、干燥，无霉斑或严重污渍",
+            "将衣物放入指定的纺织品回收箱或交给纺织品回收机构"
+          ],
+          "tip": "如果衣物状况良好，也可以直接捐赠给慈善机构或需要的人。"
+        },
+        "assertions": [],
+        "durationMs": 20597,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Hanging_shirts_and_jackets_(Unsplash).jpg"
+      },
+      {
+        "id": "holdout-diet-pepsi-can-on-table-v23-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "holdout",
+        "expected": {
+          "id": "holdout-diet-pepsi-can-on-table-v23-en",
+          "sourceId": "holdout-diet-pepsi-can-on-table-v23",
+          "locale": "en",
+          "channel": "return_point",
+          "status": "recyclable",
+          "partition": "holdout",
+          "nextAction": "return_container",
+          "requiredExactText": [
+            "S$0.10"
+          ]
+        },
+        "actual": {
+          "item": "Diet Pepsi aluminium drink can",
+          "status": "recyclable",
+          "confidence": 0.98,
+          "channel": "return_point",
+          "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+          "preparation": [
+            "Ensure the container is empty",
+            "Keep Deposit Mark and barcode intact",
+            "Insert one container at a time",
+            "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+          ],
+          "tip": "S$0.10 per container",
+          "next_action": {
+            "type": "return_container",
+            "channel": "return_point",
+            "title": "Return it for S$0.10 if it has the Deposit Mark",
+            "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+            "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+          }
+        },
+        "assertions": [],
+        "durationMs": 14474,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:An_opened_can_of_diet_pepsi_sitting_on_a_table.jpg"
+      },
+      {
+        "id": "holdout-milk-tea-plastic-bottle-v23-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "holdout",
+        "expected": {
+          "id": "holdout-milk-tea-plastic-bottle-v23-en",
+          "sourceId": "holdout-milk-tea-plastic-bottle-v23",
+          "locale": "en",
+          "channel": "return_point",
+          "status": "recyclable",
+          "partition": "holdout",
+          "nextAction": "return_container",
+          "requiredExactText": [
+            "S$0.10"
+          ]
+        },
+        "actual": {
+          "item": "310ml plastic bottle of prepackaged Hong Kong milk tea",
+          "status": "recyclable",
+          "confidence": 0.98,
+          "channel": "return_point",
+          "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+          "preparation": [
+            "Ensure the container is empty",
+            "Keep Deposit Mark and barcode intact",
+            "Insert one container at a time",
+            "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+          ],
+          "tip": "S$0.10 per container",
+          "next_action": {
+            "type": "return_container",
+            "channel": "return_point",
+            "title": "Return it for S$0.10 if it has the Deposit Mark",
+            "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+            "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+          }
+        },
+        "assertions": [],
+        "durationMs": 11373,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:HK_drink_%E9%B4%BB%E7%A6%8F%E5%A0%82_Hung_Fook_Tong_Hong_Kong_Style_MilkTea_plastic_bottle_green_November_2020_SS2_01.jpg"
+      },
+      {
+        "id": "holdout-pepsi-max-can-at-desk-v23-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "holdout",
+        "expected": {
+          "id": "holdout-pepsi-max-can-at-desk-v23-en",
+          "sourceId": "holdout-pepsi-max-can-at-desk-v23",
+          "locale": "en",
+          "channel": "return_point",
+          "status": "recyclable",
+          "partition": "holdout",
+          "nextAction": "return_container",
+          "requiredExactText": [
+            "S$0.10"
+          ]
+        },
+        "actual": {
+          "item": "Pepsi Max No Sugar beverage can",
+          "status": "recyclable",
+          "confidence": 0.98,
+          "channel": "return_point",
+          "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+          "preparation": [
+            "Ensure the container is empty",
+            "Keep Deposit Mark and barcode intact",
+            "Insert one container at a time",
+            "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+          ],
+          "tip": "S$0.10 per container",
+          "next_action": {
+            "type": "return_container",
+            "channel": "return_point",
+            "title": "Return it for S$0.10 if it has the Deposit Mark",
+            "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+            "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+          }
+        },
+        "assertions": [],
+        "durationMs": 13983,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Pepsi_Max_can.jpg"
+      },
+      {
+        "id": "holdout-cracked-phone-screen-v23-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "holdout",
+        "expected": {
+          "id": "holdout-cracked-phone-screen-v23-en",
+          "sourceId": "holdout-cracked-phone-screen-v23",
+          "locale": "en",
+          "channel": "ewaste",
+          "status": "special_handling",
+          "partition": "holdout"
+        },
+        "actual": {
+          "item": "Smartphone with a cracked screen",
+          "status": "special_handling",
+          "confidence": 0.99,
+          "channel": "ewaste",
+          "reason": "A smartphone is regulated ICT equipment and should be recycled through an e-waste collection point, even when its screen is damaged.",
+          "preparation": [
+            "Back up your data and perform a factory reset if the phone still works.",
+            "Remove any SIM and memory cards.",
+            "Leave the installed battery in place and take the phone to an e-waste collection point."
+          ],
+          "tip": "If it still works, consider repairing or donating it before recycling."
+        },
+        "assertions": [],
+        "durationMs": 17737,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Smartphone_cracked_screen.jpg"
+      },
+      {
+        "id": "holdout-compact-fluorescent-bulb-v23-en",
+        "mode": "image",
+        "locale": "en",
+        "partition": "holdout",
+        "expected": {
+          "id": "holdout-compact-fluorescent-bulb-v23-en",
+          "sourceId": "holdout-compact-fluorescent-bulb-v23",
+          "locale": "en",
+          "channel": "lighting",
+          "status": "special_handling",
+          "partition": "holdout"
+        },
+        "actual": {
+          "item": "Compact fluorescent lamp (CFL) bulb",
+          "status": "special_handling",
+          "confidence": 0.99,
+          "channel": "lighting",
+          "reason": "Used CFL bulbs require lighting collection because they contain a small amount of mercury; they should not go into the blue recycling bin.",
+          "preparation": [
+            "Keep the bulb intact and handle it carefully to avoid breakage.",
+            "Take it to a designated used-bulb or lighting collection point."
+          ],
+          "tip": "If the bulb breaks, ventilate the area and carefully collect the fragments without using a vacuum cleaner."
+        },
+        "assertions": [],
+        "durationMs": 12648,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Energiesparlampe_01a.jpg"
       }
     ]
   }

@@ -8,7 +8,7 @@ import * as dotenv from 'dotenv';
 import { DEFAULT_EXECUTION_POLICY } from '../../src/lib/ai/provider';
 import { exportProductionManifest } from './production-manifest';
 import { verifyProductionWorktree } from './production-worktree';
-import { productionPatchDigest, PRODUCTION_DEPENDENCIES, PRODUCTION_MODULE_PATHS, PRODUCTION_NODE_VERSION } from './production-contract';
+import { PRODUCTION_DEPENDENCIES, PRODUCTION_MODELS, PRODUCTION_MODULE_PATHS, PRODUCTION_NODE_VERSION } from './production-contract';
 import { validateProductionRaw } from './production-validation';
 import { writeProductionBaselines } from './production-scoring';
 import type { ProductionContext, ProductionRawOutput } from './production-types';
@@ -29,12 +29,11 @@ async function main() {
   const directory = mkdtempSync(join(tmpdir(), 'binwhere-production-'));
   const manifestPath = join(directory, 'manifest.json');
   exportProductionManifest(manifestPath);
-  const context: ProductionContext = {
-    preflight, patchSha256: productionPatchDigest(), executionPolicy: DEFAULT_EXECUTION_POLICY,
-  };
+  const context: ProductionContext = { preflight, executionPolicy: DEFAULT_EXECUTION_POLICY };
   const contextPath = join(directory, 'context.json');
   writeFileSync(contextPath, JSON.stringify({ ...context, expected: {
-    modulePaths: PRODUCTION_MODULE_PATHS, dependencies: PRODUCTION_DEPENDENCIES, nodeVersion: PRODUCTION_NODE_VERSION,
+    modulePaths: PRODUCTION_MODULE_PATHS, dependencies: PRODUCTION_DEPENDENCIES, models: PRODUCTION_MODELS,
+    nodeVersion: PRODUCTION_NODE_VERSION,
   } }, null, 2));
   if (!dryRun) {
     dotenv.config({ path: join(__dirname, '../../.env'), quiet: true });
@@ -59,7 +58,7 @@ async function main() {
   validateProductionRaw(raw, dryRun);
   assert.equal(raw.source.dryRun, dryRun, 'Subprocess run mode differs');
   console.log(`Verified raw output: ${output}`);
-  if (dryRun) console.log('Dry run complete, including local OCR; no production baselines written.');
+  if (dryRun) console.log('Dry run complete; no production baselines written.');
   else for (const file of writeProductionBaselines(raw)) console.log(`Production baseline: ${file}`);
 }
 

@@ -19,16 +19,15 @@ assert.equal(hasMinimumBcrsHoldouts([yes, no, no, no]), false);
 assert.equal(hasMinimumBcrsHoldouts([yes, yes, yes, no]), false);
 assert.equal(hasMinimumBcrsHoldouts([yes, yes, no, glass]), true);
 assert.equal(hasMinimumBcrsHoldouts([yes, yes, no, no, glass]), true);
-assert.equal(BCRS_BASELINE.id, 'sg-bcrs-v22');
-assert.equal(BCRS_IMAGE_CASES.length, 61);
+assert.equal(BCRS_BASELINE.id, 'sg-bcrs-v23');
+assert.equal(BCRS_IMAGE_CASES.length, 73);
 assert.equal(BCRS_TEXT_CASES.length, 32);
-assert.equal(new Set(BCRS_IMAGE_CASES.map(({ id }) => id)).size, 61);
+assert.equal(new Set(BCRS_IMAGE_CASES.map(({ id }) => id)).size, 73);
 assert.equal(new Set(BCRS_TEXT_CASES.map(({ id }) => id)).size, 32);
-// Selected and pixel-reviewed on 2026-11-02, after candidate code and labels froze.
+// Selected and pixel-reviewed on 2026-11-06, after candidate code and labels froze.
 const holdoutSources = [
-  'holdout-sarsi-can-v22', 'holdout-pocari-bottle-in-hand-v22', 'holdout-short-coffee-can-v22',
-  'holdout-tiger-glass-beer-bottle-v22', 'holdout-oat-milk-gable-carton-v22', 'holdout-shampoo-bottle-v22',
-  'holdout-drink-box-with-straw-v22',
+  'holdout-diet-pepsi-can-on-table-v23', 'holdout-milk-tea-plastic-bottle-v23', 'holdout-pepsi-max-can-at-desk-v23',
+  'holdout-cracked-phone-screen-v23', 'holdout-compact-fluorescent-bulb-v23',
 ];
 const sources = new Set(BCRS_IMAGE_SOURCES.map(({ id }) => id));
 for (const testCase of BCRS_IMAGE_CASES) {
@@ -152,4 +151,4 @@ for (const locale of ['en', 'zh', 'ms', 'ta'] as const) {
   assert.ok(checkBcrsResult(unknown, { ...uncertain, confidence: 0.5 }, locale, true).length > 0);
   assert.ok(checkBcrsResult(unknown, { ...uncertain, next_action: { ...uncertain.next_action!, type: 'try_return_point' } }, locale, true).length > 0);
 }
-console.log('PASS v22 truth invariants, minimum holdouts, 80 copy bindings and four-language release assertions');
+console.log('PASS v23 truth invariants, minimum holdouts, 80 copy bindings and four-language release assertions');

@@ -19,8 +19,9 @@ import {
 } from '../../src/lib/ai/provider';
 import { t } from '../../src/lib/i18n';
 
-/** Actual deployment from 2026-10-25; execution uses its own installed dependencies. */
-export const PRODUCTION_REVISION = '5a19b7f0854ac15a63263996692601eaaa5554b0';
+/** Actual deployment from 2026-11-06; execution uses its own installed dependencies. */
+export const PRODUCTION_REVISION = '5719b02f893048d9734a0edd65f0a08a2b64b26a';
+const PRODUCTION_SHORT_REVISION = PRODUCTION_REVISION.slice(0, 7);
 const LOCALES: readonly Locale[] = ['en', 'zh', 'ms', 'ta'];
 
 function fileDigest(path: string) {
@@ -54,9 +55,9 @@ export interface ClassificationProfile {
   executionPolicy: ClassificationExecutionPolicy;
 }
 
-/** Identity only. Production classification must execute revision 5a19b7f itself. */
+/** Identity only. Production classification must execute the deployed revision itself. */
 export const PRODUCTION_PROFILE = {
-  id: 'production-5a19b7f',
+  id: `production-${PRODUCTION_SHORT_REVISION}`,
   revision: PRODUCTION_REVISION,
 } as const;
 
@@ -82,7 +83,7 @@ export const CANDIDATE_PROFILE: ClassificationProfile = {
 export function selectProfile(value = 'candidate'): ClassificationProfile {
   if (value === 'candidate') return CANDIDATE_PROFILE;
   if (value === 'production') {
-    throw new Error('Production cannot run in candidate code. Execute 5a19b7f in a separate git worktree using npm run baseline:production -- --worktree=<absolute-path>; see docs/classify-eval.md.');
+    throw new Error(`Production cannot run in candidate code. Execute ${PRODUCTION_SHORT_REVISION} in a separate git worktree using npm run baseline:production -- --worktree=<absolute-path>; see docs/classify-eval.md.`);
   }
   throw new Error(`Invalid --profile=${value}; expected production or candidate`);
 }

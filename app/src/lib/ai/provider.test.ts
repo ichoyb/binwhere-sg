@@ -303,9 +303,9 @@ async function main() {
 
   await runTest('production is identity only and cannot execute candidate provider code', async () => {
     assert.deepEqual(Object.keys(PRODUCTION_PROFILE).sort(), ['id', 'revision']);
-    assert.equal(PRODUCTION_PROFILE.id, 'production-5a19b7f');
-    assert.match(PRODUCTION_PROFILE.revision, /^5a19b7f/);
-    assert.throws(() => selectProfile('production'), /5a19b7f.*worktree.*baseline:production/);
+    assert.equal(PRODUCTION_PROFILE.id, 'production-5719b02');
+    assert.match(PRODUCTION_PROFILE.revision, /^5719b02/);
+    assert.throws(() => selectProfile('production'), /5719b02.*worktree.*baseline:production/);
     assert.equal(selectProfile(), CANDIDATE_PROFILE);
     assert.match(profileDigest(CANDIDATE_PROFILE), /^[a-f0-9]{64}$/);
     assert.throws(() => selectProfile('other'), /Invalid/);

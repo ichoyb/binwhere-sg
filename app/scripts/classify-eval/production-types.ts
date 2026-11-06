@@ -24,14 +24,12 @@ export interface ProductionManifest {
 export interface WorktreePreflight {
   revision: string;
   trackedChanges: string[];
-  tokenhubBlob: string;
   lockfiles: Record<string, string>;
-  checks: { head: true; trackedChanges: true; tokenhubBlob: true; lockfiles: true };
+  checks: { head: true; trackedChanges: true; lockfiles: true };
 }
 
 export interface ProductionContext {
   preflight: WorktreePreflight;
-  patchSha256: string;
   executionPolicy: ClassificationExecutionPolicy;
 }
 
@@ -39,6 +37,7 @@ export interface ProductionSource extends ProductionContext {
   manifestDigest: string;
   modulePaths: Record<string, string>;
   dependencies: { sharp: string; appZod: string; coreZod: string };
+  models: { text: string; image: string };
   nodeVersion: string;
   policyFieldsMatch: true;
   dryRun: boolean;
@@ -50,7 +49,6 @@ export interface ProductionSource extends ProductionContext {
     nearDuplicateSimilarityLimit: number;
     closestPair: { leftSourceId: string; rightSourceId: string; similarity: number } | null;
   };
-  ocrDiagnostic?: unknown;
 }
 
 export interface ProductionRawOutput {
