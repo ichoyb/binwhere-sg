@@ -39,6 +39,14 @@ export const DEFAULT_LIMITS: RateLimitConfig = {
   ],
 };
 
+export const POINTS_LIMITS: RateLimitConfig = {
+  perIp: [{ windowMs: MINUTE, max: 6 }],
+};
+
+export const ROUTE_LIMITS: RateLimitConfig = {
+  perIp: [{ windowMs: MINUTE, max: 10 }],
+};
+
 // ═══════════════════════════════════════════════════════════
 //  Origin allowlist
 // ═══════════════════════════════════════════════════════════
@@ -142,26 +150,17 @@ function checkOrigin(request: NextRequest): boolean {
 //  Public API
 // ═══════════════════════════════════════════════════════════
 
-/**
- * Check origin + rate limits for an incoming request.
- * Returns null if allowed, or a 403/429 NextResponse if blocked.
- *
- * Usage:
- * ```ts
- * const blocked = checkRateLimit(request, CLASSIFY_LIMITS);
- * if (blocked) return blocked;
- * ```
- */
-export function checkRateLimit(
+export type RateLimitFailure =
+  | { status: 403; code: 'FORBIDDEN'; error: string }
+  | { status: 429; code: 'RATE_LIMITED'; error: string; retryAfterS: number };
+
+export function getRateLimitFailure(
   request: NextRequest,
   config: RateLimitConfig,
-): NextResponse | null {
+): RateLimitFailure | null {
   // 1. Origin check
   if (!checkOrigin(request)) {
-    return NextResponse.json(
-      { code: 'FORBIDDEN', error: 'Forbidden' },
-      { status: 403 },
-    );
+    return { status: 403, code: 'FORBIDDEN', error: 'Forbidden' };
   }
 
   const ip = getClientIp(request);
@@ -171,10 +170,12 @@ export function checkRateLimit(
   for (const rule of config.perIp) {
     const result = ipStore.check(`${scope}:${ip}:${rule.windowMs}`, rule.windowMs, rule.max);
     if (!result.ok) {
-      return NextResponse.json(
-        { code: 'RATE_LIMITED', error: 'Too many requests' },
-        { status: 429, headers: { 'Retry-After': String(result.retryAfterS) } },
-      );
+      return {
+        status: 429,
+        code: 'RATE_LIMITED',
+        error: 'Too many requests',
+        retryAfterS: result.retryAfterS,
+      };
     }
   }
 
@@ -183,13 +184,30 @@ export function checkRateLimit(
     for (const rule of config.global) {
       const result = globalStore.check(`${scope}:__global__:${rule.windowMs}`, rule.windowMs, rule.max);
       if (!result.ok) {
-        return NextResponse.json(
-          { code: 'RATE_LIMITED', error: 'Service temporarily unavailable' },
-          { status: 429, headers: { 'Retry-After': String(result.retryAfterS) } },
-        );
+        return {
+          status: 429,
+          code: 'RATE_LIMITED',
+          error: 'Service temporarily unavailable',
+          retryAfterS: result.retryAfterS,
+        };
       }
     }
   }
 
   return null;
+}
+
+export function checkRateLimit(
+  request: NextRequest,
+  config: RateLimitConfig,
+): NextResponse | null {
+  const failure = getRateLimitFailure(request, config);
+  if (!failure) return null;
+  return NextResponse.json(
+    { code: failure.code, error: failure.error },
+    {
+      status: failure.status,
+      ...(failure.status === 429 && { headers: { 'Retry-After': String(failure.retryAfterS) } }),
+    },
+  );
 }

@@ -1,0 +1,12 @@
+© OpenStreetMap contributors. https://www.openstreetmap.org/copyright
+
+The road graph is a Derivative Database under the Open Database License 1.0.
+Source: Geofabrik Malaysia/Singapore/Brunei monthly extract.
+The exact URL, SHA256, PBF header timestamp and bounding box are in manifest.json.
+The source profile, its upstream diff and pins are in metadata/.
+The extraction and graph-building instructions are in the repository's
+docs/routing-production-runbook.md and ops/routing/.
+Keep this attribution with any graph redistribution. Public use requires the
+ODbL notices and the corresponding database or alteration method to be offered
+as described in ODbL 4.6. The data-license page must provide attribution and
+that offer before public App use.

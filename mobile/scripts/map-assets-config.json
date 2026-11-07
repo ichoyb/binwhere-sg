@@ -1,0 +1,90 @@
+{
+  "generatedAt": "2026-11-07",
+  "extractor": {
+    "url": "https://github.com/protomaps/go-pmtiles/releases/download/v1.31.2/go-pmtiles-1.31.2_Darwin_arm64.zip",
+    "version": "1.31.2",
+    "sha256": "40528f7f616fcbf91207cd48c8fc023d213f6d86c0cbf1f748732803d1880f3d"
+  },
+  "basemap": {
+    "url": "https://build.protomaps.com/20261106.pmtiles",
+    "version": "20261106",
+    "extractSha256": "e83da78920c63aafd0a160bd533478b72923f2f1782949bac66c460d8bb8ddcd",
+    "bbox": [
+      103.59,
+      1.15,
+      104.1,
+      1.49
+    ],
+    "minZoom": 9,
+    "maxZoom": 15,
+    "license": "ODbL-1.0"
+  },
+  "osm": {
+    "url": "https://download.geofabrik.de/asia/malaysia-singapore-brunei-261101.osm.pbf",
+    "version": "261101",
+    "bytes": 252694201,
+    "md5": "f9bbc1b7b16548ed1b7cb3eba880f9dc",
+    "sha256": "c56a5d8a54aa0475e82e5315de51629c939d47dedd52d43833bbd07eabef9078",
+    "relation": 536780,
+    "license": "ODbL-1.0"
+  },
+  "glyphs": {
+    "baseUrl": "https://raw.githubusercontent.com/protomaps/basemaps-assets/028c18f713baecad011301ff7a69acc39bcc2ae7/fonts",
+    "version": "028c18f713baecad011301ff7a69acc39bcc2ae7",
+    "fontStack": "Noto Sans Regular",
+    "license": "OFL-1.1",
+    "licenseSha256": "7713cfc8e3c36d5ec4aa3d6cffe7500a1b3310f8a86d914b8ea09c2a9dee7c2d",
+    "ranges": {
+      "0-255": "62c6d49b15fa836eb6aa45e259c7ca6762f44b011b09e47776efbe4a6db1b397",
+      "8192-8447": "8ea977a587352fe31b4159ffdbc9a40be79056f2472017c742ea1e4a931864b9"
+    }
+  },
+  "layers": {
+    "earth": {
+      "type": 3,
+      "properties": []
+    },
+    "water": {
+      "type": 3,
+      "properties": []
+    },
+    "landuse": {
+      "type": 3,
+      "properties": [
+        "kind"
+      ],
+      "kinds": [
+        "park",
+        "forest",
+        "nature_reserve",
+        "wood",
+        "grass",
+        "grassland",
+        "garden",
+        "meadow",
+        "village_green",
+        "scrub"
+      ]
+    },
+    "roads": {
+      "type": 2,
+      "properties": [
+        "kind",
+        "name"
+      ],
+      "kinds": [
+        "highway",
+        "major_road",
+        "minor_road",
+        "path"
+      ]
+    },
+    "buildings": {
+      "type": 3,
+      "properties": [
+        "height",
+        "min_height"
+      ]
+    }
+  }
+}

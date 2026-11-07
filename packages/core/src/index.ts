@@ -53,6 +53,25 @@ export {
   ApiErrorResponseSchema,
 } from './types/api';
 
+export type {
+  ApiV2ErrorCode,
+  ApiV2ErrorResponse,
+  PointsLayer,
+  PointsResponse,
+  RouteRequest,
+  RouteResponse,
+} from './types/api-v2';
+export {
+  API_V2_PATHS,
+  ApiV2ErrorCodeSchema,
+  ApiV2ErrorResponseSchema,
+  PointsLayerSchema,
+  PointsRowSchema,
+  PointsResponseSchema,
+  RouteRequestSchema,
+  RouteResponseSchema,
+} from './types/api-v2';
+
 // i18n
 export type { Locale, TranslationKey } from './i18n';
 export {
@@ -78,6 +97,7 @@ export {
   SITE_URL,
   PRIVACY_POLICY_URL,
   SUPPORT_URL,
+  DATA_LICENSE_URL,
   SUPPORT_EMAIL,
 } from './constants';
 

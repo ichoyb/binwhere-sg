@@ -1,0 +1,55 @@
+{
+  "bubble": {
+    "content": [
+      8,
+      16,
+      56,
+      48
+    ],
+    "height": 64,
+    "pixelRatio": 2,
+    "stretchX": [
+      [
+        8,
+        56
+      ]
+    ],
+    "stretchY": [
+      [
+        20,
+        44
+      ]
+    ],
+    "width": 64,
+    "x": 256,
+    "y": 0
+  },
+  "destination": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 192,
+    "y": 0
+  },
+  "tree": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 64,
+    "y": 0
+  },
+  "user": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 128,
+    "y": 0
+  },
+  "windows": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 0,
+    "y": 0
+  }
+}

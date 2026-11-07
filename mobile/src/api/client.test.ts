@@ -8,6 +8,9 @@ import {
   buildNearbyUrl,
   classifyItem,
   fetchNearby,
+  fetchPoints,
+  buildPointsUrl,
+  ApiV2Error,
   getApiBaseUrl,
   setContractViolationReporter,
   type ContractViolation,
@@ -91,6 +94,25 @@ run('buildNearbyUrl composes the versioned nearby endpoint', () => {
 });
 
 async function runNetworkContractTests() {
+  await runAsync('classifyItem forwards cancellation and does not report an aborted body as a contract violation', async () => {
+    const controller = new AbortController();
+    const reports: ContractViolation[] = [];
+    setContractViolationReporter((violation) => reports.push(violation));
+    await withFetch(async (_url, init) => {
+      assert.equal(init?.signal, controller.signal);
+      const response = new Response();
+      response.json = async () => {
+        controller.abort();
+        throw new DOMException('Aborted', 'AbortError');
+      };
+      return response;
+    }, async () => {
+      await assert.rejects(classifyItem({ text: 'can', locale: 'en' }, controller.signal),
+        (error: unknown) => error instanceof DOMException && error.name === 'AbortError');
+    });
+    assert.deepEqual(reports, []);
+    setContractViolationReporter(() => {});
+  });
   await runAsync('classifyItem parses a valid response at runtime', async () => {
   await withFetch(
     async () => new Response(JSON.stringify({
@@ -243,6 +265,47 @@ async function runNetworkContractTests() {
       setContractViolationReporter(() => {});
     }
     assert.deepEqual(reports, []);
+  });
+
+  await runAsync('points loads a validated snapshot and ETag, then validates with a body-free 304', async () => {
+    const response = {
+      dataVersion: 'b'.repeat(64),
+      layers: { blue_bin: [[1.3, 103.8, 'Bin', 'Address']], return_point: [], ewaste: [], textile: [], donation: [] },
+    };
+    const url = buildPointsUrl('http://localhost:26000/');
+    assert.equal(url, 'http://localhost:26000/api/v2/points');
+    await withFetch(async (input, init) => {
+      assert.equal(input, url);
+      assert.deepEqual(init?.headers, {});
+      return new Response(JSON.stringify(response), { headers: { ETag: '"snapshot-b"' } });
+    }, async () => {
+      assert.deepEqual(await fetchPoints(url, null), { status: 200, response, etag: '"snapshot-b"' });
+    });
+    await withFetch(async (_input, init) => {
+      assert.deepEqual(init?.headers, { 'If-None-Match': '"snapshot-b"' });
+      return new Response(null, { status: 304 });
+    }, async () => { assert.deepEqual(await fetchPoints(url, '"snapshot-b"'), { status: 304 }); });
+  });
+
+  await runAsync('points preserves v2 failures including rate limiting and reports malformed responses', async () => {
+    const reports: ContractViolation[] = [];
+    setContractViolationReporter((violation) => reports.push(violation));
+    for (const status of [429, 503]) {
+      const code = status === 429 ? 'RATE_LIMITED' : 'POINTS_DATA_UNAVAILABLE';
+      await withFetch(async () => new Response(JSON.stringify({ code, error: 'Unavailable' }), { status }), async () => {
+        await assert.rejects(() => fetchPoints(buildPointsUrl(), null),
+          (error: unknown) => error instanceof ApiV2Error && error.status === status && error.code === code);
+      });
+    }
+    assert.equal(reports.length, 0);
+    for (const [status, body] of [[200, '{}'], [500, '{"error":"Missing code"}'], [200, '<html>bad</html>']] as const) {
+      await withFetch(async () => new Response(body, { status }), async () => {
+        await assert.rejects(() => fetchPoints(buildPointsUrl(), null),
+          (error: unknown) => error instanceof ApiError && error.code === 'INVALID_RESPONSE');
+      });
+    }
+    assert.deepEqual(reports.map(({ endpoint, status }) => [endpoint, status]), [['points', 200], ['points', 500], ['points', 200]]);
+    setContractViolationReporter(() => {});
   });
 
   console.log('All client tests passed');

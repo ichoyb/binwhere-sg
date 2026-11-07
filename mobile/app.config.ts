@@ -53,7 +53,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const sentryDsn = process.env.EXPO_PUBLIC_SENTRY_DSN ?? '';
   const sentryOrg = process.env.SENTRY_ORG ?? '';
   const sentryProject = process.env.SENTRY_PROJECT ?? '';
-  const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 
   // A production binary lives on users' phones long after the build machine is
   // gone. Refuse to produce one that cannot report its own crashes or
@@ -82,6 +81,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const uploadSymbols = sentryOrg !== '';
 
   const plugins: NonNullable<ExpoConfig['plugins']> = [
+    ['@maplibre/maplibre-react-native', { ios: { nativeVersion: '6.31.0' } }],
+    './plugins/with-map-assets.js',
     [
       'expo-splash-screen',
       {
@@ -183,9 +184,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         backgroundColor: '#E8F8EF',
         foregroundImage: '../app/public/icons/icon-512.png',
       },
-      ...(googleMapsApiKey
-        ? { config: { googleMaps: { apiKey: googleMapsApiKey } } }
-        : {}),
     },
     plugins,
     extra: { eas: { projectId: EAS_PROJECT_ID } },

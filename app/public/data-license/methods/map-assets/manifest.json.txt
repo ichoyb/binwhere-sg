@@ -1,0 +1,293 @@
+{
+  "boundaryRelationVersion": 78,
+  "configSha256": "2f64dd1537ed7d2b5c71f9d24865ca2cc0b708a7833859ef862fc49064f46d29",
+  "featureCountsIncludingTileDuplicates": {
+    "buildings": 156484,
+    "earth": 1053,
+    "landuse": 23685,
+    "roads": 45534,
+    "water": 3416
+  },
+  "files": {
+    "FONT-LICENSE.txt": {
+      "bytes": 4374,
+      "license": "OFL-1.1",
+      "sha256": "7713cfc8e3c36d5ec4aa3d6cffe7500a1b3310f8a86d914b8ea09c2a9dee7c2d",
+      "sourceUrl": "https://raw.githubusercontent.com/protomaps/basemaps-assets/028c18f713baecad011301ff7a69acc39bcc2ae7/fonts/OFL.txt",
+      "sourceVersion": "028c18f713baecad011301ff7a69acc39bcc2ae7"
+    },
+    "basemap.pmtiles": {
+      "bytes": 14063024,
+      "license": "ODbL-1.0",
+      "sha256": "0bfedce0829973d84ecd3933025751777ca9b9b0f1fd074d160b5f78611decc9",
+      "sourceUrl": "https://build.protomaps.com/20261106.pmtiles",
+      "sourceVersion": "20261106"
+    },
+    "country-mask.geojson": {
+      "bytes": 16110,
+      "license": "ODbL-1.0",
+      "sha256": "e3c44be98c9149f1fb5f1fae933cd95e1655c3cccfd1ca9110fce34da54c4a02",
+      "sourceUrl": "https://download.geofabrik.de/asia/malaysia-singapore-brunei-261101.osm.pbf",
+      "sourceVersion": "261101"
+    },
+    "fonts/Noto Sans Regular/0-255.pbf": {
+      "bytes": 76044,
+      "license": "OFL-1.1",
+      "sha256": "62c6d49b15fa836eb6aa45e259c7ca6762f44b011b09e47776efbe4a6db1b397",
+      "sourceUrl": "https://raw.githubusercontent.com/protomaps/basemaps-assets/028c18f713baecad011301ff7a69acc39bcc2ae7/fonts/Noto%20Sans%20Regular/0-255.pbf",
+      "sourceVersion": "028c18f713baecad011301ff7a69acc39bcc2ae7"
+    },
+    "fonts/Noto Sans Regular/8192-8447.pbf": {
+      "bytes": 64220,
+      "license": "OFL-1.1",
+      "sha256": "8ea977a587352fe31b4159ffdbc9a40be79056f2472017c742ea1e4a931864b9",
+      "sourceUrl": "https://raw.githubusercontent.com/protomaps/basemaps-assets/028c18f713baecad011301ff7a69acc39bcc2ae7/fonts/Noto%20Sans%20Regular/8192-8447.pbf",
+      "sourceVersion": "028c18f713baecad011301ff7a69acc39bcc2ae7"
+    },
+    "initial-style.json": {
+      "bytes": 52,
+      "license": "Generated empty MapLibre style; no third-party content",
+      "sha256": "517d6e67662ea342d11ae4ae558bb3975d36948cfc48e2075fed664bb3727b88",
+      "sourceUrl": "repo:mobile/scripts/build-map-assets.py",
+      "sourceVersion": "0469aa13203c6601e6ca189a15cde3811d82cf01d35a26c26f4448c672c563b7"
+    },
+    "sprite.json": {
+      "bytes": 688,
+      "license": "Original procedural artwork; no third-party sprite assets",
+      "sha256": "684c9e5ea260bc5b4860673ea82f4857231039ca5c2ec95af6078d362d131c16",
+      "sourceUrl": "repo:mobile/scripts/build-map-assets.py",
+      "sourceVersion": "0469aa13203c6601e6ca189a15cde3811d82cf01d35a26c26f4448c672c563b7"
+    },
+    "sprite.png": {
+      "bytes": 1379,
+      "license": "Original procedural artwork; no third-party sprite assets",
+      "sha256": "fd3fbced0570b41c0e20dd06b085bdbabeec975a8ea25caef2bda0b3b764e04d",
+      "sourceUrl": "repo:mobile/scripts/build-map-assets.py",
+      "sourceVersion": "0469aa13203c6601e6ca189a15cde3811d82cf01d35a26c26f4448c672c563b7"
+    },
+    "sprite@2x.json": {
+      "bytes": 691,
+      "license": "Original procedural artwork; no third-party sprite assets",
+      "sha256": "3c281a1dd6d0780af06bce7c52a0214d84f96e3e137a8bf3c048a709bb50329d",
+      "sourceUrl": "repo:mobile/scripts/build-map-assets.py",
+      "sourceVersion": "0469aa13203c6601e6ca189a15cde3811d82cf01d35a26c26f4448c672c563b7"
+    },
+    "sprite@2x.png": {
+      "bytes": 3995,
+      "license": "Original procedural artwork; no third-party sprite assets",
+      "sha256": "44780943eb7e0bc83ff0fe0dcfee2316cd74a950c2df8c129189bc17d68a3e75",
+      "sourceUrl": "repo:mobile/scripts/build-map-assets.py",
+      "sourceVersion": "0469aa13203c6601e6ca189a15cde3811d82cf01d35a26c26f4448c672c563b7"
+    },
+    "trees.pmtiles": {
+      "bytes": 32534,
+      "license": "ODbL-1.0",
+      "sha256": "0797ca01b7f380e1d1572b4f35deca9ef2025b24a5afd3f12621f91441b6b98e",
+      "sourceUrl": "https://download.geofabrik.de/asia/malaysia-singapore-brunei-261101.osm.pbf",
+      "sourceVersion": "261101"
+    }
+  },
+  "generatedAt": "2026-11-07",
+  "generationDatePolicy": "Pinned batch date; wall-clock rebuild time does not change output.",
+  "generatorSha256": "0469aa13203c6601e6ca189a15cde3811d82cf01d35a26c26f4448c672c563b7",
+  "glyphCoverage": {
+    "characters": " \"&'(),-./0123456789:@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz–’",
+    "codepoints": [
+      "U+0020",
+      "U+0022",
+      "U+0026",
+      "U+0027",
+      "U+0028",
+      "U+0029",
+      "U+002C",
+      "U+002D",
+      "U+002E",
+      "U+002F",
+      "U+0030",
+      "U+0031",
+      "U+0032",
+      "U+0033",
+      "U+0034",
+      "U+0035",
+      "U+0036",
+      "U+0037",
+      "U+0038",
+      "U+0039",
+      "U+003A",
+      "U+0040",
+      "U+0041",
+      "U+0042",
+      "U+0043",
+      "U+0044",
+      "U+0045",
+      "U+0046",
+      "U+0047",
+      "U+0048",
+      "U+0049",
+      "U+004A",
+      "U+004B",
+      "U+004C",
+      "U+004D",
+      "U+004E",
+      "U+004F",
+      "U+0050",
+      "U+0051",
+      "U+0052",
+      "U+0053",
+      "U+0054",
+      "U+0055",
+      "U+0056",
+      "U+0057",
+      "U+0058",
+      "U+0059",
+      "U+005A",
+      "U+0061",
+      "U+0062",
+      "U+0063",
+      "U+0064",
+      "U+0065",
+      "U+0066",
+      "U+0067",
+      "U+0068",
+      "U+0069",
+      "U+006A",
+      "U+006B",
+      "U+006C",
+      "U+006D",
+      "U+006E",
+      "U+006F",
+      "U+0070",
+      "U+0071",
+      "U+0072",
+      "U+0073",
+      "U+0074",
+      "U+0075",
+      "U+0076",
+      "U+0077",
+      "U+0078",
+      "U+0079",
+      "U+007A",
+      "U+2013",
+      "U+2019"
+    ],
+    "missing": [],
+    "ranges": [
+      "0-255",
+      "8192-8447"
+    ]
+  },
+  "layers": {
+    "buildings": {
+      "properties": [
+        "height",
+        "min_height"
+      ],
+      "type": 3
+    },
+    "earth": {
+      "properties": [],
+      "type": 3
+    },
+    "landuse": {
+      "kinds": [
+        "park",
+        "forest",
+        "nature_reserve",
+        "wood",
+        "grass",
+        "grassland",
+        "garden",
+        "meadow",
+        "village_green",
+        "scrub"
+      ],
+      "properties": [
+        "kind"
+      ],
+      "type": 3
+    },
+    "roads": {
+      "kinds": [
+        "highway",
+        "major_road",
+        "minor_road",
+        "path"
+      ],
+      "properties": [
+        "kind",
+        "name"
+      ],
+      "type": 2
+    },
+    "water": {
+      "properties": [],
+      "type": 3
+    }
+  },
+  "schemaVersion": 1,
+  "sizes": {
+    "extract": 27539511,
+    "five_layers_z9": 23507379,
+    "singapore_tiles": 19712019,
+    "style_features_and_properties": 14063024
+  },
+  "sources": {
+    "basemap": {
+      "bbox": [
+        103.59,
+        1.15,
+        104.1,
+        1.49
+      ],
+      "extractSha256": "e83da78920c63aafd0a160bd533478b72923f2f1782949bac66c460d8bb8ddcd",
+      "license": "ODbL-1.0",
+      "maxZoom": 15,
+      "minZoom": 9,
+      "url": "https://build.protomaps.com/20261106.pmtiles",
+      "version": "20261106"
+    },
+    "extractor": {
+      "sha256": "40528f7f616fcbf91207cd48c8fc023d213f6d86c0cbf1f748732803d1880f3d",
+      "url": "https://github.com/protomaps/go-pmtiles/releases/download/v1.31.2/go-pmtiles-1.31.2_Darwin_arm64.zip",
+      "version": "1.31.2"
+    },
+    "glyphs": {
+      "baseUrl": "https://raw.githubusercontent.com/protomaps/basemaps-assets/028c18f713baecad011301ff7a69acc39bcc2ae7/fonts",
+      "fontStack": "Noto Sans Regular",
+      "license": "OFL-1.1",
+      "licenseSha256": "7713cfc8e3c36d5ec4aa3d6cffe7500a1b3310f8a86d914b8ea09c2a9dee7c2d",
+      "ranges": {
+        "0-255": "62c6d49b15fa836eb6aa45e259c7ca6762f44b011b09e47776efbe4a6db1b397",
+        "8192-8447": "8ea977a587352fe31b4159ffdbc9a40be79056f2472017c742ea1e4a931864b9"
+      },
+      "version": "028c18f713baecad011301ff7a69acc39bcc2ae7"
+    },
+    "osm": {
+      "bytes": 252694201,
+      "license": "ODbL-1.0",
+      "md5": "f9bbc1b7b16548ed1b7cb3eba880f9dc",
+      "relation": 536780,
+      "sha256": "c56a5d8a54aa0475e82e5315de51629c939d47dedd52d43833bbd07eabef9078",
+      "url": "https://download.geofabrik.de/asia/malaysia-singapore-brunei-261101.osm.pbf",
+      "version": "261101"
+    }
+  },
+  "tools": {
+    "extractor": "PMTiles CLI 1.31.2",
+    "mapbox-vector-tile": "2.2.0",
+    "osmium": "4.3.2",
+    "pmtiles": "3.8.1",
+    "protobuf": "6.33.6",
+    "python": "3.13.16",
+    "shapely": "2.2.0",
+    "zlib": "1.2.12"
+  },
+  "totalFileBytes": 14263111,
+  "trees": {
+    "count": 5154,
+    "extent": 4096,
+    "tiles": 183,
+    "zoom": 15
+  },
+  "uvLockSha256": "131f0182da03319a14510cf954ca177fbe5940b001c1f0a6cc93eb485fa82b4e"
+}

@@ -11,7 +11,7 @@ import {
   getReuseChannelsIndex,
   getReturnPointIndex,
 } from '@/lib/data-gov';
-import { formatReturnPointOpeningHours } from '@/lib/bcrs';
+import { getPointDetails } from '@/lib/point-details';
 import { checkRateLimit, DEFAULT_LIMITS } from '@/lib/rate-limit';
 import { clientId, gridCell, logEvent } from '@/lib/telemetry';
 
@@ -25,33 +25,6 @@ function errorResponse(
     { code, error, ...(details === undefined ? {} : { details }) },
     { status },
   );
-}
-
-/** Convert "FERNVALE ROAD" to "Fernvale Road". */
-function toTitleCase(value: string): string {
-  return value.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
-}
-
-/** Extract KML description table values used by the blue-bin dataset. */
-function parseDescriptionHtml(html: string): Record<string, string> {
-  const attrs: Record<string, string> = {};
-  const pattern = /<th>(\w+)<\/th>\s*<td>(.*?)<\/td>/g;
-  let match;
-  while ((match = pattern.exec(html)) !== null) {
-    attrs[match[1]] = match[2].trim();
-  }
-  return attrs;
-}
-
-function parseAccepts(description: string): string {
-  const normalized = description.toLowerCase();
-  if (normalized.includes('all regulated')) return 'All regulated e-waste';
-  if (normalized.includes('non-regulated')) return 'Small appliances';
-  const parts: string[] = [];
-  if (normalized.includes('ict')) parts.push('ICT equipment');
-  if (normalized.includes('batter')) parts.push('Batteries');
-  if (normalized.includes('lamp')) parts.push('Lamps');
-  return parts.join(', ');
 }
 
 function matchesEwasteChannel(description: string, channel: string): boolean {
@@ -105,9 +78,6 @@ export async function GET(request: NextRequest) {
   const cell = gridCell(input.lat, input.lng);
 
   try {
-    const isEwaste = input.channel === 'ewaste'
-      || input.channel === 'ewaste_battery'
-      || input.channel === 'lighting';
     const isDonation = input.channel === 'donation';
     const isReturnPoint = input.channel === 'return_point';
     const index = input.channel === 'blue_bin'
@@ -170,69 +140,15 @@ export async function GET(request: NextRequest) {
       radiusKm: input.radius,
       count: filtered.length,
       results: filtered.map((result) => {
-        const description = (result.properties.Description as string) || '';
-        const parsedDescription = description
-          ? parseDescriptionHtml(description)
-          : {};
-        const property = (key: string) =>
-          (result.properties[key] as string) || parsedDescription[key] || '';
-
-        const block = property('ADDRESSBLOCKHOUSENUMBER');
-        const street = property('ADDRESSSTREETNAME');
-        const building = property('ADDRESSBUILDINGNAME');
-
-        let name: string;
-        let address: string;
-        if (input.channel === 'blue_bin') {
-          const parts: string[] = [];
-          if (block) parts.push(`Blk ${block}`);
-          if (street) parts.push(toTitleCase(street));
-          name = parts.join(' ') || (building ? toTitleCase(building) : 'Blue Bin');
-          address = building ? toTitleCase(building) : '';
-        } else if (input.channel === 'textile') {
-          name = property('NAME') || 'Textile Bin';
-          address = property('DESCRIPTION');
-        } else if (isReturnPoint) {
-          name = property('NAME') || 'Return Point';
-          address = property('FULLADDRESS');
-        } else if (isDonation) {
-          name = property('NAME') || 'Donation Point';
-          address = property('FULLADDRESS')
-            || [block, street, building].filter(Boolean).join(', ');
-        } else {
-          name = property('NAME')
-            || (result.properties.Name as string)
-            || 'E-Waste Point';
-          address = street;
-        }
-
-        const ewasteDescription = (result.properties.DESCRIPTION as string) || '';
-        const accepts = isEwaste ? parseAccepts(ewasteDescription) : undefined;
-        const donationAccepts = isDonation
-          ? property('ACCEPTEDITEMS') || undefined
-          : undefined;
-        const reuseType = isDonation
-          ? property('REUSETYPE') || undefined
-          : undefined;
-        const openingHours = isReturnPoint
-          ? formatReturnPointOpeningHours(result.properties.OPENING_HOURS)
-          : undefined;
-        const machineStatus = isReturnPoint
-          ? property('MACHINE_STATUS') || undefined
-          : undefined;
-
+        const { name, address, postalCode, ...details } = getPointDetails(result.properties, input.channel);
         return {
           name,
           address,
-          postalCode: property('ADDRESSPOSTALCODE'),
+          postalCode,
           distanceKm: Math.round(result.distanceKm * 1000) / 1000,
           lat: result.coordinates.latitude,
           lng: result.coordinates.longitude,
-          ...(accepts && { accepts }),
-          ...(donationAccepts && { accepts: donationAccepts }),
-          ...(reuseType && { reuseType }),
-          ...(openingHours && { openingHours }),
-          ...(machineStatus && { machineStatus }),
+          ...details,
         };
       }),
     });

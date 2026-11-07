@@ -2,12 +2,11 @@ import * as Sentry from '@sentry/react-native';
 import * as Localization from 'expo-localization';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, BackHandler, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, BackHandler, Modal, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   buildBcrsGuideResult,
   normalizeLocale,
-  type AppView,
   type ClassifyResult,
   type ScanHistoryItem,
 } from '@binwhere/core';
@@ -15,10 +14,11 @@ import { ErrorBoundary } from './src/components/ErrorBoundary';
 import { initReporting } from './src/lib/reporting';
 import { AppStateProvider, useAppState } from './src/state/AppState';
 import { HomeScreen } from './src/screens/HomeScreen';
-import { ResultScreen } from './src/screens/ResultScreen';
-import { NearbyScreen } from './src/screens/NearbyScreen';
+import { AnswerScreen } from './src/screens/AnswerScreen';
+import { CameraScreen } from './src/screens/CameraScreen';
+import { MapHomeScreen } from './src/screens/MapHomeScreen';
+import { dark } from './src/theme/dark';
 import { colors } from './src/theme/colors';
-import { getNearbyTarget } from './src/lib/nearby';
 
 // Before the first render, so a crash during startup is reported too.
 initReporting();
@@ -39,17 +39,13 @@ function Root() {
     addToHistory,
     clearHistory,
     historyReady,
-    location,
-    geoLoading,
-    geoError,
-    requestLocation,
     classifyResult,
     setClassifyResult,
     setCapturedImage,
     capturedImage,
   } = useAppState();
 
-  const [view, setView] = useState<AppView>('home');
+  const [view, setView] = useState<'home' | 'legacy' | 'camera' | 'answer'>('home');
 
   const goHome = useCallback(() => {
     setClassifyResult(null);
@@ -59,11 +55,7 @@ function Root() {
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (view === 'nearby') {
-        setView('result');
-        return true;
-      }
-      if (view === 'result') {
+      if (view !== 'home') {
         goHome();
         return true;
       }
@@ -72,22 +64,14 @@ function Root() {
     return () => subscription.remove();
   }, [goHome, view]);
 
-  const requestLocationIfNeeded = useCallback(
-    (result: ClassifyResult) => {
-      if (getNearbyTarget(result)) void requestLocation();
-    },
-    [requestLocation],
-  );
-
   const handleClassified = useCallback(
     (result: ClassifyResult, imageUri: string | null) => {
       setClassifyResult(result);
       setCapturedImage(imageUri);
       addToHistory(result, locale);
-      requestLocationIfNeeded(result);
-      setView('result');
+      setView('answer');
     },
-    [addToHistory, locale, requestLocationIfNeeded, setCapturedImage, setClassifyResult],
+    [addToHistory, locale, setCapturedImage, setClassifyResult],
   );
 
   const handleCategorySelect = useCallback(
@@ -95,10 +79,9 @@ function Root() {
       setClassifyResult(result);
       setCapturedImage(null);
       addToHistory(result, locale);
-      requestLocationIfNeeded(result);
-      setView('result');
+      setView('answer');
     },
-    [addToHistory, locale, requestLocationIfNeeded, setCapturedImage, setClassifyResult],
+    [addToHistory, locale, setCapturedImage, setClassifyResult],
   );
 
   const handleHistorySelect = useCallback(
@@ -106,19 +89,17 @@ function Root() {
       if (!item.result) return;
       setClassifyResult(item.result);
       setCapturedImage(null);
-      requestLocationIfNeeded(item.result);
-      setView('result');
+      setView('answer');
     },
-    [requestLocationIfNeeded, setCapturedImage, setClassifyResult],
+    [setCapturedImage, setClassifyResult],
   );
 
   const handleBcrsEntry = useCallback(() => {
     const result = buildBcrsGuideResult(locale);
     setClassifyResult(result);
     setCapturedImage(null);
-    requestLocationIfNeeded(result);
-    setView('result');
-  }, [locale, requestLocationIfNeeded, setCapturedImage, setClassifyResult]);
+    setView('answer');
+  }, [locale, setCapturedImage, setClassifyResult]);
 
   if (!localeReady || !historyReady) {
     return (
@@ -129,49 +110,48 @@ function Root() {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <StatusBar style="dark" />
-      {view === 'home' ? (
-        <HomeScreen
-          locale={locale}
-          onLocaleChange={setLocale}
-          history={history}
-          onHistorySelect={handleHistorySelect}
-          onHistoryClear={clearHistory}
-          onClassified={handleClassified}
-          onCategorySelect={handleCategorySelect}
-          onBcrsEntry={handleBcrsEntry}
-        />
-      ) : null}
-      {view === 'result' && classifyResult ? (
-        <ResultScreen
-          result={classifyResult}
-          locale={locale}
-          capturedImage={capturedImage}
-          userLocation={location}
-          geoLoading={geoLoading}
-          geoError={geoError}
-          onScanAgain={goHome}
-          onViewNearby={() => setView('nearby')}
-          onRequestLocation={() => {
-            void requestLocation();
-          }}
-        />
-      ) : null}
-      {view === 'nearby' && classifyResult ? (
-        <NearbyScreen
-          result={classifyResult}
-          locale={locale}
-          userLocation={location}
-          geoLoading={geoLoading}
-          geoError={geoError}
-          onBack={() => setView('result')}
-          onRequestLocation={() => {
-            void requestLocation();
-          }}
-        />
-      ) : null}
-    </SafeAreaView>
+    <View style={styles.mapRoot}>
+      <StatusBar style={view === 'legacy' ? 'dark' : 'light'} />
+      <MapHomeScreen
+        locale={locale}
+        onBcrsEntry={handleBcrsEntry}
+        homeVisible={view === 'home'}
+        onSearch={() => setView('legacy')}
+        onCamera={() => setView('camera')}
+      >
+        <Modal
+          visible={view === 'legacy'}
+          presentationStyle="fullScreen"
+          animationType={view === 'answer' ? 'none' : 'slide'}
+          onRequestClose={goHome}
+        >
+          <SafeAreaView style={styles.safe}>
+            <StatusBar style="dark" />
+            <HomeScreen
+              locale={locale}
+              onLocaleChange={setLocale}
+              history={history}
+              onHistorySelect={handleHistorySelect}
+              onHistoryClear={clearHistory}
+              onClassified={handleClassified}
+              onCategorySelect={handleCategorySelect}
+              onBcrsEntry={handleBcrsEntry}
+              onClose={goHome}
+            />
+          </SafeAreaView>
+        </Modal>
+        {view === 'camera' ? <CameraScreen locale={locale} onClose={goHome}
+          onClassified={handleClassified} /> : null}
+        {view === 'answer' && classifyResult ? (
+          <AnswerScreen result={classifyResult} locale={locale} photo={capturedImage}
+            onClose={goHome} onScanAgain={() => {
+              setClassifyResult(null);
+              setCapturedImage(null);
+              setView('camera');
+            }} />
+        ) : null}
+      </MapHomeScreen>
+    </View>
   );
 }
 
@@ -191,11 +171,12 @@ function App() {
 export default Sentry.wrap(App);
 
 const styles = StyleSheet.create({
+  mapRoot: { flex: 1, backgroundColor: dark.background },
   safe: { flex: 1, backgroundColor: colors.bg },
   loading: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.bg,
+    backgroundColor: dark.background,
   },
 });

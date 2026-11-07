@@ -1,0 +1,41 @@
+[Unit]
+Description=BinWhere walking routes
+After=network.target
+
+[Service]
+Type=simple
+User=binwhere-routing
+Group=binwhere-routing
+WorkingDirectory=/opt/binwhere-routing/current
+ExecStart=/opt/binwhere-routing/current/bin/osrm-routed --algorithm mld --threads 2 --ip 127.0.0.1 --port 5000 --verbosity WARNING /opt/binwhere-routing/current/data/singapore.osrm
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+KillSignal=SIGTERM
+UMask=0027
+MemoryMax=1G
+
+CapabilityBoundingSet=
+LockPersonality=true
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectSystem=strict
+ReadOnlyPaths=/opt/binwhere-routing
+RestrictAddressFamilies=AF_UNIX AF_INET
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+IPAddressDeny=any
+IPAddressAllow=localhost
+
+[Install]
+WantedBy=multi-user.target

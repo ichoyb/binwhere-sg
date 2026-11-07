@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "platform": "linux/amd64",
+  "ubuntu_image": "ubuntu:24.04@sha256:78d4744ead1f5b19b04d0df558ab182a5300903900755e515b2ca4d10eb2044d",
+  "apt_snapshot": "20261101T000000Z",
+  "osrm": {
+    "version": "26.11.0",
+    "url": "https://codeload.github.com/Project-OSRM/osrm-backend/tar.gz/refs/tags/v26.11.0",
+    "sha256": "d08387e3cb2faad4acdcfaca6ebdacc7faab16e73662c2a6a9558b7450908372"
+  },
+  "vcpkg": {
+    "commit": "d015e31e90838a4c9dfa3eed45979bc70d9357fc",
+    "url": "https://codeload.github.com/microsoft/vcpkg/tar.gz/d015e31e90838a4c9dfa3eed45979bc70d9357fc",
+    "sha256": "3621490b3fdabe0a357bc3199d2eb5344eac51ce223e243d0c596a3c15f1f43a"
+  },
+  "osm": {
+    "url": "https://download.geofabrik.de/asia/malaysia-singapore-brunei-261101.osm.pbf",
+    "bytes": 252694201,
+    "md5": "f9bbc1b7b16548ed1b7cb3eba880f9dc",
+    "sha256": "c56a5d8a54aa0475e82e5315de51629c939d47dedd52d43833bbd07eabef9078",
+    "bbox": [
+      103.58,
+      1.13,
+      104.1,
+      1.49
+    ]
+  },
+  "tools": {
+    "osmium": "1.16.0-1build1",
+    "cmake": {
+      "version": "3.31.8",
+      "url": "https://github.com/Kitware/CMake/releases/download/v3.31.8/cmake-3.31.8-linux-x86_64.tar.gz",
+      "sha256": "630615d8e98ac33eba7fbe472626dff5c899c85af3c024585ae109166a6909d0"
+    },
+    "ninja": "1.11.1-2",
+    "actionlint": {
+      "version": "1.7.7",
+      "archives": {
+        "darwin_arm64": "2693315b9093aeacb4ebd91a993fea54fc215057bf0da2659056b4bc033873db",
+        "linux_amd64": "023070a287cd8cccd71515fedc843f1985bf96c436b7effaecce67290e7e0757"
+      }
+    },
+    "bootstrap_ca_certificates": "20240203",
+    "bootstrap_openssl": "3.0.13-0ubuntu3",
+    "ubuntu_cmake": "3.28.3-1build7",
+    "bootstrap_suite": "noble"
+  }
+}

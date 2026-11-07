@@ -114,6 +114,19 @@ const ms: Record<keyof typeof en, string> = {
   'nearby.loadingMap': 'Memuatkan peta...',
 
   // Map
+  'map.searchItems': 'Cari barang',
+  'map.layers': 'Lapisan peta',
+  'map.locate': 'Pergi ke lokasi saya',
+  'map.camera': 'Buka kamera',
+  'map.close': 'Tutup',
+  'map.pointsUnavailable': 'Lokasi kitar semula tidak dapat dimuatkan',
+  'map.retry': 'Cuba lagi',
+  'map.locationDenied': 'Akses lokasi dimatikan. Benarkan akses dalam Tetapan untuk mencari lokasi anda.',
+  'map.locationUnavailable': 'Lokasi anda tidak dapat dikesan. Sila cuba lagi.',
+  'map.locationOutsideSingapore': 'Anda berada di luar Singapura. Peta ini hanya menunjukkan lokasi kitar semula di Singapura.',
+  'map.straightLine': 'Jarak garis lurus',
+  'map.dataLicense': 'Data dan lesen peta',
+  'map.overview': 'Peta kitar semula Singapura',
   'map.youAreHere': 'Anda di sini',
   'map.navigate': 'Navigasi',
 
@@ -166,6 +179,14 @@ const ms: Record<keyof typeof en, string> = {
   "bcrs.classifyReason": "Bekas minuman jenis ini termasuk dalam skim deposit. Jika anda membelinya di Singapura dan bekas ini mempunyai Deposit Mark (10¢ SG RETURN), pulangkan di Pusat Pulangan untuk S$0.10; mesin mengimbas kod bar untuk membuat keputusan. Tanpa Deposit Mark atau jika dibeli di luar Singapura, bilas dan masukkan ke dalam tong kitar semula biru.",
   'classify.notSureReason': 'Maklumat yang ada belum mencukupi untuk memilih saluran kitar semula dengan selamat.',
   'classify.notSurePreparation': 'Berikan foto atau penerangan yang lebih jelas yang menunjukkan keseluruhan item.',
+
+  'camera.deniedHint': 'Tutup kamera dan gunakan bar carian untuk menerangkan item anda.',
+  'camera.capture': 'Ambil foto',
+  'camera.backToCamera': 'Kembali ke kamera',
+  'camera.cancel': 'Batalkan pengecaman',
+  'answer.expand': 'Lihat jawapan penuh',
+  'answer.collapse': 'Ringkaskan jawapan',
+  'answer.nearbyBlueBins': 'Tong kitar semula biru berdekatan',
 };
 
 export default ms;

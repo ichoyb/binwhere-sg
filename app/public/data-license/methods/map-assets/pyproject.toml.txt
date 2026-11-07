@@ -1,0 +1,11 @@
+[project]
+name = "binwhere-map-assets"
+version = "0.0.0"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "mapbox-vector-tile",
+  "osmium",
+  "pmtiles",
+  "protobuf",
+  "shapely",
+]

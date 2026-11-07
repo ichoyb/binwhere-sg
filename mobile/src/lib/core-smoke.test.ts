@@ -13,7 +13,7 @@ import {
   NearbyResponseSchema,
   isSingaporeCoordinates,
 } from '@binwhere/core';
-import { getNearbyTarget } from './nearby';
+import { automaticDestination, optionalDestination } from './destination';
 
 function run(name: string, fn: () => void) {
   fn();
@@ -68,7 +68,7 @@ run('Singapore bounds are shared by both clients and the API', () => {
 });
 
 run('bulky waste resolves to furniture donation points', () => {
-  const target = getNearbyTarget({
+  const target = automaticDestination({
     item: 'Sofa',
     status: 'special_handling',
     confidence: 0.9,
@@ -80,7 +80,7 @@ run('bulky waste resolves to furniture donation points', () => {
 
 console.log('All core smoke tests passed');
 
-run('an unconfirmed bottle can navigate to return points without claiming a channel', () => {
+run('an unconfirmed bottle stays put and offers a return-point button', () => {
   const result: ClassifyResult = {
     item: 'drink bottle', status: 'not_sure', channel: null, confidence: 0.3, reason: 'Unknown material',
   };
@@ -92,7 +92,8 @@ run('an unconfirmed bottle can navigate to return points without claiming a chan
     singapore_mark: 'unknown', explicitly_no_singapore_mark: false, purchased_outside_singapore: false,
     damaged: false, contaminated: false,
   }, 'en');
-  assert.deepEqual(getNearbyTarget(result), { channel: 'return_point' });
+  assert.equal(automaticDestination(result), null);
+  assert.deepEqual(optionalDestination(result), { channel: 'return_point' });
   assert.equal(result.channel, null);
   assert.equal(result.next_action?.type, 'check_container_type');
 });

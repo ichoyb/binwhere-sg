@@ -98,11 +98,12 @@ export function reportError(error: unknown, context?: Record<string, unknown>): 
  * parse it. Grouped per endpoint so one bad deploy shows as one issue.
  */
 export function reportContractViolation(violation: ContractViolation): void {
+  const version = violation.endpoint === 'points' ? 'v2' : 'v1';
   if (!enabled) {
-    console.error('[reporting] (disabled) v1 contract violation', violation);
+    console.error(`[reporting] (disabled) ${version} contract violation`, violation);
     return;
   }
-  Sentry.captureMessage(`v1 contract violation: ${violation.endpoint}`, {
+  Sentry.captureMessage(`${version} contract violation: ${violation.endpoint}`, {
     level: 'error',
     tags: { endpoint: violation.endpoint, http_status: String(violation.status) },
     extra: { issues: violation.issues },

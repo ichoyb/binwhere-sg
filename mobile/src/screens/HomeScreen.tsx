@@ -9,7 +9,6 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { CameraView } from 'expo-camera';
 import {
   getFriendlyError,
   getFriendlyApiError,
@@ -24,8 +23,7 @@ import {
   type ScanHistoryItem,
 } from '@binwhere/core';
 import { ApiError, classifyItem } from '../api/client';
-import { useCamera } from '../hooks/useCamera';
-import { prepareImageForClassify } from '../lib/image-prep';
+import { useAppState } from '../state/AppState';
 import { colors, radii, spacing, touch } from '../theme/colors';
 
 interface Props {
@@ -37,6 +35,7 @@ interface Props {
   onClassified: (result: ClassifyResult, imageUri: string | null) => void;
   onCategorySelect: (result: ClassifyResult) => void;
   onBcrsEntry: () => void;
+  onClose: () => void;
 }
 
 export function HomeScreen({
@@ -48,12 +47,13 @@ export function HomeScreen({
   onClassified,
   onCategorySelect,
   onBcrsEntry,
+  onClose,
 }: Props) {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
-  const camera = useCamera();
+  const { readGrantedLocation } = useAppState();
 
   const categories = getItemCategories(locale);
 
@@ -61,6 +61,7 @@ export function HomeScreen({
     async (params: { image?: string; text?: string }, imageUri: string | null) => {
       setLoading(true);
       setError(null);
+      void readGrantedLocation();
       try {
         const result = await classifyItem({ ...params, locale });
         onClassified(result, imageUri);
@@ -74,7 +75,7 @@ export function HomeScreen({
         setLoading(false);
       }
     },
-    [locale, onClassified],
+    [locale, onClassified, readGrantedLocation],
   );
 
   const submitText = useCallback(async () => {
@@ -84,38 +85,16 @@ export function HomeScreen({
     await runClassify({ text: value }, null);
   }, [text, loading, runClassify]);
 
-  const openCamera = useCallback(async () => {
-    setError(null);
-    await camera.start();
-  }, [camera]);
-
-  const snapAndClassify = useCallback(async () => {
-    if (loading || camera.busy) return;
-    setError(null);
-    setLoading(true);
-    try {
-      const photo = await camera.capture();
-      if (!photo) {
-        setError(getFriendlyError('Classification failed', locale));
-        return;
-      }
-      const base64 = await prepareImageForClassify(photo);
-      camera.stop();
-      const result = await classifyItem({ image: base64, locale });
-      onClassified(result, photo.uri);
-    } catch (e) {
-      setError(
-        e instanceof ApiError
-          ? getFriendlyApiError(e.code, locale)
-          : getFriendlyError(e instanceof Error ? e.message : String(e), locale),
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [loading, camera, locale, onClassified]);
-
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
+      <Pressable
+        onPress={onClose}
+        style={styles.secondaryBtn}
+        accessibilityRole="button"
+        accessibilityLabel={t(locale, 'map.close')}
+      >
+        <Text style={styles.secondaryBtnText}>{t(locale, 'map.close')}</Text>
+      </Pressable>
       <View style={styles.header}>
         <Text style={styles.logo}>BinWhere</Text>
         <View style={styles.localeRow}>
@@ -143,63 +122,6 @@ export function HomeScreen({
       <Text style={styles.title}>{t(locale, 'home.snapToKnow')}</Text>
       <Text style={styles.subtitle}>{t(locale, 'home.recycleRight')}</Text>
 
-      {/* Camera identify path */}
-      <View style={styles.card}>
-        {camera.active && camera.permission?.granted ? (
-          <View style={styles.cameraWrap}>
-            <CameraView
-              ref={camera.cameraRef}
-              style={styles.camera}
-              facing="back"
-              mode="picture"
-            />
-            <Text style={styles.cameraGuide}>{t(locale, 'home.cameraGuide')}</Text>
-            <View style={styles.cameraActions}>
-              <Pressable
-                onPress={camera.stop}
-                style={styles.secondaryBtn}
-                disabled={loading}
-              >
-                <Text style={styles.secondaryBtnText}>{t(locale, 'result.back')}</Text>
-              </Pressable>
-              <Pressable
-                onPress={snapAndClassify}
-                style={[styles.snapBtn, (loading || camera.busy) && styles.btnDisabled]}
-                disabled={loading || camera.busy}
-                accessibilityLabel="Snap"
-              >
-                {loading || camera.busy ? (
-                  <ActivityIndicator color={colors.white} />
-                ) : (
-                  <View style={styles.snapInner} />
-                )}
-              </Pressable>
-            </View>
-          </View>
-        ) : (
-          <>
-            <Pressable
-              onPress={openCamera}
-              style={[styles.primaryBtn, loading && styles.btnDisabled]}
-              disabled={loading}
-            >
-              <Text style={styles.primaryBtnText}>{t(locale, 'home.openCamera')}</Text>
-            </Pressable>
-            {camera.status === 'denied' ? (
-              <Text style={styles.hint}>
-                {t(locale, 'home.cameraDenied')}
-                {'\n'}
-                {t(locale, 'home.cameraDeniedHint')}
-              </Text>
-            ) : null}
-            {/* Fallback copy always visible when camera UI is closed — text path remains available */}
-            {camera.status !== 'active' && camera.status !== 'denied' ? (
-              <Text style={styles.hint}>{t(locale, 'home.cameraUnavailableHint')}</Text>
-            ) : null}
-          </>
-        )}
-      </View>
-
       {/* Text identify path */}
       <View style={styles.card}>
         <TextInput
@@ -212,11 +134,11 @@ export function HomeScreen({
           editable={!loading}
         />
         <Pressable
-          onPress={submitText}
+          onPress={() => void submitText()}
           disabled={loading || !text.trim()}
           style={[styles.primaryBtn, (loading || !text.trim()) && styles.btnDisabled]}
         >
-          {loading && !camera.active ? (
+          {loading ? (
             <ActivityIndicator color={colors.white} />
           ) : (
             <Text style={styles.primaryBtnText}>{t(locale, 'home.search')}</Text>
@@ -344,44 +266,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  cameraWrap: { borderRadius: radii.card, overflow: 'hidden' },
-  camera: { width: '100%', height: 320, backgroundColor: '#000' },
-  cameraGuide: {
-    position: 'absolute',
-    top: spacing.sm,
-    left: spacing.sm,
-    right: spacing.sm,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 8,
-    borderRadius: 18,
-    backgroundColor: 'rgba(0, 0, 0, 0.65)',
-    color: colors.white,
-    textAlign: 'center',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  cameraActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: spacing.md,
-  },
-  snapBtn: {
-    width: touch.snap,
-    height: touch.snap,
-    borderRadius: touch.snap / 2,
-    backgroundColor: colors.neaGreen,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 4,
-    borderColor: '#B8E6C8',
-  },
-  snapInner: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: colors.white,
-  },
   input: {
     minHeight: 88,
     borderWidth: 1,
@@ -413,7 +297,6 @@ const styles = StyleSheet.create({
   btnDisabled: { opacity: 0.4 },
   primaryBtnText: { color: colors.white, fontSize: 16, fontWeight: '700' },
   error: { color: colors.danger, marginTop: spacing.sm, fontSize: 14 },
-  hint: { marginTop: spacing.sm, fontSize: 13, color: colors.textMuted, lineHeight: 18 },
   bcrsBtn: {
     backgroundColor: '#E8F8EF',
     borderRadius: radii.card,

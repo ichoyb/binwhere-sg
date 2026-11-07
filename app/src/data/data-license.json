@@ -1,0 +1,257 @@
+{
+  "map": {
+    "generatedAt": "2026-11-07",
+    "basemap": {
+      "url": "https://build.protomaps.com/20261106.pmtiles",
+      "version": "20261106",
+      "extractSha256": "e83da78920c63aafd0a160bd533478b72923f2f1782949bac66c460d8bb8ddcd",
+      "bbox": [
+        103.59,
+        1.15,
+        104.1,
+        1.49
+      ],
+      "minZoom": 9,
+      "maxZoom": 15,
+      "license": "ODbL-1.0"
+    },
+    "osm": {
+      "url": "https://download.geofabrik.de/asia/malaysia-singapore-brunei-261101.osm.pbf",
+      "version": "261101",
+      "bytes": 252694201,
+      "md5": "f9bbc1b7b16548ed1b7cb3eba880f9dc",
+      "sha256": "c56a5d8a54aa0475e82e5315de51629c939d47dedd52d43833bbd07eabef9078",
+      "relation": 536780,
+      "license": "ODbL-1.0"
+    },
+    "layers": {
+      "earth": {
+        "type": 3,
+        "properties": []
+      },
+      "water": {
+        "type": 3,
+        "properties": []
+      },
+      "landuse": {
+        "type": 3,
+        "properties": [
+          "kind"
+        ],
+        "kinds": [
+          "park",
+          "forest",
+          "nature_reserve",
+          "wood",
+          "grass",
+          "grassland",
+          "garden",
+          "meadow",
+          "village_green",
+          "scrub"
+        ]
+      },
+      "roads": {
+        "type": 2,
+        "properties": [
+          "kind",
+          "name"
+        ],
+        "kinds": [
+          "highway",
+          "major_road",
+          "minor_road",
+          "path"
+        ]
+      },
+      "buildings": {
+        "type": 3,
+        "properties": [
+          "height",
+          "min_height"
+        ]
+      }
+    },
+    "tools": {
+      "extractor": "PMTiles CLI 1.31.2",
+      "mapbox-vector-tile": "2.2.0",
+      "osmium": "4.3.2",
+      "pmtiles": "3.8.1",
+      "protobuf": "6.33.6",
+      "python": "3.13.16",
+      "shapely": "2.2.0",
+      "zlib": "1.2.12"
+    },
+    "trees": {
+      "count": 5154,
+      "extent": 4096,
+      "tiles": 183,
+      "zoom": 15
+    },
+    "boundaryRelationVersion": 78,
+    "files": {
+      "basemap.pmtiles": {
+        "bytes": 14063024,
+        "license": "ODbL-1.0",
+        "sha256": "0bfedce0829973d84ecd3933025751777ca9b9b0f1fd074d160b5f78611decc9",
+        "sourceUrl": "https://build.protomaps.com/20261106.pmtiles",
+        "sourceVersion": "20261106"
+      },
+      "trees.pmtiles": {
+        "bytes": 32534,
+        "license": "ODbL-1.0",
+        "sha256": "0797ca01b7f380e1d1572b4f35deca9ef2025b24a5afd3f12621f91441b6b98e",
+        "sourceUrl": "https://download.geofabrik.de/asia/malaysia-singapore-brunei-261101.osm.pbf",
+        "sourceVersion": "261101"
+      },
+      "country-mask.geojson": {
+        "bytes": 16110,
+        "license": "ODbL-1.0",
+        "sha256": "e3c44be98c9149f1fb5f1fae933cd95e1655c3cccfd1ca9110fce34da54c4a02",
+        "sourceUrl": "https://download.geofabrik.de/asia/malaysia-singapore-brunei-261101.osm.pbf",
+        "sourceVersion": "261101"
+      }
+    }
+  },
+  "protomaps": {
+    "attribution": "<a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">&copy; OpenStreetMap</a>",
+    "description": "Basemap layers derived from OpenStreetMap and Natural Earth"
+  },
+  "routing": {
+    "pins": {
+      "schema": 1,
+      "platform": "linux/amd64",
+      "ubuntu_image": "ubuntu:24.04@sha256:78d4744ead1f5b19b04d0df558ab182a5300903900755e515b2ca4d10eb2044d",
+      "apt_snapshot": "20261101T000000Z",
+      "osrm": {
+        "version": "26.11.0",
+        "url": "https://codeload.github.com/Project-OSRM/osrm-backend/tar.gz/refs/tags/v26.11.0",
+        "sha256": "d08387e3cb2faad4acdcfaca6ebdacc7faab16e73662c2a6a9558b7450908372"
+      },
+      "vcpkg": {
+        "commit": "d015e31e90838a4c9dfa3eed45979bc70d9357fc",
+        "url": "https://codeload.github.com/microsoft/vcpkg/tar.gz/d015e31e90838a4c9dfa3eed45979bc70d9357fc",
+        "sha256": "3621490b3fdabe0a357bc3199d2eb5344eac51ce223e243d0c596a3c15f1f43a"
+      },
+      "osm": {
+        "url": "https://download.geofabrik.de/asia/malaysia-singapore-brunei-261101.osm.pbf",
+        "bytes": 252694201,
+        "md5": "f9bbc1b7b16548ed1b7cb3eba880f9dc",
+        "sha256": "c56a5d8a54aa0475e82e5315de51629c939d47dedd52d43833bbd07eabef9078",
+        "bbox": [
+          103.58,
+          1.13,
+          104.1,
+          1.49
+        ]
+      },
+      "tools": {
+        "osmium": "1.16.0-1build1",
+        "cmake": {
+          "version": "3.31.8",
+          "url": "https://github.com/Kitware/CMake/releases/download/v3.31.8/cmake-3.31.8-linux-x86_64.tar.gz",
+          "sha256": "630615d8e98ac33eba7fbe472626dff5c899c85af3c024585ae109166a6909d0"
+        },
+        "ninja": "1.11.1-2",
+        "actionlint": {
+          "version": "1.7.7",
+          "archives": {
+            "darwin_arm64": "2693315b9093aeacb4ebd91a993fea54fc215057bf0da2659056b4bc033873db",
+            "linux_amd64": "023070a287cd8cccd71515fedc843f1985bf96c436b7effaecce67290e7e0757"
+          }
+        },
+        "bootstrap_ca_certificates": "20240203",
+        "bootstrap_openssl": "3.0.13-0ubuntu3",
+        "ubuntu_cmake": "3.28.3-1build7",
+        "bootstrap_suite": "noble"
+      }
+    },
+    "profileSha256": "37173c8f4d0c20ed3e2bdfd651822d802f2671152e1d4780967d24ef233e5dc6"
+  },
+  "downloads": [
+    {
+      "source": "mobile/scripts/map-assets-config.json",
+      "href": "/data-license/methods/map-assets/map-assets-config.json.txt",
+      "sha256": "2f64dd1537ed7d2b5c71f9d24865ca2cc0b708a7833859ef862fc49064f46d29",
+      "bytes": 2248
+    },
+    {
+      "source": "mobile/scripts/build-map-assets.py",
+      "href": "/data-license/methods/map-assets/build-map-assets.py.txt",
+      "sha256": "0469aa13203c6601e6ca189a15cde3811d82cf01d35a26c26f4448c672c563b7",
+      "bytes": 17551
+    },
+    {
+      "source": "mobile/scripts/pyproject.toml",
+      "href": "/data-license/methods/map-assets/pyproject.toml.txt",
+      "sha256": "495e90cf70b463143012b2ff35d85dc3b2c4ba179cdf7fd3e798f6ff937d3dfb",
+      "bytes": 185
+    },
+    {
+      "source": "mobile/scripts/uv.lock",
+      "href": "/data-license/methods/map-assets/uv.lock.txt",
+      "sha256": "131f0182da03319a14510cf954ca177fbe5940b001c1f0a6cc93eb485fa82b4e",
+      "bytes": 32416
+    },
+    {
+      "source": "mobile/scripts/.python-version",
+      "href": "/data-license/methods/map-assets/python-version.txt",
+      "sha256": "2d82946ffb2ecf549699ebb86ecbbe663bbc19d53c49c681a1a425f003f80ddb",
+      "bytes": 8
+    },
+    {
+      "source": "mobile/assets/map-assets/manifest.json",
+      "href": "/data-license/methods/map-assets/manifest.json.txt",
+      "sha256": "d9960cc476ca8a68dacb8a7180ec2cc9cbf379f154a6b80e4cd83dedfbf2a675",
+      "bytes": 8767
+    },
+    {
+      "source": "ops/routing/pins.json",
+      "href": "/data-license/methods/routing/pins.json.txt",
+      "sha256": "b263be95a1912e297015d0d711887c710310e2698ad369181286355b0f594ac9",
+      "bytes": 1737
+    },
+    {
+      "source": "ops/routing/foot.lua",
+      "href": "/data-license/methods/routing/foot.lua.txt",
+      "sha256": "37173c8f4d0c20ed3e2bdfd651822d802f2671152e1d4780967d24ef233e5dc6",
+      "bytes": 11607
+    },
+    {
+      "source": "ops/routing/foot.diff",
+      "href": "/data-license/methods/routing/foot.diff.txt",
+      "sha256": "1c07e6fb27cd32b7d8f492790d07c2fff34834d603e4dc0923d74a67d34f58f7",
+      "bytes": 623
+    },
+    {
+      "source": "ops/routing/build-release.py",
+      "href": "/data-license/methods/routing/build-release.py.txt",
+      "sha256": "642c5400ccd358f93bed43c281cdde97d177f99785909231d7107f7de34feec6",
+      "bytes": 7910
+    },
+    {
+      "source": "ops/routing/build-engine.sh",
+      "href": "/data-license/methods/routing/build-engine.sh.txt",
+      "sha256": "060dc63b6882ab965fd09428b08a908ff9078276be502042c913052961f9eb57",
+      "bytes": 2249
+    },
+    {
+      "source": "ops/routing/x64-linux-release.cmake",
+      "href": "/data-license/methods/routing/x64-linux-release.cmake.txt",
+      "sha256": "7667047d4dc6d539f576c29801b0d05dcb6340f8e2324418b5821aabafe1311b",
+      "bytes": 165
+    },
+    {
+      "source": "ops/routing/build-release.sh",
+      "href": "/data-license/methods/routing/build-release.sh.txt",
+      "sha256": "d962f86e0fbe63397debafd414ca23dc728958efb24f8f057099d6382858cc91",
+      "bytes": 480
+    },
+    {
+      "source": "ops/routing/Dockerfile.build",
+      "href": "/data-license/methods/routing/Dockerfile.build.txt",
+      "sha256": "a5f672f4a0859a4832ec83cab26a997e56f11846dd0249207095458ac72f1baf",
+      "bytes": 1759
+    }
+  ]
+}

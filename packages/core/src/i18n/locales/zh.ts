@@ -114,6 +114,19 @@ const zh: Record<keyof typeof en, string> = {
   'nearby.loadingMap': '正在加载地图...',
 
   // Map
+  'map.searchItems': '搜索物品',
+  'map.layers': '地图图层',
+  'map.locate': '前往我的位置',
+  'map.camera': '打开相机',
+  'map.close': '关闭',
+  'map.pointsUnavailable': '回收点没加载出来',
+  'map.retry': '重试',
+  'map.locationDenied': '定位权限未开启。请到设置中允许使用定位。',
+  'map.locationUnavailable': '暂时找不到您的位置，请再试一次。',
+  'map.locationOutsideSingapore': '您目前不在新加坡。地图只显示新加坡的回收点。',
+  'map.straightLine': '直线',
+  'map.dataLicense': '地图数据与使用许可',
+  'map.overview': '新加坡回收地图',
   'map.youAreHere': '您在这里',
   'map.navigate': '导航',
 
@@ -166,6 +179,14 @@ const zh: Record<keyof typeof en, string> = {
   "bcrs.classifyReason": "这类饮料容器属于押金回收范围。在新加坡购买、印有押金标志（10¢ SG RETURN）的，可送到退还点退 S$0.10，能否退款由回收机扫描条形码决定。没有押金标志或在境外购买的，冲洗后放进蓝色回收箱。",
   'classify.notSureReason': '现有信息不足，无法安全确定回收渠道。',
   'classify.notSurePreparation': '请提供更清晰的照片或描述，并完整展示物品。',
+
+  'camera.deniedHint': '您可以关闭相机，改用搜索栏输入物品。',
+  'camera.capture': '拍照',
+  'camera.backToCamera': '回到取景',
+  'camera.cancel': '取消识别',
+  'answer.expand': '展开答案',
+  'answer.collapse': '收起答案',
+  'answer.nearbyBlueBins': '附近的蓝色回收桶',
 };
 
 export default zh;

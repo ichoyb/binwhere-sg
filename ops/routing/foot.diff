@@ -1,0 +1,19 @@
+--- upstream/profiles/foot.lua
++++ ops/routing/foot.lua
+@@ -225,6 +225,16 @@
+ 
+ -- main entry point for processsing a way
+ function process_way(profile, way, result, relations)
++  if way:get_value_by_key('route') == 'ferry' then
++    return
++  end
++  if way:get_value_by_key('highway') == 'service' then
++    local layer = tonumber(way:get_value_by_key('layer'))
++    if (layer and layer < 0) or way:get_value_by_key('tunnel') == 'yes' then
++      return
++    end
++  end
++
+   -- the intial filtering of ways based on presence of tags
+   -- affects processing times significantly, because all ways
+   -- have to be checked.

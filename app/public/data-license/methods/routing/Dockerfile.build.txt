@@ -1,0 +1,31 @@
+FROM ubuntu:24.04@sha256:78d4744ead1f5b19b04d0df558ab182a5300903900755e515b2ca4d10eb2044d
+ARG BUILD_LABEL
+LABEL binwhere-run="${BUILD_LABEL}"
+ENV DEBIAN_FRONTEND=noninteractive
+RUN printf '%s\n' 'Types: deb' 'URIs: http://archive.ubuntu.com/ubuntu/' \
+      'Suites: noble' 'Components: main' \
+      'Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg' \
+      > /etc/apt/sources.list.d/ubuntu.sources \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates=20240203 openssl=3.0.13-0ubuntu3 \
+    && printf '%s\n' 'Types: deb' \
+      'URIs: https://snapshot.ubuntu.com/ubuntu/20261101T000000Z/' \
+      'Suites: noble noble-updates noble-backports noble-security' \
+      'Components: main restricted universe multiverse' \
+      'Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg' \
+      > /etc/apt/sources.list.d/ubuntu.sources \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       autoconf automake build-essential ca-certificates openssl curl git libtool pkg-config \
+       unzip zip tar python3 patchelf iproute2 systemd \
+       osmium-tool=1.16.0-1build1 cmake=3.28.3-1build7 ninja-build=1.11.1-2 \
+    && rm -rf /var/lib/apt/lists/*
+RUN curl --fail --location --silent --show-error \
+      https://github.com/Kitware/CMake/releases/download/v3.31.8/cmake-3.31.8-linux-x86_64.tar.gz \
+      -o /tmp/cmake.tar.gz \
+    && printf '%s  %s\n' 630615d8e98ac33eba7fbe472626dff5c899c85af3c024585ae109166a6909d0 /tmp/cmake.tar.gz | sha256sum -c - \
+    && mkdir /opt/cmake && tar -xzf /tmp/cmake.tar.gz --strip-components=1 -C /opt/cmake \
+    && rm /tmp/cmake.tar.gz
+ENV VCPKG_FORCE_SYSTEM_BINARIES=1 VCPKG_DISABLE_METRICS=1
+ENV PATH="/opt/cmake/bin:${PATH}"
+WORKDIR /repo

@@ -1,10 +1,15 @@
 import {
   API_V1_PATHS,
+  API_V2_PATHS,
   ApiErrorResponseSchema,
+  ApiV2ErrorResponseSchema,
   ClassifyRequestSchema,
   ClassifyResultSchema,
   NearbyQuerySchema,
   NearbyResponseSchema,
+  PointsResponseSchema,
+  type ApiV2ErrorCode,
+  type PointsResponse,
   type ApiErrorCode,
   type ClassifyRequest,
   type ClassifyResult,
@@ -69,7 +74,7 @@ export class ApiError extends Error {
   }
 }
 
-export type ApiEndpoint = 'classify' | 'nearby';
+export type ApiEndpoint = 'classify' | 'nearby' | 'points';
 
 /**
  * A server response this build could not parse against the v1 contract.
@@ -88,7 +93,7 @@ export interface ContractViolation {
 export type ContractViolationReporter = (violation: ContractViolation) => void;
 
 let reportContractViolation: ContractViolationReporter = (violation) => {
-  console.error('[api] v1 contract violation', violation);
+  console.error('[api] contract violation', violation);
 };
 
 /** Route violations to crash reporting; the default only logs, so tests stay SDK-free. */
@@ -110,10 +115,11 @@ function describeIssues(error: SchemaIssues): string[] {
 }
 
 /** Read the body as JSON, reporting a non-JSON body as a contract violation. */
-async function readJson(response: Response, endpoint: ApiEndpoint): Promise<unknown> {
+async function readJson(response: Response, endpoint: ApiEndpoint, signal?: AbortSignal): Promise<unknown> {
   try {
     return await response.json();
-  } catch {
+  } catch (error) {
+    if (signal?.aborted) throw error;
     reportContractViolation({
       endpoint,
       status: response.status,
@@ -164,6 +170,7 @@ async function toApiError(response: Response, endpoint: ApiEndpoint): Promise<Ap
 
 export async function classifyItem(
   params: ClassifyRequest,
+  signal?: AbortSignal,
 ): Promise<ClassifyResult> {
   const parsedRequest = ClassifyRequestSchema.safeParse(params);
   if (!parsedRequest.success) {
@@ -176,8 +183,10 @@ export async function classifyItem(
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(parsedRequest.data),
+      signal,
     });
   } catch (error) {
+    if (signal?.aborted) throw error;
     throw new ApiError(
       0,
       'NETWORK_ERROR',
@@ -189,7 +198,7 @@ export async function classifyItem(
     throw await toApiError(response, 'classify');
   }
 
-  return parseContract(ClassifyResultSchema, await readJson(response, 'classify'), response, 'classify');
+  return parseContract(ClassifyResultSchema, await readJson(response, 'classify', signal), response, 'classify');
 }
 
 export async function fetchNearby(
@@ -225,4 +234,34 @@ export function isRetryable(error: unknown): boolean {
     // The classify provider has already exhausted its own bounded retries. Running
     // the whole request again here doubles both upstream attempts and user latency.
     && error.code !== 'CLASSIFICATION_FAILED';
+}
+
+export class ApiV2Error extends Error {
+  constructor(public readonly status: number, public readonly code: ApiV2ErrorCode, message: string) {
+    super(message);
+    this.name = 'ApiV2Error';
+  }
+}
+
+export function buildPointsUrl(baseUrl: string = getApiBaseUrl()): string {
+  return `${baseUrl.replace(/\/+$/, '')}${API_V2_PATHS.points}`;
+}
+
+export type PointsUpdate = { status: 304 } | { status: 200; response: PointsResponse; etag: string | null };
+
+export async function fetchPoints(url: string, etag: string | null): Promise<PointsUpdate> {
+  const response = await fetch(url, {
+    headers: etag === null ? {} : { 'If-None-Match': etag },
+  });
+  if (response.status === 304) return { status: 304 };
+  const body = await readJson(response, 'points');
+  if (!response.ok) {
+    const error = parseContract(ApiV2ErrorResponseSchema, body, response, 'points');
+    throw new ApiV2Error(response.status, error.code, error.error);
+  }
+  return {
+    status: 200,
+    response: parseContract(PointsResponseSchema, body, response, 'points'),
+    etag: response.headers.get('ETag'),
+  };
 }

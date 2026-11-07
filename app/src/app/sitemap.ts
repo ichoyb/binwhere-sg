@@ -36,6 +36,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'yearly' as const,
       priority: 0.3,
     },
+    {
+      url: `${BASE}/data-license`,
+      lastModified: new Date('2026-11-07'),
+      changeFrequency: 'yearly' as const,
+      priority: 0.3,
+    },
     ...mediaArticles,
   ];
 }

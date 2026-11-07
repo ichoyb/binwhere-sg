@@ -138,6 +138,19 @@ const en = {
   'nearby.loadingMap': 'Loading map...',
 
   // Map
+  'map.searchItems': 'Search items',
+  'map.layers': 'Map layers',
+  'map.locate': 'Go to my location',
+  'map.camera': 'Open camera',
+  'map.close': 'Close',
+  'map.pointsUnavailable': "Recycling points didn't load",
+  'map.retry': 'Try again',
+  'map.locationDenied': 'Location access is off. Allow it in Settings to find your location.',
+  'map.locationUnavailable': "Couldn't get your location. Please try again.",
+  'map.locationOutsideSingapore': "You're outside Singapore. The map shows recycling points in Singapore.",
+  'map.straightLine': 'Straight line',
+  'map.dataLicense': 'Map data and licences',
+  'map.overview': 'Singapore recycling map',
   'map.youAreHere': 'You are here',
   'map.navigate': 'Navigate',
 
@@ -166,6 +179,14 @@ const en = {
   'donate.shoes': 'Shoes',
   'donate.stationery': 'Stationery',
   'donate.toys': 'Toys',
+
+  'camera.deniedHint': 'Close the camera and use the search bar to describe your item.',
+  'camera.capture': 'Take a photo',
+  'camera.backToCamera': 'Back to camera',
+  'camera.cancel': 'Cancel identification',
+  'answer.expand': 'Expand answer',
+  'answer.collapse': 'Collapse answer',
+  'answer.nearbyBlueBins': 'Nearby blue recycling bins',
 } as const;
 
 export default en;

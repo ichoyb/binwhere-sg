@@ -2,7 +2,7 @@ import React, { createContext, useContext, useMemo, useState } from 'react';
 import type { ClassifyResult, Locale, ScanHistoryItem } from '@binwhere/core';
 import { useHistory } from '../hooks/useHistory';
 import { useLocale } from '../hooks/useLocale';
-import { useGeolocation, type UserLocation } from '../hooks/useGeolocation';
+import { useGeolocation, type LocationResult, type UserLocation } from '../hooks/useGeolocation';
 
 interface AppStateValue {
   locale: Locale;
@@ -15,7 +15,8 @@ interface AppStateValue {
   location: UserLocation | null;
   geoLoading: boolean;
   geoError: string | null;
-  requestLocation: () => Promise<UserLocation | null>;
+  requestLocation: () => Promise<LocationResult>;
+  readGrantedLocation: () => Promise<LocationResult | null>;
   classifyResult: ClassifyResult | null;
   setClassifyResult: (r: ClassifyResult | null) => void;
   capturedImage: string | null;
@@ -27,7 +28,7 @@ const AppStateContext = createContext<AppStateValue | null>(null);
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const { locale, setLocale, ready: localeReady } = useLocale();
   const { history, addToHistory, clearHistory, ready: historyReady } = useHistory();
-  const { location, loading: geoLoading, error: geoError, requestLocation } = useGeolocation();
+  const { location, loading: geoLoading, error: geoError, requestLocation, readGrantedLocation } = useGeolocation();
   const [classifyResult, setClassifyResult] = useState<ClassifyResult | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
@@ -44,6 +45,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       geoLoading,
       geoError,
       requestLocation,
+      readGrantedLocation,
       classifyResult,
       setClassifyResult,
       capturedImage,
@@ -61,6 +63,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       geoLoading,
       geoError,
       requestLocation,
+      readGrantedLocation,
       classifyResult,
       capturedImage,
     ],

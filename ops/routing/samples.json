@@ -1,0 +1,531 @@
+{
+  "snapshot_sha256": "7f63437e3dc8581128988aebc719f55f7ca520ff125d2299d7e9a71732ba793b",
+  "selection": "10 research pairs copied unchanged; five named malls and five HDB addresses by snapshot OBJECTID; supplemental origin is nearest other return-point at 200–800 m, ties by OBJECTID. Distances use equirectangular projection at midpoint latitude. No routing result used for selection.",
+  "pairs": [
+    {
+      "id": "01",
+      "category": "research",
+      "area": "Ang Mo Kio",
+      "origin": [
+        103.8454,
+        1.3691
+      ],
+      "destination": [
+        103.844373,
+        1.367978
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "destination_properties": {
+        "OBJECTID": "3038",
+        "NAME": "Block 203 Ang Mo Kio Ave 3",
+        "FULLADDRESS": "203 Ang Mo Kio Ave 3, 560203",
+        "ADDRESSPOSTALCODE": "560203"
+      }
+    },
+    {
+      "id": "02",
+      "category": "research",
+      "area": "Toa Payoh",
+      "origin": [
+        103.8496,
+        1.3346
+      ],
+      "destination": [
+        103.851,
+        1.3336
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "destination_properties": {
+        "OBJECTID": "1144",
+        "NAME": "SHENG SIONG BLK 181 TOA PAYOH LORONG 4",
+        "FULLADDRESS": "BLK 181 TOA PAYOH LORONG 4 #01-602, 310181",
+        "ADDRESSPOSTALCODE": "310181",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      }
+    },
+    {
+      "id": "03",
+      "category": "research",
+      "area": "Tampines",
+      "origin": [
+        103.9452,
+        1.3532
+      ],
+      "destination": [
+        103.94467,
+        1.352457
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "destination_properties": {
+        "OBJECTID": "2807",
+        "NAME": "FairPrice Tampines Mall",
+        "FULLADDRESS": "4 Tampines Central 5 #B1-12 Tampines Mall (529510)",
+        "ADDRESSPOSTALCODE": "529510"
+      }
+    },
+    {
+      "id": "04",
+      "category": "research",
+      "area": "Bedok",
+      "origin": [
+        103.9323,
+        1.3268
+      ],
+      "destination": [
+        103.9289,
+        1.332236
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "destination_properties": {
+        "OBJECTID": "2883",
+        "NAME": "Blk 514, Bedok North Ave 2",
+        "FULLADDRESS": "Blk 514, Bedok North Ave 2, 460513",
+        "ADDRESSPOSTALCODE": "460513"
+      }
+    },
+    {
+      "id": "05",
+      "category": "research",
+      "area": "Punggol",
+      "origin": [
+        103.9023,
+        1.4052
+      ],
+      "destination": [
+        103.90275029993946,
+        1.3854070756769141
+      ],
+      "snapshot_file": "ewaste-recycling-points.json.gz",
+      "destination_properties": {
+        "OBJECTID": 20375,
+        "NAME": "NEA Producer Responsibility Scheme - ALBA E-waste Recycling Programme",
+        "ADDRESSBLOCKHOUSENUMBER": null,
+        "ADDRESSBUILDINGNAME": "FAIRPRICE @ RIVERVALE PLAZA",
+        "ADDRESSFLOORNUMBER": null,
+        "ADDRESSPOSTALCODE": "540118",
+        "ADDRESSSTREETNAME": "118 RIVERVALE DR, RIVERVALE PLAZA, #01-08",
+        "ADDRESSUNITNUMBER": null,
+        "DESCRIPTION": "Bin collection; E-waste accepted: Batteries and Lamps only",
+        "HYPERLINK": "https://alba-ewaste.sg; https://go.gov.sg/e-waste",
+        "PHOTOURL": null,
+        "ACCESSRESTRICTION": "Public",
+        "LANDXADDRESSPOINT": 35726.8615,
+        "LANDYADDRESSPOINT": 40816.9043,
+        "INC_CRC": "80ABA98FB643A5A2",
+        "FMEL_UPD_D": "20211231094420"
+      }
+    },
+    {
+      "id": "06",
+      "category": "research",
+      "area": "Sengkang",
+      "origin": [
+        103.8956,
+        1.3897
+      ],
+      "destination": [
+        103.8949,
+        1.3918
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "destination_properties": {
+        "OBJECTID": "1315",
+        "NAME": "Cold Storage Compass One",
+        "FULLADDRESS": "1 Sengkang Square #B1-25 Compass One Shopping Centre, 545078",
+        "ADDRESSPOSTALCODE": "545078",
+        "OPENING_HOURS": "Mon - Sun:  08:00 AM - 10:00 PM"
+      }
+    },
+    {
+      "id": "07",
+      "category": "research",
+      "area": "Woodlands",
+      "origin": [
+        103.7861,
+        1.436
+      ],
+      "destination": [
+        103.8150104591437,
+        1.4466386192627299
+      ],
+      "snapshot_file": "ewaste-recycling-points.json.gz",
+      "destination_properties": {
+        "OBJECTID": 19939,
+        "NAME": "KGS E-waste Recycling Programme for Non-regulated E-waste",
+        "ADDRESSBLOCKHOUSENUMBER": null,
+        "ADDRESSBUILDINGNAME": "336A SEMBAWANG CRESCENT MSCP",
+        "ADDRESSFLOORNUMBER": null,
+        "ADDRESSPOSTALCODE": "751336",
+        "ADDRESSSTREETNAME": "336A SEMBAWANG CRESCENT",
+        "ADDRESSUNITNUMBER": null,
+        "DESCRIPTION": "Bin collection; E-waste accepted: Non-regulated products only; E.g. Small household appliances, gaming consoles, audio systems, power supplies",
+        "HYPERLINK": "https://www.kgs.com.sg/",
+        "PHOTOURL": null,
+        "ACCESSRESTRICTION": "Public",
+        "LANDXADDRESSPOINT": 25962.59473,
+        "LANDYADDRESSPOINT": 47587.47448,
+        "INC_CRC": "40028B80580D2D2F",
+        "FMEL_UPD_D": "20220509154022"
+      }
+    },
+    {
+      "id": "08",
+      "category": "research",
+      "area": "Yishun",
+      "origin": [
+        103.835,
+        1.4295
+      ],
+      "destination": [
+        103.84228,
+        1.42154
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "destination_properties": {
+        "OBJECTID": "511",
+        "NAME": "676C Yishun Ring Rd",
+        "FULLADDRESS": "676C Yishun Ring Rd, 763676",
+        "ADDRESSPOSTALCODE": "763676",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      }
+    },
+    {
+      "id": "09",
+      "category": "research",
+      "area": "Jurong West",
+      "origin": [
+        103.7045,
+        1.3435
+      ],
+      "destination": [
+        103.739371389964,
+        1.33375343199036
+      ],
+      "snapshot_file": "reuse-channels.json.gz",
+      "destination_properties": {
+        "NAME": "Cash Converters - Jurong East",
+        "DESCRIPTION": "Cash Converters is a place to buy and sell. Individuals can go to a counter to sell their goods, or browse and shop through their large selection of used and new goods.",
+        "ADDRESSBUILDINGNAME": "#01-315",
+        "ADDRESSBLOCKHOUSENUMBER": "135",
+        "ADDRESSPOSTALCODE": "600135",
+        "ADDRESSSTREETNAME": "Jurong Gateway Road",
+        "ACCEPTEDITEMS": "Baby and children's Items , Bags and accessories , Books, Clothing , Furniture , Household goods , ICT equipment , Other electrical appliances , Shoes , Stationery , Toys",
+        "REUSETYPE": "Resell",
+        "FULLADDRESS": "135 Jurong Gateway Road, #01-315"
+      }
+    },
+    {
+      "id": "10",
+      "category": "research",
+      "area": "Clementi",
+      "origin": [
+        103.765,
+        1.315
+      ],
+      "destination": [
+        103.79822639971725,
+        1.3017850640091186
+      ],
+      "snapshot_file": "ewaste-recycling-points.json.gz",
+      "destination_properties": {
+        "OBJECTID": 20334,
+        "NAME": "NEA Producer Responsibility Scheme - ALBA E-waste Recycling Programme",
+        "ADDRESSBLOCKHOUSENUMBER": null,
+        "ADDRESSBUILDINGNAME": "SHENG SIONG @ 88 TANGLIN HALT",
+        "ADDRESSFLOORNUMBER": null,
+        "ADDRESSPOSTALCODE": "141088",
+        "ADDRESSSTREETNAME": "88 TANGLIN HALT ROAD, #01-10",
+        "ADDRESSUNITNUMBER": null,
+        "DESCRIPTION": "Bin collection; E-waste accepted: Batteries and Lamps only",
+        "HYPERLINK": "https://alba-ewaste.sg; https://go.gov.sg/e-waste",
+        "PHOTOURL": null,
+        "ACCESSRESTRICTION": "Public",
+        "LANDXADDRESSPOINT": 24094.5577,
+        "LANDYADDRESSPOINT": 31570.3239,
+        "INC_CRC": "39F9701A90CD6F99",
+        "FMEL_UPD_D": "20220204175023"
+      }
+    },
+    {
+      "id": "mall-01",
+      "category": "mall",
+      "origin": [
+        103.8716,
+        1.353219
+      ],
+      "destination": [
+        103.8719,
+        1.3507
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "origin_properties": {
+        "OBJECTID": "1336",
+        "NAME": "Giant Serangoon Central Drive",
+        "FULLADDRESS": "Blk 266 Serangoon Central Drive #01-255, 550266",
+        "ADDRESSPOSTALCODE": "550266",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      },
+      "destination_properties": {
+        "OBJECTID": "1120",
+        "NAME": "FairPrice Nex Mall",
+        "FULLADDRESS": "23 Serangoon Central #03-42 Nex Mall , 556083",
+        "ADDRESSPOSTALCODE": "556083",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      }
+    },
+    {
+      "id": "mall-02",
+      "category": "mall",
+      "origin": [
+        103.85,
+        1.3496
+      ],
+      "destination": [
+        103.848945,
+        1.351084
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "origin_properties": {
+        "OBJECTID": "1142",
+        "NAME": "SHENG SIONG BLK 512 BISHAN STREET 13",
+        "FULLADDRESS": "BLK 512 BISHAN STREET 13 #01-524, 570512",
+        "ADDRESSPOSTALCODE": "570512",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      },
+      "destination_properties": {
+        "OBJECTID": "1135",
+        "NAME": "FairPrice Finest Junction 8",
+        "FULLADDRESS": "9 Bishan Place #B1-01 Junction 8 Shopping Centre (579837)",
+        "ADDRESSPOSTALCODE": "579837",
+        "OPENING_HOURS": "Mon - Sun:  07:00 AM - 11:00 PM"
+      }
+    },
+    {
+      "id": "mall-03",
+      "category": "mall",
+      "origin": [
+        103.7432,
+        1.33266
+      ],
+      "destination": [
+        103.7426,
+        1.3345
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "origin_properties": {
+        "OBJECTID": "2386",
+        "NAME": "Don Don Donki (Jurong East Mall)",
+        "FULLADDRESS": "50 Jurong Gateway Road, Jem, #02-24/26 & #03-27/29, 608549",
+        "ADDRESSPOSTALCODE": "608549",
+        "OPENING_HOURS": "Mon - Sun:  11:00 AM - 11:00 PM"
+      },
+      "destination_properties": {
+        "OBJECTID": "2169",
+        "NAME": "SCARLETT@WESTGATE",
+        "FULLADDRESS": "3 GATEWAY DRIVE, #B2-01 WESTGATE, 608532",
+        "ADDRESSPOSTALCODE": "608532",
+        "OPENING_HOURS": "Mon - Sun:  09:00 AM - 11:00 PM"
+      }
+    },
+    {
+      "id": "mall-04",
+      "category": "mall",
+      "origin": [
+        103.83406,
+        1.426585
+      ],
+      "destination": [
+        103.8361,
+        1.42832
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "origin_properties": {
+        "OBJECTID": "477",
+        "NAME": "757 Yishun Street 72",
+        "FULLADDRESS": "757 Yishun Street 72 , 760757",
+        "ADDRESSPOSTALCODE": "760757",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      },
+      "destination_properties": {
+        "OBJECTID": "2187",
+        "NAME": "FairPrice Northpoint City",
+        "FULLADDRESS": "1 Northpoint Drive, #B2-103 to 107 Northpoint City (768019)",
+        "ADDRESSPOSTALCODE": "768019",
+        "OPENING_HOURS": "Mon - Sun:  08:00 AM - 11:00 PM"
+      }
+    },
+    {
+      "id": "mall-05",
+      "category": "mall",
+      "origin": [
+        103.921439,
+        1.326125
+      ],
+      "destination": [
+        103.92331,
+        1.324801
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "origin_properties": {
+        "OBJECTID": "814",
+        "NAME": "Blk 63, Chai Chee Road",
+        "FULLADDRESS": "Blk 63, Chai Chee Road, 460063",
+        "ADDRESSPOSTALCODE": "460063",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      },
+      "destination_properties": {
+        "OBJECTID": "2457",
+        "NAME": "FairPrice Bedok Mall",
+        "FULLADDRESS": "311 New Upper Changi Road #B2-60 Bedok Mall (467360)",
+        "ADDRESSPOSTALCODE": "467360",
+        "OPENING_HOURS": "Mon - Sun:  08:00 AM - 11:00 PM"
+      }
+    },
+    {
+      "id": "hdb-01",
+      "category": "hdb",
+      "origin": [
+        103.69459,
+        1.3451
+      ],
+      "destination": [
+        103.69639,
+        1.34389
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "origin_properties": {
+        "OBJECTID": "2279",
+        "NAME": "831 Jurong West Street 81",
+        "FULLADDRESS": "831 Jurong West Street 81, 640831",
+        "ADDRESSPOSTALCODE": "640831",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      },
+      "destination_properties": {
+        "OBJECTID": "139",
+        "NAME": "715 Jurong West Street 71",
+        "FULLADDRESS": "715 Jurong West Street 71, 640715",
+        "ADDRESSPOSTALCODE": "640715",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      }
+    },
+    {
+      "id": "hdb-02",
+      "category": "hdb",
+      "origin": [
+        103.8351,
+        1.42938
+      ],
+      "destination": [
+        103.83317,
+        1.42935
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "origin_properties": {
+        "OBJECTID": "2347",
+        "NAME": "FairPrice Yishun MRT",
+        "FULLADDRESS": "301 Yishun Ave 2, #01-02 Yishun MRT Station (769093)",
+        "ADDRESSPOSTALCODE": "769093",
+        "OPENING_HOURS": "Mon - Sun:  07:00 AM - 11:30 PM"
+      },
+      "destination_properties": {
+        "OBJECTID": "140",
+        "NAME": "745 Yishun Street 72",
+        "FULLADDRESS": "745 Yishun Street 72, 760745",
+        "ADDRESSPOSTALCODE": "760745",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      }
+    },
+    {
+      "id": "hdb-03",
+      "category": "hdb",
+      "origin": [
+        103.69842,
+        1.34946
+      ],
+      "destination": [
+        103.697933,
+        1.347477
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "origin_properties": {
+        "OBJECTID": "440",
+        "NAME": "764 Jurong West Street 74",
+        "FULLADDRESS": "764 Jurong West Street 74, 640764",
+        "ADDRESSPOSTALCODE": "640764",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      },
+      "destination_properties": {
+        "OBJECTID": "146",
+        "NAME": "746 Jurong West Street 73",
+        "FULLADDRESS": "746 Jurong West Street 73, 640746",
+        "ADDRESSPOSTALCODE": "640746",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      }
+    },
+    {
+      "id": "hdb-04",
+      "category": "hdb",
+      "origin": [
+        103.72339,
+        1.32686
+      ],
+      "destination": [
+        103.72105,
+        1.32756
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "origin_properties": {
+        "OBJECTID": "167",
+        "NAME": "140 Corporation Drive",
+        "FULLADDRESS": "140 Corporation Drive, 610140",
+        "ADDRESSPOSTALCODE": "610140",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      },
+      "destination_properties": {
+        "OBJECTID": "147",
+        "NAME": "153 Yung Ho Rd",
+        "FULLADDRESS": "153 Yung Ho Rd, 610153",
+        "ADDRESSPOSTALCODE": "610153",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      }
+    },
+    {
+      "id": "hdb-05",
+      "category": "hdb",
+      "origin": [
+        103.705435,
+        1.344026
+      ],
+      "destination": [
+        103.70331,
+        1.344892
+      ],
+      "snapshot_file": "return-points.json.gz",
+      "origin_properties": {
+        "OBJECTID": "229",
+        "NAME": "682A Jurong West Central 1",
+        "FULLADDRESS": "682A Jurong West Central 1, 641682",
+        "ADDRESSPOSTALCODE": "641682",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      },
+      "destination_properties": {
+        "OBJECTID": "148",
+        "NAME": "678D Jurong West Street 64",
+        "FULLADDRESS": "678D Jurong West Street 64, 644678",
+        "ADDRESSPOSTALCODE": "644678",
+        "OPENING_HOURS": "Mon - Sun:  24 Hrs"
+      }
+    }
+  ],
+  "ferry": {
+    "id": "ang-mo-kio-ubin",
+    "origin": [
+      103.8454,
+      1.3691
+    ],
+    "destination": [
+      103.9701,
+      1.4045
+    ]
+  }
+}

@@ -10,15 +10,18 @@
     "export:android": "expo export --platform android",
     "export:ios": "expo export --platform ios",
     "typecheck": "tsc --noEmit",
-    "test:unit": "tsx eas.test.ts && tsx app.config.test.ts && tsx src/api/client.test.ts && tsx src/lib/history.test.ts && tsx src/lib/core-smoke.test.ts && tsx src/lib/scrub.test.ts && tsx ../packages/core/scripts/next-action.test.ts && tsx ../packages/core/scripts/v1-contract.ts --check",
+    "test:unit": "tsx scripts/check-map-assets.ts && tsx src/map/assets.test.ts && tsx src/map/points.test.ts && tsx src/map/camera.test.ts && tsx eas.test.ts && tsx app.config.test.ts && tsx src/api/client.test.ts && tsx src/lib/points-cache.test.ts && tsx src/lib/straight-line-distance.test.ts && tsx src/lib/history.test.ts && tsx src/lib/destination.test.ts && tsx src/lib/recognition-progress.test.ts && tsx src/lib/core-smoke.test.ts && tsx src/lib/scrub.test.ts && tsx ../packages/core/scripts/next-action.test.ts && tsx ../packages/core/scripts/v1-contract.ts --check && tsx ../packages/core/scripts/v2-contract.ts --check",
     "test:live": "tsx src/api/classify-live.test.ts",
-    "eas-build-pre-install": "npm ci --prefix ../packages/core"
+    "eas-build-pre-install": "npm ci --prefix ../packages/core",
+    "map:build": "uv run --project scripts --locked --managed-python python scripts/build-map-assets.py"
   },
   "dependencies": {
     "@binwhere/core": "file:../packages/core",
+    "@maplibre/maplibre-react-native": "11.5.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@sentry/react-native": "~8.28.0",
     "expo": "~58.0.23",
+    "expo-blur": "~58.0.5",
     "expo-camera": "~58.0.14",
     "expo-haptics": "~58.0.7",
     "expo-image-manipulator": "~58.0.16",
@@ -28,7 +31,6 @@
     "expo-status-bar": "~58.0.4",
     "react": "19.3.0",
     "react-native": "0.88.1",
-    "react-native-maps": "1.29.11",
     "react-native-safe-area-context": "~5.11.1"
   },
   "devDependencies": {

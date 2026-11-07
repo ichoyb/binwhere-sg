@@ -1,0 +1,15 @@
+export const dark = {
+  background: '#030b17',
+  glass: 'rgba(13, 24, 39, 0.88)',
+  glassBorder: 'rgba(195, 220, 246, 0.38)',
+  text: '#f5f8ff',
+  muted: '#c1cede',
+  accent: '#26e795',
+  onAccent: '#041b12',
+  body: 16,
+  caption: 14,
+  button: 52,
+  camera: 72,
+  radius: 26,
+  gap: 12,
+} as const;
