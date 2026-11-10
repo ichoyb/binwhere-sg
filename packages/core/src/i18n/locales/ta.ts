@@ -77,6 +77,23 @@ const ta: Record<keyof typeof en, string> = {
   'home.clearHistory': 'அழி',
   'home.privacy': 'தனியுரிமைக் கொள்கை',
   'home.support': 'உதவி',
+  'search.suggestions': 'பொருள் பரிந்துரைகள்',
+  'search.browseCategories': 'வகை வாரியாகப் பாருங்கள்',
+  'search.language': 'மொழி',
+  'about.title': 'செயலியைப் பற்றி',
+  'about.version': 'பதிப்பு',
+  'about.build': 'கட்டமைப்பு எண்',
+  'about.independent': 'BinWhere ஒரு சுயாதீனத் திட்டம். இதற்கு NEA, BCRS Ltd அல்லது பிற அமைப்புகளுடன் அதிகாரப்பூர்வத் தொடர்போ அவற்றின் ஆதரவோ இல்லை.',
+  'about.dataSources': 'தரவுகளின் ஆதாரங்கள்',
+  'about.sourceRecycling': 'நீல மறுசுழற்சித் தொட்டிகள், மின்-கழிவுகள்: தேசிய சுற்றுப்புற அமைப்பு (NEA), data.gov.sg வழியாக வெளியிடப்பட்டது.',
+  'about.sourceReuse': 'நன்கொடை மற்றும் பயன்படுத்திய பொருட்களுக்கான வழிகள்: NEA.',
+  'about.sourceTextile': 'பழைய துணி சேகரிப்புத் தொட்டிகள்: recycle.gov.sg.',
+  'about.sourceBcrs': 'BCRS திருப்பிக் கொடுக்கும் இடங்கள்: BCRS நிர்வாகியின் Return Right வரைபடம்.',
+  'about.sourceOsm': 'வரைபடங்கள், மரங்கள், நடைப்பாதைகள்: © OpenStreetMap contributors · ODbL.',
+  'about.aiService': 'AI சேவை',
+  'about.aiDescription': 'பொருளை அடையாளம் காணும்போது, உங்கள் படம் அல்லது உரை Tencent Cloud நிறுவனத்தின் AI சேவைக்கு அனுப்பப்படும். சிங்கப்பூருக்கு வெளியிலும் செயலாக்கம் நடைபெறலாம். Tencent Cloud தரவுகளை அதிகபட்சம் 30 நாட்கள் வைத்திருக்கும்; உள்ளடக்கத்தையும் மதிப்பாய்வு செய்யும்.',
+  'about.contact': 'தொடர்பு மின்னஞ்சல்',
+  'about.privacyAndSupport': 'தனியுரிமை மற்றும் உதவி',
 
   // Loading
   'loading.identifying': 'பொருளை அடையாளம் காணுகிறது...',
@@ -129,6 +146,13 @@ const ta: Record<keyof typeof en, string> = {
   'map.overview': 'சிங்கப்பூர் மறுசுழற்சி வரைபடம்',
   'map.youAreHere': 'நீங்கள் இங்கே இருக்கிறீர்கள்',
   'map.navigate': 'வழிசெலுத்து',
+  'map.accepts': 'ஏற்றுக்கொள்பவை: {items}',
+
+  'route.walkingRoute': 'நடைப்பாதை',
+  'route.destinationGap': 'நடைப்பாதை {name} அருகில் முடிகிறது. இறுதிப் பகுதிக்கு அங்குள்ள வழிகாட்டிப் பலகைகளைப் பின்பற்றுங்கள்.',
+  'route.notOnNetwork': 'உங்கள் இருப்பிடம் அல்லது செல்லும் இடத்திலிருந்து 50 மீட்டருக்குள் நடந்து செல்லக்கூடிய சாலை இல்லை. நடைப்பாதையை உருவாக்க முடியவில்லை.',
+  'route.notFound': 'நடந்து செல்லும் பாதை கிடைக்கவில்லை.',
+  'route.unavailable': 'தற்போது நடைப்பாதையை உருவாக்க முடியவில்லை.',
 
   // Shared
   'shared.tryAgain': 'மீண்டும் முயலவும்',

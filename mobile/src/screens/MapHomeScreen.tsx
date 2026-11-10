@@ -1,6 +1,6 @@
 import {
-  DATA_LICENSE_URL, formatDistance, isSingaporeCoordinates, t,
-  type Locale, type PointsLayer, type TranslationKey,
+  DATA_LICENSE_URL, ewasteAcceptTranslationKey, isSingaporeCoordinates, t,
+  type Locale, type PointsLayer, type RouteRequest, type TranslationKey,
 } from '@binwhere/core';
 import {
   Camera, Map, type CameraRef, type MapRef, type PressEvent, type ViewStateChangeEvent,
@@ -13,17 +13,21 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GlassButton, GlassPanel } from '../components/Glass';
 import { MapIcon } from '../components/MapIcon';
+import type { FeatureCollection, LineString } from 'geojson';
+import { WalkingRouteDetails } from '../components/WalkingRouteDetails';
+import { useWalkingRoute } from '../hooks/useWalkingRoute';
 import { usePoints } from '../hooks/usePoints';
 import { useReduceMotion } from '../hooks/useReduceMotion';
 import { reportError } from '../lib/reporting';
 import { straightLineKm } from '../lib/straight-line-distance';
 import { MapLayers, emptyMapData, type MapLabels } from '../map/MapLayers';
-import { cameraCommand, createMapCamera, islandCamera, type MapCameraTarget } from '../map/camera';
+import { cameraCommand, createMapCamera, destinationCamera, islandCamera, type MapCameraTarget } from '../map/camera';
 import { pointsToGeoJSON, pointTypes, type MapPoints } from '../map/points';
 import { mapStyle, neighborhoodMinZoom, pointColors } from '../map/style';
 import { useAppState } from '../state/AppState';
 import { dark } from '../theme/dark';
 import { SharedMapContext } from '../map/SharedMap';
+import { routeMapData } from '../map/route-data';
 
 interface Props {
   locale: Locale;
@@ -49,6 +53,15 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
   const [notice, setNotice] = useState<TranslationKey | null>(null);
   const [locating, setLocating] = useState(false);
   const [destination, setDestination] = useState<MapLabels>(emptyMapData);
+  const [route, setRoute] = useState<FeatureCollection<LineString>>(emptyMapData);
+  const [distance, setDistance] = useState<MapLabels>(emptyMapData);
+  const [homeRequest, setHomeRequest] = useState<RouteRequest | null>(null);
+  const [homeLanded, setHomeLanded] = useState<RouteRequest | null>(null);
+  const [controlsHeight, setControlsHeight] = useState(0);
+  const [routeLocating, setRouteLocating] = useState(false);
+  const locationRequest = useRef(0);
+  const cameraSettled = useRef<(() => void) | null>(null);
+  const walking = useWalkingRoute(homeRequest);
   const [answerLayers, setAnswerLayers] = useState<PointsLayer[] | null>(null);
   const reduceMotion = useReduceMotion();
   const { location, requestLocation } = useAppState();
@@ -65,7 +78,23 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => setSelected(null), [points]);
+  const clearHomeRoute = useCallback(() => {
+    locationRequest.current++;
+    setRouteLocating(false);
+    setHomeRequest(null);
+    setHomeLanded(null);
+    setRoute(emptyMapData);
+    setDistance(emptyMapData);
+    setDestination(emptyMapData);
+  }, []);
+
+  useEffect(() => {
+    setSelected(null);
+    if (homeVisible) clearHomeRoute();
+  }, [points, homeVisible, clearHomeRoute]);
+  useEffect(() => {
+    if (!homeVisible) { setSelected(null); clearHomeRoute(); }
+  }, [homeVisible, clearHomeRoute]);
 
   const move = useCallback(async (target: MapCameraTarget, durationMs = 1000) => {
     const camera = createMapCamera(mapRef.current!, cameraRef.current!);
@@ -73,7 +102,53 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
     else await camera.flyTo(target, durationMs);
   }, [reduceMotion]);
 
+  const moveAndWait = useCallback(async (target: MapCameraTarget, durationMs = 1000) => {
+    cameraSettled.current?.();
+    await move(target, durationMs);
+    await new Promise<void>((resolve) => { cameraSettled.current = resolve; });
+  }, [move]);
+
+  useEffect(() => {
+    if (!homeRequest || !controlsHeight || !ready) return;
+    let cancelled = false;
+    const { origin, destination: target } = homeRequest;
+    setDestination({ type: 'FeatureCollection', features: [{ type: 'Feature',
+      geometry: { type: 'Point', coordinates: [target.lng, target.lat] },
+      properties: { label: selected!.properties.name } }] });
+    void moveAndWait(destinationCamera([target.lng, target.lat], [origin.lng, origin.lat],
+      width, height, controlsHeight + Math.max(insets.bottom, dark.gap), insets.top)).then(() => {
+      if (!cancelled) setHomeLanded(homeRequest);
+    }).catch((error) => reportError(error, { operation: 'point-route-camera' }));
+    return () => { cancelled = true; };
+  }, [homeRequest, controlsHeight, ready, width, height, insets.bottom, insets.top, moveAndWait]);
+
+  useEffect(() => {
+    const data = homeRequest && homeLanded === homeRequest && walking.route.kind === 'success'
+      ? routeMapData(walking.route.response) : { route: emptyMapData, distance: emptyMapData };
+    if (homeRequest) { setRoute(data.route); setDistance(data.distance); }
+  }, [homeRequest, homeLanded, walking.route]);
+
+  const requestPointRoute = async () => {
+    clearHomeRoute();
+    const active = locationRequest.current;
+    const point = selected!;
+    setRouteLocating(true);
+    setNotice(null);
+    const located = await requestLocation();
+    if (active !== locationRequest.current) return;
+    setRouteLocating(false);
+    if (!located.location) {
+      setNotice(located.error === 'permission_denied' ? 'map.locationDenied' : 'map.locationUnavailable');
+    } else if (!isSingaporeCoordinates(located.location.lat, located.location.lng)) {
+      setNotice('map.locationOutsideSingapore');
+    } else {
+      setHomeRequest({ origin: located.location,
+        destination: { lng: point.geometry.coordinates[0], lat: point.geometry.coordinates[1] } });
+    }
+  };
+
   const locate = async () => {
+    clearHomeRoute();
     setLocating(true);
     setNotice(null);
     setSelected(null);
@@ -97,6 +172,7 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
   };
 
   const pressMap = async ({ nativeEvent }: NativeSyntheticEvent<PressEvent>) => {
+    clearHomeRoute();
     setSelected(null);
     setNotice(null);
     setLayersOpen(false);
@@ -119,7 +195,7 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
     setNeighborhood(nativeEvent.zoom >= neighborhoodMinZoom);
     if (nativeEvent.userInteraction) {
       setAttributionExpanded(false);
-      setSelected(null);
+      if (homeVisible && walking.route.kind !== 'success') { setSelected(null); clearHomeRoute(); }
     }
   };
   const label = (type: PointsLayer) => type === 'return_point' ? 'BCRS'
@@ -133,10 +209,15 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
       <Map ref={mapRef} style={StyleSheet.absoluteFill} mapStyle={mapStyle} attribution={false}
         logo={false} compass={false} accessibilityLabel={t(locale, 'map.overview')} accessibilityRole="image"
         onDidFinishLoadingMap={() => setReady(true)} onRegionIsChanging={cameraChanged}
-        onRegionDidChange={cameraChanged}
+        onRegionDidChange={(event) => {
+          cameraChanged(event);
+          const resolve = cameraSettled.current;
+          cameraSettled.current = null;
+          resolve?.();
+        }}
         onPress={(event) => { if (ready && homeVisible) void pressMap(event).catch(reportError); }}>
         <Camera ref={cameraRef} initialViewState={initial} />
-        <MapLayers points={points} visiblePointTypes={answerLayers ?? visibleTypes} user={user} destination={destination}
+        <MapLayers points={points} visiblePointTypes={answerLayers ?? visibleTypes} user={user} destination={destination} route={route} distance={distance}
           neighborhood={neighborhood} reduceMotion={reduceMotion} />
       </Map>
 
@@ -144,13 +225,13 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
         <View style={[styles.top, { top: insets.top + dark.gap }]} pointerEvents="box-none">
           <GlassButton label={t(locale, 'bcrs.guideItem')} style={styles.bcrs}
             onPress={() => {
-              setVisibleTypes(['return_point']); setSelected(null); setLayersOpen(false); onBcrsEntry();
+              clearHomeRoute(); setVisibleTypes(['return_point']); setSelected(null); setLayersOpen(false); onBcrsEntry();
             }}>
             <Text style={styles.bcrsText}>BCRS</Text>
           </GlassButton>
           <View style={styles.tools}>
             <GlassButton label={t(locale, 'map.layers')} selected={layersOpen}
-              onPress={() => { setLayersOpen(!layersOpen); setSelected(null); setNotice(null); }}>
+              onPress={() => { clearHomeRoute(); setLayersOpen(!layersOpen); setSelected(null); setNotice(null); }}>
               <MapIcon name="layers" />
             </GlassButton>
             <GlassButton label={t(locale, 'map.locate')} disabled={!ready || locating}
@@ -178,7 +259,8 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
           </GlassPanel>
         ) : null}
 
-        <View style={[styles.bottom, { bottom: Math.max(insets.bottom, dark.gap) }]} pointerEvents="box-none">
+        <View style={[styles.bottom, { bottom: Math.max(insets.bottom, dark.gap) }]} pointerEvents="box-none"
+          onLayout={(event) => setControlsHeight(event.nativeEvent.layout.height)}>
           <View style={styles.attributionRow} pointerEvents="box-none">
             <Pressable accessibilityLabel={t(locale, 'map.dataLicense')} accessibilityRole="link"
               onPress={openLicense} style={styles.attribution} hitSlop={14}>
@@ -212,19 +294,29 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
               </View>
               <Text style={styles.pointName}>{selected.properties.name}</Text>
               {selected.properties.address ? <Text style={styles.body}>{selected.properties.address}</Text> : null}
-              {inSingapore ? <Text style={styles.distance}>
-                {t(locale, 'map.straightLine')} · {formatDistance(straightLineKm(location, selected.geometry.coordinates))}
-              </Text> : null}
+              {selected.properties.ewasteAccepts ? <Text style={styles.body}>{t(locale, 'map.accepts').replace(
+                '{items}', selected.properties.ewasteAccepts.map((kind) => t(locale, ewasteAcceptTranslationKey(kind)))
+                  .join(locale === 'zh' ? '、' : ', '),
+              )}</Text> : null}
+              {inSingapore ? <WalkingRouteDetails locale={locale} name={selected.properties.name}
+                distanceKm={straightLineKm(location, selected.geometry.coordinates)}
+                route={walking.route} retry={walking.retry} /> : null}
+              {!homeRequest ? <Pressable accessibilityRole="button" accessibilityLabel={t(locale, 'route.walkingRoute')}
+                disabled={routeLocating} accessibilityState={{ disabled: routeLocating, busy: routeLocating }}
+                onPress={() => void requestPointRoute()} style={styles.routeButton}>
+                {routeLocating ? <ActivityIndicator color={dark.accent} /> :
+                  <Text style={styles.retry}>{t(locale, 'route.walkingRoute')}</Text>}
+              </Pressable> : null}
             </GlassPanel>
           ) : null}
           <GlassPanel style={styles.searchBar}>
             <Pressable accessibilityLabel={t(locale, 'map.searchItems')} accessibilityRole="button"
-              onPress={onSearch} style={styles.search}>
+              onPress={() => { clearHomeRoute(); setSelected(null); onSearch(); }} style={styles.search}>
               <MapIcon name="search" />
               <Text style={[styles.body, styles.searchText]}>{t(locale, 'map.searchItems')}</Text>
             </Pressable>
             <Pressable accessibilityLabel={t(locale, 'map.camera')} accessibilityRole="button"
-              onPress={onCamera} style={styles.camera}>
+              onPress={() => { clearHomeRoute(); setSelected(null); onCamera(); }} style={styles.camera}>
               <MapIcon name="camera" accent />
             </Pressable>
           </GlassPanel>
@@ -236,7 +328,7 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
           <Text style={styles.caption}>{attributionExpanded ? '© OpenStreetMap' : 'ⓘ'}</Text>
         </Pressable>
       </View> : null}
-      <SharedMapContext.Provider value={{ ready, reduceMotion, width, height, move, setDestination, setAnswerLayers }}>
+      <SharedMapContext.Provider value={{ ready, reduceMotion, width, height, move, moveAndWait, setDestination, setRoute, setDistance, setAnswerLayers }}>
         {children}
       </SharedMapContext.Provider>
     </View>
@@ -268,7 +360,7 @@ const styles = StyleSheet.create({
   pointCard: { padding: 20, gap: 8 },
   typeRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   pointName: { color: dark.text, fontSize: 20, fontWeight: '700' },
-  distance: { color: dark.accent, fontSize: dark.caption, lineHeight: 20 },
+  routeButton: { minHeight: dark.button, justifyContent: 'center' },
   searchBar: { flexDirection: 'row', alignItems: 'center', borderRadius: 40, padding: 5 },
   search: { flex: 1, minHeight: dark.camera, flexDirection: 'row', alignItems: 'center', paddingLeft: 16, paddingRight: 8, gap: 12 },
   searchText: { flex: 1 },

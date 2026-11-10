@@ -2,8 +2,8 @@ import * as Sentry from '@sentry/react-native';
 import * as Localization from 'expo-localization';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, BackHandler, Modal, StyleSheet, View } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, BackHandler, StyleSheet, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
   buildBcrsGuideResult,
   normalizeLocale,
@@ -11,9 +11,10 @@ import {
   type ScanHistoryItem,
 } from '@binwhere/core';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
+import { SearchPanel } from './src/components/SearchPanel';
 import { initReporting } from './src/lib/reporting';
 import { AppStateProvider, useAppState } from './src/state/AppState';
-import { HomeScreen } from './src/screens/HomeScreen';
+import { AboutScreen } from './src/screens/AboutScreen';
 import { AnswerScreen } from './src/screens/AnswerScreen';
 import { CameraScreen } from './src/screens/CameraScreen';
 import { MapHomeScreen } from './src/screens/MapHomeScreen';
@@ -45,7 +46,9 @@ function Root() {
     capturedImage,
   } = useAppState();
 
-  const [view, setView] = useState<'home' | 'legacy' | 'camera' | 'answer'>('home');
+  const [view, setView] = useState<'home' | 'camera' | 'answer'>('home');
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   const goHome = useCallback(() => {
     setClassifyResult(null);
@@ -55,6 +58,14 @@ function Root() {
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (aboutOpen) {
+        setAboutOpen(false);
+        return true;
+      }
+      if (searchOpen) {
+        setSearchOpen(false);
+        return true;
+      }
       if (view !== 'home') {
         goHome();
         return true;
@@ -62,10 +73,11 @@ function Root() {
       return false;
     });
     return () => subscription.remove();
-  }, [goHome, view]);
+  }, [aboutOpen, goHome, searchOpen, view]);
 
   const handleClassified = useCallback(
     (result: ClassifyResult, imageUri: string | null) => {
+      setSearchOpen(false);
       setClassifyResult(result);
       setCapturedImage(imageUri);
       addToHistory(result, locale);
@@ -76,6 +88,7 @@ function Root() {
 
   const handleCategorySelect = useCallback(
     (result: ClassifyResult) => {
+      setSearchOpen(false);
       setClassifyResult(result);
       setCapturedImage(null);
       addToHistory(result, locale);
@@ -87,6 +100,7 @@ function Root() {
   const handleHistorySelect = useCallback(
     (item: ScanHistoryItem) => {
       if (!item.result) return;
+      setSearchOpen(false);
       setClassifyResult(item.result);
       setCapturedImage(null);
       setView('answer');
@@ -95,6 +109,7 @@ function Root() {
   );
 
   const handleBcrsEntry = useCallback(() => {
+    setSearchOpen(false);
     const result = buildBcrsGuideResult(locale);
     setClassifyResult(result);
     setCapturedImage(null);
@@ -111,23 +126,18 @@ function Root() {
 
   return (
     <View style={styles.mapRoot}>
-      <StatusBar style={view === 'legacy' ? 'dark' : 'light'} />
+      <StatusBar style="light" />
       <MapHomeScreen
         locale={locale}
         onBcrsEntry={handleBcrsEntry}
-        homeVisible={view === 'home'}
-        onSearch={() => setView('legacy')}
+        homeVisible={view === 'home' && !searchOpen}
+        onSearch={() => setSearchOpen(true)}
         onCamera={() => setView('camera')}
       >
-        <Modal
-          visible={view === 'legacy'}
-          presentationStyle="fullScreen"
-          animationType={view === 'answer' ? 'none' : 'slide'}
-          onRequestClose={goHome}
-        >
-          <SafeAreaView style={styles.safe}>
-            <StatusBar style="dark" />
-            <HomeScreen
+        {searchOpen ? (
+          <View style={StyleSheet.absoluteFill} accessibilityElementsHidden={aboutOpen}
+            importantForAccessibility={aboutOpen ? 'no-hide-descendants' : 'auto'}>
+            <SearchPanel
               locale={locale}
               onLocaleChange={setLocale}
               history={history}
@@ -136,10 +146,12 @@ function Root() {
               onClassified={handleClassified}
               onCategorySelect={handleCategorySelect}
               onBcrsEntry={handleBcrsEntry}
-              onClose={goHome}
+              onAbout={() => setAboutOpen(true)}
+              onClose={() => setSearchOpen(false)}
             />
-          </SafeAreaView>
-        </Modal>
+          </View>
+        ) : null}
+        {aboutOpen ? <AboutScreen locale={locale} onClose={() => setAboutOpen(false)} /> : null}
         {view === 'camera' ? <CameraScreen locale={locale} onClose={goHome}
           onClassified={handleClassified} /> : null}
         {view === 'answer' && classifyResult ? (
@@ -172,7 +184,6 @@ export default Sentry.wrap(App);
 
 const styles = StyleSheet.create({
   mapRoot: { flex: 1, backgroundColor: dark.background },
-  safe: { flex: 1, backgroundColor: colors.bg },
   loading: {
     flex: 1,
     alignItems: 'center',

@@ -39,11 +39,11 @@ export function destinationLayers(query: DestinationQuery): PointsLayer[] {
   switch (query.channel) {
     case 'blue_bin':
     case 'return_point':
-    case 'ewaste':
     case 'textile':
       return [query.channel];
     case 'donation':
       return query.acceptedItem ? [] : ['donation'];
+    case 'ewaste':
     case 'ewaste_battery':
     case 'lighting':
       return [];

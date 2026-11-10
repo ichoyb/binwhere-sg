@@ -1,5 +1,6 @@
 import type { NearbyChannel } from '@binwhere/core';
 import { formatReturnPointOpeningHours } from './bcrs';
+import { parseEwasteDescription } from './ewaste';
 
 function toTitleCase(value: string): string {
   return value.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
@@ -15,15 +16,8 @@ function parseDescriptionHtml(html: string): Record<string, string> {
   return attrs;
 }
 
-function parseAccepts(description: string): string {
-  const normalized = description.toLowerCase();
-  if (normalized.includes('all regulated')) return 'All regulated e-waste';
-  if (normalized.includes('non-regulated')) return 'Small appliances';
-  const parts: string[] = [];
-  if (normalized.includes('ict')) parts.push('ICT equipment');
-  if (normalized.includes('batter')) parts.push('Batteries');
-  if (normalized.includes('lamp')) parts.push('Lamps');
-  return parts.join(', ');
+function parseAccepts(description: string, objectId: unknown): string {
+  return parseEwasteDescription(description, objectId).accepts;
 }
 
 export function getPointDetails(properties: Record<string, unknown>, channel: NearbyChannel) {
@@ -67,7 +61,7 @@ export function getPointDetails(properties: Record<string, unknown>, channel: Ne
   }
 
   const ewasteDescription = (properties.DESCRIPTION as string) || '';
-  const accepts = isEwaste ? parseAccepts(ewasteDescription) : undefined;
+  const accepts = isEwaste ? parseAccepts(ewasteDescription, properties.OBJECTID) : undefined;
   const donationAccepts = isDonation
     ? property('ACCEPTEDITEMS') || undefined
     : undefined;

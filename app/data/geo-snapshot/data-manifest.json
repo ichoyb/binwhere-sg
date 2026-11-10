@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-19T14:08:55.889Z",
+  "generatedAt": "2026-11-07T17:48:53.606Z",
   "datasets": {
     "recyclingBins": {
       "outputFile": "recycling-bins.json",
@@ -22,9 +22,11 @@
       "retrievedAt": "2026-09-19T14:08:44.841Z",
       "upstreamUpdatedAt": "2025-11-08T10:11:56+08:00",
       "coverageStart": "2022-06-02T00:00:00+08:00",
-      "featureCount": 718,
+      "featureCount": 675,
       "minimumFeatureCount": 500,
-      "sha256": "9c5d5eab965eb8306be0733059ea6fe517ebe88890dcede976ca42ac2ec64a7d"
+      "sha256": "277606bb290a64acc9136184a9f135ac220fef75e20fefebb82cbb0ab4e3a4b8",
+      "sourceRecordCount": 718,
+      "excludedCollectionDriveCount": 43
     },
     "textile": {
       "outputFile": "textile-bins.json",

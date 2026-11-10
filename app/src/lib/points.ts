@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import type { PointsLayer, PointsResponse } from '@binwhere/core';
 import type { GeoJSONFeatureCollection } from './data-gov/shared/types';
 import { getPointDetails } from './point-details';
+import { getEwasteAccepts, parseEwasteDescription } from './ewaste';
 
 const LAYER_FILES = {
   blue_bin: 'recycling-bins.json',
@@ -27,12 +28,18 @@ export function getPointsData(): PointsResponse {
     textile: [],
     donation: [],
   };
+  const ewasteAccepts: NonNullable<PointsResponse['ewasteAccepts']> = [];
 
   for (const layer of Object.keys(LAYER_FILES) as PointsLayer[]) {
     const data = JSON.parse(readFileSync(join(directory, LAYER_FILES[layer]), 'utf8')) as GeoJSONFeatureCollection;
     layers[layer] = data.features.map((feature) => {
       const [lng, lat] = feature.geometry.coordinates;
       const { name, address } = getPointDetails(feature.properties, layer);
+      if (layer === 'ewaste') {
+        ewasteAccepts.push(getEwasteAccepts(parseEwasteDescription(
+          feature.properties.DESCRIPTION as string, feature.properties.OBJECTID,
+        ).items));
+      }
       return [lat, lng, name, address];
     });
   }
@@ -40,6 +47,7 @@ export function getPointsData(): PointsResponse {
   cached = {
     dataVersion: createHash('sha256').update(manifest).digest('hex'),
     layers,
+    ewasteAccepts,
   };
   return cached;
 }

@@ -8,6 +8,8 @@ import {
   NearbyQuerySchema,
   NearbyResponseSchema,
   PointsResponseSchema,
+  RouteRequestSchema,
+  RouteResponseSchema,
   type ApiV2ErrorCode,
   type PointsResponse,
   type ApiErrorCode,
@@ -15,6 +17,8 @@ import {
   type ClassifyResult,
   type NearbyQueryInput,
   type NearbyResponse,
+  type RouteRequest,
+  type RouteResponse,
 } from '@binwhere/core';
 
 export const DEFAULT_API_BASE = 'https://binwhere.sg';
@@ -74,10 +78,10 @@ export class ApiError extends Error {
   }
 }
 
-export type ApiEndpoint = 'classify' | 'nearby' | 'points';
+export type ApiEndpoint = 'classify' | 'nearby' | 'points' | 'route';
 
 /**
- * A server response this build could not parse against the v1 contract.
+ * A server response this build could not parse against its versioned contract.
  *
  * An installed app cannot be redeployed, so this is the one failure the
  * server side must hear about from the client: it means a web deploy broke
@@ -264,4 +268,53 @@ export async function fetchPoints(url: string, etag: string | null): Promise<Poi
     response: parseContract(PointsResponseSchema, body, response, 'points'),
     etag: response.headers.get('ETag'),
   };
+}
+
+export class RouteNetworkError extends Error {
+  constructor() {
+    super('Route network request failed');
+    this.name = 'RouteNetworkError';
+  }
+}
+
+export async function fetchRoute(params: RouteRequest, signal?: AbortSignal): Promise<RouteResponse> {
+  const request = RouteRequestSchema.safeParse(params);
+  if (!request.success) throw new ApiV2Error(400, 'INVALID_INPUT', 'Invalid route request');
+
+  let response: Response;
+  try {
+    response = await fetch(`${getApiBaseUrl()}${API_V2_PATHS.route}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request.data),
+      signal,
+    });
+  } catch {
+    if (signal?.aborted) {
+      const error = new Error('Route request cancelled');
+      error.name = 'AbortError';
+      throw error;
+    }
+    throw new RouteNetworkError();
+  }
+
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    if (signal?.aborted) {
+      const error = new Error('Route request cancelled');
+      error.name = 'AbortError';
+      throw error;
+    }
+  }
+  if (!response.ok) {
+    const parsed = ApiV2ErrorResponseSchema.safeParse(body);
+    if (parsed.success) throw new ApiV2Error(response.status, parsed.data.code, 'Route request failed');
+  } else {
+    const parsed = RouteResponseSchema.safeParse(body);
+    if (parsed.success) return parsed.data;
+  }
+  reportContractViolation({ endpoint: 'route', status: response.status, issues: ['<body>: invalid route response'] });
+  throw new ApiV2Error(response.ok ? 502 : response.status, 'INVALID_RESPONSE', 'Invalid route response');
 }

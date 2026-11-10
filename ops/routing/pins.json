@@ -44,5 +44,22 @@
     "bootstrap_openssl": "3.0.13-0ubuntu3",
     "ubuntu_cmake": "3.28.3-1build7",
     "bootstrap_suite": "noble"
+  },
+  "boost_math_overlay": {
+    "upstream_port_sha256": {
+      "build-old-libs.patch": "40bacf2d2c374251a60178fe501ef7d1a38b9f6985055cbb9f31a9a6ce91eab1",
+      "features.cmake": "ad44dfda60db04cfc0c6cd2cd9c6b6114cb613eed67bb6670bf8675b07062387",
+      "opt-random.diff": "5fc24dd00ba760c8e4a1e8819bfe3d88e9fe93d51f66aa2c5de40c4ed4b99cc9",
+      "portfile.cmake": "34cba4f5d1fcf5b734923f2f141a3f3c3114f925de4f5b9f6240e8da1c1bfa1f",
+      "vcpkg.json": "8ab32ad73819acaf0d8df478172d3e63ec029aeb6260832f6ce26e0b13aeccef"
+    },
+    "files_sha256": {
+      "boost_math_android.patch": "165eee4fadba845f5d052cd4347cd82dc3f58144f076f3ba695898bdc75596e6",
+      "build-old-libs.patch": "40bacf2d2c374251a60178fe501ef7d1a38b9f6985055cbb9f31a9a6ce91eab1",
+      "features.cmake": "ad44dfda60db04cfc0c6cd2cd9c6b6114cb613eed67bb6670bf8675b07062387",
+      "opt-random.diff": "5fc24dd00ba760c8e4a1e8819bfe3d88e9fe93d51f66aa2c5de40c4ed4b99cc9",
+      "portfile.cmake": "b1ae2b991bfda595194bdab520cc78e443e278203160f878a53e476c18ab4af8",
+      "vcpkg.json": "8ab32ad73819acaf0d8df478172d3e63ec029aeb6260832f6ce26e0b13aeccef"
+    }
   }
 }

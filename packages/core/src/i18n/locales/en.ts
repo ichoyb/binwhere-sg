@@ -77,6 +77,23 @@ const en = {
   'home.clearHistory': 'Clear',
   'home.privacy': 'Privacy Policy',
   'home.support': 'Support',
+  'search.suggestions': 'Suggestions',
+  'search.browseCategories': 'Browse categories',
+  'search.language': 'Language',
+  'about.title': 'About',
+  'about.version': 'Version',
+  'about.build': 'Build',
+  'about.independent': 'BinWhere is an independent project. It is not affiliated with or endorsed by NEA, BCRS Ltd or other organisations.',
+  'about.dataSources': 'Data sources',
+  'about.sourceRecycling': 'Blue recycling bins and e-waste: National Environment Agency (NEA), published via data.gov.sg.',
+  'about.sourceReuse': 'Donation and second-hand channels: NEA.',
+  'about.sourceTextile': 'Textile collection bins: recycle.gov.sg.',
+  'about.sourceBcrs': "BCRS return points: the BCRS operator's Return Right map.",
+  'about.sourceOsm': 'Maps, trees and walking routes: © OpenStreetMap contributors · ODbL.',
+  'about.aiService': 'AI service',
+  'about.aiDescription': "When you identify an item, your photo or text is sent to Tencent Cloud's AI service for processing. Processing may take place outside Singapore. Tencent Cloud retains the data for up to 30 days and performs content moderation.",
+  'about.contact': 'Contact email',
+  'about.privacyAndSupport': 'Privacy and support',
 
   // Loading
   'loading.identifying': 'Identifying item...',
@@ -153,6 +170,13 @@ const en = {
   'map.overview': 'Singapore recycling map',
   'map.youAreHere': 'You are here',
   'map.navigate': 'Navigate',
+  'map.accepts': 'Accepts: {items}',
+
+  'route.walkingRoute': 'Walking route',
+  'route.destinationGap': 'The route ends near {name}. Follow the signs for the last stretch.',
+  'route.notOnNetwork': 'There is no walkable road within 50 m of you or the destination, so a route cannot be generated.',
+  'route.notFound': 'No walking route found.',
+  'route.unavailable': 'A walking route is temporarily unavailable.',
 
   // Shared
   'shared.tryAgain': 'Try Again',

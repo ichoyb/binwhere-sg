@@ -13,7 +13,7 @@ for (const channel of Object.keys(CHANNEL_STATUS) as ChannelType[]) {
     assert.deepEqual(destinationLayers(query!), []);
   } else {
     assert.deepEqual(query, { channel });
-    assert.deepEqual(destinationLayers(query!), ['ewaste_battery', 'lighting'].includes(channel) ? [] : [channel]);
+    assert.deepEqual(destinationLayers(query!), ['ewaste', 'ewaste_battery', 'lighting'].includes(channel) ? [] : [channel]);
   }
   assert.deepEqual(optionalDestination(result), channel === 'blue_bin' ? { channel: 'blue_bin' } : null);
 }

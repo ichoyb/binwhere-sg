@@ -37,6 +37,12 @@ export const PointsLayerSchema = z.enum([
 
 export type PointsLayer = z.infer<typeof PointsLayerSchema>;
 
+export const EwasteAcceptSchema = z.enum([
+  'ict', 'battery', 'lamp', 'non_regulated', 'all_regulated',
+]);
+
+export type EwasteAccept = z.infer<typeof EwasteAcceptSchema>;
+
 export const PointsRowSchema = z.tuple([
   z.number().min(SINGAPORE_BOUNDS.minLat).max(SINGAPORE_BOUNDS.maxLat),
   z.number().min(SINGAPORE_BOUNDS.minLng).max(SINGAPORE_BOUNDS.maxLng),
@@ -57,7 +63,23 @@ export const PointsResponseSchema = z.object({
     + 'Ids are unique only within dataVersion and repeat for the same snapshot. '
     + 'Clients must not persist or compare ids across versions. Duplicate source records remain separate rows.',
   ),
-});
+  ewasteAccepts: z.array(z.array(EwasteAcceptSchema).min(1).refine(
+    (items) => items.every((item, index) => index === 0
+      || EwasteAcceptSchema.options.indexOf(items[index - 1]) < EwasteAcceptSchema.options.indexOf(item)),
+    'Kinds must be unique and in enum order',
+  ).refine(
+    (items) => !items.includes('all_regulated') || items.length === 1,
+    'all_regulated must appear alone',
+  )).optional().describe(
+    'Accepted e-waste kinds for layers.ewaste at the same row index. '
+    + 'When present, its length must equal layers.ewaste.length. Each entry is nonempty, '
+    + 'unique and ordered ict, battery, lamp, non_regulated, all_regulated. '
+    + 'all_regulated covers ict, battery, lamp, large_appliance and electric_mobility and must appear alone.',
+  ),
+}).refine(
+  (data) => data.ewasteAccepts === undefined || data.ewasteAccepts.length === data.layers.ewaste.length,
+  { message: 'ewasteAccepts must match layers.ewaste length', path: ['ewasteAccepts'] },
+);
 
 export type PointsResponse = z.infer<typeof PointsResponseSchema>;
 

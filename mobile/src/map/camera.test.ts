@@ -73,3 +73,16 @@ for (const [width, height] of [[375, 812], [402, 874], [440, 956]]) {
   assert.deepEqual(far, pointOnly, 'keep destination framing when both cannot fit at neighborhood zoom');
 }
 console.log('PASS destination framing reserves card space and fits nearby user or prioritizes destination');
+
+for (const cardHeight of [330, 464, 696]) {
+  const height = 874;
+  const topInset = 62;
+  const target = destinationCamera(destination, null, 402, height, cardHeight, topInset);
+  const mercatorY = (lat: number) => (1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2;
+  const north = (mercatorY(target.center[1]) - mercatorY(destination[1])) * 512 * 2 ** target.zoom;
+  const pitch = target.pitch * Math.PI / 180;
+  const screenY = height / 2 - north * Math.cos(pitch) / (1 + north * Math.sin(pitch) / (height * 1.5));
+  assert.ok(Math.abs(screenY - (height + topInset - cardHeight) / 2) < 1e-7);
+  assert.ok(screenY > topInset && screenY < height - cardHeight);
+}
+console.log('PASS native perspective projection keeps the destination above short, tall and expanded cards');

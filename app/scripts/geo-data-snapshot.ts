@@ -5,6 +5,7 @@ import { gzipSync, gunzipSync } from 'node:zlib';
 
 import { assertSnapshotFresh, GEO_DATA_POLICIES, sha256, validateGeoData } from './geo-data-quality';
 import { TEXTILE_MAXIMUM_AGE_DAYS } from './convert-textile-data';
+import { parseEwasteDescription } from '../src/lib/ewaste';
 
 export const GEO_DATA_FILES = {
   recyclingBins: 'recycling-bins.json',
@@ -30,6 +31,7 @@ export interface GeoDataManifestEntry {
   featureCount: number;
   minimumFeatureCount: number;
   sourceRecordCount?: number;
+  excludedCollectionDriveCount?: number;
   declaredFeatureCount?: number;
   excludedInventoryRecordCount?: number;
   invalidLocationRecordCount?: number;
@@ -68,6 +70,10 @@ function readManifest(directory: string): { text: string; value: GeoDataManifest
     assert.ok(Number.isInteger(entry.featureCount), `${key}: invalid feature count`);
     assert.ok(entry.sourceUrl && entry.publisher, `${key}: missing provenance`);
   }
+  const ewaste = value.datasets.ewaste;
+  assert.ok(Number.isInteger(ewaste.sourceRecordCount) && ewaste.sourceRecordCount! >= 0, 'ewaste: invalid source record count');
+  assert.ok(Number.isInteger(ewaste.excludedCollectionDriveCount) && ewaste.excludedCollectionDriveCount! >= 0, 'ewaste: invalid excluded collection drive count');
+  assert.equal(ewaste.sourceRecordCount, ewaste.featureCount + ewaste.excludedCollectionDriveCount!, 'ewaste: source, excluded and feature counts differ');
   const textile = value.datasets.textile;
   assert.equal(textile.maximumAgeDays, TEXTILE_MAXIMUM_AGE_DAYS, 'Textile snapshot age policy differs');
   assert.ok(textile.snapshotCapturedAt, 'Textile capture date is required');
@@ -88,6 +94,12 @@ function readVerifiedData(directory: string, compressed: boolean) {
     const data = JSON.parse(text);
     validateGeoData(data, GEO_DATA_POLICIES[key]);
     assert.equal(data.features.length, entry.featureCount, `${key}: manifest feature count mismatch`);
+    if (key === 'ewaste') {
+      for (const { properties } of data.features) {
+        const collection = parseEwasteDescription(properties.DESCRIPTION, properties.OBJECTID);
+        assert.notEqual(collection.service, 'collection_drive', `ewaste: collection drive OBJECTID ${properties.OBJECTID} is not allowed in the snapshot`);
+      }
+    }
     files.set(entry.outputFile, bytes);
   }
   return { manifest, files };

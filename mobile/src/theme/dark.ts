@@ -5,6 +5,7 @@ export const dark = {
   text: '#f5f8ff',
   muted: '#c1cede',
   accent: '#26e795',
+  accentSoft: 'rgba(38, 231, 149, 0.12)',
   onAccent: '#041b12',
   body: 16,
   caption: 14,

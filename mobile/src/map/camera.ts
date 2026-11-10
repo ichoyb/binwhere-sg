@@ -46,7 +46,7 @@ export function destinationCamera(
   const pitch = 55;
   const radians = pitch * Math.PI / 180;
   const screenOffset = (topInset - cardHeight) / 2;
-  const groundOffset = screenOffset / (Math.cos(radians) - screenOffset * Math.sin(radians) / (height * 1.5));
+  const groundOffset = screenOffset / (Math.cos(radians) + screenOffset * Math.sin(radians) / (height * 1.5));
   centerY -= groundOffset / (512 * 2 ** zoom);
   return {
     center: [centerX * 360 - 180, Math.atan(Math.sinh(Math.PI * (1 - 2 * centerY))) * 180 / Math.PI],

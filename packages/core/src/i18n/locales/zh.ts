@@ -77,6 +77,23 @@ const zh: Record<keyof typeof en, string> = {
   'home.clearHistory': '清除',
   'home.privacy': '隐私政策',
   'home.support': '帮助与反馈',
+  'search.suggestions': '物品建议',
+  'search.browseCategories': '按分类浏览',
+  'search.language': '语言',
+  'about.title': '关于',
+  'about.version': '版本号',
+  'about.build': '构建号',
+  'about.independent': 'BinWhere 是独立项目，与 NEA、BCRS Ltd 等机构没有隶属或背书关系。',
+  'about.dataSources': '数据来源',
+  'about.sourceRecycling': '蓝色回收桶、电子废物：新加坡国家环境局（NEA），经 data.gov.sg 发布。',
+  'about.sourceReuse': '捐赠和二手渠道：NEA。',
+  'about.sourceTextile': '旧衣回收箱：recycle.gov.sg。',
+  'about.sourceBcrs': 'BCRS 退还点：BCRS 运营方的 Return Right 地图。',
+  'about.sourceOsm': '地图、树木和步行路线：© OpenStreetMap contributors · ODbL。',
+  'about.aiService': 'AI 服务',
+  'about.aiDescription': '识别时，您的照片或文字会发送给腾讯云的 AI 服务处理。处理可能在新加坡以外进行，腾讯云最多保留 30 天，并会做内容审核。',
+  'about.contact': '联系邮箱',
+  'about.privacyAndSupport': '隐私与帮助',
 
   // Loading
   'loading.identifying': '正在识别物品...',
@@ -129,6 +146,13 @@ const zh: Record<keyof typeof en, string> = {
   'map.overview': '新加坡回收地图',
   'map.youAreHere': '您在这里',
   'map.navigate': '导航',
+  'map.accepts': '接收：{items}',
+
+  'route.walkingRoute': '步行路线',
+  'route.destinationGap': '路线到 {name} 附近为止，最后一段请看现场指示。',
+  'route.notOnNetwork': '您或目标附近 50 m 内没有可步行的道路，无法生成路线。',
+  'route.notFound': '找不到步行路线。',
+  'route.unavailable': '暂时无法生成步行路线。',
 
   // Shared
   'shared.tryAgain': '重试',

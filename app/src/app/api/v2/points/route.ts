@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { ApiV2ErrorResponseSchema, PointsResponseSchema, type ApiV2ErrorCode } from '@binwhere/core';
 import { getPointsData } from '@/lib/points';
@@ -31,7 +32,8 @@ export async function GET(request: NextRequest) {
     }
 
     const data = parsed.data;
-    const versionTag = `"${data.dataVersion}"`;
+    const body = JSON.stringify(data);
+    const versionTag = `"${createHash('sha256').update(body).digest('hex')}"`;
     const etag = `W/${versionTag}`;
     const headers = { ETag: etag, 'Cache-Control': CACHE_CONTROL };
     const unchanged = request.headers.get('if-none-match')?.split(',').some((value) => {
@@ -49,7 +51,7 @@ export async function GET(request: NextRequest) {
     });
     return unchanged
       ? new NextResponse(null, { status, headers })
-      : NextResponse.json(data, { headers });
+      : new NextResponse(body, { headers: { ...headers, 'Content-Type': 'application/json' } });
   } catch (error) {
     console.error('[api/v2/points] Error:', error);
     return fail('POINTS_DATA_UNAVAILABLE', 'Recycling point data is unavailable', 503);

@@ -1,4 +1,4 @@
-import { PointsLayerSchema, type PointsLayer, type PointsResponse } from '@binwhere/core';
+import { PointsLayerSchema, type EwasteAccept, type PointsLayer, type PointsResponse } from '@binwhere/core';
 import type { FeatureCollection, Point } from 'geojson';
 
 export const pointTypes = PointsLayerSchema.options;
@@ -8,6 +8,7 @@ export type MapPoints = FeatureCollection<Point, {
   name: string;
   address: string;
   dataVersion: string;
+  ewasteAccepts?: EwasteAccept[];
 }>;
 
 export function pointsToGeoJSON(response: PointsResponse): MapPoints {
@@ -18,7 +19,11 @@ export function pointsToGeoJSON(response: PointsResponse): MapPoints {
         type: 'Feature' as const,
         id: `${type}:${index}`,
         geometry: { type: 'Point' as const, coordinates: [longitude, latitude] },
-        properties: { type, name, address, dataVersion: response.dataVersion },
+        properties: {
+          type, name, address, dataVersion: response.dataVersion,
+          ...(type === 'ewaste' && response.ewasteAccepts !== undefined
+            ? { ewasteAccepts: response.ewasteAccepts[index] } : {}),
+        },
       }),
     )),
   };

@@ -81,13 +81,20 @@ async function main() {
   assert.equal(ids.size, Object.values(body.layers).reduce((sum, rows) => sum + rows.length, 0));
   const expectedVersion = createHash('sha256').update(readFileSync('data/geo-snapshot/data-manifest.json')).digest('hex');
   assert.equal(body.dataVersion, expectedVersion);
-  assert.equal(response.headers.get('etag'), `W/"${expectedVersion}"`);
+  const bodyHash = createHash('sha256').update(text).digest('hex');
+  assert.equal(response.headers.get('etag'), `W/"${bodyHash}"`);
   assert.equal(response.headers.get('cache-control'), 'private, no-cache');
   assert.ok(gzipSync(text).length <= 400_000);
   assert.equal(await (await call(200)).text(), text);
   console.log('PASS all five layers match snapshots, coordinates and implicit ids repeat, gzip <= 400 KB');
 
-  for (const tag of [response.headers.get('etag')!, `"older", ${response.headers.get('etag')}`, `"${expectedVersion}"`, '*']) {
+  const upgraded = await call(200, { 'if-none-match': `W/"${expectedVersion}"` });
+  const upgradedBody = PointsResponseSchema.parse(await upgraded.json());
+  assert.deepEqual(upgradedBody, body);
+  assert.equal(upgradedBody.ewasteAccepts!.length, body.layers.ewaste.length);
+  console.log('PASS manifest-based legacy ETag receives 200 with the complete response and e-waste kinds');
+
+  for (const tag of [response.headers.get('etag')!, `"older", ${response.headers.get('etag')}`, `"${bodyHash}"`, '*']) {
     const unchanged = await call(304, { 'if-none-match': tag });
     assert.equal(await unchanged.text(), '');
     assert.equal(unchanged.headers.get('etag'), response.headers.get('etag'));
@@ -116,6 +123,19 @@ async function main() {
   console.log('PASS seventh request is 429 with Retry-After; v1 buckets remain available');
 
   const data = getPointsData();
+  const originalName = data.layers.ewaste[0][2];
+  data.layers.ewaste[0][2] = `${originalName} changed`;
+  try {
+    const changed = await call(200, { 'if-none-match': response.headers.get('etag')! });
+    const changedText = await changed.text();
+    assert.equal(JSON.parse(changedText).dataVersion, expectedVersion);
+    assert.notEqual(changed.headers.get('etag'), response.headers.get('etag'));
+    assert.equal(changed.headers.get('etag'), `W/"${createHash('sha256').update(changedText).digest('hex')}"`);
+  } finally {
+    data.layers.ewaste[0][2] = originalName;
+  }
+  console.log('PASS response changes invalidate the body ETag while dataVersion stays the same');
+
   const original = data.layers.blue_bin[0][0];
   data.layers.blue_bin[0][0] = 90;
   try {

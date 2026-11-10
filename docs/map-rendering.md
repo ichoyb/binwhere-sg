@@ -71,8 +71,12 @@ Protomaps 的 `earth` 图层混有 Polygon 和用于标注的 Point。单点不�
 
 ## 答案取景与地图共用
 
-`SharedMapContext` 将同一个地图的就绪状态、减弱动态效果、相机移动和内存数据源更新提供给覆盖层。首页保留自己的图层选择；答案期间通过 `setAnswerLayers` 覆盖可见层，关闭答案后传 `null` 恢复首页选择。目的地独立清除，地图实例与当前相机保留。该 context 不请求 API。
+`SharedMapContext` 将同一个地图的就绪状态、减弱动态效果、相机移动和内存数据源更新提供给覆盖层。首页保留自己的图层选择；答案期间通过 `setAnswerLayers` 覆盖可见层，关闭答案后传 `null` 恢复首页选择。目的地独立清除，地图实例与当前相机保留。该 context 不请求 API。`setRoute` 更新 LineString FeatureCollection，`setDistance` 更新 `MapLabels` 距离气泡；两者与 `setDestination` 一起传入空集合即可清除。状态由 `MapHomeScreen` 持有并直接交给 `MapLayers`。
 
-`destinationCamera(destination, user, width, height, cardHeight, topInset)` 返回街区取景，不修改现有相机接口。答案卡先呈现，布局后测量实际高度，再将该高度用于取景，不延迟卡片出现。经纬度转换为归一化 Web Mercator 坐标，以屏幕宽度减去 112、可用高度减去卡片、顶部安全区及 144 作为两点取景空间。只有两点能在 zoom 14 及以上放入时才使用其中点，zoom 上限为 16.8；否则只取目标。倾角固定 55°，朝北。用原生地图的透视相机模型（相机屏幕距离为屏高的 1.5 倍）将中心向南移，使目标区域位于卡片上方的可见空间。相机指令仍通过 `createMapCamera` 补偿原生 pitch 换算。
+`destinationCamera(destination, user, width, height, cardHeight, topInset)` 返回街区取景，不修改现有相机接口。答案卡先呈现，布局后测量实际高度，再将该高度用于取景，不延迟卡片出现。经纬度转换为归一化 Web Mercator 坐标，以屏幕宽度减去 112、可用高度减去卡片、顶部安全区及 144 作为两点取景空间。只有两点能在 zoom 14 及以上放入时才使用其中点，zoom 上限为 16.8；否则只取目标。倾角固定 55°，朝北。用原生地图的透视相机模型（相机屏幕距离为屏高的 1.5 倍）将中心向南移，使目标区域位于卡片上方的可见空间。屏幕偏移 `s = (topInset - cardHeight) / 2` 对应的地面偏移为 `s / (cos(pitch) + s * sin(pitch) / (height * 1.5))`；正向投影再验证目标落在可见区域中点，包含展开卡片的高度。相机指令仍通过 `createMapCamera` 补偿原生 pitch 换算。
 
 有照片的答案先把底图切至 `islandCamera`，照片以 native driver 在 700 ms 内缩小并淡出，然后向取景落点发送 3000 ms 飞行。没有照片时直接从当前视角飞行。减弱动态效果通过已有 `jumpTo` 直接到落点。相机测试保护近处用户与目标的共同取景、远处用户不降低到全岛缩放，以及卡片空间预留。
+
+`SharedMapValue.moveAndWait(target, durationMs)` 在发出相机指令后等待原生 `onRegionDidChange`，用于确保路线在飞行结束或减弱动态效果的直接切换完成后出现。原有 `move` 仍只等待指令发出。`route-data.ts` 导出的 `routeMapData(response)` 接收 API 边界已解析的 `RouteResponse`，保留 `geometry` 原样，将 `formatDistance(distanceM / 1000)` 放在线段累计长度的一半处；只使用返回的路网几何，不连接用户、目标与吸附点。
+
+`mobile/src/lib/walking-route.ts` 导出的 `routeMidpoint(coordinates)` 按球面距离计算每段长度，累计到全线一半时在该段内插值，返回 `[longitude, latitude]`。零长度段保持原点。卡片内容、语言或展开状态改变高度后，答案按实测高度重新取景；首页路线按整个底部控件区域的实测高度取景。

@@ -9,7 +9,7 @@ import { scrubBreadcrumb, scrubEvent } from './scrub';
  * us itself. Sentry captures native crashes, unhandled JS errors and promise
  * rejections on its own; the two report functions add what it cannot see:
  * render errors caught by the ErrorBoundary, and a server response that no
- * longer matches the v1 contract this installed version was built against.
+ * longer matches the versioned contract this installed version was built against.
  *
  * Privacy: no PII, no performance tracing, no screenshots, and URLs are
  * scrubbed of coordinates before leaving the device (see scrub.ts).
@@ -94,11 +94,11 @@ export function reportError(error: unknown, context?: Record<string, unknown>): 
 }
 
 /**
- * Report a v1 contract violation: the server answered, the client could not
+ * Report a versioned contract violation: the server answered, the client could not
  * parse it. Grouped per endpoint so one bad deploy shows as one issue.
  */
 export function reportContractViolation(violation: ContractViolation): void {
-  const version = violation.endpoint === 'points' ? 'v2' : 'v1';
+  const version = violation.endpoint === 'points' || violation.endpoint === 'route' ? 'v2' : 'v1';
   if (!enabled) {
     console.error(`[reporting] (disabled) ${version} contract violation`, violation);
     return;

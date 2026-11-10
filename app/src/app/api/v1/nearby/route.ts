@@ -12,6 +12,7 @@ import {
   getReturnPointIndex,
 } from '@/lib/data-gov';
 import { getPointDetails } from '@/lib/point-details';
+import { queryNearby } from '@/lib/nearby';
 import { checkRateLimit, DEFAULT_LIMITS } from '@/lib/rate-limit';
 import { clientId, gridCell, logEvent } from '@/lib/telemetry';
 
@@ -25,15 +26,6 @@ function errorResponse(
     { code, error, ...(details === undefined ? {} : { details }) },
     { status },
   );
-}
-
-function matchesEwasteChannel(description: string, channel: string): boolean {
-  const normalized = description.toLowerCase();
-  if (normalized.includes('all regulated')) return true;
-  if (channel === 'ewaste') return true;
-  if (channel === 'ewaste_battery') return normalized.includes('batter');
-  if (channel === 'lighting') return normalized.includes('lamp');
-  return true;
 }
 
 export async function GET(request: NextRequest) {
@@ -107,32 +99,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const needsEwasteFilter = input.channel === 'ewaste_battery'
-      || input.channel === 'lighting';
-    const needsDonationFilter = isDonation && !!input.acceptedItem;
-    const queryLimit = needsEwasteFilter || needsDonationFilter
-      ? input.limit * 4
-      : input.limit;
-
-    const rawResults = index.queryRadius(
-      { latitude: input.lat, longitude: input.lng },
-      input.radius,
-      queryLimit,
-    );
-
-    let filtered = rawResults;
-    if (needsEwasteFilter) {
-      filtered = rawResults.filter((result) => {
-        const description = (result.properties.DESCRIPTION as string) || '';
-        return matchesEwasteChannel(description, input.channel);
-      }).slice(0, input.limit);
-    } else if (needsDonationFilter && input.acceptedItem) {
-      const acceptedItem = input.acceptedItem.toLowerCase();
-      filtered = rawResults.filter((result) => {
-        const accepted = ((result.properties.ACCEPTEDITEMS as string) || '').toLowerCase();
-        return accepted.includes(acceptedItem);
-      }).slice(0, input.limit);
-    }
+    const filtered = queryNearby(index, input);
 
     const parsedResponse = NearbyResponseSchema.safeParse({
       channel: input.channel,

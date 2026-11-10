@@ -1,0 +1,59 @@
+diff --git a/.drone/drone.sh b/.drone/drone.sh
+index 86dbf129f5..7fc9d61b11 100644
+--- a/.drone/drone.sh
++++ b/.drone/drone.sh
+@@ -51,8 +51,8 @@ echo '==================================> BEFORE_SCRIPT'
+ echo '==================================> SCRIPT'
+ 
+ echo "using $TOOLSET : : $COMPILER : <cxxflags>-std=$CXXSTD $OPTIONS ;" > ~/user-config.jam
+-(cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET && ./config_info_travis)
+-(cd libs/math/test && ../../../b2 toolset=$TOOLSET $TEST_SUITE define=$DEFINE)
++(cd libs/config/test && ../../../b2 print_config_info print_math_info toolset=$TOOLSET)
++(cd libs/math/test && ../../../b2 -j3 toolset=$TOOLSET $TEST_SUITE)
+ 
+ echo '==================================> AFTER_SUCCESS'
+ 
+diff --git a/include/boost/math/special_functions/detail/fp_traits.hpp b/include/boost/math/special_functions/detail/fp_traits.hpp
+index 7cdb12b188..7362d0fada 100644
+--- a/include/boost/math/special_functions/detail/fp_traits.hpp
++++ b/include/boost/math/special_functions/detail/fp_traits.hpp
+@@ -270,13 +270,7 @@ template<> struct fp_traits_non_native<double, double_precision>
+ 
+ // long double (64 bits) -------------------------------------------------------
+ 
+-#if defined(BOOST_NO_INT64_T) || defined(BOOST_NO_INCLASS_MEMBER_INITIALIZATION)\
+-   || defined(BOOST_BORLANDC) || defined(__CODEGEAR__) || (defined(__APPLE__) && defined(__aarch64__)) || defined(_MSC_VER)\
+-    || (defined(__GNUC__) && defined(__aarch64__) && defined(_WIN32))\
+-     || (defined(__GNUC__) && (defined(__arm__) || defined(__thumb__)))\
+-      || defined(__SYCL_DEVICE_ONLY__) || (LDBL_MANT_DIG == 53)
+-
+-static_assert(LDBL_MANT_DIG == 53, "Oops, assumption that long double is a 64-bit quantity is incorrect!!");
++#if LDBL_MANT_DIG == 53 || defined(__SYCL_DEVICE_ONLY__)
+ 
+ template<> struct fp_traits_non_native<long double, double_precision>
+ {
+@@ -305,14 +299,10 @@ template<> struct fp_traits_non_native<long double, double_precision>
+ 
+ // long double (>64 bits), x86 and x64 -----------------------------------------
+ 
+-#elif defined(__i386) || defined(__i386__) || defined(_M_IX86) \
+-    || defined(__amd64) || defined(__amd64__)  || defined(_M_AMD64) \
+-    || defined(__x86_64) || defined(__x86_64__) || defined(_M_X64)
++#elif LDBL_MANT_DIG == 64
+ 
+ // Intel extended double precision format (80 bits)
+ 
+-static_assert(LDBL_MANT_DIG == 64, "Oops, assumption that long double is an 80-bit quantity is incorrect!!");
+-
+ template<>
+ struct fp_traits_non_native<long double, extended_double_precision>
+ {
+@@ -440,8 +430,6 @@ struct fp_traits_non_native<long double, extended_double_precision>
+ 
+ // IEEE extended double precision format with 15 exponent bits (128 bits)
+ 
+-static_assert(LDBL_MANT_DIG == 113, "Oops, assumption that long double is a 128-bit quantity is incorrect!!");
+-
+ template<>
+ struct fp_traits_non_native<long double, extended_double_precision>
+ {

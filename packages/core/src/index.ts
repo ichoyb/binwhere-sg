@@ -57,6 +57,7 @@ export type {
   ApiV2ErrorCode,
   ApiV2ErrorResponse,
   PointsLayer,
+  EwasteAccept,
   PointsResponse,
   RouteRequest,
   RouteResponse,
@@ -66,6 +67,7 @@ export {
   ApiV2ErrorCodeSchema,
   ApiV2ErrorResponseSchema,
   PointsLayerSchema,
+  EwasteAcceptSchema,
   PointsRowSchema,
   PointsResponseSchema,
   RouteRequestSchema,
@@ -109,6 +111,7 @@ export {
 } from './bcrs';
 export type { ReturnPointOpeningHours } from './bcrs';
 export { mapItemToAcceptedItem } from './donation-mapping';
+export { ewasteAcceptTranslationKey } from './ewaste';
 export {
   BeverageEvidenceSchema,
   BEVERAGE_EVIDENCE_JSON_SCHEMA,

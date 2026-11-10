@@ -93,6 +93,34 @@ try {
     assert.throws(() => prepareGeoData(expired, prepared), /maximum is 366 days/);
   });
 
+  test('e-waste source, excluded and feature counts must agree', () => {
+    const broken = fixture('ewaste-counts');
+    editManifest(broken, (manifest) => { manifest.datasets.ewaste.sourceRecordCount!++; });
+    assert.throws(() => prepareGeoData(broken, prepared), /ewaste: source, excluded and feature counts differ/);
+    editManifest(broken, (manifest) => { delete manifest.datasets.ewaste.excludedCollectionDriveCount; });
+    assert.throws(() => prepareGeoData(broken, prepared), /ewaste: invalid excluded collection drive count/);
+  });
+
+  test('unknown e-waste descriptions and collection drives cannot enter a prepared snapshot', () => {
+    for (const [name, description, error] of [
+      ['unknown-description', 'Unknown collection', /OBJECTID 9876: unknown DESCRIPTION "Unknown collection"/],
+      ['collection-drive', 'E-waste collection drive; E-waste accepted: All regulated consumer products under First Schedule at https://go.gov.sg/prod-def-sl',
+        /ewaste: collection drive OBJECTID 9876 is not allowed in the snapshot/],
+    ] as const) {
+      const broken = fixture(name);
+      const file = path.join(broken, 'ewaste-recycling-points.json.gz');
+      const data = JSON.parse(gunzipSync(fs.readFileSync(file)).toString('utf8'));
+      data.features[0].properties.DESCRIPTION = description;
+      data.features[0].properties.OBJECTID = 9876;
+      const text = JSON.stringify(data);
+      fs.writeFileSync(file, gzipSync(text));
+      editManifest(broken, (manifest) => { manifest.datasets.ewaste.sha256 = sha256(text); });
+      const before = filesDigest(prepared);
+      assert.throws(() => prepareGeoData(broken, prepared), error);
+      assert.equal(filesDigest(prepared), before);
+    }
+  });
+
   test('failed data validation cannot replace the selected snapshot', () => {
     const selected = fixture('selected');
     const invalid = path.join(root, 'invalid-refresh');

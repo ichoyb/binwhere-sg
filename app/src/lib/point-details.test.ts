@@ -87,25 +87,28 @@ runTest('e-waste prefers NAME, then Name, then the existing default', () => {
     [{ Name: 'Legacy name' }, 'Legacy name'],
     [{}, 'E-Waste Point'],
   ] as const) {
-    assert.deepEqual(getPointDetails({ ...properties, ADDRESSSTREETNAME: 'Alexandra Road' }, 'ewaste'), {
-      name: expected, address: 'Alexandra Road', postalCode: '',
+    assert.deepEqual(getPointDetails({ ...properties, ADDRESSSTREETNAME: 'Alexandra Road',
+      DESCRIPTION: 'Bin collection; E-waste accepted: Batteries only' }, 'ewaste'), {
+      name: expected, address: 'Alexandra Road', postalCode: '', accepts: 'Batteries',
     });
   }
 });
 
-runTest('e-waste accepted-item labels retain the existing description rules', () => {
+runTest('e-waste accepted-item labels use the exact recognized source descriptions', () => {
   const descriptions = [
-    ['All regulated e-waste', 'All regulated e-waste'],
-    ['Non-regulated appliances', 'Small appliances'],
-    ['ICT equipment, batteries and lamps only', 'ICT equipment, Batteries, Lamps'],
-    ['Batteries only', 'Batteries'],
-    ['Lamps only', 'Lamps'],
-    ['Collection service', undefined],
+    ['Bin collection; E-waste accepted: ICT equipment, Batteries and Lamps only', 'ICT equipment, Batteries, Lamps'],
+    ['Bin collection; E-waste accepted: Batteries and Lamps only', 'Batteries, Lamps'],
+    ['Bin collection; E-waste accepted: Batteries only', 'Batteries'],
+    ['Manned collection (Contact staff for disposal); ; ; E-waste accepted: ICT equipment and Batteries only', 'ICT equipment, Batteries'],
+    ['Bin collection; E-waste accepted: Non-regulated products only; E.g. Small household appliances, gaming consoles, audio systems, power supplies', 'Small appliances'],
+    ['Manned collection (Contact staff for disposal); ; ; E-waste accepted: ICT equipment, Batteries and Lamps only', 'ICT equipment, Batteries, Lamps'],
+    ['Manned collection (Contact staff for disposal); ; ; E-waste accepted: Batteries and Lamps only', 'Batteries, Lamps'],
+    ['Drop-off and Bin collection; All regulated consumer products under First Schedule at https://go.gov.sg/prod-def-sl, Large Household Appliances, ICT Equipment, Portable Batteries, Lamps, Electric Mobility Devices', 'All regulated e-waste'],
   ] as const;
   for (const channel of ['ewaste', 'ewaste_battery', 'lighting'] as const) {
     for (const [DESCRIPTION, accepts] of descriptions) {
       assert.deepEqual(getPointDetails({ DESCRIPTION }, channel), {
-        name: 'E-Waste Point', address: '', postalCode: '', ...(accepts && { accepts }),
+        name: 'E-Waste Point', address: '', postalCode: '', accepts,
       });
     }
   }

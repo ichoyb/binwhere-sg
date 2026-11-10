@@ -166,6 +166,24 @@
             "donation"
           ],
           "description": "Each row has the implicit id \"<layer>:<zero-based row index>\". Ids are unique only within dataVersion and repeat for the same snapshot. Clients must not persist or compare ids across versions. Duplicate source records remain separate rows."
+        },
+        "ewasteAccepts": {
+          "description": "Accepted e-waste kinds for layers.ewaste at the same row index. When present, its length must equal layers.ewaste.length. Each entry is nonempty, unique and ordered ict, battery, lamp, non_regulated, all_regulated. all_regulated covers ict, battery, lamp, large_appliance and electric_mobility and must appear alone.",
+          "type": "array",
+          "items": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "ict",
+                "battery",
+                "lamp",
+                "non_regulated",
+                "all_regulated"
+              ]
+            }
+          }
         }
       },
       "required": [

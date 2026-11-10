@@ -1,14 +1,17 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ComponentRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
 import {
   ActivityIndicator, Animated, Linking, Pressable, ScrollView, Share, StyleSheet, Text, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  getFriendlyApiError, getFriendlyError, getResultShareText, formatDistance, isSingaporeCoordinates,
+  getFriendlyApiError, getFriendlyError, getResultShareText, isSingaporeCoordinates,
   LOW_CONFIDENCE_THRESHOLD, t, type ClassifyResult, type Locale, type NearbyPoint, type TranslationKey,
 } from '@binwhere/core';
 import { ApiError } from '../api/client';
 import { GlassPanel } from '../components/Glass';
+import { WalkingRouteDetails } from '../components/WalkingRouteDetails';
+import { useWalkingRoute } from '../hooks/useWalkingRoute';
+import { routeMapData } from '../map/route-data';
 import { automaticDestination, destinationLayers, findDestination, optionalDestination, type DestinationQuery } from '../lib/destination';
 import { reportError } from '../lib/reporting';
 import { destinationCamera, islandCamera } from '../map/camera';
@@ -32,15 +35,21 @@ export function AnswerScreen({ result, locale, photo, onClose, onScanAgain }: {
   onScanAgain: () => void;
 }) {
   const { requestLocation } = useAppState();
-  const { ready, reduceMotion, width, height, move, setDestination, setAnswerLayers } = useSharedMap();
+  const { ready, reduceMotion, width, height, move, moveAndWait, setDestination, setRoute, setDistance, setAnswerLayers } = useSharedMap();
   const insets = useSafeAreaInsets();
   const [expanded, setExpanded] = useState(false);
   const [query, setQuery] = useState<DestinationQuery | null>(() => automaticDestination(result));
   const [retry, setRetry] = useState(0);
   const [destination, setDestinationState] = useState<DestinationState>({ kind: 'idle' });
+  const [landed, setLanded] = useState<DestinationState | null>(null);
+  const routeTarget = useMemo(() => destination.kind === 'found'
+    ? { origin: destination.user, destination: { lat: destination.point.lat, lng: destination.point.lng } }
+    : null, [destination]);
+  const walking = useWalkingRoute(routeTarget);
   const [photoHidden, setPhotoHidden] = useState(false);
   const [framing, setFraming] = useState<{ destination: DestinationState; height: number } | null>(null);
   const cardRef = useRef<ComponentRef<typeof View>>(null);
+  const framedHeight = useRef(0);
   const photoScale = useRef(new Animated.Value(1)).current;
   const photoOpacity = useRef(new Animated.Value(1)).current;
   const optional = optionalDestination(result);
@@ -50,14 +59,19 @@ export function AnswerScreen({ result, locale, photo, onClose, onScanAgain }: {
 
   useEffect(() => () => {
     setDestination(emptyMapData);
+    setRoute(emptyMapData);
+    setDistance(emptyMapData);
     setAnswerLayers(null);
-  }, [setDestination, setAnswerLayers]);
+  }, [setDestination, setRoute, setDistance, setAnswerLayers]);
 
   useEffect(() => {
     if (!query) return;
     let cancelled = false;
     setAnswerLayers(destinationLayers(query));
     setDestination(emptyMapData);
+    setRoute(emptyMapData);
+    setDistance(emptyMapData);
+    setLanded(null);
     setDestinationState({ kind: 'loading' });
     void (async () => {
       try {
@@ -83,7 +97,14 @@ export function AnswerScreen({ result, locale, photo, onClose, onScanAgain }: {
       }
     })();
     return () => { cancelled = true; };
-  }, [query, retry, locale, requestLocation, setAnswerLayers, setDestination]);
+  }, [query, retry, locale, requestLocation, setAnswerLayers, setDestination, setRoute, setDistance]);
+
+  useEffect(() => {
+    const data = landed === destination && walking.route.kind === 'success'
+      ? routeMapData(walking.route.response) : { route: emptyMapData, distance: emptyMapData };
+    setRoute(data.route);
+    setDistance(data.distance);
+  }, [destination, landed, walking.route, setRoute, setDistance]);
 
   useLayoutEffect(() => {
     if (destination.kind === 'idle' || destination.kind === 'loading') return;
@@ -96,8 +117,9 @@ export function AnswerScreen({ result, locale, photo, onClose, onScanAgain }: {
     const island = islandCamera(width, height);
     const target = destination.kind === 'found' ? destinationCamera(
       [destination.point.lng, destination.point.lat], [destination.user.lng, destination.user.lat],
-      width, height, framing.height + insets.bottom + 12, insets.top,
+      width, height, framing.height + Math.max(insets.bottom, 12), insets.top,
     ) : island;
+    framedHeight.current = framing.height;
     if (destination.kind === 'found') setDestination({ type: 'FeatureCollection', features: [{
       type: 'Feature', geometry: { type: 'Point', coordinates: [destination.point.lng, destination.point.lat] },
       properties: { label: destination.point.name },
@@ -115,11 +137,24 @@ export function AnswerScreen({ result, locale, photo, onClose, onScanAgain }: {
       } else if (photo) {
         setPhotoHidden(true);
       }
-      if (!cancelled) await move(target, destination.kind === 'found' ? 3000 : 1000);
+      if (!cancelled) {
+        await moveAndWait(target, destination.kind === 'found' ? 3000 : 1000);
+        if (!cancelled) setLanded(destination);
+      }
     })().catch((error) => reportError(error, { operation: 'answer-map-camera' }));
     return () => { cancelled = true; photoScale.stopAnimation(); photoOpacity.stopAnimation(); };
-  }, [destination, ready, framing, reduceMotion, width, height, insets.top, insets.bottom,
-    move, photo, photoOpacity, photoScale, setDestination]);
+  }, [destination, ready, framing?.destination, reduceMotion, width, height, insets.top, insets.bottom,
+    move, moveAndWait, photo, photoOpacity, photoScale, setDestination]);
+
+  useEffect(() => {
+    if (landed !== destination || destination.kind !== 'found' || framing?.destination !== destination
+      || framing.height === framedHeight.current) return;
+    framedHeight.current = framing.height;
+    void move(destinationCamera([destination.point.lng, destination.point.lat],
+      [destination.user.lng, destination.user.lat], width, height,
+      framing.height + Math.max(insets.bottom, 12), insets.top), 400)
+      .catch((error) => reportError(error, { operation: 'answer-card-camera' }));
+  }, [landed, destination, framing, width, height, insets.bottom, insets.top, move]);
 
   const share = () => {
     void Share.share({ message: getResultShareText(result, locale) }).catch(reportError);
@@ -132,7 +167,11 @@ export function AnswerScreen({ result, locale, photo, onClose, onScanAgain }: {
       ]} /> : null}
       <View style={[styles.card, { bottom: Math.max(insets.bottom, 12), maxHeight: height - insets.top - 24 }]} pointerEvents="box-none">
         <GlassPanel>
-          <View ref={cardRef} collapsable={false}>
+          <View ref={cardRef} collapsable={false} onLayout={(event) => {
+            const cardHeight = event.nativeEvent.layout.height;
+            setFraming((current) => current?.destination === destination && current.height === cardHeight
+              ? current : { destination, height: cardHeight });
+          }}>
             <ScrollView style={{ maxHeight: height * (expanded ? 0.68 : 0.48) }} contentContainerStyle={styles.content}>
               <Pressable accessibilityRole="button" accessibilityLabel={t(locale, expanded ? 'answer.collapse' : 'answer.expand')}
                 accessibilityState={{ expanded }} onPress={() => setExpanded(!expanded)} style={styles.header}>
@@ -146,7 +185,8 @@ export function AnswerScreen({ result, locale, photo, onClose, onScanAgain }: {
                 <Text style={styles.name}>{t(locale, 'result.considerDonating')}</Text> : null}
               {destination.kind === 'found' ? <View style={styles.target}>
                 <Text style={styles.name}>{destination.point.name}</Text>
-                <Text style={styles.distance}>{t(locale, 'map.straightLine')} · {formatDistance(destination.point.distanceKm)}</Text>
+                <WalkingRouteDetails locale={locale} name={destination.point.name}
+                  distanceKm={destination.point.distanceKm} route={walking.route} retry={walking.retry} />
                 {destination.point.address ? <Text style={styles.body}>{destination.point.address}</Text> : null}
                 {destination.point.openingHours ? <Text style={styles.caption}>{t(locale, 'bcrs.openingHours')}: {destination.point.openingHours}</Text> : null}
               </View> : destination.kind === 'loading' ? <ActivityIndicator color={dark.accent}
@@ -232,7 +272,6 @@ const styles = StyleSheet.create({
   caption: { color: dark.muted, fontSize: 14, lineHeight: 20 },
   accent: { color: dark.accent, fontSize: 16, lineHeight: 23, fontWeight: '600' },
   target: { borderTopWidth: 1, borderColor: dark.glassBorder, paddingTop: 12, gap: 6 },
-  distance: { color: dark.accent, fontSize: 14, fontWeight: '600' },
   section: { borderTopWidth: 1, borderColor: dark.glassBorder, paddingTop: 12, gap: 8 },
   button: { minHeight: 52, justifyContent: 'center' },
   actions: { flexDirection: 'row', gap: 12, paddingHorizontal: 16, paddingBottom: 16 },

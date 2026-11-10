@@ -33,6 +33,19 @@ assert.deepEqual(pointsToGeoJSON({
 }), { type: 'FeatureCollection', features: [] });
 console.log('PASS v2 map points preserve rows, coordinates, types and snapshot-scoped ids');
 
+const withAccepts = pointsToGeoJSON({
+  ...response,
+  layers: { ...response.layers, ewaste: [response.layers.ewaste[0], [1.35, 103.85, 'Battery', 'F']] },
+  ewasteAccepts: [['ict', 'battery', 'lamp'], ['battery']],
+});
+assert.deepEqual(withAccepts.features.filter((feature) => feature.properties.type === 'ewaste')
+  .map((feature) => feature.properties.ewasteAccepts), [['ict', 'battery', 'lamp'], ['battery']]);
+for (const feature of withAccepts.features.filter((feature) => feature.properties.type !== 'ewaste')) {
+  assert.equal('ewasteAccepts' in feature.properties, false);
+}
+assert.equal('ewasteAccepts' in points.features.find((feature) => feature.properties.type === 'ewaste')!.properties, false);
+console.log('PASS e-waste kinds follow row indices, remain absent for older responses and never attach to other layers');
+
 for (const type of pointTypes) {
   const core = pointLayers([type]).find((layer) => layer.id === 'point-core')!;
   assert.deepEqual(core.filter, ['in', ['get', 'type'], ['literal', [type]]]);

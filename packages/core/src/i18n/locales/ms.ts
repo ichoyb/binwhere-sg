@@ -77,6 +77,23 @@ const ms: Record<keyof typeof en, string> = {
   'home.clearHistory': 'Kosongkan',
   'home.privacy': 'Dasar Privasi',
   'home.support': 'Bantuan',
+  'search.suggestions': 'Cadangan item',
+  'search.browseCategories': 'Semak mengikut kategori',
+  'search.language': 'Bahasa',
+  'about.title': 'Tentang',
+  'about.version': 'Versi',
+  'about.build': 'Nombor binaan',
+  'about.independent': 'BinWhere ialah projek bebas yang tidak mempunyai hubungan rasmi dengan atau mendapat sokongan daripada NEA, BCRS Ltd atau organisasi lain.',
+  'about.dataSources': 'Sumber data',
+  'about.sourceRecycling': 'Tong kitar semula biru dan e-sisa: Agensi Sekitaran Kebangsaan (NEA), diterbitkan melalui data.gov.sg.',
+  'about.sourceReuse': 'Saluran derma dan barangan terpakai: NEA.',
+  'about.sourceTextile': 'Tong pengumpulan pakaian terpakai: recycle.gov.sg.',
+  'about.sourceBcrs': 'Tempat pemulangan BCRS: peta Return Right oleh pengendali BCRS.',
+  'about.sourceOsm': 'Peta, pokok dan laluan berjalan kaki: © OpenStreetMap contributors · ODbL.',
+  'about.aiService': 'Perkhidmatan AI',
+  'about.aiDescription': 'Apabila anda mengenal pasti item, foto atau teks anda dihantar kepada perkhidmatan AI Tencent Cloud untuk diproses. Pemprosesan mungkin dilakukan di luar Singapura. Tencent Cloud menyimpan data sehingga 30 hari dan menjalankan semakan kandungan.',
+  'about.contact': 'E-mel perhubungan',
+  'about.privacyAndSupport': 'Privasi dan bantuan',
 
   // Loading
   'loading.identifying': 'Mengenal pasti item...',
@@ -129,6 +146,13 @@ const ms: Record<keyof typeof en, string> = {
   'map.overview': 'Peta kitar semula Singapura',
   'map.youAreHere': 'Anda di sini',
   'map.navigate': 'Navigasi',
+  'map.accepts': 'Menerima: {items}',
+
+  'route.walkingRoute': 'Laluan berjalan kaki',
+  'route.destinationGap': 'Laluan berakhir berhampiran {name}. Ikut papan tanda untuk bahagian terakhir.',
+  'route.notOnNetwork': 'Tiada jalan yang boleh dilalui dengan berjalan kaki dalam lingkungan 50 m dari anda atau destinasi. Laluan tidak dapat dijana.',
+  'route.notFound': 'Laluan berjalan kaki tidak ditemui.',
+  'route.unavailable': 'Laluan berjalan kaki tidak dapat dijana buat sementara waktu.',
 
   // Shared
   'shared.tryAgain': 'Cuba Lagi',

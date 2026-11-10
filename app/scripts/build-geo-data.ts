@@ -36,6 +36,7 @@ import {
   validateGeoData,
 } from './geo-data-quality';
 import { publishGeoSnapshot, type GeoDataManifest } from './geo-data-snapshot';
+import { convertEwasteData } from './convert-ewaste-data';
 
 const STAGING_DIR = path.join(
   __dirname,
@@ -119,17 +120,19 @@ async function buildAllData(): Promise<GeoDataManifest> {
     const geojson = await client.getGeoJSON(dataset.id);
     validateGeoData(geojson, dataset.policy);
 
-    const contentSha256 = writeGeoJson(dataset.outputFile, geojson);
+    const ewaste = dataset.manifestKey === 'ewaste' ? convertEwasteData(geojson) : null;
+    const output = ewaste ? ewaste.geojson : geojson;
+    const contentSha256 = writeGeoJson(dataset.outputFile, output);
     const outputPath = path.join(STAGING_DIR, dataset.outputFile);
     const retrievedAt = new Date().toISOString();
-    dataGovEntries[dataset.manifestKey] = dataGovManifestEntry(
-      dataset,
-      metadata,
-      geojson.features.length,
-      retrievedAt,
-      contentSha256,
-    );
-    logOutput(geojson.features.length, outputPath, startedAt);
+    dataGovEntries[dataset.manifestKey] = {
+      ...dataGovManifestEntry(dataset, metadata, output.features.length, retrievedAt, contentSha256),
+      ...(ewaste && {
+        sourceRecordCount: ewaste.sourceRecordCount,
+        excludedCollectionDriveCount: ewaste.excludedCollectionDriveCount,
+      }),
+    };
+    logOutput(output.features.length, outputPath, startedAt);
   }
 
   console.log('[build-geo-data] Converting textile bins...');
