@@ -19,6 +19,10 @@ export async function setItem<T>(key: string, value: T): Promise<void> {
   await AsyncStorage.setItem(key, JSON.stringify(value));
 }
 
+export async function removeItem(key: string): Promise<void> {
+  await AsyncStorage.removeItem(key);
+}
+
 /** Round-trip helper used by tests and optional call sites. */
 export async function roundTripJson<T>(key: string, value: T): Promise<T | null> {
   await setItem(key, value);

@@ -256,7 +256,7 @@ export default function DesktopShell({
             BinWhere AI identifies your item in seconds — with disposal guidance and navigation to {totalLocationCount.toLocaleString('en-SG')} recycling points across Singapore.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
-            {['BinWhere AI', '< 3s Recognition', '4 Languages'].map((tag) => (
+            {['BinWhere AI', '~3s Text Recognition', '4 Languages'].map((tag) => (
               <span key={tag} className="border border-white/15 text-xs text-gray-400 rounded-full px-3 py-1">{tag}</span>
             ))}
           </div>

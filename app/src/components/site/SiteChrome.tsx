@@ -60,7 +60,8 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             </nav>
           </div>
           <p className="mt-4 text-xs text-gray-400 text-center sm:text-left">
-            &copy; {new Date().getFullYear()} BinWhere. Data sourced from NEA &amp; data.gov.sg.
+            &copy; {new Date().getFullYear()} BinWhere. Data sourced from NEA &amp; data.gov.sg under the{' '}
+            <a href="https://data.gov.sg/open-data-licence" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#00A651] transition-colors">Singapore Open Data Licence</a>.
           </p>
         </div>
       </footer>

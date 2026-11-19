@@ -40,6 +40,7 @@ function Root() {
     addToHistory,
     clearHistory,
     historyReady,
+    locationReady,
     classifyResult,
     setClassifyResult,
     setCapturedImage,
@@ -116,7 +117,7 @@ function Root() {
     setView('answer');
   }, [locale, setCapturedImage, setClassifyResult]);
 
-  if (!localeReady || !historyReady) {
+  if (!localeReady || !historyReady || !locationReady) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator color={colors.neaGreen} size="large" />
@@ -131,6 +132,8 @@ function Root() {
         locale={locale}
         onBcrsEntry={handleBcrsEntry}
         homeVisible={view === 'home' && !searchOpen}
+        attributionAboveChildren={view === 'home' && searchOpen && !aboutOpen}
+        searchOpen={searchOpen}
         onSearch={() => setSearchOpen(true)}
         onCamera={() => setView('camera')}
       >
@@ -147,6 +150,7 @@ function Root() {
               onCategorySelect={handleCategorySelect}
               onBcrsEntry={handleBcrsEntry}
               onAbout={() => setAboutOpen(true)}
+              aboutOpen={aboutOpen}
               onClose={() => setSearchOpen(false)}
             />
           </View>

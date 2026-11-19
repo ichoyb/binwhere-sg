@@ -29,6 +29,7 @@ const BUNDLE_ID = 'sg.binwhere.app';
 
 /** English permission strings; zh-Hans / ms / ta versions live in ./locales. */
 const CAMERA_PERMISSION = 'BinWhere uses the camera to identify items for recycling guidance.';
+export const PHOTOS_PERMISSION = 'BinWhere uses the photo you choose to identify the item for recycling guidance.';
 const LOCATION_PERMISSION = 'BinWhere uses your location to find nearby recycling points in Singapore.';
 
 type CollectedDataType = NonNullable<
@@ -89,10 +90,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         image: '../app/public/icons/binwhere-logo.png',
         imageWidth: 200,
         resizeMode: 'contain',
-        backgroundColor: '#F5F7FA',
+        backgroundColor: '#030b17', // dark.background
       },
     ],
     'expo-localization',
+    'expo-web-browser',
+    // PHPicker needs no permission; keep the upload-check photo string and suppress the automatic microphone string.
+    ['expo-image-picker', { photosPermission: PHOTOS_PERMISSION, microphonePermission: false }],
     [
       'expo-camera',
       {
@@ -131,7 +135,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     orientation: 'portrait',
     // 1024×1024, no alpha — App Store rejects transparent icons.
     icon: './assets/icon-1024.png',
-    userInterfaceStyle: 'light',
+    userInterfaceStyle: 'dark',
     scheme: 'binwhere',
     // Native permission prompts in every language the app itself speaks.
     locales: {
@@ -150,6 +154,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       },
       infoPlist: {
         NSCameraUsageDescription: CAMERA_PERMISSION,
+        NSPhotoLibraryUsageDescription: PHOTOS_PERMISSION,
         NSLocationWhenInUseUsageDescription: LOCATION_PERMISSION,
         // Let system UI follow the device language even where the JS bundle
         // falls back to English.

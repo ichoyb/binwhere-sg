@@ -1,20 +1,12 @@
 import assert from 'node:assert/strict';
-import { routeDestinationGap, routeFailure, routeMidpoint } from './walking-route';
+import { routeFailure, routeMidpoint } from './walking-route';
 import { routeMapData } from '../map/route-data';
-import { t, type ApiV2ErrorCode, type RouteResponse } from '@binwhere/core';
-
-for (const locale of ['en', 'zh', 'ms', 'ta'] as const) {
-  const [before, after] = t(locale, 'route.destinationGap').split('{name}');
-  for (const name of ['Point $&', 'Point $$', "Point $` $'"]) {
-    assert.equal(routeDestinationGap(locale, name), before + name + after);
-  }
-}
-console.log('PASS destination gap preserves literal dollar patterns and only replaces the name in all four locales');
+import { type ApiV2ErrorCode, type RouteResponse } from '@binwhere/core';
 
 for (const [code, message, retry, report] of [
   ['ROUTE_NOT_ON_NETWORK', 'route.notOnNetwork', false, false],
   ['ROUTE_NOT_FOUND', 'route.notFound', false, false],
-  ['RATE_LIMITED', 'error.tooMany', true, false],
+  ['RATE_LIMITED', 'error.rateLimited', true, false],
   ['NETWORK_ERROR', 'error.networkError', true, false],
   ['SERVER_BUSY', 'route.unavailable', true, false],
   ['ROUTING_UNAVAILABLE', 'route.unavailable', true, false],
@@ -26,6 +18,10 @@ for (const [code, message, retry, report] of [
   assert.deepEqual(routeFailure(code satisfies ApiV2ErrorCode | 'NETWORK_ERROR'), { message, retry, report });
   console.log(`PASS route failure ${code}`);
 }
+
+assert.deepEqual(routeFailure('RATE_LIMITED', null), { message: 'error.rateLimited', retry: true, report: false });
+assert.deepEqual(routeFailure('RATE_LIMITED', 40), { message: 'error.rateLimitedSeconds', n: 40, retry: true, report: false });
+assert.deepEqual(routeFailure('RATE_LIMITED', 10800), { message: 'error.rateLimitedHours', n: 3, retry: true, report: false });
 
 const midpoint = routeMidpoint([[103.8, 1.3], [103.801, 1.3], [103.804, 1.3]]);
 assert.ok(Math.abs(midpoint[0] - 103.802) < 1e-9);

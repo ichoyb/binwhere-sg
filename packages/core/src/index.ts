@@ -100,6 +100,7 @@ export {
   PRIVACY_POLICY_URL,
   SUPPORT_URL,
   DATA_LICENSE_URL,
+  OPEN_DATA_LICENCE_URL,
   SUPPORT_EMAIL,
 } from './constants';
 
@@ -127,3 +128,6 @@ export type { BeverageEvidence, BeverageInputMode } from './next-action';
 export type { CategoryItem, ItemCategory } from './data/item-categories';
 export { ITEM_CATEGORIES } from './data/item-categories';
 export { getItemCategories } from './data/item-categories-i18n';
+
+export type { PlanningArea } from './data/planning-areas';
+export { PLANNING_AREAS, getPlanningArea } from './data/planning-areas';

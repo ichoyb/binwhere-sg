@@ -1,8 +1,10 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 import { t, type Locale } from '@binwhere/core';
 import { reportError } from '../lib/reporting';
-import { colors, radii, spacing, touch } from '../theme/colors';
+import { radii, spacing, touch } from '../theme/colors';
+import { dark } from '../theme/dark';
+import { announce } from '../lib/accessibility';
 
 interface Props {
   locale: Locale;
@@ -30,6 +32,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   componentDidCatch(error: Error, info: React.ErrorInfo): void {
     reportError(error, { componentStack: info.componentStack ?? undefined });
+    announce(`${t(this.props.locale, 'error.crashTitle')}, ${t(this.props.locale, 'error.crashBody')}`);
   }
 
   private reset = (): void => {
@@ -40,33 +43,33 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (!this.state.error) return this.props.children;
     const { locale } = this.props;
     return (
-      <View style={styles.root}>
-        <Text style={styles.title}>{t(locale, 'error.crashTitle')}</Text>
+      <ScrollView alwaysBounceVertical={false} style={{ backgroundColor: dark.background }} contentContainerStyle={styles.root}>
+        <Text style={styles.title} accessibilityRole="header" maxFontSizeMultiplier={2}>{t(locale, 'error.crashTitle')}</Text>
         <Text style={styles.body}>{t(locale, 'error.crashBody')}</Text>
-        <Pressable onPress={this.reset} style={styles.button} accessibilityRole="button">
+        <Pressable onPress={this.reset} style={styles.button} accessibilityRole="button" accessibilityLabel={t(locale, 'error.crashRetry')}>
           <Text style={styles.buttonText}>{t(locale, 'error.crashRetry')}</Text>
         </Pressable>
-      </View>
+      </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1,
-    backgroundColor: colors.bg,
+    flexGrow: 1,
+    backgroundColor: dark.background,
     alignItems: 'stretch',
     justifyContent: 'center',
     padding: spacing.lg,
   },
-  title: { fontSize: 22, fontWeight: '700', color: colors.text, marginBottom: spacing.sm },
-  body: { fontSize: 16, lineHeight: 24, color: colors.textMuted, marginBottom: spacing.lg },
+  title: { fontSize: 22, fontWeight: '700', color: dark.text, marginBottom: spacing.sm },
+  body: { fontSize: 16, lineHeight: 24, color: dark.muted, marginBottom: spacing.lg },
   button: {
     minHeight: touch.minHeight,
-    backgroundColor: colors.neaGreen,
+    backgroundColor: dark.accent,
     borderRadius: radii.button,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonText: { color: colors.white, fontSize: 16, fontWeight: '700' },
+  buttonText: { color: dark.onAccent, fontSize: 16, fontWeight: '700' },
 });

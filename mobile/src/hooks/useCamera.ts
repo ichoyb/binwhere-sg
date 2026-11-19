@@ -1,7 +1,9 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
 import type { CapturedPhoto } from '../lib/image-prep';
+import { reportError } from '../lib/reporting';
 
 export type CameraUiStatus =
   | 'idle'
@@ -12,9 +14,19 @@ export type CameraUiStatus =
 
 export function useCamera() {
   const cameraRef = useRef<CameraView>(null);
-  const [permission, requestPermission] = useCameraPermissions();
+  const [permission, requestPermission, getPermission] = useCameraPermissions();
   const [active, setActive] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        void getPermission().then((current) => setActive(current.granted))
+          .catch((error) => reportError(error, { operation: 'refresh-camera-permission' }));
+      }
+    });
+    return () => subscription.remove();
+  }, [getPermission]);
 
   const status: CameraUiStatus = (() => {
     // permission object missing while module bootstraps

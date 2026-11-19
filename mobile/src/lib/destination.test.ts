@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { CHANNEL_STATUS, type ChannelType, type ClassifyResult } from '@binwhere/core';
-import { automaticDestination, destinationLayers, findDestination, optionalDestination } from './destination';
+import { answerInitiallyExpanded, automaticDestination, destinationLayers, findDestination, optionalDestination } from './destination';
 
 for (const channel of Object.keys(CHANNEL_STATUS) as ChannelType[]) {
   const result: ClassifyResult = { item: 'Sofa', status: CHANNEL_STATUS[channel], channel,
     confidence: 0.9, reason: 'Test' };
   const query = automaticDestination(result);
+  assert.equal(answerInitiallyExpanded(result), ['blue_bin', 'general_waste', 'hazardous'].includes(channel), channel);
   if (['blue_bin', 'general_waste', 'hazardous'].includes(channel)) {
     assert.equal(query, null, channel);
   } else if (channel === 'bulky_waste' || channel === 'donation') {
@@ -19,11 +20,14 @@ for (const channel of Object.keys(CHANNEL_STATUS) as ChannelType[]) {
 }
 assert.equal(automaticDestination({ item: 'Unknown', status: 'not_sure', channel: null,
   confidence: 0.2, reason: 'Unknown' }), null);
+assert.equal(answerInitiallyExpanded({ item: 'Unknown', status: 'not_sure', channel: null,
+  confidence: 0.2, reason: 'Unknown' }), true);
 assert.deepEqual(destinationLayers({ channel: 'blue_bin' }), ['blue_bin']);
 assert.deepEqual(destinationLayers({ channel: 'donation' }), ['donation']);
 assert.deepEqual(automaticDestination({ item: 'Unmapped object', status: 'consider_donating', channel: 'donation',
   confidence: 0.9, reason: 'Reuse' }), { channel: 'donation' });
 console.log('PASS every channel has its own automatic/button destination and exact layer rule');
+console.log('PASS every channel and null channel start expanded exactly when there is no automatic destination');
 
 async function main() {
   const original = globalThis.fetch;

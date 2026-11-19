@@ -47,10 +47,14 @@ readonly ENV_FILE="/etc/binwhere/env"
 [[ ! -L "${ENV_FILE}" ]] || die "${ENV_FILE} must not be a symlink"
 [[ "$(stat -c '%U:%G:%a' "${ENV_FILE}")" == 'root:binwhere:640' ]] \
   || die "${ENV_FILE} must be owned by root:binwhere with mode 0640"
-[[ "$(grep -Ec '^[A-Za-z_][A-Za-z0-9_]*=' "${ENV_FILE}")" -eq 1 ]] \
-  || die "${ENV_FILE} must contain exactly one variable assignment"
 grep -Eq '^TOKENHUB_API_KEY=[^[:space:]]+$' "${ENV_FILE}" \
   || die 'TOKENHUB_API_KEY must be present and non-empty'
+grep -Eq '^SENTRY_DSN=[^[:space:]]+$' "${ENV_FILE}" \
+  || die 'SENTRY_DSN must be present and non-empty'
+grep -Eq '^SENTRY_DSN=https://[^[:space:]]*$' "${ENV_FILE}" \
+  || die 'SENTRY_DSN must start with https://'
+[[ "$(grep -Ec '^[A-Za-z_][A-Za-z0-9_]*=' "${ENV_FILE}")" -eq 2 ]] \
+  || die "${ENV_FILE} must contain exactly TOKENHUB_API_KEY and SENTRY_DSN assignments"
 
 install -d -o root -g binwhere -m 0750 "${RELEASES_DIR}"
 readonly WORK_DIR="$(mktemp -d /var/tmp/binwhere-deploy.XXXXXX)"

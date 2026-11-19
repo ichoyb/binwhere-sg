@@ -197,5 +197,6 @@ export const SITE_URL = 'https://binwhere.sg';
 export const PRIVACY_POLICY_URL = `${SITE_URL}/privacy`;
 export const SUPPORT_URL = `${SITE_URL}/support`;
 export const DATA_LICENSE_URL = `${SITE_URL}/data-license`;
+export const OPEN_DATA_LICENCE_URL = 'https://data.gov.sg/open-data-licence';
 /** Contact published on the site footer, the privacy policy and App Store Connect. */
 export const SUPPORT_EMAIL = 'ichoyb@gmail.com';

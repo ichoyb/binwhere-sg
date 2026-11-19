@@ -1,74 +1,94 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 import * as Location from 'expo-location';
 import { reportError } from '../lib/reporting';
+import type { Coordinates } from '../lib/location-source';
 
-export interface UserLocation {
-  lat: number;
-  lng: number;
+export type UserLocation = Coordinates;
+export interface LocationResult {
+  location: UserLocation | null;
+  permission: Location.PermissionStatus | null;
 }
 
-export type LocationResult =
-  | { location: UserLocation; error: null }
-  | { location: null; error: 'permission_denied' | 'location_failed' };
-
-export function useGeolocation() {
+export function useGeolocation(enabled: boolean) {
   const [location, setLocation] = useState<UserLocation | null>(null);
+  const [permission, setPermission] = useState<Location.LocationPermissionResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const active = useRef(enabled);
+  active.current = enabled;
 
-  const readLocation = useCallback(async (): Promise<LocationResult> => {
+  const readLocation = useCallback(async (): Promise<UserLocation> => {
     const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
     const next = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-    setLocation(next);
-    return { location: next, error: null };
+    if (active.current) setLocation(next);
+    return next;
+  }, []);
+
+  const readPermission = useCallback(async () => {
+    const current = await Location.getForegroundPermissionsAsync();
+    if (active.current) {
+      setPermission(current);
+      if (!current.granted) setLocation(null);
+    }
+    return current;
   }, []);
 
   const requestLocation = useCallback(async (): Promise<LocationResult> => {
     setLoading(true);
-    setError(null);
+    let status: Location.PermissionStatus | null = null;
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setError('permission_denied');
-        setLocation(null);
-        return { location: null, error: 'permission_denied' };
+      const current = await Location.requestForegroundPermissionsAsync();
+      status = current.status;
+      if (active.current) setPermission(current);
+      if (!current.granted) {
+        if (active.current) setLocation(null);
+        return { location: null, permission: status };
       }
-      return await readLocation();
+      if (!active.current) return { location: null, permission: status };
+      return { location: await readLocation(), permission: status };
     } catch {
-      setError('location_failed');
-      setLocation(null);
-      return { location: null, error: 'location_failed' };
+      if (active.current) setLocation(null);
+      return { location: null, permission: status };
     } finally {
       setLoading(false);
     }
   }, [readLocation]);
 
   const readGrantedLocation = useCallback(async (): Promise<LocationResult | null> => {
+    let status: Location.PermissionStatus | null = null;
     try {
-      const permission = await Location.getForegroundPermissionsAsync();
-      if (permission.status !== 'granted') return null;
-      return await readLocation();
-    } catch {
-      return { location: null, error: 'location_failed' };
-    }
-  }, [readLocation]);
+      const current = await readPermission();
+      status = current.status;
+      if (!active.current || !current.granted) return null;
+      return { location: await readLocation(), permission: status };
+    } catch { return { location: null, permission: status }; }
+  }, [readLocation, readPermission]);
 
   useEffect(() => {
-    void Location.getForegroundPermissionsAsync().then(async ({ status }) => {
-      if (status === 'granted') {
-        setLoading(true);
-        try {
-          await readLocation();
-        } catch {
-          // Background failures leave location unavailable; only explicit requests show the reason.
-        } finally {
-          setLoading(false);
-        }
+    if (!enabled) return;
+    let cancelled = false;
+    void readPermission().then(async (current) => {
+      if (cancelled || !active.current || !current.granted) return;
+      setLoading(true);
+      try {
+        await readLocation();
+      } catch {
+        // Background failures leave location unavailable; only explicit requests show the reason.
+      } finally {
+        setLoading(false);
       }
     }, (failure) => {
-      reportError(failure, { operation: 'startup-location-permission' });
+      if (!cancelled) reportError(failure, { operation: 'startup-location-permission' });
     });
-  }, [readLocation]);
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        void readPermission().catch((failure) => {
+          if (!cancelled) reportError(failure, { operation: 'refresh-location-permission' });
+        });
+      }
+    });
+    return () => { cancelled = true; subscription.remove(); };
+  }, [enabled, readLocation, readPermission]);
 
-  return { location, loading, error, requestLocation, readGrantedLocation };
+  return { location, permission, loading, requestLocation, readGrantedLocation };
 }

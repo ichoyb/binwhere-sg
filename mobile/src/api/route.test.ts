@@ -44,7 +44,6 @@ async function main() {
     for (const [status, body] of [
       [200, { ...response, geometry: { type: '1.3691,103.8454', coordinates: '1.367978,103.844373' } }],
       [503, { code: '1.3691,103.8454', error: '1.367978,103.844373' }],
-      [429, { code: 'RATE_LIMITED', error: 103.8454 }],
       [200, '1.3691 103.8454 1.367978 103.844373'],
       [503, '1.3691 103.8454 1.367978 103.844373'],
     ] as const) {
@@ -56,6 +55,21 @@ async function main() {
       assert.deepEqual(reports, [{ endpoint: 'route', status, issues: ['<body>: invalid route response'] }]);
     }
     console.log('PASS malformed success and error responses preserve safe contract reports and HTTP error status without coordinates');
+
+    for (const [body, header, seconds] of [
+      ['{"code":"RATE_LIMITED","error":103.8454}', '40', 40],
+      ['{"code":"RATE_LIMITED","error":"Limited"}', '10800', 10800],
+      ['<html>edge rate limit</html>', null, null],
+    ] as const) {
+      reports.length = 0;
+      globalThis.fetch = async () => new Response(body, { status: 429,
+        headers: header === null ? {} : { 'Retry-After': header } });
+      await assert.rejects(fetchRoute(request), (error) => privateFailure(error)
+        && error instanceof ApiV2Error && error.code === 'RATE_LIMITED' && error.status === 429
+        && error.retryAfterSeconds === seconds);
+      assert.deepEqual(reports, []);
+    }
+    console.log('PASS route 429 ignores malformed and edge bodies, preserves wait seconds and reports nothing');
 
     reports.length = 0;
     globalThis.fetch = async () => new Response(JSON.stringify({ code: 'FORBIDDEN', error: '1.3691 103.8454 1.367978 103.844373' }), { status: 403 });
@@ -79,6 +93,14 @@ async function main() {
       return body;
     };
     await assert.rejects(fetchRoute(request, bodyController.signal), (error) => privateFailure(error)
+      && error instanceof Error && error.name === 'AbortError');
+    const completedBodyController = new AbortController();
+    globalThis.fetch = async () => {
+      const body = new Response();
+      body.json = async () => { completedBodyController.abort(); return { invalid: true }; };
+      return body;
+    };
+    await assert.rejects(fetchRoute(request, completedBodyController.signal), (error) => privateFailure(error)
       && error instanceof Error && error.name === 'AbortError');
     assert.deepEqual(reports, []);
     console.log('PASS cancelled fetch and body reads stay private and are not contract violations');

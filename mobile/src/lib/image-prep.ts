@@ -1,5 +1,8 @@
-import { IMAGE_MAX_SIZE, IMAGE_QUALITY } from '@binwhere/core';
-import * as ImageManipulator from 'expo-image-manipulator';
+import { IMAGE_QUALITY } from '@binwhere/core';
+import { fromByteArray, toByteArray } from 'base64-js';
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
+import { classifyImageSize } from './image-size';
+import { removeJpegApp1 } from './jpeg-exif';
 
 export interface CapturedPhoto {
   uri: string;
@@ -7,29 +10,11 @@ export interface CapturedPhoto {
   height: number;
 }
 
-/**
- * Fit a photo inside IMAGE_MAX_SIZE on both edges without enlarging it, and compress it
- * to raw base64 JPEG (no data-URL prefix). Matches web `compressImage`, which is also the
- * size every classify evaluation image is sent at; resizing by width alone sent portrait
- * photos at 2048×2731.
- */
-export async function prepareImageForClassify({ uri, width, height }: CapturedPhoto): Promise<string> {
-  const actions = Math.max(width, height) > IMAGE_MAX_SIZE
-    ? [{ resize: width >= height ? { width: IMAGE_MAX_SIZE } : { height: IMAGE_MAX_SIZE } }]
-    : [];
-  const manipulated = await ImageManipulator.manipulateAsync(
-    uri,
-    actions,
-    {
-      compress: IMAGE_QUALITY,
-      format: ImageManipulator.SaveFormat.JPEG,
-      base64: true,
-    },
-  );
-
-  if (!manipulated.base64) {
-    throw new Error('Image compression produced no base64 output');
-  }
-
-  return manipulated.base64;
+export async function prepareImageForClassify({ uri }: CapturedPhoto): Promise<string> {
+  const original = await ImageManipulator.manipulate(uri).renderAsync();
+  const size = classifyImageSize(original.width, original.height);
+  const rendered = await ImageManipulator.manipulate(original).resize(size).renderAsync();
+  const output = await rendered.saveAsync({ compress: IMAGE_QUALITY, format: SaveFormat.JPEG, base64: true });
+  if (!output.base64) throw new Error('Image compression produced no base64 output');
+  return fromByteArray(removeJpegApp1(toByteArray(output.base64)));
 }

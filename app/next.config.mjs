@@ -17,6 +17,9 @@ const nextConfig = {
   },
   poweredByHeader: false,
   experimental: {
+    // npm run audit:production and npm run audit:build enforce dependency advisories.
+    // Build results must not depend on whether CI, a developer or an AI agent runs them.
+    agentUpgrade: false,
     // Production releases are read-only, so ISR results stay in memory. Otherwise an
     // on-demand render (scanners probing /blog/<junk>) fails its disk write with EACCES.
     // `dynamicParams = false` on the blog route is not the fix: Next 16.3.3 then logs a

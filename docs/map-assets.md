@@ -19,7 +19,7 @@ npm --prefix mobile run map:build -- \
   --osm-pbf /path/to/region.osm.pbf
 ```
 
-命令通过 `uv run --project mobile/scripts --locked` 使用 `.python-version` 固定的解释器和 `uv.lock` 中带哈希的依赖。两个本地输入参数均可省略；省略时从配置里的固定来源获取。每日底图源会过期，保留已校验的截取输入；本地输入仍须符合 pin。
+命令通过 `uv run --project mobile/scripts --locked` 使用 `.python-version` 固定的解释器和 `uv.lock` 中带哈希的依赖。两个本地输入参数均可省略；省略时从配置里的固定来源获取。每日底图源会过期，保留已校验的截取输入；本地输入仍须符合 pin。当前 pin 的两份输入长期保存在私有 artifact bucket（`$WEB_ARTIFACT_BUCKET`）的 `inputs/` 下：底图截取 `inputs/basemap/singapore-extract-20261106.pmtiles`，OSM `inputs/osm/malaysia-singapore-brunei-261101.osm.pbf`，哈希与配置中的 pin 相同。
 
 输出目录必须为空。生成器会校验下载内容，并对写出的每个 PMTiles 自动执行官方格式校验，任一步失败均非零退出；全部成功才写 manifest。
 

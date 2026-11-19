@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import type { ConfigContext, ExpoConfig } from 'expo/config';
-import appConfig from './app.config';
+import appConfig, { PHOTOS_PERMISSION } from './app.config';
 
 const SENTRY = {
   EXPO_PUBLIC_SENTRY_DSN: 'https://public@example.invalid/1',
@@ -51,4 +52,15 @@ run('the EAS builder adds the Sentry upload plugin for a configured production b
     '@sentry/react-native/expo',
     { organization: 'yu-bo', project: 'binwhere-mobile' },
   ]);
+});
+
+run('PHPicker declares the photo upload-check string and removes the microphone string without changing camera permission', () => {
+  const config = evaluate({});
+  assert.deepEqual(config.plugins?.find((plugin) => Array.isArray(plugin) && plugin[0] === 'expo-image-picker'),
+    ['expo-image-picker', { photosPermission: PHOTOS_PERMISSION, microphonePermission: false }]);
+  assert.equal(config.ios?.infoPlist?.NSPhotoLibraryUsageDescription, PHOTOS_PERMISSION);
+  for (const locale of ['zh-Hans', 'ms', 'ta']) {
+    const strings = JSON.parse(readFileSync(new URL(`./locales/${locale}.json`, import.meta.url), 'utf8'));
+    assert.ok(strings.NSPhotoLibraryUsageDescription.trim(), locale);
+  }
 });

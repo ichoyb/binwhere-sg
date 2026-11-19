@@ -94,6 +94,32 @@ run('buildNearbyUrl composes the versioned nearby endpoint', () => {
 });
 
 async function runNetworkContractTests() {
+  await runAsync('classify, nearby and points 429 bypass body parsing and contract reporting', async () => {
+    const reports: ContractViolation[] = [];
+    setContractViolationReporter((violation) => reports.push(violation));
+    try {
+      for (const [body, header, seconds] of [
+        ['{"code":"RATE_LIMITED","error":"Limited"}', '40', 40],
+        ['{"error":7}', '10800', 10800],
+        ['<html>edge</html>', null, null],
+        ['<html>edge</html>', 'Thu, 12 Nov 2026 12:00:00 GMT', null],
+      ] as const) {
+        await withFetch(async () => {
+          const response = new Response(body, { status: 429, headers: header === null ? {} : { 'Retry-After': header } });
+          response.json = async () => assert.fail('429 body must not be parsed');
+          return response;
+        }, async () => {
+          for (const call of [() => classifyItem({ text: 'paper', locale: 'en' }),
+            () => fetchNearby({ lat: 1.3691, lng: 103.8454, channel: 'blue_bin' }),
+            () => fetchPoints(buildPointsUrl(), null)]) {
+            await assert.rejects(call(), (error: unknown) => (error instanceof ApiError || error instanceof ApiV2Error)
+              && error.status === 429 && error.code === 'RATE_LIMITED' && error.retryAfterSeconds === seconds);
+          }
+        });
+      }
+      assert.deepEqual(reports, []);
+    } finally { setContractViolationReporter(() => {}); }
+  });
   await runAsync('classifyItem forwards cancellation and does not report an aborted body as a contract violation', async () => {
     const controller = new AbortController();
     const reports: ContractViolation[] = [];
@@ -112,6 +138,22 @@ async function runNetworkContractTests() {
     });
     assert.deepEqual(reports, []);
     setContractViolationReporter(() => {});
+  });
+  await runAsync('a cancelled nearby body cannot report a contract violation after the source changes', async () => {
+    const controller = new AbortController();
+    const reports: ContractViolation[] = [];
+    setContractViolationReporter((violation) => reports.push(violation));
+    try {
+      await withFetch(async (_url, init) => {
+        assert.equal(init?.signal, controller.signal);
+        const response = new Response();
+        response.json = async () => { controller.abort(); return { invalid: true }; };
+        return response;
+      }, async () => {
+        await assert.rejects(fetchNearby({ lat: 1.3691, lng: 103.8454, channel: 'blue_bin' }, controller.signal));
+      });
+      assert.deepEqual(reports, []);
+    } finally { setContractViolationReporter(() => {}); }
   });
   await runAsync('classifyItem parses a valid response at runtime', async () => {
   await withFetch(

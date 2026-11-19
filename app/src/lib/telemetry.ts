@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 
 import { getClientIp } from './http-utils';
+import { reportEvent } from './reporting';
 
 /**
  * Structured application events — the business half of observability.
@@ -71,4 +72,5 @@ export function logEvent(event: string, fields: EventFields): void {
     if (value !== undefined) payload[key] = value;
   }
   console.log(`${EVENT_PREFIX} ${JSON.stringify(payload)}`);
+  reportEvent(event, fields);
 }

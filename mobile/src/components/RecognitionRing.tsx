@@ -12,7 +12,7 @@ export function RecognitionRing({ locale }: { locale: Locale }) {
     return () => clearInterval(timer);
   }, []);
   return (
-    <View style={styles.ring} accessibilityRole="progressbar" accessibilityLabel={t(locale, 'loading.identifying')}
+    <View accessible style={styles.ring} accessibilityState={{ busy: true }} accessibilityRole="progressbar" accessibilityLabel={t(locale, 'loading.identifying')}
       accessibilityValue={{ min: 0, max: 100, now: Math.round(progress * 100) }}>
       {Array.from({ length: 72 }, (_, index) => {
         const angle = index * Math.PI * 2 / 72;

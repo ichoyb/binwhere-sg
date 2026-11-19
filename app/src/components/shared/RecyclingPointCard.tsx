@@ -22,11 +22,11 @@ const ACCEPT_ICONS: Record<string, { icon: ReactElement; label: string }> = {
     icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z" /><path d="M9 21h6" /></svg>,
   },
   'All regulated e-waste': {
-    label: 'All e-waste',
+    label: 'All regulated e-waste',
     icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 19a2 2 0 01-2-2V7l3-4h8l3 4v10a2 2 0 01-2 2H7z" /><path d="M12 7v6m0 2v2" /></svg>,
   },
   'Small appliances': {
-    label: 'Appliances',
+    label: 'Small appliances',
     icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 3v18h14V3H5z" /><circle cx="12" cy="16" r="2" /><path d="M9 7h6" /></svg>,
   },
 };

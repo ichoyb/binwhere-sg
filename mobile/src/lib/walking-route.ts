@@ -1,19 +1,19 @@
-import { t, type ApiV2ErrorCode, type Locale, type TranslationKey } from '@binwhere/core';
+import { type ApiV2ErrorCode, type TranslationKey } from '@binwhere/core';
+import { rateLimitMessage } from './api-error';
 
-export function routeFailure(code: ApiV2ErrorCode | 'NETWORK_ERROR'): {
-  message: TranslationKey; retry: boolean; report: boolean;
+export function routeFailure(code: ApiV2ErrorCode | 'NETWORK_ERROR', retryAfterSeconds: number | null = null): {
+  message: TranslationKey; n?: number; retry: boolean; report: boolean;
 } {
   switch (code) {
     case 'ROUTE_NOT_ON_NETWORK': return { message: 'route.notOnNetwork', retry: false, report: false };
     case 'ROUTE_NOT_FOUND': return { message: 'route.notFound', retry: false, report: false };
-    case 'RATE_LIMITED': return { message: 'error.tooMany', retry: true, report: false };
+    case 'RATE_LIMITED': {
+      const { key, ...params } = rateLimitMessage(retryAfterSeconds);
+      return { message: key, ...params, retry: true, report: false };
+    }
     case 'NETWORK_ERROR': return { message: 'error.networkError', retry: true, report: false };
     default: return { message: 'route.unavailable', retry: true, report: code === 'FORBIDDEN' || code === 'INVALID_INPUT' };
   }
-}
-
-export function routeDestinationGap(locale: Locale, name: string): string {
-  return t(locale, 'route.destinationGap').replace('{name}', () => name);
 }
 
 export function routeMidpoint(coordinates: [number, number][]): [number, number] {

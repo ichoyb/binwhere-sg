@@ -72,6 +72,7 @@ export class ApiError extends Error {
     public readonly status: number,
     public readonly code: ApiErrorCode,
     message: string,
+    public readonly retryAfterSeconds: number | null = null,
   ) {
     super(message);
     this.name = 'ApiError';
@@ -121,7 +122,9 @@ function describeIssues(error: SchemaIssues): string[] {
 /** Read the body as JSON, reporting a non-JSON body as a contract violation. */
 async function readJson(response: Response, endpoint: ApiEndpoint, signal?: AbortSignal): Promise<unknown> {
   try {
-    return await response.json();
+    const body: unknown = await response.json();
+    if (signal?.aborted) throw new Error('API request cancelled');
+    return body;
   } catch (error) {
     if (signal?.aborted) throw error;
     reportContractViolation({
@@ -150,13 +153,18 @@ function parseContract<T>(
   throw new ApiError(502, 'INVALID_RESPONSE', `Invalid ${endpoint} response`);
 }
 
-async function toApiError(response: Response, endpoint: ApiEndpoint): Promise<ApiError> {
+async function toApiError(response: Response, endpoint: ApiEndpoint, signal?: AbortSignal): Promise<ApiError> {
+  if (signal?.aborted) throw new Error('API request cancelled');
+  if (response.status === 429) {
+    return new ApiError(429, 'RATE_LIMITED', 'Usage limit reached', parseRetryAfter(response.headers.get('Retry-After')));
+  }
   let body: unknown;
   try {
     body = await response.json();
   } catch {
     body = undefined;
   }
+  if (signal?.aborted) throw new Error('API request cancelled');
   const parsed = ApiErrorResponseSchema.safeParse(body);
   if (parsed.success) {
     return new ApiError(response.status, parsed.data.code, parsed.data.error);
@@ -199,7 +207,7 @@ export async function classifyItem(
   }
 
   if (!response.ok) {
-    throw await toApiError(response, 'classify');
+    throw await toApiError(response, 'classify', signal);
   }
 
   return parseContract(ClassifyResultSchema, await readJson(response, 'classify', signal), response, 'classify');
@@ -207,6 +215,7 @@ export async function classifyItem(
 
 export async function fetchNearby(
   params: NearbyQueryParams,
+  signal?: AbortSignal,
 ): Promise<NearbyResponse> {
   const parsedQuery = NearbyQuerySchema.safeParse(params);
   if (!parsedQuery.success) {
@@ -215,8 +224,9 @@ export async function fetchNearby(
 
   let response: Response;
   try {
-    response = await fetch(buildNearbyUrl(parsedQuery.data));
+    response = await fetch(buildNearbyUrl(parsedQuery.data), { signal });
   } catch (error) {
+    if (signal?.aborted) throw error;
     throw new ApiError(
       0,
       'NETWORK_ERROR',
@@ -225,10 +235,10 @@ export async function fetchNearby(
   }
 
   if (!response.ok) {
-    throw await toApiError(response, 'nearby');
+    throw await toApiError(response, 'nearby', signal);
   }
 
-  return parseContract(NearbyResponseSchema, await readJson(response, 'nearby'), response, 'nearby');
+  return parseContract(NearbyResponseSchema, await readJson(response, 'nearby', signal), response, 'nearby');
 }
 
 export function isRetryable(error: unknown): boolean {
@@ -241,7 +251,8 @@ export function isRetryable(error: unknown): boolean {
 }
 
 export class ApiV2Error extends Error {
-  constructor(public readonly status: number, public readonly code: ApiV2ErrorCode, message: string) {
+  constructor(public readonly status: number, public readonly code: ApiV2ErrorCode, message: string,
+    public readonly retryAfterSeconds: number | null = null) {
     super(message);
     this.name = 'ApiV2Error';
   }
@@ -258,6 +269,9 @@ export async function fetchPoints(url: string, etag: string | null): Promise<Poi
     headers: etag === null ? {} : { 'If-None-Match': etag },
   });
   if (response.status === 304) return { status: 304 };
+  if (response.status === 429) {
+    throw new ApiV2Error(429, 'RATE_LIMITED', 'Usage limit reached', parseRetryAfter(response.headers.get('Retry-After')));
+  }
   const body = await readJson(response, 'points');
   if (!response.ok) {
     const error = parseContract(ApiV2ErrorResponseSchema, body, response, 'points');
@@ -298,9 +312,14 @@ export async function fetchRoute(params: RouteRequest, signal?: AbortSignal): Pr
     throw new RouteNetworkError();
   }
 
+  if (response.status === 429) {
+    throw new ApiV2Error(429, 'RATE_LIMITED', 'Usage limit reached', parseRetryAfter(response.headers.get('Retry-After')));
+  }
+
   let body: unknown;
   try {
     body = await response.json();
+    if (signal?.aborted) throw new Error('Route request cancelled');
   } catch {
     if (signal?.aborted) {
       const error = new Error('Route request cancelled');
@@ -317,4 +336,10 @@ export async function fetchRoute(params: RouteRequest, signal?: AbortSignal): Pr
   }
   reportContractViolation({ endpoint: 'route', status: response.status, issues: ['<body>: invalid route response'] });
   throw new ApiV2Error(response.ok ? 502 : response.status, 'INVALID_RESPONSE', 'Invalid route response');
+}
+
+export function parseRetryAfter(value: string | null): number | null {
+  if (value === null || !/^\d+$/.test(value)) return null;
+  const seconds = Number(value);
+  return Number.isInteger(seconds) ? seconds : null;
 }

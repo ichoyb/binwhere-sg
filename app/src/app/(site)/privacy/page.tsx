@@ -11,7 +11,7 @@ import { PRIVACY_POLICY_URL, SUPPORT_EMAIL } from '@binwhere/core';
  * below is the date of the last such change.
  */
 
-const EFFECTIVE_DATE = '3 September 2026';
+const EFFECTIVE_DATE = '19 November 2026';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -37,12 +37,12 @@ const DATA_ROWS: Row[] = [
   {
     data: 'Photos and text descriptions of items you want to recycle',
     why: 'To identify the item and give you recycling guidance.',
-    how: 'Sent over HTTPS to our server, which passes the photo or text to our AI provider (TokenHub, operated by Tencent Cloud) to produce the answer. Our server does not store the photo or the text. It records only the outcome of the request: the category returned, a confidence score, the language, and how long the request took.',
+    how: 'Sent over HTTPS to our server, which passes it to TokenHub, a Tencent Cloud service. Tencent’s hy3 model answers text requests; Moonshot AI’s Kimi model (kimi-k3.1-pro-highspeed) answers photo requests, both through TokenHub. Tencent Cloud may process requests outside Singapore as computing resources are allocated across countries and regions. It moderates content and retains inputs and outputs for up to 30 days after a request. BinWhere does not store the photo or text. Our server records the category returned, confidence score, language and time taken. If an AI request fails, our logs also include up to 200 characters of the provider’s response or error message for troubleshooting.',
   },
   {
     data: 'Your location, only if you allow it',
-    why: 'To list recycling points near you.',
-    how: 'Your coordinates are sent to our server for that one query. Our event records keep the position rounded to a grid cell of roughly 1 km, and the location parameters are removed from the web-server access log. Location is used only while the app is open, never in the background.',
+    why: 'To list recycling points near you and calculate walking routes.',
+    how: 'Your coordinates are sent to our server for a nearby query. If you choose an area manually, we send its centre instead of your device location. For walking routes, the app sends the starting point (device location or area centre) and the selected recycling point to our server. Our own routing service calculates the route; no map or routing provider receives these coordinates. Our event records keep only grid cells of roughly 1 km, and location parameters are removed from the web-server access log. The app’s basemap is bundled on your phone, so viewing it sends no request. Recycling-point lists are downloaded from our server and cached on your phone. Location is used only while the app is open, never in the background.',
   },
   {
     data: 'Network information (your IP address, device type, app version)',
@@ -50,9 +50,9 @@ const DATA_ROWS: Row[] = [
     how: 'Your IP address is used in memory to apply request limits. Our application events store only a one-way hash of it that is reset every time the server restarts. The web-server access log records the IP address, the request path and the user agent; it is rotated automatically and only a bounded amount is ever kept.',
   },
   {
-    data: 'Crash and error reports (app only)',
+    data: 'Crash and error reports',
     why: 'To find and fix crashes, because a broken app cannot tell us otherwise.',
-    how: 'If the app crashes or receives a response it cannot understand, a report is sent to Sentry (Functional Software, Inc.). It contains the error, the device model, the operating system and app version, and the last few actions in the app. We turn off Sentry’s collection of personal information, attach no screenshots, and strip location parameters from any web address in the report. The report carries a random identifier that the app creates when it is installed, so that we can count how many installations a crash affects; it is not linked to you and disappears when you uninstall the app. Sentry keeps reports for 90 days.',
+    how: 'If the app crashes or receives a response it cannot understand, a report is sent to Sentry (Functional Software, Inc.). It contains the error, the device model, the operating system and app version, and the last few actions in the app. We turn off Sentry’s collection of personal information, attach no screenshots, and strip location parameters from any web address in the report. The report carries a random identifier that the app creates when it is installed, so that we can count how many installations a crash affects; it is not linked to you and disappears when you uninstall the app. Our website server also reports unexpected errors and AI answers that do not meet the agreed format. Server reports contain the error type, code location and request path, or the anonymous fields already in our event records, such as a hashed client identifier and roughly 1 km grid cells. They contain no IP addresses, precise locations, photos or text descriptions. Sentry stores reports in its EU data centre in Frankfurt for 30 days.',
   },
   {
     data: 'Website analytics (binwhere.sg only)',
@@ -72,12 +72,12 @@ interface Processor {
 }
 
 const PROCESSORS: Processor[] = [
-  { name: 'TokenHub (Tencent Cloud)', role: 'AI model that identifies items from your photo or description.' },
-  { name: 'Sentry (Functional Software, Inc.)', role: 'Crash and error reporting for the mobile app.' },
+  { name: 'TokenHub (Tencent Cloud)', role: 'AI processing under our agreement with Tencent Cloud International Pte. Ltd. (Singapore). Tencent’s hy3 model handles text and Moonshot AI’s Kimi model handles photos through TokenHub. Processing may take place outside Singapore. Tencent Cloud moderates content and retains inputs and outputs for up to 30 days.' },
+  { name: 'Sentry (Functional Software, Inc.)', role: 'Crash and error reporting for the mobile app and website server, stored in its EU data centre in Frankfurt for 30 days.' },
   { name: 'Cloudflare', role: 'Network security and content delivery in front of our server; it sees the same request data as our web server.' },
-  { name: 'Amazon Web Services (Singapore region)', role: 'Hosting for our server.' },
+  { name: 'Amazon Web Services (Singapore region)', role: 'Hosting for BinWhere’s own server, separate from the AI processing described above.' },
   { name: 'Google Analytics', role: 'Website usage statistics, on binwhere.sg only.' },
-  { name: 'Apple Maps / Google Maps', role: 'When you tap for directions, you leave BinWhere and the maps app’s own privacy policy applies.' },
+  { name: 'Google Maps (website only)', role: 'Website directions links open Google Maps walking directions to the selected recycling point, under Google’s own privacy policy.' },
 ];
 
 export default function PrivacyPage() {
@@ -91,9 +91,9 @@ export default function PrivacyPage() {
         <h2 className="text-lg font-bold text-gray-900">In short</h2>
         <ul className="mt-3 space-y-2 text-base leading-relaxed list-disc pl-5">
           <li>BinWhere has no accounts and no sign-in. We do not know who you are.</li>
-          <li>Photos and descriptions you submit are used to answer your question and are not stored by us.</li>
-          <li>Your location is used only to find nearby recycling points; our records keep a ~1 km cell, never your exact position.</li>
-          <li>The app reports crashes so we can fix them. Reports contain no personal information.</li>
+          <li>Photos and descriptions go through our server to Tencent Cloud’s TokenHub to answer your question. We do not store them; Tencent Cloud may process them outside Singapore and keeps inputs and outputs for up to 30 days.</li>
+          <li>Your location is used to find nearby recycling points and calculate walking routes; our event records keep ~1 km cells, never your exact position.</li>
+          <li>The app and website server report errors so we can fix them. Reports exclude IP addresses, precise locations, photos and descriptions, and are kept for 30 days in Sentry’s EU data centre in Frankfurt.</li>
           <li>We do not show ads, do not track you across other apps or websites, and do not sell data.</li>
         </ul>
       </section>
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
 
       <Section title="What this policy covers">
         <p>
-          This policy covers the BinWhere mobile app for iOS and Android, the web app and website at
+          This policy covers the BinWhere mobile app for iPhone, the web app and website at
           binwhere.sg, and the server that both use. Where something applies to only one of them, the
           text says so.
         </p>
@@ -140,7 +140,7 @@ export default function PrivacyPage() {
       <Section title="What we do not do">
         <ul className="space-y-2 list-disc pl-5">
           <li>We do not ask you to create an account, and we do not collect your name, email address or contact details unless you email us.</li>
-          <li>We do not use your location in the background, and we never read your photo library: the app uses the camera live and only when you tap the shutter.</li>
+          <li>We do not use your location in the background. The app does not access your photo library: when you choose a photo, the iOS system picker gives the app only that selected photo. Location and other photo metadata are removed before it is sent.</li>
           <li>We do not use advertising identifiers, fingerprinting, or any form of tracking across apps or websites.</li>
           <li>We do not sell, rent or share personal data for marketing.</li>
         </ul>
@@ -155,17 +155,22 @@ export default function PrivacyPage() {
           ))}
         </ul>
         <p className="mt-3">
-          Recycling-point data comes from public datasets published by the National Environment Agency
-          and data.gov.sg. No personal data is sent to them.
+          We share data only with the service providers listed above. Under their respective data
+          processing terms, they protect it to a standard no lower than that described in this policy.
+          Recycling-point data comes from public datasets published by NEA through data.gov.sg under the{' '}
+          <a className="text-[#0077B6] underline" href="https://data.gov.sg/open-data-licence" target="_blank" rel="noopener noreferrer">Singapore Open Data Licence</a>,
+          Return Right (BCRS return points) and Cloop (textile recycling bins). Map and walking-route data
+          comes from OpenStreetMap; see our <Link className="text-[#0077B6] underline" href="/data-license">data licences</Link>.
+          No personal data is sent to them.
         </p>
       </Section>
 
       <Section title="How long we keep things">
         <ul className="space-y-2 list-disc pl-5">
-          <li>Photos and descriptions: not stored.</li>
-          <li>Application events (outcome, hashed client, ~1 km cell): kept in our server log, which is rotated automatically.</li>
+          <li>Photos and descriptions: not stored by BinWhere. Tencent Cloud retains inputs and outputs for up to 30 days after a request and moderates content.</li>
+          <li>Application events (outcome, hashed client, ~1 km cell): kept in our server log, which is rotated automatically. Failed AI requests may also log up to 200 characters of the provider’s response or error message; these logs rotate in the same way.</li>
           <li>Web-server access log (IP address, path, user agent): rotated automatically; at most a bounded number of files are kept.</li>
-          <li>Crash reports: 90 days at Sentry.</li>
+          <li>App crash and website server error reports: 30 days at Sentry’s EU data centre in Frankfurt.</li>
           <li>Recent results: on your device until you clear them or uninstall the app.</li>
         </ul>
       </Section>
