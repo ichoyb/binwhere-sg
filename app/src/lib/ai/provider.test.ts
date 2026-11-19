@@ -43,6 +43,7 @@ const EVIDENCE = {
 
 /** A model answer: everything but the status, which follows from the channel. */
 const MODEL_OK = {
+  item_kind: 'other',
   beverage_evidence: EVIDENCE,
   item: 'aluminium can',
   confidence: 0.95,
@@ -50,7 +51,9 @@ const MODEL_OK = {
   reason: 'Has a Deposit Mark.',
 } satisfies Omit<ClassifyResult, 'status'> & { beverage_evidence: typeof EVIDENCE };
 
-const OK = { ...MODEL_OK, status: 'recyclable' } satisfies ClassifyResult & { beverage_evidence: typeof EVIDENCE };
+const { item_kind: modelKind, ...modelFields } = MODEL_OK;
+assert.equal(modelKind, 'other');
+const OK = { ...modelFields, status: 'recyclable' } satisfies ClassifyResult & { beverage_evidence: typeof EVIDENCE };
 
 const TEST_JPEG_BASE64 = '/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAIDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AKpAB//Z';
 
@@ -208,7 +211,7 @@ async function main() {
         ['string', 'null'],
       );
       assert.deepEqual(body.response_format.json_schema.schema.required, [
-        'item', 'confidence', 'channel', 'reason', 'preparation', 'tip', 'beverage_evidence',
+        'item', 'item_kind', 'confidence', 'channel', 'reason', 'preparation', 'tip', 'beverage_evidence',
       ]);
       const beverageEvidence = body.response_format.json_schema.schema.properties as unknown as {
         beverage_evidence: { required: string[] };
@@ -305,9 +308,9 @@ async function main() {
 
   await runTest('production is identity only and cannot execute candidate provider code', async () => {
     assert.deepEqual(Object.keys(PRODUCTION_PROFILE).sort(), ['id', 'revision']);
-    assert.equal(PRODUCTION_PROFILE.id, 'production-b533bdb');
-    assert.match(PRODUCTION_PROFILE.revision, /^b533bdb/);
-    assert.throws(() => selectProfile('production'), /b533bdb.*worktree.*baseline:production/);
+    assert.equal(PRODUCTION_PROFILE.id, 'production-f52c26d');
+    assert.match(PRODUCTION_PROFILE.revision, /^f52c26d/);
+    assert.throws(() => selectProfile('production'), /f52c26d.*worktree.*baseline:production/);
     assert.equal(selectProfile(), CANDIDATE_PROFILE);
     assert.match(profileDigest(CANDIDATE_PROFILE), /^[a-f0-9]{64}$/);
     assert.throws(() => selectProfile('other'), /Invalid/);
@@ -541,9 +544,52 @@ async function main() {
     );
   });
 
+  await runTest('ewaste rejects a non-electrical or missing item_kind through the retryable path', async () => {
+    for (const item_kind of ['books', undefined, 'unknown_kind']) {
+      await withMockFetch(async () => completionResponse(JSON.stringify({
+        ...MODEL_OK, channel: 'ewaste', item_kind,
+        beverage_evidence: { ...EVIDENCE, beverage_product: 'other' },
+      })), async () => {
+        await assert.rejects(new TokenHubProvider('test-key').classify({ text: 'item' }), RetryableProviderError);
+      });
+    }
+  });
+
+  await runTest('final channel keeps donation kinds and removes kinds after a beverage decision', async () => {
+    for (const [channel, item_kind, expectedKind] of [
+      ['donation', 'books', 'books'], ['donation', 'other', undefined],
+      ['ewaste', 'large_household_appliance', 'large_household_appliance'],
+    ] as const) {
+      await withMockFetch(async () => completionResponse(JSON.stringify({ ...MODEL_OK, channel, item_kind,
+        beverage_evidence: { ...EVIDENCE, beverage_product: 'other' },
+      })), async () => {
+        const result = await new TokenHubProvider('test-key').classify({ text: 'item', locale: 'zh' });
+        assert.equal(result.item_kind, expectedKind);
+        if (expectedKind === 'large_household_appliance') {
+          assert.equal(result.reason, t('zh', 'ewaste.collection.reason'));
+          assert.equal(result.tip, undefined);
+        }
+      });
+    }
+    await withMockFetch(async () => completionResponse(JSON.stringify({ ...MODEL_OK, item_kind: 'books' })), async () => {
+      assert.equal((await new TokenHubProvider('test-key').classify({ text: 'item' })).item_kind, undefined);
+    });
+  });
+
+  await runTest('image majority distinguishes the retained item kind', async () => {
+    const common = { ...OK, channel: 'ewaste' as const, status: 'special_handling' as const };
+    const result = await classifyItem({ image: TEST_JPEG_BASE64 }, answers([
+      { ...common, item_kind: 'ict_equipment' },
+      { ...common, item_kind: 'other_electrical' },
+      { ...common, item_kind: 'large_household_appliance' },
+    ]));
+    assert.equal(result.channel, null);
+    assert.equal(result.item_kind, undefined);
+  });
+
   await runTest('TokenHub derives the status from the channel', async () => {
     const laptop = {
-      ...MODEL_OK, item: 'laptop', channel: 'ewaste', reason: 'ICT equipment.',
+      ...MODEL_OK, item_kind: 'ict_equipment', item: 'laptop', channel: 'ewaste', reason: 'ICT equipment.',
       beverage_evidence: { ...EVIDENCE, beverage_product: 'other', subject: 'other', form: 'other', material: 'other' },
     };
     for (const [answer, status] of [[laptop, 'special_handling'], [{ ...laptop, channel: null, confidence: 0.3 }, 'not_sure']] as const) {

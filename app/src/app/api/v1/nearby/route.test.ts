@@ -105,6 +105,33 @@ async function main() {
     assert.equal(ApiErrorResponseSchema.parse(await response.json()).code, 'INVALID_INPUT');
   });
 
+  const invalidQueries: Record<string, string>[] = [
+    { channel: 'blue_bin', itemKind: 'books' },
+    { channel: 'ewaste_battery', itemKind: 'ict_equipment' },
+    { channel: 'lighting', itemKind: 'other_electrical' },
+    { channel: 'textile', itemKind: 'clothing' },
+    { channel: 'return_point', itemKind: 'ict_equipment' },
+    { channel: 'ewaste', itemKind: 'books' },
+    { channel: 'donation', itemKind: 'electric_mobility_device' },
+    { channel: 'donation', itemKind: 'other' },
+    { channel: 'ewaste', itemKind: 'unknown_kind' },
+    { channel: 'donation', itemKind: 'books', acceptedItem: 'Books' },
+    { channel: 'ewaste', itemKind: 'ict_equipment', acceptedItem: 'ICT equipment' },
+  ];
+  for (const query of invalidQueries) {
+    const response = await GET(request({ ...ANG_MO_KIO, ...query }));
+    assert.equal(response.status, 400, JSON.stringify(query));
+    assert.equal(ApiErrorResponseSchema.parse(await response.json()).code, 'INVALID_INPUT');
+  }
+  for (const [channel, itemKind] of [['ewaste', 'other_electrical'], ['donation', 'books']] as const) {
+    const response = await GET(request({ ...ANG_MO_KIO, channel, itemKind, radius: '5' }));
+    assert.equal(response.status, 200);
+    const body = NearbyResponseSchema.parse(await response.json());
+    for (const point of body.results) assert.ok(channel === 'donation'
+      ? point.accepts?.split(',').map((category) => category.trim()).includes('Books')
+      : point.accepts === 'Small appliances');
+  }
+
   console.log('All nearby route tests passed');
 }
 

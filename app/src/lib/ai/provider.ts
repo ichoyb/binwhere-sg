@@ -123,7 +123,7 @@ const validate = (result: ClassifyResult, policy: ClassificationExecutionPolicy)
 
 /** What a user acts on. Two samples agree only when all of it matches. */
 const decision = (result: ClassifyResult) =>
-  `${result.status}/${result.channel ?? 'null'}/${result.next_action?.type ?? 'none'}`;
+  `${result.status}/${result.channel ?? 'null'}/${result.next_action?.type ?? 'none'}/${result.item_kind ?? 'none'}`;
 
 /**
  * Classify an item within its budget: text takes one sample, an image the majority

@@ -75,7 +75,7 @@ run('bulky waste resolves to furniture donation points', () => {
     channel: 'bulky_waste',
     reason: 'Bulky item',
   });
-  assert.deepEqual(target, { channel: 'donation', acceptedItem: 'Furniture' });
+  assert.deepEqual(target, { channel: 'donation', itemKind: 'furniture' });
 });
 
 console.log('All core smoke tests passed');

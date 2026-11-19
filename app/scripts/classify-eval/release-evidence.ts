@@ -16,6 +16,7 @@ import * as path from 'node:path';
 import {
   ChannelTypeSchema,
   ClassifyResultSchema,
+  ItemKindSchema,
   ClassifyStatusSchema,
   IMAGE_MAX_SIZE,
   IMAGE_QUALITY,
@@ -59,8 +60,8 @@ interface StoredProfile {
 
 interface StoredTextCase {
   text: string;
-  expected: { channel: string; status: string };
-  actual: { channel: string | null; status: string; confidence: number } | null;
+  expected: { channel: string; status: string; item_kind?: string };
+  actual: { channel: string | null; status: string; confidence: number; item_kind?: string } | null;
   channelMatch: boolean;
   statusMatch: boolean;
   error?: string;
@@ -70,6 +71,8 @@ interface StoredTextReport {
   provider: string;
   totalItems: number;
   exactAccuracy: number;
+  itemKindAccuracy: number;
+  unsafeItemKindDiversions: number;
   channelAccuracy: number;
   statusAccuracy: number;
   notSureCount: number;
@@ -139,6 +142,8 @@ interface ReleaseEvidence {
 
 interface TextDerived {
   exactAccuracy: number;
+  itemKindAccuracy: number;
+  unsafeItemKindDiversions: number;
   channelAccuracy: number;
   statusAccuracy: number;
   notSureCount: number;
@@ -148,6 +153,8 @@ interface TextDerived {
   perChannel: Record<string, { total: number; correct: number; accuracy: number }>;
   exactByText: Map<string, boolean>;
   gate: {
+    itemKindPass: boolean;
+    itemKindSafetyPass: boolean;
     exactPass: boolean;
     channelPass: boolean;
     statusPass: boolean;
@@ -183,7 +190,7 @@ function assertProfile(actual: StoredProfile, expected: ClassificationProfile | 
   }, `${label} profile does not match the current executable contract`);
 }
 
-function deriveText(report: StoredTextReport, label: string): TextDerived {
+function deriveText(report: StoredTextReport, label: string, checkKinds = true): TextDerived {
   assert.equal(report.provider, 'tokenhub', `${label} must contain the TokenHub report`);
   assert.equal(report.totalItems, TEST_ITEMS.length, `${label} total item count differs`);
   assert.equal(report.results.length, TEST_ITEMS.length, `${label} is not a complete text run`);
@@ -194,6 +201,8 @@ function deriveText(report: StoredTextReport, label: string): TextDerived {
   let channelCorrect = 0;
   let statusCorrect = 0;
   let exactCorrect = 0;
+  let kindCorrect = 0;
+  let unsafeItemKindDiversions = 0;
   let notSureCount = 0;
   let errors = 0;
   let unsafeDiversions = 0;
@@ -206,6 +215,7 @@ function deriveText(report: StoredTextReport, label: string): TextDerived {
     assert.deepEqual(stored.expected, {
       channel: item.expectedChannel,
       status: item.expectedStatus,
+      ...(item.expectedItemKind ? { item_kind: item.expectedItemKind } : {}),
     }, `${label} changed the expected answer for ${JSON.stringify(item.text)}`);
 
     if (stored.error !== undefined || stored.actual === null) {
@@ -229,7 +239,12 @@ function deriveText(report: StoredTextReport, label: string): TextDerived {
 
     if (channelMatch) channelCorrect += 1;
     if (statusMatch) statusCorrect += 1;
-    if (channelMatch && statusMatch) exactCorrect += 1;
+    const actualKind = ItemKindSchema.optional().parse(stored.actual.item_kind);
+    const kindMatch = item.expectedItemKind === undefined || actualKind === item.expectedItemKind;
+    if (item.expectedItemKind !== undefined && kindMatch) kindCorrect += 1;
+    if ((item.expectedItemKind === 'large_household_appliance' || item.expectedItemKind === 'electric_mobility_device')
+      && (actualKind === 'ict_equipment' || actualKind === 'other_electrical')) unsafeItemKindDiversions += 1;
+    if (channelMatch && statusMatch && (!checkKinds || kindMatch)) exactCorrect += 1;
     if (actualStatus === 'not_sure') notSureCount += 1;
     if (
       TEXT_SAFETY_CHANNELS.has(item.expectedChannel) &&
@@ -238,7 +253,7 @@ function deriveText(report: StoredTextReport, label: string): TextDerived {
     ) {
       unsafeDiversions += 1;
     }
-    exactByText.set(item.text, channelMatch && statusMatch);
+    exactByText.set(item.text, channelMatch && statusMatch && (!checkKinds || kindMatch));
   }
 
   for (const item of TEST_ITEMS) {
@@ -252,6 +267,9 @@ function deriveText(report: StoredTextReport, label: string): TextDerived {
   }
 
   const total = TEST_ITEMS.length;
+  const itemKindAccuracy = kindCorrect / TEST_ITEMS.filter((item) => item.expectedItemKind !== undefined).length;
+  const itemKindPass = !checkKinds || itemKindAccuracy >= TEXT_GATE_THRESHOLDS.itemKindAccuracy;
+  const itemKindSafetyPass = !checkKinds || unsafeItemKindDiversions <= TEXT_GATE_THRESHOLDS.maxUnsafeItemKindDiversions;
   const exactAccuracy = exactCorrect / total;
   const channelAccuracy = channelCorrect / total;
   const statusAccuracy = statusCorrect / total;
@@ -267,6 +285,8 @@ function deriveText(report: StoredTextReport, label: string): TextDerived {
   const safetyPass = unsafeDiversions <= TEXT_GATE_THRESHOLDS.maxUnsafeDiversions;
 
   return {
+    itemKindAccuracy,
+    unsafeItemKindDiversions,
     exactAccuracy,
     channelAccuracy,
     statusAccuracy,
@@ -277,6 +297,8 @@ function deriveText(report: StoredTextReport, label: string): TextDerived {
     perChannel,
     exactByText,
     gate: {
+      itemKindPass,
+      itemKindSafetyPass,
       exactPass,
       channelPass,
       statusPass,
@@ -286,12 +308,14 @@ function deriveText(report: StoredTextReport, label: string): TextDerived {
       safetyPass,
       measurementValid: errorsPass,
       releaseEligible: exactPass && channelPass && statusPass && perChannelPass &&
-        notSurePass && errorsPass && safetyPass,
+        notSurePass && errorsPass && safetyPass && itemKindPass && itemKindSafetyPass,
     },
   };
 }
 
 function assertStoredTextMetrics(report: StoredTextReport, derived: TextDerived, label: string) {
+  assert.equal(report.itemKindAccuracy, derived.itemKindAccuracy, `${label} item kind accuracy is not derived`);
+  assert.equal(report.unsafeItemKindDiversions, derived.unsafeItemKindDiversions, `${label} unsafe item kind count is not derived`);
   assert.equal(report.exactAccuracy, derived.exactAccuracy, `${label} exact accuracy is not derived`);
   assert.equal(report.channelAccuracy, derived.channelAccuracy, `${label} channel accuracy is not derived`);
   assert.equal(report.statusAccuracy, derived.statusAccuracy, `${label} status accuracy is not derived`);
@@ -332,7 +356,7 @@ function verifyTextEvidence(candidate: StoredTextEvidence) {
   assert.equal(production.truthSetDigest, TEXT_TRUTH_SET_DIGEST);
   assertProfile(production.profile, PRODUCTION_PROFILE, 'Text production baseline');
   assert.equal(production.reports.length, 1, 'Text production baseline must contain one report');
-  const productionDerived = deriveText(production.reports[0], 'Text production baseline');
+  const productionDerived = deriveText(production.reports[0], 'Text production baseline', false);
   assertStoredTextMetrics(production.reports[0], productionDerived, 'Text production baseline');
   assert.equal(productionDerived.errors, 0, 'Text production baseline has provider errors');
 

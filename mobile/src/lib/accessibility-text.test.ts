@@ -29,3 +29,12 @@ const expected: Record<Locale, { accessibilityLabel: string; accessibilityLangua
 };
 for (const option of LOCALE_OPTIONS) assert.deepEqual(languageOptionAccessibility(option), expected[option.value]);
 console.log('PASS accessibility header, destination, walking route and language option text in all four locales');
+
+for (const locale of ['en', 'zh', 'ms', 'ta'] as const) {
+  for (const item_kind of ['large_household_appliance', 'electric_mobility_device'] as const) {
+    const collection = { item: 'TV', status: 'special_handling', channel: 'ewaste', confidence: 0.9,
+      reason: 'Collection', item_kind } as const;
+    assert.equal(answerHeaderLabel(collection, locale),
+      `${t(locale, 'channel.ewaste')}, TV, ${t(locale, 'ewaste.collection.title')}`);
+  }
+}

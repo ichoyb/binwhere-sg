@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { getDestinationChannel } from '@binwhere/core';
+import { getResultDestinationQuery, getResultTitleKey, requiresEwasteCollection, ALBA_COLLECTION_URL } from '@binwhere/core';
 import dynamic from 'next/dynamic';
 import type { ClassifyResult } from '@/lib/ai/types';
 import type { Locale } from '@/lib/i18n/types';
@@ -12,8 +12,7 @@ import RecyclingPointCard from '@/components/shared/RecyclingPointCard';
 import StatusIcon from '@/components/shared/StatusIcon';
 import ViewToggle from '@/components/nearby/ViewToggle';
 import { useNearby } from '@/hooks/useNearby';
-import { CHANNEL_TO_NEARBY, CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
-import { mapItemToAcceptedItem } from '@/lib/donation-mapping';
+import { CHANNEL_DISPLAY_CONFIG } from '@/lib/constants';
 import HazardousInfoCard from '@/components/result/HazardousInfoCard';
 import BcrsInfoCard from '@/components/result/BcrsInfoCard';
 import { generateShareCard } from '@/lib/share-card';
@@ -64,31 +63,29 @@ export default function ResultPage({
   locale,
 }: ResultPageProps) {
   const action = result.next_action;
-  const destination = getDestinationChannel(result);
-  const nearbyChannel = destination ? CHANNEL_TO_NEARBY[destination] : null;
+  const destinationQuery = getResultDestinationQuery(result);
+  const destination = destinationQuery?.channel ?? null;
+  const nearbyChannel = result.channel === 'bulky_waste' ? null : destination;
+  const titleKey = getResultTitleKey(result);
+  const collection = requiresEwasteCollection(result);
   const isHazardous = result.channel === 'hazardous';
   const isBcrsReturn = result.channel === 'return_point';
   const isInSingapore = userLocation
     ? isSingaporeCoordinates(userLocation.lat, userLocation.lng)
     : false;
 
-  // For donation channel, derive acceptedItem from the item name
-  const acceptedItem = nearbyChannel === 'donation' ? mapItemToAcceptedItem(result.item) : undefined;
-
-  // For bulky_waste, also query donation channel for Furniture/Large home appliances
-  const bulkyDonationChannel = result.channel === 'bulky_waste' ? 'donation' as const : null;
-  const bulkyAcceptedItem = result.channel === 'bulky_waste' ? 'Furniture' : undefined;
-
   const { points, loading: nearbyLoading } = useNearby(
     isInSingapore ? userLocation : null,
     nearbyChannel,
-    acceptedItem,
+    undefined,
+    destinationQuery?.itemKind,
   );
 
   const { points: donationPoints, loading: donationLoading } = useNearby(
     isInSingapore ? userLocation : null,
-    bulkyDonationChannel,
-    bulkyAcceptedItem,
+    result.channel === 'bulky_waste' ? 'donation' : null,
+    undefined,
+    result.channel === 'bulky_waste' ? destinationQuery?.itemKind : undefined,
   );
 
   const [nearbyMode, setNearbyMode] = useState<'list' | 'map'>('map');
@@ -212,7 +209,7 @@ export default function ResultPage({
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={ch.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
                   <path d={ch.iconPath} />
                 </svg>
-                <span className="text-caption font-semibold">{t(locale, `instruction.${result.channel}` as TranslationKey)}</span>
+                <span className="text-caption font-semibold">{titleKey ? t(locale, titleKey) : result.reason}</span>
               </div>
             );
           })()}
@@ -233,6 +230,10 @@ export default function ResultPage({
               </ul>
             </div>
           )}
+          {collection && <a href={ALBA_COLLECTION_URL} target="_blank" rel="noopener noreferrer"
+            className="flex min-h-btn items-center justify-center rounded-btn bg-nea-green px-4 py-3 text-white font-semibold">
+            {t(locale, 'ewaste.collection.book')}
+          </a>}
         </div>}
 
         {/* Low confidence warning */}

@@ -48,6 +48,7 @@ function categoryEstablished(e: BeverageEvidence, mode: BeverageInputMode) {
 export function toUnconfirmed(result: ClassifyResult, locale: Locale): ClassifyResult {
   const classification = { ...result };
   delete classification.next_action;
+  delete classification.item_kind;
   return {
     ...classification, status: 'not_sure', channel: null,
     confidence: Math.min(result.confidence, 0.49),

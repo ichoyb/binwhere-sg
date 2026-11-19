@@ -57,6 +57,7 @@ export function buildNearbyQueryString(params: NearbyQueryParams): string {
     radius: String(input.radius),
   });
   if (input.acceptedItem) query.set('acceptedItem', input.acceptedItem);
+  if (input.itemKind) query.set('itemKind', input.itemKind);
   return query.toString();
 }
 

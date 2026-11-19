@@ -19,8 +19,8 @@ import {
 } from '../../src/lib/ai/provider';
 import { t } from '../../src/lib/i18n';
 
-/** Actual deployment from 2026-11-06; execution uses its own installed dependencies. */
-export const PRODUCTION_REVISION = 'b533bdb96f6042311013b95a36031957b6096681';
+/** Actual deployment from 2026-11-19; execution uses its own installed dependencies. */
+export const PRODUCTION_REVISION = 'f52c26d3513da4465090a43a90e15b81ebbe1b46';
 const PRODUCTION_SHORT_REVISION = PRODUCTION_REVISION.slice(0, 7);
 const LOCALES: readonly Locale[] = ['en', 'zh', 'ms', 'ta'];
 
@@ -35,6 +35,9 @@ const CANDIDATE_EXECUTION_SOURCE_PATHS = {
   imageSanitizer: join(__dirname, '../../src/lib/image-security.ts'),
   resultContract: join(__dirname, '../../../packages/core/src/types/classify.ts'),
   actionPolicy: join(__dirname, '../../../packages/core/src/next-action.ts'),
+  itemKinds: join(__dirname, '../../../packages/core/src/item-kind.ts'),
+  donationCategories: join(__dirname, '../../../packages/core/src/donation-mapping.ts'),
+  resultRouting: join(__dirname, '../../../packages/core/src/result-routing.ts'),
 } as const;
 
 function candidateExecutionSourceDigests() {
@@ -146,6 +149,8 @@ export function profileDigest(profile: ClassificationProfile): string {
     imagePrompts: Object.fromEntries(LOCALES.map((locale) => [locale, getPrompt(locale, 'image')])),
     responseFormat: ACTION_CLASSIFY_RESPONSE_FORMAT,
     copy: Object.fromEntries(LOCALES.map((locale) => [locale, [
+      'ewaste.collection.title', 'ewaste.collection.reason',
+      'ewaste.collection.step1', 'ewaste.collection.step2', 'ewaste.collection.step3', 'ewaste.collection.book',
       'action.return.title', 'action.return.instruction', 'action.return.qualification',
       'action.try.title', 'action.try.instruction', 'action.try.qualification',
       'action.check.title', 'action.check.instruction', 'action.check.qualification',

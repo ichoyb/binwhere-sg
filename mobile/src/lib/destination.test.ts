@@ -9,8 +9,8 @@ for (const channel of Object.keys(CHANNEL_STATUS) as ChannelType[]) {
   assert.equal(answerInitiallyExpanded(result), ['blue_bin', 'general_waste', 'hazardous'].includes(channel), channel);
   if (['blue_bin', 'general_waste', 'hazardous'].includes(channel)) {
     assert.equal(query, null, channel);
-  } else if (channel === 'bulky_waste' || channel === 'donation') {
-    assert.deepEqual(query, { channel: 'donation', acceptedItem: 'Furniture' });
+  } else if (channel === 'bulky_waste') {
+    assert.deepEqual(query, { channel: 'donation', itemKind: 'furniture' });
     assert.deepEqual(destinationLayers(query!), []);
   } else {
     assert.deepEqual(query, { channel });
@@ -29,6 +29,20 @@ assert.deepEqual(automaticDestination({ item: 'Unmapped object', status: 'consid
 console.log('PASS every channel has its own automatic/button destination and exact layer rule');
 console.log('PASS every channel and null channel start expanded exactly when there is no automatic destination');
 
+for (const item_kind of ['large_household_appliance', 'electric_mobility_device'] as const) {
+  const result = { item: 'TV', channel: 'ewaste', status: 'special_handling', confidence: 0.9,
+    reason: 'Collection', item_kind } as const;
+  assert.equal(automaticDestination(result), null);
+  assert.equal(optionalDestination(result), null);
+  assert.equal(answerInitiallyExpanded(result), true);
+}
+for (const itemKind of ['books', 'stationery', 'other_electrical', 'ict_equipment'] as const) {
+  const result = { item: '可再用物品', channel: 'donation', status: 'consider_donating', confidence: 0.9,
+    reason: '捐赠', item_kind: itemKind } as const;
+  assert.deepEqual(automaticDestination(result), { channel: 'donation', itemKind });
+  assert.deepEqual(destinationLayers(automaticDestination(result)!), []);
+}
+
 async function main() {
   const original = globalThis.fetch;
   const point = { name: 'Return point', address: 'AMK', postalCode: '', distanceKm: 0.4, lat: 1.369, lng: 103.845 };
@@ -39,13 +53,13 @@ async function main() {
         const url = new URL(String(input));
         radii.push(Number(url.searchParams.get('radius')));
         assert.equal(url.searchParams.get('channel'), 'donation');
-        assert.equal(url.searchParams.get('acceptedItem'), 'Furniture');
+        assert.equal(url.searchParams.get('itemKind'), 'furniture');
         assert.equal(url.searchParams.get('limit'), '1');
         const count = counts[radii.length - 1];
         return new Response(JSON.stringify({ channel: 'donation', center: { lat: 1.3691, lng: 103.8454 },
           radiusKm: radii.at(-1), count, results: count ? [point] : [] }), { status: 200 });
       };
-      const result = await findDestination({ channel: 'donation', acceptedItem: 'Furniture' }, { lat: 1.3691, lng: 103.8454 });
+      const result = await findDestination({ channel: 'donation', itemKind: 'furniture' }, { lat: 1.3691, lng: 103.8454 });
       assert.deepEqual(radii, expectedRadii);
       assert.deepEqual(result, counts.at(-1) ? point : null);
     }

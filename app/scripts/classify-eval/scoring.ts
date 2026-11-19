@@ -19,6 +19,8 @@ export interface ProviderReport {
   channelAccuracy: number;
   statusAccuracy: number;
   exactAccuracy: number;
+  itemKindAccuracy: number;
+  unsafeItemKindDiversions: number;
   notSureCount: number;
   notSureRate: number;
   perChannel: Record<string, { total: number; correct: number; accuracy: number }>;
@@ -44,7 +46,7 @@ export interface RegressionResult {
   error?: string;
 }
 
-export function evaluateReport(report: ProviderReport) {
+export function evaluateReport(report: ProviderReport, checkKinds = true) {
   const exactPass = report.exactAccuracy >= TEXT_GATE_THRESHOLDS.exactAccuracy;
   const channelPass = report.channelAccuracy >= TEXT_GATE_THRESHOLDS.channelAccuracy;
   const statusPass = report.statusAccuracy >= TEXT_GATE_THRESHOLDS.statusAccuracy;
@@ -54,7 +56,11 @@ export function evaluateReport(report: ProviderReport) {
   );
   const errorsPass = report.errors <= TEXT_GATE_THRESHOLDS.maxProviderErrors;
   const safetyPass = report.unsafeDiversions <= TEXT_GATE_THRESHOLDS.maxUnsafeDiversions;
+  const itemKindPass = !checkKinds || report.itemKindAccuracy >= TEXT_GATE_THRESHOLDS.itemKindAccuracy;
+  const itemKindSafetyPass = !checkKinds || report.unsafeItemKindDiversions <= TEXT_GATE_THRESHOLDS.maxUnsafeItemKindDiversions;
   return {
+    itemKindPass,
+    itemKindSafetyPass,
     exactPass,
     channelPass,
     statusPass,
@@ -64,7 +70,7 @@ export function evaluateReport(report: ProviderReport) {
     safetyPass,
     measurementValid: errorsPass,
     releaseEligible: exactPass && channelPass && statusPass && perChannelPass &&
-      notSurePass && errorsPass && safetyPass,
+      notSurePass && errorsPass && safetyPass && itemKindPass && itemKindSafetyPass,
   };
 }
 
@@ -74,10 +80,19 @@ function percentile(values: number[], ratio: number): number {
   return sorted[Math.ceil(sorted.length * ratio) - 1];
 }
 
-export function scoreTextResults(results: TestResult[]): ProviderReport {
+export function scoreTextResults(results: TestResult[], checkKinds = true): ProviderReport {
   const channelCorrect = results.filter((entry) => entry.channelMatch).length;
   const statusCorrect = results.filter((entry) => entry.statusMatch).length;
-  const exactCorrect = results.filter((entry) => entry.channelMatch && entry.statusMatch).length;
+  const kindMatches = (entry: TestResult) => entry.item.expectedItemKind === undefined
+    || entry.result?.item_kind === entry.item.expectedItemKind;
+  const exactCorrect = results.filter((entry) => entry.channelMatch && entry.statusMatch
+    && (!checkKinds || kindMatches(entry))).length;
+  const kindResults = results.filter((entry) => entry.item.expectedItemKind !== undefined);
+  const itemKindAccuracy = kindResults.filter(kindMatches).length / kindResults.length;
+  const unsafeItemKindDiversions = results.filter((entry) => (
+    (entry.item.expectedItemKind === 'large_household_appliance' || entry.item.expectedItemKind === 'electric_mobility_device')
+    && (entry.result?.item_kind === 'ict_equipment' || entry.result?.item_kind === 'other_electrical')
+  )).length;
   const notSureCount = results.filter((entry) => entry.result?.status === 'not_sure').length;
   const errorCount = results.filter((entry) => entry.error !== undefined).length;
   const unsafeDiversions = results.filter((entry) => entry.result &&
@@ -104,6 +119,8 @@ export function scoreTextResults(results: TestResult[]): ProviderReport {
     channelAccuracy: channelCorrect / TEST_ITEMS.length,
     statusAccuracy: statusCorrect / TEST_ITEMS.length,
     exactAccuracy: exactCorrect / TEST_ITEMS.length,
+    itemKindAccuracy,
+    unsafeItemKindDiversions,
     notSureCount,
     notSureRate: notSureCount / TEST_ITEMS.length,
     perChannel,
@@ -124,9 +141,10 @@ export function serializeTextReport(report: ProviderReport) {
     ...report,
     results: report.results.map((entry) => ({
       text: entry.item.text,
-      expected: { channel: entry.item.expectedChannel, status: entry.item.expectedStatus },
+      locale: entry.item.locale ?? 'en',
+      expected: { channel: entry.item.expectedChannel, status: entry.item.expectedStatus, item_kind: entry.item.expectedItemKind },
       actual: entry.result ? { channel: entry.result.channel, status: entry.result.status,
-        confidence: entry.result.confidence } : null,
+        confidence: entry.result.confidence, item_kind: entry.result.item_kind } : null,
       channelMatch: entry.channelMatch, statusMatch: entry.statusMatch,
       durationMs: entry.durationMs, error: entry.error,
     })),

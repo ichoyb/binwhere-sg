@@ -18,6 +18,8 @@ import { TEST_ITEMS, TEXT_BASELINE } from './test-items';
 
 export const TEXT_GATE_THRESHOLDS = {
   exactAccuracy: 0.9,
+  itemKindAccuracy: 0.9,
+  maxUnsafeItemKindDiversions: 0,
   channelAccuracy: 0.9,
   statusAccuracy: 0.9,
   perChannelAccuracy: 0.8,
@@ -121,6 +123,9 @@ export function checkBcrsResult(
     failures.push(`confidence expected <= ${expected.maxConfidence}, got ${result.confidence}`);
   }
 
+  if (checkActions && expected.expectedItemKind !== undefined && result.item_kind !== expected.expectedItemKind) {
+    failures.push(`item_kind expected ${expected.expectedItemKind}, got ${result.item_kind ?? 'none'}`);
+  }
   const prose = resultText(result);
   for (const exact of expected.requiredExactText ?? []) {
     if (!prose.includes(exact)) failures.push(`response is missing exact text ${JSON.stringify(exact)}`);

@@ -1,4 +1,4 @@
-import type { ChannelType, ClassifyStatus, Locale } from '@binwhere/core';
+import type { ChannelType, ClassifyStatus, Locale, ItemKind } from '@binwhere/core';
 
 export const BCRS_POLICY_SOURCE = {
   url: 'https://www.nea.gov.sg/our-services/waste-management/beverage-container-return-scheme/for-consumers',
@@ -16,12 +16,13 @@ export const BCRS_POLICY_SOURCE = {
 } as const;
 
 export const BCRS_BASELINE = {
-  id: 'sg-bcrs-v24',
+  id: 'sg-bcrs-v25',
   reviewedAt: '2026-11-06',
   holdoutRule: "All previously exposed images, including the five v23 holdouts, are regression cases. After candidate code and labels are frozen, select new pixel-reviewed holdouts with at least two return_point truths and at least two non-return_point truths. Each holdout must pass every classification, action and safety assertion with zero provider errors. Apply the ordered v23 rules to the submitted pixels: an identified non-beverage keeps its ordinary channel in any scene, and drinks follow the container-category rules. Image exactness remains at least 95%, return-point recall at least 90%, and wrong non-null channels and false return points remain zero tolerance. Reject near-duplicate source pairs at 0.995 before any model call. These checks are developer-visible, frozen and non-adaptive, not sealed blind tests.",
 } as const;
 
 export interface ExpectedClassification {
+  expectedItemKind?: ItemKind;
   channel: ChannelType | null;
   status: ClassifyStatus;
   /** Exact strings that must survive localisation unchanged. */
@@ -1700,6 +1701,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     "id": "nonbeverage-shattered-phone-en",
     "sourceId": "nonbeverage-shattered-phone",
+    "expectedItemKind": "ict_equipment",
     "locale": "en",
     "channel": "ewaste",
     "status": "special_handling",
@@ -1776,6 +1778,7 @@ export const BCRS_IMAGE_CASES: readonly BcrsImageCase[] = [
   {
     "id": "holdout-cracked-phone-screen-v23-en",
     "sourceId": "holdout-cracked-phone-screen-v23",
+    "expectedItemKind": "ict_equipment",
     "locale": "en",
     "channel": "ewaste",
     "status": "special_handling",

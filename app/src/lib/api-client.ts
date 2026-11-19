@@ -91,6 +91,7 @@ export async function fetchNearby(
     radius: String(input.radius),
   });
   if (input.acceptedItem) query.set('acceptedItem', input.acceptedItem);
+  if (input.itemKind) query.set('itemKind', input.itemKind);
 
   let response: Response;
   try {

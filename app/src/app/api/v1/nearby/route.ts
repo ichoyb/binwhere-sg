@@ -89,6 +89,7 @@ export async function GET(request: NextRequest) {
         http: 503,
         code: 'DATA_UNAVAILABLE',
         channel: input.channel,
+        kind: input.itemKind,
         cell,
         ms: elapsed(),
       });
@@ -131,6 +132,7 @@ export async function GET(request: NextRequest) {
         http: 502,
         code: 'INVALID_RESPONSE',
         channel: input.channel,
+        kind: input.itemKind,
         cell,
         ms: elapsed(),
       });
@@ -147,6 +149,7 @@ export async function GET(request: NextRequest) {
       ok: true,
       http: 200,
       channel: input.channel,
+      kind: input.itemKind,
       cell,
       radiusKm: input.radius,
       results: parsedResponse.data.count,
@@ -161,6 +164,7 @@ export async function GET(request: NextRequest) {
       http: 500,
       code: 'NEARBY_QUERY_FAILED',
       channel: input.channel,
+      kind: input.itemKind,
       cell,
       ms: elapsed(),
     });

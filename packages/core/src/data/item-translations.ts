@@ -207,11 +207,16 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
           preparation: ['恢复出厂设置并清除个人数据', '取下保护壳和屏幕保护膜'],
           tip: '可以考虑将可用的平板电脑捐给 Digital for Life 计划或慈善机构。',
         },
-        'TV / Monitor': {
-          name: '电视 / 显示器',
-          reason: '电视和显示器属于受管制电子废弃物。根据新加坡的延伸生产者责任制度，提供送货的零售商必须提供一换一回收服务。',
-          preparation: ['拔掉所有线缆', '如果是智能电视，请清除个人数据'],
-          tip: '购买新电视时，记得要求零售商一换一回收旧电视——这是免费的。',
+        'TV': {
+          name: '电视',
+          reason: t('zh', 'ewaste.collection.reason'),
+          preparation: [t('zh', 'ewaste.collection.step1'), t('zh', 'ewaste.collection.step2'), t('zh', 'ewaste.collection.step3')],
+        },
+        'Computer Monitor': {
+          name: '电脑显示器',
+          reason: t('zh', 'ewaste.monitor.reason'),
+          preparation: [t('zh', 'ewaste.monitor.preparation')],
+          tip: t('zh', 'ewaste.monitor.tip'),
         },
         'Printer': {
           name: '打印机',
@@ -223,7 +228,6 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
           name: '线缆与充电器',
           reason: '线缆和充电器含有铜和其他金属，应在电子废弃物收集点回收。',
           preparation: ['将线缆整齐捆好', '尽可能将不同类型分开'],
-          tip: '商场和社区中心的电子废弃物收集箱接受线缆等小型电子物品。',
         },
         'Power Bank': {
           name: '充电宝',
@@ -596,11 +600,16 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
           preparation: ['Tetapan semula kilang dan padam data peribadi', 'Tanggalkan sarung pelindung dan pelindung skrin'],
           tip: 'Pertimbangkan untuk menderma tablet yang masih berfungsi kepada program Digital for Life atau badan amal.',
         },
-        'TV / Monitor': {
-          name: 'TV / Monitor',
-          reason: 'TV dan monitor adalah e-sisa terkawal. Di bawah skim Tanggungjawab Pengeluar Dilanjutkan Singapura, peruncit yang menawarkan penghantaran mesti menyediakan perkhidmatan tukar ganti 1-untuk-1.',
-          preparation: ['Cabut semua kabel', 'Padam data peribadi jika ia TV pintar'],
-          tip: 'Apabila membeli TV baru, minta peruncit untuk tukar ganti 1-untuk-1 TV lama anda — ia percuma.',
+        'TV': {
+          name: 'TV',
+          reason: t('ms', 'ewaste.collection.reason'),
+          preparation: [t('ms', 'ewaste.collection.step1'), t('ms', 'ewaste.collection.step2'), t('ms', 'ewaste.collection.step3')],
+        },
+        'Computer Monitor': {
+          name: 'Monitor Komputer',
+          reason: t('ms', 'ewaste.monitor.reason'),
+          preparation: [t('ms', 'ewaste.monitor.preparation')],
+          tip: t('ms', 'ewaste.monitor.tip'),
         },
         'Printer': {
           name: 'Pencetak',
@@ -612,7 +621,6 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
           name: 'Kabel & Pengecas',
           reason: 'Kabel dan pengecas mengandungi tembaga dan logam lain. Ia perlu dikitar semula di pusat pengumpulan e-sisa.',
           preparation: ['Ikat kabel dengan kemas', 'Asingkan jenis yang berbeza jika boleh'],
-          tip: 'Tong pengumpulan e-sisa di pusat beli-belah dan pusat komuniti menerima barangan kecil seperti kabel.',
         },
         'Power Bank': {
           name: 'Pengecas Mudah Alih',
@@ -985,11 +993,16 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
           preparation: ['தொழிற்சாலை மீட்டமைப்பு செய்து தனிப்பட்ட தரவை அழிக்கவும்', 'பாதுகாப்பு கவர் மற்றும் திரை பாதுகாப்பியை அகற்றவும்'],
           tip: 'செயல்படும் டேப்லெட்களை Digital for Life திட்டங்கள் அல்லது தொண்டு நிறுவனங்களுக்கு நன்கொடையாக வழங்கலாம்.',
         },
-        'TV / Monitor': {
-          name: 'TV / மானிட்டர்',
-          reason: 'TV மற்றும் மானிட்டர்கள் கட்டுப்படுத்தப்பட்ட மின்னணுக் கழிவுகள் ஆகும். சிங்கப்பூரின் விரிவாக்கப்பட்ட உற்பத்தியாளர் பொறுப்புத் திட்டத்தின் கீழ், டெலிவரி வழங்கும் சில்லறை விற்பனையாளர்கள் 1-க்கு-1 பழையது மாற்றும் சேவையை வழங்க வேண்டும்.',
-          preparation: ['அனைத்து கேபிள்களையும் துண்டிக்கவும்', 'ஸ்மார்ட் TV எனில் தனிப்பட்ட தரவை அழிக்கவும்'],
-          tip: 'புதிய TV வாங்கும்போது, சில்லறை விற்பனையாளரிடம் 1-க்கு-1 பழையது மாற்றும் சேவையைக் கேளுங்கள் — இது இலவசம்.',
+        'TV': {
+          name: 'தொலைக்காட்சி',
+          reason: t('ta', 'ewaste.collection.reason'),
+          preparation: [t('ta', 'ewaste.collection.step1'), t('ta', 'ewaste.collection.step2'), t('ta', 'ewaste.collection.step3')],
+        },
+        'Computer Monitor': {
+          name: 'கணினி மானிட்டர்',
+          reason: t('ta', 'ewaste.monitor.reason'),
+          preparation: [t('ta', 'ewaste.monitor.preparation')],
+          tip: t('ta', 'ewaste.monitor.tip'),
         },
         'Printer': {
           name: 'அச்சுப்பொறி',
@@ -1001,7 +1014,6 @@ export const ITEM_TRANSLATIONS: Record<Exclude<Locale, 'en'>, Record<string, Cat
           name: 'கேபிள்கள் & சார்ஜர்கள்',
           reason: 'கேபிள்கள் மற்றும் சார்ஜர்களில் செம்பு மற்றும் பிற உலோகங்கள் உள்ளன. மின்னணுக் கழிவு சேகரிப்புப் புள்ளிகளில் மறுசுழற்சி செய்ய வேண்டும்.',
           preparation: ['கேபிள்களை நேர்த்தியாகக் கட்டுங்கள்', 'முடிந்தால் வெவ்வேறு வகைகளைப் பிரிக்கவும்'],
-          tip: 'வணிக வளாகங்கள் மற்றும் சமூக மையங்களில் உள்ள மின்னணுக் கழிவு சேகரிப்புத் தொட்டிகள் கேபிள்கள் போன்ற சிறிய பொருட்களை ஏற்றுக்கொள்கின்றன.',
         },
         'Power Bank': {
           name: 'பவர் பேங்க்',

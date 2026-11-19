@@ -1,9 +1,9 @@
-import { formatDistance, t, type ClassifyResult, type Locale, type LOCALE_OPTIONS, type RouteResponse } from '@binwhere/core';
+import { getResultTitleKey, formatDistance, t, type ClassifyResult, type Locale, type LOCALE_OPTIONS, type RouteResponse } from '@binwhere/core';
 
 export function answerHeaderLabel(result: ClassifyResult, locale: Locale) {
   const category = result.channel ? t(locale, `channel.${result.channel}`) : t(locale, `status.${result.status}`);
-  const headline = result.next_action?.title
-    ?? (result.channel ? t(locale, `instruction.${result.channel}`) : result.reason);
+  const titleKey = getResultTitleKey(result);
+  const headline = result.next_action?.title ?? (titleKey ? t(locale, titleKey) : result.reason);
   return `${category}, ${result.item}, ${headline}`;
 }
 

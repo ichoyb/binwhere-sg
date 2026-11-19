@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-11-06T14:30:51.206Z",
+  "timestamp": "2026-11-19T15:53:02.120Z",
   "profile": {
-    "id": "production-b533bdb",
-    "revision": "b533bdb96f6042311013b95a36031957b6096681",
-    "digest": "88f382fbe24ebf5353fe6b3e57774835084b11bff58b6b3ac623c343532f4119"
+    "id": "production-f52c26d",
+    "revision": "f52c26d3513da4465090a43a90e15b81ebbe1b46",
+    "digest": "0a23df7e711a74c9b213c615258ca64b2cb5fb85baacbb8ab20606b9768e2236"
   },
   "source": {
     "preflight": {
-      "revision": "b533bdb96f6042311013b95a36031957b6096681",
+      "revision": "f52c26d3513da4465090a43a90e15b81ebbe1b46",
       "trackedChanges": [],
       "lockfiles": {
-        "app/package-lock.json": "92d6ddaedafafb51665044a5e02b527822983d7785adc33dd2079ed82a7acede",
+        "app/package-lock.json": "bf0322b3908bd32f8c203b79f4f5876b7ceff3ad42a04710bf7ee4cbb8f8de6d",
         "packages/core/package-lock.json": "465985793d7630bd7ff724bbbcaf67423611c8037a90c06b221eff8550b95941"
       },
       "checks": {
@@ -29,7 +29,7 @@
       "retryBackoffMs": 500,
       "validateResultSemantics": true
     },
-    "manifestDigest": "51789f185571f342c70b3e213110f6638cde55cbb82193a66ab58411a5f1abb6",
+    "manifestDigest": "76efff21f3f5cc12617503210b90118b3f5b43a6cd1f0bc4907253be3475ecc1",
     "modulePaths": {
       "sharp": "app/node_modules/sharp/dist/index.cjs",
       "appZod": "app/node_modules/zod/index.cjs",
@@ -46,13 +46,13 @@
     },
     "models": {
       "text": "hy3",
-      "image": "kimi-k3.1-pro"
+      "image": "kimi-k3.1-pro-highspeed"
     },
     "nodeVersion": "v24.22.1",
     "policyFieldsMatch": true,
     "dryRun": false,
-    "startedAt": "2026-11-06T13:57:55.379Z",
-    "endedAt": "2026-11-06T14:30:51.206Z",
+    "startedAt": "2026-11-19T15:32:36.713Z",
+    "endedAt": "2026-11-19T15:53:02.120Z",
     "imagePipeline": {
       "maxSize": 2048,
       "quality": 0.7
@@ -370,14 +370,14 @@
   },
   "runKind": "complete",
   "baseline": {
-    "id": "sg-bcrs-v24",
+    "id": "sg-bcrs-v25",
     "reviewedAt": "2026-11-06",
     "holdoutRule": "All previously exposed images, including the five v23 holdouts, are regression cases. After candidate code and labels are frozen, select new pixel-reviewed holdouts with at least two return_point truths and at least two non-return_point truths. Each holdout must pass every classification, action and safety assertion with zero provider errors. Apply the ordered v23 rules to the submitted pixels: an identified non-beverage keeps its ordinary channel in any scene, and drinks follow the container-category rules. Image exactness remains at least 95%, return-point recall at least 90%, and wrong non-null channels and false return points remain zero tolerance. Reject near-duplicate source pairs at 0.995 before any model call. These checks are developer-visible, frozen and non-adaptive, not sealed blind tests."
   },
-  "truthSetDigest": "fadf96cc8f57c6096f9a1ada5d9d0e5284813d0e56c1dd2b494d3b88933d64d9",
+  "truthSetDigest": "9cd1282569de199e90ec4ef054cffe03eb5c3d2f9067fa4a726b4894d13dc906",
   "models": {
     "text": "hy3",
-    "image": "kimi-k3.1-pro"
+    "image": "kimi-k3.1-pro-highspeed"
   },
   "policySource": {
     "url": "https://www.nea.gov.sg/our-services/waste-management/beverage-container-return-scheme/for-consumers",
@@ -1316,7 +1316,7 @@
       "actual": {
         "item": "Empty 500ml plastic beverage bottle with Singapore BCRS Deposit Mark",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 1,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -1335,7 +1335,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 3942
+      "durationMs": 3397
     },
     {
       "id": "official-mark-present-zh",
@@ -1355,7 +1355,7 @@
       "actual": {
         "item": "空的500ml塑料饮料瓶",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 1,
         "channel": "return_point",
         "reason": "这类饮料容器属于押金回收范围。在新加坡购买、印有押金标志（10¢ SG RETURN）的，可送到退还点退 S$0.10，能否退款由回收机扫描条形码决定。没有押金标志或在境外购买的，冲洗后放进蓝色回收箱。",
         "preparation": [
@@ -1374,7 +1374,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 3297
+      "durationMs": 3453
     },
     {
       "id": "official-mark-present-ms",
@@ -1394,7 +1394,7 @@
       "actual": {
         "item": "Botol minuman plastik 500ml",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 1,
         "channel": "return_point",
         "reason": "Bekas minuman jenis ini termasuk dalam skim deposit. Jika anda membelinya di Singapura dan bekas ini mempunyai Deposit Mark (10¢ SG RETURN), pulangkan di Pusat Pulangan untuk S$0.10; mesin mengimbas kod bar untuk membuat keputusan. Tanpa Deposit Mark atau jika dibeli di luar Singapura, bilas dan masukkan ke dalam tong kitar semula biru.",
         "preparation": [
@@ -1413,7 +1413,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 3866
+      "durationMs": 3629
     },
     {
       "id": "official-mark-present-ta",
@@ -1452,7 +1452,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 4982
+      "durationMs": 4925
     },
     {
       "id": "official-mark-explicitly-absent-en",
@@ -1471,14 +1471,14 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "Single metal drink can without Singapore Deposit Mark; excluded from return_point so goes to blue bin as clean dry metal recyclable.",
+        "reason": "Clean empty aluminium drink can without Singapore Deposit Mark is recyclable via blue bin, not return_point.",
         "preparation": [
           "Ensure can is empty",
           "Rinse if needed and keep dry"
         ]
       },
       "assertions": [],
-      "durationMs": 3430
+      "durationMs": 2924
     },
     {
       "id": "official-mark-explicitly-absent-zh",
@@ -1493,18 +1493,18 @@
         "status": "recyclable"
       },
       "actual": {
-        "item": "空的干净330ml铝制饮料罐",
+        "item": "空的、干净的330ml铝制饮料罐",
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "单只预包装金属饮料罐，容量330ml在150ml-3L范围内，无损坏无污染，但明确无新加坡Deposit Mark，不符合return_point条件，按普通可回收物投入蓝色回收箱。",
+        "reason": "为预包装饮料罐，容量330ml在150ml-3L范围内，无损坏无污染，但明确无新加坡Deposit Mark，不符合return_point条件，空净金属罐归蓝色回收箱。",
         "preparation": [
           "清空罐内残留物",
-          "保持罐体清洁干燥后投入蓝色回收箱"
+          "确保罐身干净干燥后放入蓝色回收箱"
         ]
       },
       "assertions": [],
-      "durationMs": 3806
+      "durationMs": 3502
     },
     {
       "id": "official-mark-explicitly-absent-ms",
@@ -1519,18 +1519,18 @@
         "status": "recyclable"
       },
       "actual": {
-        "item": "Tin minuman aluminium 330ml",
+        "item": "Tin minuman aluminium 330ml kosong dan bersih",
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "Tin aluminium kosong dan bersih tanpa Deposit Mark Singapura, jadi tidak layak untuk return_point dan dikitar semula melalui tong biru.",
+        "reason": "Tin aluminium kosong dan bersih tanpa Deposit Mark Singapura tidak layak untuk return_point, jadi masuk tong biru (blue_bin).",
         "preparation": [
-          "Pastikan tin kosong dan kering",
-          "Bilas jika perlu sebelum dibuang ke tong biru"
+          "Pastikan tin benar-benar kosong",
+          "Bilas jika perlu dan pastikan kering sebelum dibuang ke tong biru"
         ]
       },
       "assertions": [],
-      "durationMs": 3686
+      "durationMs": 3480
     },
     {
       "id": "official-mark-explicitly-absent-ta",
@@ -1549,13 +1549,14 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "சிங்கப்பூர் Deposit Mark இல்லாத காலி, சுத்தமான அலுமினிய பான கேன் நீல குப்பையில் மறுசுழற்சி செய்யப்படும்.",
+        "reason": "காலியான மற்றும் சுத்தமான அலுமினிய பான கேன் நீல பின்னில் மறுசுழற்சி செய்யப்படும். சிங்கப்பூர் Deposit Mark இல்லாததால் return_point அல்ல.",
         "preparation": [
-          "கேனை காலியாகவும் உலரவும் உறுதிசெய்யவும்"
+          "கேனை நன்கு கழுவி உலர விடவும்",
+          "நீல மறுசுழற்சி பின்னில் போடவும்"
         ]
       },
       "assertions": [],
-      "durationMs": 5071
+      "durationMs": 4324
     },
     {
       "id": "official-mark-unknown-en",
@@ -1595,7 +1596,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 3523
+      "durationMs": 3417
     },
     {
       "id": "official-mark-unknown-zh",
@@ -1635,7 +1636,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 3708
+      "durationMs": 3388
     },
     {
       "id": "official-mark-unknown-ms",
@@ -1654,7 +1655,7 @@
         "nextAction": "return_container"
       },
       "actual": {
-        "item": "botol minuman plastik",
+        "item": "Botol minuman plastik",
         "status": "recyclable",
         "confidence": 0.9,
         "channel": "return_point",
@@ -1675,7 +1676,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 3954
+      "durationMs": 3926
     },
     {
       "id": "official-mark-unknown-ta",
@@ -1715,7 +1716,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 5413
+      "durationMs": 4745
     },
     {
       "id": "ordinary-water-bottle-en",
@@ -1755,7 +1756,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 3619
+      "durationMs": 3413
     },
     {
       "id": "ordinary-water-bottle-zh",
@@ -1795,7 +1796,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 3497
+      "durationMs": 3231
     },
     {
       "id": "ordinary-water-bottle-ms",
@@ -1835,7 +1836,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 3865
+      "durationMs": 4429
     },
     {
       "id": "ordinary-water-bottle-ta",
@@ -1875,7 +1876,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 4892
+      "durationMs": 5344
     },
     {
       "id": "crushed-aluminium-can-en",
@@ -1895,14 +1896,14 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "Single prepackaged metal beverage can, crushed (damaged barcode) so excluded from return_point; empty, clean and dry aluminium can is recyclable via blue bin.",
+        "reason": "Single prepackaged metal drink can, crushed (damaged barcode) so not eligible for return_point; empty and clean aluminium can is recyclable via blue bin.",
         "preparation": [
-          "Ensure can is empty",
-          "Keep can clean and dry"
+          "Ensure can is empty, clean and dry",
+          "Place in blue recycling bin"
         ]
       },
       "assertions": [],
-      "durationMs": 3542
+      "durationMs": 3478
     },
     {
       "id": "crushed-aluminium-can-zh",
@@ -1922,15 +1923,14 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "铝制饮料罐为空且干净，但已压扁（损坏），不符合返退点条件，按普通金属回收投入蓝色回收箱。",
+        "reason": "铝制饮料罐为干净干燥的单一预包装饮料容器，但已压扁（损坏），不符合返退点条件，按普通可回收物投入蓝色回收箱。",
         "preparation": [
           "清空罐内残留物",
-          "冲洗并保持干净干燥",
-          "压扁后放入蓝色回收箱"
+          "确保罐体干净干燥后放入蓝色回收箱"
         ]
       },
       "assertions": [],
-      "durationMs": 3695
+      "durationMs": 2721
     },
     {
       "id": "crushed-aluminium-can-ms",
@@ -1950,14 +1950,14 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "Tin aluminium kosong dan bersih tetapi dikemekkan, jadi tidak layak untuk return_point dan boleh dikitar semula melalui tong biru.",
+        "reason": "Tin aluminium kosong dan bersih tetapi dikemekkan, jadi tidak layak untuk return_point dan sebaliknya pergi ke tong biru.",
         "preparation": [
           "Pastikan tin kosong dan bersih",
           "Keringkan sebelum dibuang ke tong biru"
         ]
       },
       "assertions": [],
-      "durationMs": 3498
+      "durationMs": 3582
     },
     {
       "id": "crushed-aluminium-can-ta",
@@ -1973,18 +1973,18 @@
         "nextAction": null
       },
       "actual": {
-        "item": "நசுக்கப்பட்ட 330ml அலுமினிய பான கேன்",
+        "item": "நசுக்கப்பட்ட, காலியான, சுத்தமான 330ml அலுமினிய பான கேன்",
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "நசுக்கப்பட்ட பான கேன் BCRS வரம்பிற்குள் இல்லை, எனவே நீல குப்பையில் மறுசுழற்சி செய்யப்படும்.",
+        "reason": "கேன் நசுக்கப்பட்டிருந்தாலும் காலியாகவும் சுத்தமாகவும் உள்ளது; BCRS இல்லாத நசுக்கப்பட்ட கேன் நீல குப்பையில் மறுசுழற்சி செய்யப்படும்.",
         "preparation": [
           "கேனை முழுவதுமாக காலி செய்யவும்",
           "சுத்தமாகவும் உலர்ந்ததாகவும் உறுதிப்படுத்தவும்"
         ]
       },
       "assertions": [],
-      "durationMs": 4616
+      "durationMs": 4809
     },
     {
       "id": "five-litre-water-bottle-en",
@@ -2000,18 +2000,18 @@
         "nextAction": null
       },
       "actual": {
-        "item": "5L plastic drinking-water bottle (empty, clean)",
+        "item": "5L plastic drinking-water bottle",
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "Empty clean plastic bottle over 3L is excluded from return_point but recyclable via blue bin as clean dry plastic.",
+        "reason": "Empty clean plastic bottle over 3L is not eligible for BCRS return_point (above 3L limit) but is a clean dry plastic recyclable for the blue bin.",
         "preparation": [
           "Ensure bottle is empty",
-          "Rinse if needed and keep clean and dry"
+          "Rinse if needed and leave clean and dry"
         ]
       },
       "assertions": [],
-      "durationMs": 3252
+      "durationMs": 3273
     },
     {
       "id": "five-litre-water-bottle-zh",
@@ -2031,14 +2031,15 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "容量高于3L，不属于BCRS返还点范围；空且干净的塑料瓶可作为干净干燥可回收物投入蓝色回收箱。",
+        "reason": "容量5L超过BCRS的3L上限，且为空净塑料瓶，不属于押金退还范围，按干净干燥塑料容器归入蓝色回收箱。",
         "preparation": [
-          "清空瓶内液体",
-          "确保瓶身干净干燥后投入蓝色回收箱"
-        ]
+          "确保瓶子干净干燥",
+          "移除瓶盖后放入蓝色回收箱（瓶盖若为塑料也可回收，请先确认本地指引）"
+        ],
+        "tip": "因容量高于3L，无法在Return Point获得S$0.10退款，请直接投入蓝色回收箱。"
       },
       "assertions": [],
-      "durationMs": 3913
+      "durationMs": 3509
     },
     {
       "id": "five-litre-water-bottle-ms",
@@ -2058,14 +2059,15 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "Botol plastik minuman yang kosong dan bersih boleh dikitar semula melalui tong biru. Kapasiti 5L melebihi 3L maka tidak layak untuk return_point BCRS.",
+        "reason": "Botol plastik minuman 5L melebihi had 3L untuk return_point, jadi masuk tong biru jika bersih dan kering.",
         "preparation": [
-          "Pastikan botol kosong",
-          "Bilas jika perlu dan pastikan kering sebelum dibuang ke tong biru"
-        ]
+          "Pastikan botol kosong dan kering",
+          "Buang penutup jika tidak boleh dikitar semula atau ikut panduan tong biru"
+        ],
+        "tip": "Kapasiti melebihi 3L tidak layak untuk bayaran balik S$0.10 di Return Point."
       },
       "assertions": [],
-      "durationMs": 4631
+      "durationMs": 3698
     },
     {
       "id": "five-litre-water-bottle-ta",
@@ -2085,14 +2087,13 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "காலியான, சுத்தமான பிளாஸ்டிக் பாட்டில் நீல குப்பையில் போடத்தக்கது; ஆனால் அளவு 3L ஐ விட அதிகமாக இருப்பதால் return_point க்கு தகுதியில்லை.",
+        "reason": "காலியான மற்றும் சுத்தமான பிளாஸ்டிக் பாட்டில் நீல குப்பையில் போடத்தகுந்தது, ஆனால் அளவு 3L ஐ விட அதிகமாக இருப்பதால் திரும்பப் பெறும் மையத்திற்கு வராது.",
         "preparation": [
-          "பாட்டிலை முழுவதுமாக காலி செய்யவும்",
-          "உலர விடவும்"
+          "பாட்டிலை நன்கு கழுவி உலர விடவும்"
         ]
       },
       "assertions": [],
-      "durationMs": 4704
+      "durationMs": 4331
     },
     {
       "id": "hundred-ml-cultured-milk-bottle-en",
@@ -2108,18 +2109,18 @@
         "nextAction": null
       },
       "actual": {
-        "item": "100ml plastic cultured milk drink bottle (empty, clean)",
+        "item": "100ml plastic cultured milk drink bottle",
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "Empty clean plastic drink bottle below 150ml is excluded from BCRS return_point but recyclable as clean dry plastic in blue bin.",
+        "reason": "Single prepackaged plastic beverage bottle below 150ml cannot use return_point; empty and clean so goes to blue bin.",
         "preparation": [
-          "Ensure bottle is empty and clean",
-          "Place in blue recycling bin"
+          "Empty the bottle",
+          "Rinse if needed and ensure clean and dry"
         ]
       },
       "assertions": [],
-      "durationMs": 3565
+      "durationMs": 3150
     },
     {
       "id": "hundred-ml-cultured-milk-bottle-zh",
@@ -2139,14 +2140,14 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "容量低于150ml，不属于BCRS返还点范围，但为空净塑料饮料瓶，可作蓝色回收箱塑料回收",
+        "reason": "容量低于150ml，不属于BCRS返还点范围，但为空且干净的塑料饮料瓶，可作为干净干燥可回收物投入蓝色回收箱。",
         "preparation": [
           "清空瓶内残留液体",
-          "保持瓶身干净干燥"
+          "确保瓶子干净干燥后放入蓝色回收箱"
         ]
       },
       "assertions": [],
-      "durationMs": 3613
+      "durationMs": 3121
     },
     {
       "id": "hundred-ml-cultured-milk-bottle-ms",
@@ -2166,14 +2167,14 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "Botol plastik minuman yang kosong, bersih dan kering boleh dikitar semula dalam tong biru. Kapasiti 100ml di bawah 150ml menjadikannya tidak layak untuk return_point BCRS.",
+        "reason": "Botol plastik kosong dan bersih boleh dikitar semula melalui tong biru. Kapasiti 100ml di bawah 150ml menjadikannya tidak layak untuk return_point BCRS.",
         "preparation": [
-          "Pastikan botol kosong dan kering",
-          "Bilas jika perlu sebelum dibuang ke tong biru"
+          "Pastikan botol benar-benar kosong",
+          "Bilas jika perlu dan pastikan kering sebelum dibuang ke tong biru"
         ]
       },
       "assertions": [],
-      "durationMs": 3751
+      "durationMs": 3387
     },
     {
       "id": "hundred-ml-cultured-milk-bottle-ta",
@@ -2193,14 +2194,14 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "காலியான மற்றும் சுத்தமான பிளாஸ்டிக் பான பாட்டில் நீல குப்பையில் மறுசுழற்சி செய்யப்படலாம். ஆனால் அளவு 100ml ஆக இருப்பதால் BCRS திருப்பிச் செலுத்தும் புள்ளிக்கு (150ml-3L வரம்பு) தகுதியில்லை.",
+        "reason": "100ml கொள்ளளவு என்பதால் BCRS திரும்பப் பெறும் புள்ளிக்கு தகுதியற்றது (150ml-3L வரம்பு); ஆனால் காலியான, சுத்தமான பிளாஸ்டிக் பாட்டில் என்பதால் நீல குப்பையில் மறுசுழற்சி செய்யலாம்.",
         "preparation": [
           "பாட்டிலை முழுவதுமாக காலி செய்யவும்",
-          "சுத்தம் மற்றும் உலர்ந்த நிலையில் வைக்கவும்"
+          "சுத்தம் மற்றும் உலர்ந்த நிலையில் நீல குப்பையில் போடவும்"
         ]
       },
       "assertions": [],
-      "durationMs": 5079
+      "durationMs": 5267
     },
     {
       "id": "drink-can-bought-in-johor-bahru-en",
@@ -2216,18 +2217,18 @@
         "nextAction": null
       },
       "actual": {
-        "item": "Empty clean 330ml aluminium drink can",
+        "item": "330ml aluminium drink can",
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "Single aluminium drink can, clean and empty, but purchased outside Singapore with no Deposit Mark, so not eligible for return_point refund; goes to blue bin as metal recyclable.",
+        "reason": "Empty clean aluminium drink can is recyclable, but bought outside Singapore with no Singapore Deposit Mark so not eligible for return_point refund; goes to blue bin.",
         "preparation": [
           "Ensure can is empty",
-          "Rinse if needed and keep dry"
+          "Rinse if needed and keep clean and dry"
         ]
       },
       "assertions": [],
-      "durationMs": 3469
+      "durationMs": 3199
     },
     {
       "id": "drink-can-bought-in-johor-bahru-zh",
@@ -2243,18 +2244,19 @@
         "nextAction": null
       },
       "actual": {
-        "item": "马来西亚新山购买的330ml铝制罐装饮料（空、干净）",
+        "item": "330ml铝制罐装饮料（空、干净）",
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "罐装饮料为空且干净，但用户明确说明在马来西亚新山购买，不属于新加坡BCRS返还点范围，因此按普通金属回收投入蓝色回收箱。",
+        "reason": "物品为空的干净铝罐，属清洁干燥可回收物；但因在马来西亚新山购买，不在新加坡BCRS退款范围内，故归入蓝色回收箱而非return_point。",
         "preparation": [
-          "清空罐内液体",
-          "保持罐子清洁干燥"
-        ]
+          "清空罐内残留饮料",
+          "保持罐子干净干燥后放入蓝色回收箱"
+        ],
+        "tip": "因非新加坡购买，无S$0.10押金退款；请勿投入return_point机器。"
       },
       "assertions": [],
-      "durationMs": 3469
+      "durationMs": 3508
     },
     {
       "id": "drink-can-bought-in-johor-bahru-ms",
@@ -2274,14 +2276,14 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "Tin aluminium kosong dan bersih boleh dikitar semula dalam tong biru. Dibeli di luar Singapura dan tiada Tanda Deposit Singapura, jadi tidak layak untuk return_point.",
+        "reason": "Tin aluminium kosong dan bersih boleh dikitar semula dalam tong biru, tetapi dibeli di luar Singapura tanpa Tanda Deposit, jadi tidak layak untuk return_point.",
         "preparation": [
-          "Pastikan tin kosong dan bersih",
+          "Pastikan tin kosong dan kering",
           "Masukkan ke dalam tong biru"
         ]
       },
       "assertions": [],
-      "durationMs": 3922
+      "durationMs": 3574
     },
     {
       "id": "drink-can-bought-in-johor-bahru-ta",
@@ -2301,14 +2303,14 @@
         "status": "recyclable",
         "confidence": 0.95,
         "channel": "blue_bin",
-        "reason": "சிங்கப்பூருக்கு வெளியே வாங்கப்பட்டதால் BCRS திருப்பிச் செலுத்துதலுக்கு தகுதியில்லை; ஆனால் காலியான, சுத்தமான உலோக கேன் நீல குப்பையில் மறுசுழற்சி செய்யப்படும்.",
+        "reason": "சிங்கப்பூருக்கு வெளியே வாங்கப்பட்டதால் BCRS திரும்பப் பெறும் தகுதியில்லை; ஆனால் காலியான சுத்தமான உலோக கேன் நீல குப்பையில் மறுசுழற்சி செய்யப்படும்.",
         "preparation": [
-          "கேனை காலியாக்கவும்",
-          "சுத்தம் செய்து உலர விடவும்"
+          "கேனை காலியாக்கி சுத்தம் செய்யவும்",
+          "உலர விட்டு நீல குப்பையில் போடவும்"
         ]
       },
       "assertions": [],
-      "durationMs": 6086
+      "durationMs": 4949
     },
     {
       "id": "official-mark-closeup-en",
@@ -2328,7 +2330,7 @@
         ]
       },
       "actual": {
-        "item": "Suntory C.C. Lemon prepackaged lemon soft drink container",
+        "item": "C.C. Lemon plastic drink bottle",
         "status": "recyclable",
         "confidence": 0.97,
         "channel": "return_point",
@@ -2349,7 +2351,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 17037,
+      "durationMs": 6257,
       "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
     },
     {
@@ -2370,9 +2372,9 @@
         ]
       },
       "actual": {
-        "item": "三得利 C.C. Lemon 柠檬味饮料塑料瓶",
+        "item": "C.C. Lemon 柠檬味预包装饮料塑料瓶",
         "status": "recyclable",
-        "confidence": 0.97,
+        "confidence": 0.98,
         "channel": "return_point",
         "reason": "这类饮料容器属于押金回收范围。在新加坡购买、印有押金标志（10¢ SG RETURN）的，可送到退还点退 S$0.10，能否退款由回收机扫描条形码决定。没有押金标志或在境外购买的，冲洗后放进蓝色回收箱。",
         "preparation": [
@@ -2391,7 +2393,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 17629,
+      "durationMs": 8094,
       "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
     },
     {
@@ -2412,7 +2414,7 @@
         ]
       },
       "actual": {
-        "item": "Botol plastik minuman berkarbonat Suntory C.C. Lemon",
+        "item": "Botol plastik minuman C.C. Lemon",
         "status": "recyclable",
         "confidence": 0.98,
         "channel": "return_point",
@@ -2433,7 +2435,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 18008,
+      "durationMs": 7392,
       "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
     },
     {
@@ -2454,9 +2456,9 @@
         ]
       },
       "actual": {
-        "item": "C.C. Lemon முன்கூட்டியே பொதிசெய்யப்பட்ட எலுமிச்சைப் பானத்தின் பிளாஸ்டிக் பாட்டில்",
+        "item": "சி.சி. லெமன் பிளாஸ்டிக் பானப் போத்தல்",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 0.96,
         "channel": "return_point",
         "reason": "இந்த வகைப் பானக் கொள்கலன் வைப்புத்தொகைத் திட்டத்தில் உள்ளது. சிங்கப்பூரில் வாங்கிய இதில் Deposit Mark (10¢ SG RETURN) இருந்தால், திருப்பி அளிக்கும் இடம் ஒன்றில் திருப்பி அளித்து S$0.10 பெறலாம்; இயந்திரம் பார்கோடை ஸ்கேன் செய்து தீர்மானிக்கும். Deposit Mark இல்லாவிட்டால் அல்லது சிங்கப்பூருக்கு வெளியே வாங்கியிருந்தால், கழுவி நீல மறுசுழற்சி தொட்டியில் இடவும்.",
         "preparation": [
@@ -2475,7 +2477,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 26326,
+      "durationMs": 9085,
       "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/after-false-starts-and-muted-launch-can-the-beverage-container-return-scheme-improve-recycling-in"
     },
     {
@@ -2494,9 +2496,9 @@
         "maxConfidence": 0.49
       },
       "actual": {
-        "item": "Coke Zero can and 600 ml plastic drink bottle",
+        "item": "Coke Zero can and plastic drink bottle",
         "status": "not_sure",
-        "confidence": 0.25,
+        "confidence": 0.2,
         "channel": null,
         "reason": "There is not enough information to choose a recycling channel safely.",
         "preparation": [
@@ -2504,7 +2506,7 @@
         ]
       },
       "assertions": [],
-      "durationMs": 14048,
+      "durationMs": 8586,
       "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-deposit-vending-machine-6018216"
     },
     {
@@ -2525,9 +2527,9 @@
         ]
       },
       "actual": {
-        "item": "600ml plastic beverage bottle",
+        "item": "500ml plastic bottled water",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 0.99,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -2546,7 +2548,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 15552,
+      "durationMs": 5412,
       "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361"
     },
     {
@@ -2557,340 +2559,6 @@
       "expected": {
         "id": "mark-not-visible-bottle-en",
         "sourceId": "mark-not-visible-bottle",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Clear plastic bottled-water container",
-        "status": "recyclable",
-        "confidence": 0.97,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 15069,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Bottle_of_Water.jpg"
-    },
-    {
-      "id": "individual-can-mark-not-visible-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "individual-can-mark-not-visible-en",
-        "sourceId": "individual-can-mark-not-visible",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Single prepackaged carbonated drink can in loose plastic wrapping",
-        "status": "recyclable",
-        "confidence": 0.96,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 20519,
-      "sourcePageUrl": "https://mothership.sg/2026/07/ice-mountain-drinks-fairprice-bcrs-logo/"
-    },
-    {
-      "id": "empty-glass-bottle-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "empty-glass-bottle-en",
-        "sourceId": "empty-glass-bottle",
-        "locale": "en",
-        "channel": "blue_bin",
-        "status": "recyclable",
-        "partition": "regression"
-      },
-      "actual": {
-        "item": "Clear glass beverage bottle",
-        "status": "recyclable",
-        "confidence": 0.97,
-        "channel": "blue_bin",
-        "reason": "This is a single intact, uncontaminated glass beverage bottle. Glass bottles are not accepted at BCRS Return Points but can be recycled in the blue bin when clean and dry.",
-        "preparation": [
-          "Empty any remaining contents.",
-          "Rinse the bottle and let it dry.",
-          "Place it in the blue recycling bin."
-        ]
-      },
-      "assertions": [],
-      "durationMs": 14631,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Clear_empty_glass_bottle.jpg"
-    },
-    {
-      "id": "negative-crushed-can-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "negative-crushed-can-en",
-        "sourceId": "negative-crushed-can",
-        "locale": "en",
-        "channel": "blue_bin",
-        "status": "recyclable",
-        "partition": "regression"
-      },
-      "actual": {
-        "item": "Crushed 355ml metal beverage can",
-        "status": "recyclable",
-        "confidence": 0.99,
-        "channel": "blue_bin",
-        "reason": "The single metal drink can is visibly crushed, so it is not eligible for a Return Point. It can go in the blue recycling bin once clean and dry.",
-        "preparation": [
-          "Empty any remaining drink.",
-          "Rinse if needed and let the can dry.",
-          "Place it in the blue recycling bin."
-        ],
-        "tip": "Do not flatten cans unnecessarily; intact drink containers may instead be accepted at a Return Point."
-      },
-      "assertions": [],
-      "durationMs": 15756,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Crushed_Coke_Can_(3921080513).jpg"
-    },
-    {
-      "id": "negative-small-cultured-milk-bottle-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "negative-small-cultured-milk-bottle-en",
-        "sourceId": "negative-small-cultured-milk-bottle",
-        "locale": "en",
-        "channel": "blue_bin",
-        "status": "recyclable",
-        "partition": "regression"
-      },
-      "actual": {
-        "item": "65ml Yakult fermented milk drink bottle",
-        "status": "recyclable",
-        "confidence": 0.99,
-        "channel": "blue_bin",
-        "reason": "This is a single intact plastic prepackaged drink bottle labelled as a fermented milk drink. Its printed 65ml capacity is below the 150ml-3L BCRS range, so it belongs in the blue bin when clean and dry.",
-        "preparation": [
-          "Empty any remaining drink.",
-          "Remove the foil seal and rinse the bottle.",
-          "Let it dry before placing it in the blue bin."
-        ],
-        "tip": "No BCRS refund applies because the bottle is below 150ml."
-      },
-      "assertions": [],
-      "durationMs": 15134,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Yakult_65ml_Vietnam.JPG"
-    },
-    {
-      "id": "negative-large-water-jug-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "negative-large-water-jug-en",
-        "sourceId": "negative-large-water-jug",
-        "locale": "en",
-        "channel": "blue_bin",
-        "status": "recyclable",
-        "partition": "regression"
-      },
-      "actual": {
-        "item": "Large plastic drinking-water jug",
-        "status": "recyclable",
-        "confidence": 0.96,
-        "channel": "blue_bin",
-        "reason": "This single intact plastic water bottle is visibly larger than 3L, so it is outside the 150ml-3L BCRS size range. Once empty, clean and dry, it can go in the blue recycling bin.",
-        "preparation": [
-          "Empty all water from the jug.",
-          "Rinse if needed and allow it to dry.",
-          "Replace the cap and place the jug in the blue recycling bin."
-        ],
-        "tip": "It is not eligible for a Return Point refund because its capacity is above 3L."
-      },
-      "assertions": [],
-      "durationMs": 19390,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Garrafa_agua_8L.jpg"
-    },
-    {
-      "id": "negative-milk-carton-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "negative-milk-carton-en",
-        "sourceId": "negative-milk-carton",
-        "locale": "en",
-        "channel": "blue_bin",
-        "status": "recyclable",
-        "partition": "regression"
-      },
-      "actual": {
-        "item": "Uni-President 200ml UHT milk in a Tetra Pak carton",
-        "status": "recyclable",
-        "confidence": 0.99,
-        "channel": "blue_bin",
-        "reason": "This is a single 200ml prepackaged milk carton. Beverage cartons are not eligible for the Return Point, but clean, empty Tetra Pak cartons are accepted in Singapore's blue recycling bins.",
-        "preparation": [
-          "Empty all milk from the carton",
-          "Rinse it and let it dry",
-          "Flatten it before placing it in the blue recycling bin"
-        ],
-        "tip": "Only recycle the carton once it is clean and dry; leftover milk can contaminate other recyclables."
-      },
-      "assertions": [],
-      "durationMs": 15099,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Uni-President_Milk_200ml_by_AGV_20250921.jpg"
-    },
-    {
-      "id": "negative-soap-pump-bottle-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "negative-soap-pump-bottle-en",
-        "sourceId": "negative-soap-pump-bottle",
-        "locale": "en",
-        "channel": "blue_bin",
-        "status": "recyclable",
-        "partition": "regression"
-      },
-      "actual": {
-        "item": "Plastic soap dispenser bottle with pump",
-        "status": "recyclable",
-        "confidence": 0.97,
-        "channel": "blue_bin",
-        "reason": "Empty soap or detergent bottles, including those with pump heads, are recyclable in Singapore's blue bin once emptied and rinsed.",
-        "preparation": [
-          "Use up or empty the contents.",
-          "Rinse the bottle and pump, then let them dry before placing them in the blue bin."
-        ],
-        "tip": "Consider reusing the pump bottle for refills before recycling it."
-      },
-      "assertions": [],
-      "durationMs": 16718,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Plastic_soap_bottle.jpg"
-    },
-    {
-      "id": "negative-powdered-drink-tin-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "negative-powdered-drink-tin-en",
-        "sourceId": "negative-powdered-drink-tin",
-        "locale": "en",
-        "channel": "blue_bin",
-        "status": "recyclable",
-        "partition": "regression"
-      },
-      "actual": {
-        "item": "Nestlé MILO powdered drink metal tin",
-        "status": "recyclable",
-        "confidence": 0.98,
-        "channel": "blue_bin",
-        "reason": "This is a metal tin for powdered MILO, not a prepackaged ready-to-drink beverage container. It is recyclable in the blue bin once empty, clean and dry; it is not eligible for a BCRS Return Point.",
-        "preparation": [
-          "Empty out all remaining powder.",
-          "Rinse or wipe the tin clean and let it dry completely.",
-          "Place the metal tin in the blue recycling bin."
-        ],
-        "tip": "A reusable tin in good condition could also be kept for storage."
-      },
-      "assertions": [],
-      "durationMs": 26788,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Milo_tin_circa_2004.jpg"
-    },
-    {
-      "id": "holdout-singapore-mark-closeup-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-singapore-mark-closeup-en",
-        "sourceId": "holdout-singapore-mark-closeup",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Plastic beverage bottle",
-        "status": "recyclable",
-        "confidence": 0.95,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 17372,
-      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361"
-    },
-    {
-      "id": "holdout-foreign-refund-mark-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-foreign-refund-mark-en",
-        "sourceId": "holdout-foreign-refund-mark",
         "locale": "en",
         "channel": "return_point",
         "status": "recyclable",
@@ -2922,17 +2590,17 @@
         }
       },
       "assertions": [],
-      "durationMs": 19032,
-      "sourcePageUrl": "https://note.com/ruka926/n/n9c58c8986304"
+      "durationMs": 7742,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Bottle_of_Water.jpg"
     },
     {
-      "id": "holdout-single-sideways-marked-can-en",
+      "id": "individual-can-mark-not-visible-en",
       "mode": "image",
       "locale": "en",
       "partition": "regression",
       "expected": {
-        "id": "holdout-single-sideways-marked-can-en",
-        "sourceId": "holdout-single-sideways-marked-can",
+        "id": "individual-can-mark-not-visible-en",
+        "sourceId": "individual-can-mark-not-visible",
         "locale": "en",
         "channel": "return_point",
         "status": "recyclable",
@@ -2943,264 +2611,245 @@
         ]
       },
       "actual": {
-        "item": "Prepackaged lemon iced tea metal can",
+        "item": "F&N canned drink",
+        "status": "recyclable",
+        "confidence": 0.95,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 7300,
+      "sourcePageUrl": "https://mothership.sg/2026/07/ice-mountain-drinks-fairprice-bcrs-logo/"
+    },
+    {
+      "id": "empty-glass-bottle-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "empty-glass-bottle-en",
+        "sourceId": "empty-glass-bottle",
+        "locale": "en",
+        "channel": "blue_bin",
+        "status": "recyclable",
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Empty clear glass beverage bottle",
         "status": "recyclable",
         "confidence": 0.98,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "channel": "blue_bin",
+        "reason": "This is a single intact, uncontaminated glass bottle. Glass beverage bottles are recyclable in the blue bin and are not eligible for the BCRS Return Point.",
         "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+          "Empty and rinse the bottle.",
+          "Let it dry and place it in a blue recycling bin."
         ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
+        "tip": "Do not mix it with ceramics, mirrors or heat-resistant glass, which are not recyclable through the blue bin."
       },
       "assertions": [],
-      "durationMs": 19832,
-      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/a-map-of-waste-atms-new-website-launched-to-help-people-find-beverage-container-return-machines"
+      "durationMs": 9682,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Clear_empty_glass_bottle.jpg"
     },
     {
-      "id": "holdout-multiple-marked-containers-en",
+      "id": "negative-crushed-can-en",
       "mode": "image",
       "locale": "en",
       "partition": "regression",
       "expected": {
-        "id": "holdout-multiple-marked-containers-en",
-        "sourceId": "holdout-multiple-marked-containers",
+        "id": "negative-crushed-can-en",
+        "sourceId": "negative-crushed-can",
         "locale": "en",
-        "channel": null,
-        "status": "not_sure",
-        "partition": "regression",
-        "nextAction": null,
-        "maxConfidence": 0.49
-      },
-      "actual": {
-        "item": "Multiple prepackaged drink bottles and cans",
-        "status": "not_sure",
-        "confidence": 0.2,
-        "channel": null,
-        "reason": "There is not enough information to choose a recycling channel safely.",
-        "preparation": [
-          "Provide a clearer photo or description showing the whole item."
-        ]
-      },
-      "assertions": [],
-      "durationMs": 16951,
-      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/a-map-of-waste-atms-new-website-launched-to-help-people-find-beverage-container-return-machines"
-    },
-    {
-      "id": "holdout-single-clear-marked-bottle-v3-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-single-clear-marked-bottle-v3-en",
-        "sourceId": "holdout-single-clear-marked-bottle-v3",
-        "locale": "en",
-        "channel": "return_point",
+        "channel": "blue_bin",
         "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
+        "partition": "regression"
       },
       "actual": {
-        "item": "Single clear plastic prepackaged beverage bottle",
-        "status": "recyclable",
-        "confidence": 0.97,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 13150,
-      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-nea-rebut-accusation-6321081"
-    },
-    {
-      "id": "holdout-multiple-containers-collage-v3-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-multiple-containers-collage-v3-en",
-        "sourceId": "holdout-multiple-containers-collage-v3",
-        "locale": "en",
-        "channel": null,
-        "status": "not_sure",
-        "partition": "regression",
-        "nextAction": null,
-        "maxConfidence": 0.49
-      },
-      "actual": {
-        "item": "Beverage container return machine and multiple drink cans",
-        "status": "not_sure",
-        "confidence": 0.3,
-        "channel": null,
-        "reason": "There is not enough information to choose a recycling channel safely.",
-        "preparation": [
-          "Provide a clearer photo or description showing the whole item."
-        ]
-      },
-      "assertions": [],
-      "durationMs": 13826,
-      "sourcePageUrl": "https://www.stomp.sg/stomping-ground/man-brings-10-empty-bottles-bcrs-machine-not-all-eligible-10-cent-refund-asks-whats-point"
-    },
-    {
-      "id": "holdout-malaysia-made-singapore-mark-v4-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-malaysia-made-singapore-mark-v4-en",
-        "sourceId": "holdout-malaysia-made-singapore-mark-v4",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Single plastic bottle of prepackaged iced tea",
+        "item": "Crushed Coca-Cola metal drink can",
         "status": "recyclable",
         "confidence": 0.98,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "channel": "blue_bin",
+        "reason": "This is a single prepackaged 355ml metal beverage can. It is visibly crushed, so it is excluded from the Return Point channel but can be recycled in the blue bin when clean and dry.",
         "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+          "Empty any remaining drink.",
+          "Rinse the can and let it dry.",
+          "Place it in the blue recycling bin."
         ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
+        "tip": "Crushed cans should go in the blue bin rather than a Return Point."
       },
       "assertions": [],
-      "durationMs": 18239,
-      "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
+      "durationMs": 7650,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Crushed_Coke_Can_(3921080513).jpg"
     },
     {
-      "id": "holdout-single-angle-no-mark-v4-en",
+      "id": "negative-small-cultured-milk-bottle-en",
       "mode": "image",
       "locale": "en",
       "partition": "regression",
       "expected": {
-        "id": "holdout-single-angle-no-mark-v4-en",
-        "sourceId": "holdout-single-angle-no-mark-v4",
+        "id": "negative-small-cultured-milk-bottle-en",
+        "sourceId": "negative-small-cultured-milk-bottle",
         "locale": "en",
-        "channel": "return_point",
+        "channel": "blue_bin",
         "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
+        "partition": "regression"
       },
       "actual": {
-        "item": "Coca-Cola sugar-free soft drink can",
+        "item": "65ml plastic bottle of fermented milk drink",
         "status": "recyclable",
-        "confidence": 0.97,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "confidence": 0.98,
+        "channel": "blue_bin",
+        "reason": "The printed 65ml capacity is below the 150ml-3L deposit-container range, so this single plastic drink bottle goes in the blue bin when clean and dry.",
         "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
+          "Empty the bottle completely.",
+          "Rinse it and let it dry before placing it in the blue bin."
+        ]
       },
       "assertions": [],
-      "durationMs": 20307,
-      "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
+      "durationMs": 7366,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Yakult_65ml_Vietnam.JPG"
     },
     {
-      "id": "holdout-single-marked-can-v5-en",
+      "id": "negative-large-water-jug-en",
       "mode": "image",
       "locale": "en",
       "partition": "regression",
       "expected": {
-        "id": "holdout-single-marked-can-v5-en",
-        "sourceId": "holdout-single-marked-can-v5",
+        "id": "negative-large-water-jug-en",
+        "sourceId": "negative-large-water-jug",
         "locale": "en",
-        "channel": "return_point",
+        "channel": "blue_bin",
         "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
+        "partition": "regression"
       },
       "actual": {
-        "item": "Aluminium beverage can",
+        "item": "Large plastic water jug",
+        "status": "recyclable",
+        "confidence": 0.96,
+        "channel": "blue_bin",
+        "reason": "A single intact plastic water jug visibly larger than 3L, so it is outside the 150ml-3L deposit-container range and belongs in the blue bin when clean and dry.",
+        "preparation": [
+          "Empty any remaining water.",
+          "Rinse if needed and let it dry.",
+          "Place it in the blue recycling bin."
+        ],
+        "tip": "Containers above 3L are not eligible for the S$0.10 BCRS refund."
+      },
+      "assertions": [],
+      "durationMs": 9413,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Garrafa_agua_8L.jpg"
+    },
+    {
+      "id": "negative-milk-carton-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "negative-milk-carton-en",
+        "sourceId": "negative-milk-carton",
+        "locale": "en",
+        "channel": "blue_bin",
+        "status": "recyclable",
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "200ml Uni-President UHT milk carton",
         "status": "recyclable",
         "confidence": 0.99,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "channel": "blue_bin",
+        "reason": "This is a single 200ml Tetra Pak milk carton. Beverage cartons are excluded from the Return Point scheme but are recyclable in Singapore's blue bin when clean and dry.",
         "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+          "Empty any remaining milk.",
+          "Rinse the carton and let it dry.",
+          "Flatten it before placing it in the blue bin."
         ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
+        "tip": "Do not take this carton to a Return Point; it is not an eligible plastic or metal drink container."
       },
       "assertions": [],
-      "durationMs": 9927,
-      "sourcePageUrl": "https://www.asiaone.com/singapore/bcrs-drink-containers-no-return-mark-no-deposit"
+      "durationMs": 6458,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Uni-President_Milk_200ml_by_AGV_20250921.jpg"
     },
     {
-      "id": "holdout-single-angle-foreign-can-v5-en",
+      "id": "negative-soap-pump-bottle-en",
       "mode": "image",
       "locale": "en",
       "partition": "regression",
       "expected": {
-        "id": "holdout-single-angle-foreign-can-v5-en",
-        "sourceId": "holdout-single-angle-foreign-can-v5",
+        "id": "negative-soap-pump-bottle-en",
+        "sourceId": "negative-soap-pump-bottle",
+        "locale": "en",
+        "channel": "blue_bin",
+        "status": "recyclable",
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Plastic pump bottle, likely for soap or shampoo",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "blue_bin",
+        "reason": "Plastic soap, shampoo and detergent bottles are recyclable in the blue bin once empty and rinsed, including bottles with a pump head. This is not a beverage container.",
+        "preparation": [
+          "Empty all remaining contents.",
+          "Rinse the bottle and allow it to dry.",
+          "Place it in the blue recycling bin; the pump head may remain attached."
+        ],
+        "tip": "Consider reusing the bottle with a refill before recycling it."
+      },
+      "assertions": [],
+      "durationMs": 6623,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Plastic_soap_bottle.jpg"
+    },
+    {
+      "id": "negative-powdered-drink-tin-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "negative-powdered-drink-tin-en",
+        "sourceId": "negative-powdered-drink-tin",
+        "locale": "en",
+        "channel": "blue_bin",
+        "status": "recyclable",
+        "partition": "regression"
+      },
+      "actual": {
+        "item": "Nestlé MILO powdered drink metal tin",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "blue_bin",
+        "reason": "The printed label identifies MILO, a powdered drink, and the physical form is a cylindrical metal tin. Powdered drinks are not deposit-return beverage containers; the empty, clean and dry metal tin is recyclable in the blue bin.",
+        "preparation": [
+          "Empty out all remaining powder.",
+          "Wipe or rinse away residue and let the tin dry completely.",
+          "Place the clean, dry tin in the blue recycling bin."
+        ],
+        "tip": "The worn and rusty lid does not change the container category, but remove any loose dirt or rust flakes before recycling."
+      },
+      "assertions": [],
+      "durationMs": 9095,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Milo_tin_circa_2004.jpg"
+    },
+    {
+      "id": "holdout-singapore-mark-closeup-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-singapore-mark-closeup-en",
+        "sourceId": "holdout-singapore-mark-closeup",
         "locale": "en",
         "channel": "return_point",
         "status": "recyclable",
@@ -3211,49 +2860,7 @@
         ]
       },
       "actual": {
-        "item": "320ml 7UP carbonated lemon-lime drink can",
-        "status": "recyclable",
-        "confidence": 0.99,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 19886,
-      "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
-    },
-    {
-      "id": "holdout-marked-bottle-label-v6-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-marked-bottle-label-v6-en",
-        "sourceId": "holdout-marked-bottle-label-v6",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "POKKA Chrysanthemum White Tea plastic drink bottle",
+        "item": "Clear plastic bottled drink",
         "status": "recyclable",
         "confidence": 0.96,
         "channel": "return_point",
@@ -3274,7 +2881,401 @@
         }
       },
       "assertions": [],
-      "durationMs": 16379,
+      "durationMs": 6693,
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-points-five-minute-walk-hdb-residents-5895361"
+    },
+    {
+      "id": "holdout-foreign-refund-mark-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-foreign-refund-mark-en",
+        "sourceId": "holdout-foreign-refund-mark",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Clear plastic bottled water bottle",
+        "status": "recyclable",
+        "confidence": 0.96,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 7726,
+      "sourcePageUrl": "https://note.com/ruka926/n/n9c58c8986304"
+    },
+    {
+      "id": "holdout-single-sideways-marked-can-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-single-sideways-marked-can-en",
+        "sourceId": "holdout-single-sideways-marked-can",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Single metal can of lemon iced tea",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 7681,
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/a-map-of-waste-atms-new-website-launched-to-help-people-find-beverage-container-return-machines"
+    },
+    {
+      "id": "holdout-multiple-marked-containers-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-multiple-marked-containers-en",
+        "sourceId": "holdout-multiple-marked-containers",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "partition": "regression",
+        "nextAction": null,
+        "maxConfidence": 0.49
+      },
+      "actual": {
+        "item": "Multiple prepackaged plastic drink bottles and metal drink cans",
+        "status": "not_sure",
+        "confidence": 0.45,
+        "channel": null,
+        "reason": "There is not enough information to choose a recycling channel safely.",
+        "preparation": [
+          "Provide a clearer photo or description showing the whole item."
+        ]
+      },
+      "assertions": [],
+      "durationMs": 6579,
+      "sourcePageUrl": "https://www.straitstimes.com/singapore/environment/a-map-of-waste-atms-new-website-launched-to-help-people-find-beverage-container-return-machines"
+    },
+    {
+      "id": "holdout-single-clear-marked-bottle-v3-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-single-clear-marked-bottle-v3-en",
+        "sourceId": "holdout-single-clear-marked-bottle-v3",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Clear plastic beverage bottle",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 6175,
+      "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-nea-rebut-accusation-6321081"
+    },
+    {
+      "id": "holdout-multiple-containers-collage-v3-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-multiple-containers-collage-v3-en",
+        "sourceId": "holdout-multiple-containers-collage-v3",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "partition": "regression",
+        "nextAction": null,
+        "maxConfidence": 0.49
+      },
+      "actual": {
+        "item": "Beverage return machine and multiple drink cans",
+        "status": "not_sure",
+        "confidence": 0.2,
+        "channel": null,
+        "reason": "There is not enough information to choose a recycling channel safely.",
+        "preparation": [
+          "Provide a clearer photo or description showing the whole item."
+        ]
+      },
+      "assertions": [],
+      "durationMs": 6186,
+      "sourcePageUrl": "https://www.stomp.sg/stomping-ground/man-brings-10-empty-bottles-bcrs-machine-not-all-eligible-10-cent-refund-asks-whats-point"
+    },
+    {
+      "id": "holdout-malaysia-made-singapore-mark-v4-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-malaysia-made-singapore-mark-v4-en",
+        "sourceId": "holdout-malaysia-made-singapore-mark-v4",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Prepackaged bottled tea with a Singapore Deposit Mark",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 7659,
+      "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
+    },
+    {
+      "id": "holdout-single-angle-no-mark-v4-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-single-angle-no-mark-v4-en",
+        "sourceId": "holdout-single-angle-no-mark-v4",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Coca-Cola sugar-free drink can",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 11042,
+      "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
+    },
+    {
+      "id": "holdout-single-marked-can-v5-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-single-marked-can-v5-en",
+        "sourceId": "holdout-single-marked-can-v5",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Aluminium beverage can with Singapore Deposit Mark",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 6476,
+      "sourcePageUrl": "https://www.asiaone.com/singapore/bcrs-drink-containers-no-return-mark-no-deposit"
+    },
+    {
+      "id": "holdout-single-angle-foreign-can-v5-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-single-angle-foreign-can-v5-en",
+        "sourceId": "holdout-single-angle-foreign-can-v5",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "7UP carbonated lemon-lime drink, 320ml metal can",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 9352,
+      "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
+    },
+    {
+      "id": "holdout-marked-bottle-label-v6-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-marked-bottle-label-v6-en",
+        "sourceId": "holdout-marked-bottle-label-v6",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Plastic bottle of chrysanthemum white tea",
+        "status": "recyclable",
+        "confidence": 0.96,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 9258,
       "sourcePageUrl": "https://www.channelnewsasia.com/singapore/beverage-container-return-scheme-10-cent-deposit-errors-transition-6229386"
     },
     {
@@ -3295,7 +3296,7 @@
         ]
       },
       "actual": {
-        "item": "Aquavin 500ml plastic drinking water bottle",
+        "item": "Aquavin Pure Drinking Water 500ml plastic bottle",
         "status": "recyclable",
         "confidence": 0.98,
         "channel": "return_point",
@@ -3316,7 +3317,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 19807,
+      "durationMs": 7168,
       "sourcePageUrl": "https://mothership.sg/2026/07/bcrs-refund-two-weeks/"
     },
     {
@@ -3337,175 +3338,7 @@
         ]
       },
       "actual": {
-        "item": "300ml plastic drinking water bottle",
-        "status": "recyclable",
-        "confidence": 0.98,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 13931,
-      "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/the-beverage-container-return-scheme-is-so-easy-to-defraud.7185337/"
-    },
-    {
-      "id": "holdout-single-angle-malaysia-can-v7-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-single-angle-malaysia-can-v7-en",
-        "sourceId": "holdout-single-angle-malaysia-can-v7",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Nescafe milk coffee drink can",
-        "status": "recyclable",
-        "confidence": 0.97,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 15272,
-      "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-68"
-    },
-    {
-      "id": "holdout-marked-plastic-cup-v8-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-marked-plastic-cup-v8-en",
-        "sourceId": "holdout-marked-plastic-cup-v8",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Prepackaged plastic beverage cup",
-        "status": "recyclable",
-        "confidence": 0.98,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 15095,
-      "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-86"
-    },
-    {
-      "id": "holdout-single-angle-coke-can-v8-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-single-angle-coke-can-v8-en",
-        "sourceId": "holdout-single-angle-coke-can-v8",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Coca-Cola Y3000 Limited Edition soft drink can (222 ml)",
-        "status": "recyclable",
-        "confidence": 0.98,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 19590,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Can_of_Coca-Cola_Y3000.jpg"
-    },
-    {
-      "id": "holdout-marked-bottle-and-receipt-v10-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-marked-bottle-and-receipt-v10-en",
-        "sourceId": "holdout-marked-bottle-and-receipt-v10",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "100 PLUS isotonic drink plastic bottle, 500ml",
+        "item": "500ml plastic bottle of pure drinking water",
         "status": "recyclable",
         "confidence": 0.99,
         "channel": "return_point",
@@ -3526,7 +3359,175 @@
         }
       },
       "assertions": [],
-      "durationMs": 18241,
+      "durationMs": 4569,
+      "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/the-beverage-container-return-scheme-is-so-easy-to-defraud.7185337/"
+    },
+    {
+      "id": "holdout-single-angle-malaysia-can-v7-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-single-angle-malaysia-can-v7-en",
+        "sourceId": "holdout-single-angle-malaysia-can-v7",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Nescafé low-fat milk coffee drink can",
+        "status": "recyclable",
+        "confidence": 0.96,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 5533,
+      "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-68"
+    },
+    {
+      "id": "holdout-marked-plastic-cup-v8-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-marked-plastic-cup-v8-en",
+        "sourceId": "holdout-marked-plastic-cup-v8",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Prepackaged plastic drink cup",
+        "status": "recyclable",
+        "confidence": 0.97,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 7106,
+      "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-86"
+    },
+    {
+      "id": "holdout-single-angle-coke-can-v8-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-single-angle-coke-can-v8-en",
+        "sourceId": "holdout-single-angle-coke-can-v8",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Y3000 Limited Edition Futuristic Flavored drink can (222ml)",
+        "status": "recyclable",
+        "confidence": 0.99,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 6844,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Can_of_Coca-Cola_Y3000.jpg"
+    },
+    {
+      "id": "holdout-marked-bottle-and-receipt-v10-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-marked-bottle-and-receipt-v10-en",
+        "sourceId": "holdout-marked-bottle-and-receipt-v10",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "100PLUS isotonic drink plastic bottle (500ml)",
+        "status": "recyclable",
+        "confidence": 0.99,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 5979,
       "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-3"
     },
     {
@@ -3547,9 +3548,9 @@
         ]
       },
       "actual": {
-        "item": "240ml canned milk coffee drink",
+        "item": "240ml aluminium canned coffee drink",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 0.99,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -3568,7 +3569,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 15959,
+      "durationMs": 6615,
       "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/page-67"
     },
     {
@@ -3587,9 +3588,9 @@
         "maxConfidence": 0.49
       },
       "actual": {
-        "item": "Plastic-wrapped multipack of six 325ml sparkling drink cans",
+        "item": "Multipack shrink wrapping for six 325ml sparkling drink cans",
         "status": "not_sure",
-        "confidence": 0.2,
+        "confidence": 0.25,
         "channel": null,
         "reason": "There is not enough information to choose a recycling channel safely.",
         "preparation": [
@@ -3597,7 +3598,7 @@
         ]
       },
       "assertions": [],
-      "durationMs": 17576,
+      "durationMs": 6256,
       "sourcePageUrl": "https://www.8world.com/singapore/fnn-can-drink-bcrs-deposit-logo-3226531"
     },
     {
@@ -3620,7 +3621,7 @@
       "actual": {
         "item": "Clear plastic bottled water",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 0.97,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -3639,7 +3640,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 20545,
+      "durationMs": 7756,
       "sourcePageUrl": "https://www.stomp.sg/trending-now/traveller-carries-plastic-bottle-7-day-trip-australia-brings-it-back-spore-claim-10-cent-refund"
     },
     {
@@ -3660,9 +3661,9 @@
         ]
       },
       "actual": {
-        "item": "Plastic bottled iced tea",
+        "item": "Plastic bottled tea",
         "status": "recyclable",
-        "confidence": 0.97,
+        "confidence": 0.98,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -3681,7 +3682,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 17128,
+      "durationMs": 7276,
       "sourcePageUrl": "https://vibes.8world.com/in-depth/frontline/bcrs-3242136"
     },
     {
@@ -3702,78 +3703,7 @@
         ]
       },
       "actual": {
-        "item": "Prepackaged beverage can with Singapore Deposit Mark",
-        "status": "recyclable",
-        "confidence": 0.98,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 15298,
-      "sourcePageUrl": "https://www.8world.com/singapore/more-education-urged-to-improve-public-awareness-literacy-on-bcrs-3180601"
-    },
-    {
-      "id": "holdout-multiple-containers-shelf-v14-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-multiple-containers-shelf-v14-en",
-        "sourceId": "holdout-multiple-containers-shelf-v14",
-        "locale": "en",
-        "channel": null,
-        "status": "not_sure",
-        "partition": "regression",
-        "nextAction": null,
-        "maxConfidence": 0.49
-      },
-      "actual": {
-        "item": "Multiple prepackaged drink containers on a store shelf",
-        "status": "not_sure",
-        "confidence": 0.2,
-        "channel": null,
-        "reason": "There is not enough information to choose a recycling channel safely.",
-        "preparation": [
-          "Provide a clearer photo or description showing the whole item."
-        ]
-      },
-      "assertions": [],
-      "durationMs": 17544,
-      "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260620-9237023"
-    },
-    {
-      "id": "holdout-single-can-mark-and-barcode-v15-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-single-can-mark-and-barcode-v15-en",
-        "sourceId": "holdout-single-can-mark-and-barcode-v15",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Ice Mountain drinking water can (300ml)",
+        "item": "Prepackaged metal beverage can with Singapore Deposit Mark",
         "status": "recyclable",
         "confidence": 0.99,
         "channel": "return_point",
@@ -3794,7 +3724,78 @@
         }
       },
       "assertions": [],
-      "durationMs": 18047,
+      "durationMs": 7510,
+      "sourcePageUrl": "https://www.8world.com/singapore/more-education-urged-to-improve-public-awareness-literacy-on-bcrs-3180601"
+    },
+    {
+      "id": "holdout-multiple-containers-shelf-v14-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-multiple-containers-shelf-v14-en",
+        "sourceId": "holdout-multiple-containers-shelf-v14",
+        "locale": "en",
+        "channel": null,
+        "status": "not_sure",
+        "partition": "regression",
+        "nextAction": null,
+        "maxConfidence": 0.49
+      },
+      "actual": {
+        "item": "Multiple prepackaged drink containers",
+        "status": "not_sure",
+        "confidence": 0.3,
+        "channel": null,
+        "reason": "There is not enough information to choose a recycling channel safely.",
+        "preparation": [
+          "Provide a clearer photo or description showing the whole item."
+        ]
+      },
+      "assertions": [],
+      "durationMs": 5454,
+      "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260620-9237023"
+    },
+    {
+      "id": "holdout-single-can-mark-and-barcode-v15-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-single-can-mark-and-barcode-v15-en",
+        "sourceId": "holdout-single-can-mark-and-barcode-v15",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "F&N Ice Mountain drinking water can, 300ml",
+        "status": "recyclable",
+        "confidence": 0.99,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 6982,
       "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260730-9413074"
     },
     {
@@ -3815,7 +3816,7 @@
         ]
       },
       "actual": {
-        "item": "Jia Jia Original Herbal Tea plastic bottle",
+        "item": "Jia Jia Herbal Tea Original plastic bottle",
         "status": "recyclable",
         "confidence": 0.98,
         "channel": "return_point",
@@ -3836,7 +3837,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 13148,
+      "durationMs": 7745,
       "sourcePageUrl": "https://www.fairprice.com.sg/product/bcrs-jia-jia-herbal-tea-bottle-drink-original-500ml-13281525"
     },
     {
@@ -3859,7 +3860,7 @@
       "actual": {
         "item": "MILO Iced Energy plastic drink bottle",
         "status": "recyclable",
-        "confidence": 0.99,
+        "confidence": 0.98,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -3878,7 +3879,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 16306,
+      "durationMs": 5468,
       "sourcePageUrl": "https://www.zaobao.com.sg/news/singapore/story20260903-9618188"
     },
     {
@@ -3899,7 +3900,7 @@
       "actual": {
         "item": "Beverage container return machine",
         "status": "not_sure",
-        "confidence": 0.1,
+        "confidence": 0.2,
         "channel": null,
         "reason": "There is not enough information to choose a recycling channel safely.",
         "preparation": [
@@ -3907,7 +3908,7 @@
         ]
       },
       "assertions": [],
-      "durationMs": 16685,
+      "durationMs": 5335,
       "sourcePageUrl": "https://vibes.8world.com/in-depth/frontline/bcrs-3242136"
     },
     {
@@ -3928,9 +3929,9 @@
         ]
       },
       "actual": {
-        "item": "Evian 500ml plastic water bottle",
+        "item": "Evian 500ml plastic mineral water bottle",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 0.99,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -3949,7 +3950,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 14085,
+      "durationMs": 5861,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Evian_Bottle.jpg"
     },
     {
@@ -3966,20 +3967,20 @@
         "partition": "regression"
       },
       "actual": {
-        "item": "Mythos Hellenic Lager Beer glass bottle",
+        "item": "Green glass Mythos Hellenic Lager Beer bottle",
         "status": "recyclable",
-        "confidence": 0.99,
+        "confidence": 0.98,
         "channel": "blue_bin",
-        "reason": "This is a single intact glass beer bottle. Glass beverage bottles are excluded from BCRS Return Points and should be recycled in the blue bin when clean and dry.",
+        "reason": "This is one intact, uncontaminated prepackaged beer bottle made of glass. Glass beverage bottles are excluded from the Return Point deposit scheme and are recyclable through the blue bin when empty, clean and dry.",
         "preparation": [
           "Empty any remaining beer.",
           "Rinse the bottle and let it dry.",
-          "Remove the metal cap and place it in the blue bin separately."
+          "Place it in the blue recycling bin."
         ],
-        "tip": "No BCRS deposit refund applies to glass bottles."
+        "tip": "The metal cap can also be recycled in the blue bin."
       },
       "assertions": [],
-      "durationMs": 15974,
+      "durationMs": 5433,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Mythos_001.jpg"
     },
     {
@@ -4000,7 +4001,7 @@
         ]
       },
       "actual": {
-        "item": "Sprite lemon-lime soft drink plastic bottle",
+        "item": "Plastic Sprite lemon-lime soda bottle",
         "status": "recyclable",
         "confidence": 0.98,
         "channel": "return_point",
@@ -4021,7 +4022,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 22282,
+      "durationMs": 6567,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Bouteille_de_sprite_en_2025.jpg"
     },
     {
@@ -4040,18 +4041,17 @@
       "actual": {
         "item": "Glass Sprite beverage bottle (10 fl oz)",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 0.99,
         "channel": "blue_bin",
-        "reason": "This is a single intact, uncontaminated glass beverage bottle. Glass drink bottles are not eligible for the Return Point and should be recycled in the blue bin when clean and dry.",
+        "reason": "This is a single intact, uncontaminated glass beverage bottle. Glass drink bottles are not eligible for the Return Point and should be recycled in the blue bin.",
         "preparation": [
           "Empty any remaining drink.",
           "Rinse the bottle and let it dry.",
           "Place it in the blue recycling bin."
-        ],
-        "tip": "The 10 fl oz (about 296ml) capacity is within 150ml-3L, but glass containers are excluded from the deposit-return channel."
+        ]
       },
       "assertions": [],
-      "durationMs": 16273,
+      "durationMs": 5918,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Sprite_bottle.JPG"
     },
     {
@@ -4074,7 +4074,7 @@
       "actual": {
         "item": "Plastic bottle of unsweetened Japanese green tea",
         "status": "recyclable",
-        "confidence": 0.99,
+        "confidence": 0.98,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -4093,7 +4093,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 17942,
+      "durationMs": 6534,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:PET_bottles_with_BCRS_return_mark_and_barcode_on_a_sticker_JASWE.jpg"
     },
     {
@@ -4112,7 +4112,7 @@
         "maxConfidence": 0.49
       },
       "actual": {
-        "item": "Multiple prepackaged alcoholic beverage cans on a store shelf",
+        "item": "Assorted prepackaged beverage cans on a store shelf",
         "status": "not_sure",
         "confidence": 0.2,
         "channel": null,
@@ -4122,7 +4122,7 @@
         ]
       },
       "assertions": [],
-      "durationMs": 16882,
+      "durationMs": 5919,
       "sourcePageUrl": "https://mothership.sg/2026/09/drink-containers-without-return-right-logo/"
     },
     {
@@ -4141,9 +4141,9 @@
         "maxConfidence": 0.49
       },
       "actual": {
-        "item": "Bag of empty plastic drink bottles beside a Return Point",
+        "item": "Bag containing multiple plastic drink containers beside a Return Point",
         "status": "not_sure",
-        "confidence": 0.35,
+        "confidence": 0.15,
         "channel": null,
         "reason": "There is not enough information to choose a recycling channel safely.",
         "preparation": [
@@ -4151,7 +4151,7 @@
         ]
       },
       "assertions": [],
-      "durationMs": 14722,
+      "durationMs": 7326,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Bottles_collected_from_BCRS_Return_Right_Machine_20260915_174412.jpg"
     },
     {
@@ -4170,9 +4170,9 @@
         "maxConfidence": 0.49
       },
       "actual": {
-        "item": "Pokka Jasmine Green Tea cartons",
+        "item": "Multiple Pokka Green Tea 1L cartons on a store display",
         "status": "not_sure",
-        "confidence": 0.35,
+        "confidence": 0.2,
         "channel": null,
         "reason": "There is not enough information to choose a recycling channel safely.",
         "preparation": [
@@ -4180,7 +4180,7 @@
         ]
       },
       "assertions": [],
-      "durationMs": 15837,
+      "durationMs": 6378,
       "sourcePageUrl": "https://forums.hardwarezone.com.sg/threads/discussion-beverage-container-return-scheme.7209348/post-159670376"
     },
     {
@@ -4201,7 +4201,7 @@
         ]
       },
       "actual": {
-        "item": "Plastic drinking water bottle (600ml)",
+        "item": "600ml plastic drinking water bottle",
         "status": "recyclable",
         "confidence": 0.99,
         "channel": "return_point",
@@ -4222,7 +4222,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 15022,
+      "durationMs": 6929,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:A_PET_bottle_with_BCRS_return_mark_-_RSKY.jpg"
     },
     {
@@ -4243,9 +4243,9 @@
         ]
       },
       "actual": {
-        "item": "Coca-Cola Original Taste beverage can",
+        "item": "Coca-Cola Original Taste metal drink can",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 0.99,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -4264,7 +4264,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 15229,
+      "durationMs": 5639,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Coca-Cola_Okinawa_can.jpg"
     },
     {
@@ -4285,7 +4285,7 @@
         ]
       },
       "actual": {
-        "item": "Prepackaged grape juice drink in a metal can",
+        "item": "Aluminium grape juice drink can",
         "status": "recyclable",
         "confidence": 0.97,
         "channel": "return_point",
@@ -4306,7 +4306,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 17671,
+      "durationMs": 6312,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Lotte_Squeeze_Grappe_Ade.jpg"
     },
     {
@@ -4327,133 +4327,7 @@
         ]
       },
       "actual": {
-        "item": "Metal beer can",
-        "status": "recyclable",
-        "confidence": 0.98,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 16395,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Pilsner_Urquell_2-PANT.JPG"
-    },
-    {
-      "id": "holdout-sarsi-can-v22-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-sarsi-can-v22-en",
-        "sourceId": "holdout-sarsi-can-v22",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Sarsi soft drink can",
-        "status": "recyclable",
-        "confidence": 0.99,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 16543,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Fnnsarsi.JPG"
-    },
-    {
-      "id": "holdout-pocari-bottle-in-hand-v22-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-pocari-bottle-in-hand-v22-en",
-        "sourceId": "holdout-pocari-bottle-in-hand-v22",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Pocari Sweat plastic drink bottle",
-        "status": "recyclable",
-        "confidence": 0.99,
-        "channel": "return_point",
-        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
-        "preparation": [
-          "Ensure the container is empty",
-          "Keep Deposit Mark and barcode intact",
-          "Insert one container at a time",
-          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
-        ],
-        "tip": "S$0.10 per container",
-        "next_action": {
-          "type": "return_container",
-          "channel": "return_point",
-          "title": "Return it for S$0.10 if it has the Deposit Mark",
-          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
-          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
-        }
-      },
-      "assertions": [],
-      "durationMs": 11670,
-      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Pocari_Sweat_500ml_plastic_bottle_(53489565431).jpg"
-    },
-    {
-      "id": "holdout-short-coffee-can-v22-en",
-      "mode": "image",
-      "locale": "en",
-      "partition": "regression",
-      "expected": {
-        "id": "holdout-short-coffee-can-v22-en",
-        "sourceId": "holdout-short-coffee-can-v22",
-        "locale": "en",
-        "channel": "return_point",
-        "status": "recyclable",
-        "partition": "regression",
-        "nextAction": "return_container",
-        "requiredExactText": [
-          "S$0.10"
-        ]
-      },
-      "actual": {
-        "item": "Sangaria Quality Coffee Black metal beverage can",
+        "item": "Ringnes beer can",
         "status": "recyclable",
         "confidence": 0.97,
         "channel": "return_point",
@@ -4474,7 +4348,133 @@
         }
       },
       "assertions": [],
-      "durationMs": 16707,
+      "durationMs": 7347,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Pilsner_Urquell_2-PANT.JPG"
+    },
+    {
+      "id": "holdout-sarsi-can-v22-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-sarsi-can-v22-en",
+        "sourceId": "holdout-sarsi-can-v22",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Single prepackaged sarsaparilla soft drink can",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 6091,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Fnnsarsi.JPG"
+    },
+    {
+      "id": "holdout-pocari-bottle-in-hand-v22-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-pocari-bottle-in-hand-v22-en",
+        "sourceId": "holdout-pocari-bottle-in-hand-v22",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Pocari Sweat ion supply drink in a plastic bottle",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 6228,
+      "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Pocari_Sweat_500ml_plastic_bottle_(53489565431).jpg"
+    },
+    {
+      "id": "holdout-short-coffee-can-v22-en",
+      "mode": "image",
+      "locale": "en",
+      "partition": "regression",
+      "expected": {
+        "id": "holdout-short-coffee-can-v22-en",
+        "sourceId": "holdout-short-coffee-can-v22",
+        "locale": "en",
+        "channel": "return_point",
+        "status": "recyclable",
+        "partition": "regression",
+        "nextAction": "return_container",
+        "requiredExactText": [
+          "S$0.10"
+        ]
+      },
+      "actual": {
+        "item": "Sangaria Quality Coffee Black canned coffee",
+        "status": "recyclable",
+        "confidence": 0.98,
+        "channel": "return_point",
+        "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
+        "preparation": [
+          "Ensure the container is empty",
+          "Keep Deposit Mark and barcode intact",
+          "Insert one container at a time",
+          "Tap SimplyGo EZ-Link or scan DBS PayLah! QR"
+        ],
+        "tip": "S$0.10 per container",
+        "next_action": {
+          "type": "return_container",
+          "channel": "return_point",
+          "title": "Return it for S$0.10 if it has the Deposit Mark",
+          "instruction": "If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), empty it, keep it uncrushed with the barcode intact, and bring it to a Return Point.",
+          "qualification": "The Return Point scans the barcode to decide whether to accept it. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin."
+        }
+      },
+      "assertions": [],
+      "durationMs": 6654,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Can_of_Sangaria_Quality_Coffee_Black.png"
     },
     {
@@ -4491,20 +4491,20 @@
         "partition": "regression"
       },
       "actual": {
-        "item": "Tiger Lager Beer glass bottle",
+        "item": "Tiger lager beer glass bottle",
         "status": "recyclable",
         "confidence": 0.99,
         "channel": "blue_bin",
-        "reason": "This is one intact, uncontaminated glass beer bottle. Glass beverage bottles are not eligible for Return Points and should be recycled in the blue bin when empty, clean and dry.",
+        "reason": "The label identifies it as lager beer in a single intact brown glass bottle. Glass beverage bottles are not eligible for Return Point and should be recycled in the blue bin when clean and dry.",
         "preparation": [
           "Empty any remaining beer.",
           "Rinse the bottle and let it dry.",
           "Place it in the blue recycling bin."
         ],
-        "tip": "No BCRS deposit refund applies to this glass bottle."
+        "tip": "Glass bottles are not accepted for the S$0.10 beverage container deposit refund."
       },
       "assertions": [],
-      "durationMs": 16943,
+      "durationMs": 8157,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Tiger_Beer_Phuket_Thailand.jpg"
     },
     {
@@ -4521,20 +4521,19 @@
         "partition": "regression"
       },
       "actual": {
-        "item": "Oatly oat milk carton (946 ml)",
+        "item": "Oatly Barista Edition oat milk carton (946ml)",
         "status": "recyclable",
         "confidence": 0.99,
         "channel": "blue_bin",
-        "reason": "This is a single prepackaged oat milk drink in a 946 ml composite carton. Beverage cartons are excluded from the deposit-return channel but are recyclable in Singapore's blue bin when clean and dry.",
+        "reason": "This is a single prepackaged oat milk carton. Beverage cartons are excluded from the Return Point deposit scheme, but empty, clean and dry cartons are recyclable in the blue bin.",
         "preparation": [
-          "Empty all contents.",
+          "Empty all remaining oat milk.",
           "Rinse the carton and let it dry.",
-          "Flatten it if possible and place it in the blue bin."
-        ],
-        "tip": "Beverage cartons are not accepted for the S$0.10 container deposit refund."
+          "Flatten it before placing it in the blue bin."
+        ]
       },
       "assertions": [],
-      "durationMs": 19494,
+      "durationMs": 6291,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Oatly_Barista_Edition_1.jpg"
     },
     {
@@ -4551,19 +4550,20 @@
         "partition": "regression"
       },
       "actual": {
-        "item": "Dove Intense Repair Nourishing Shampoo plastic bottle, 80ml",
+        "item": "Dove Intense Repair Nourishing Shampoo bottle (80 ml)",
         "status": "recyclable",
         "confidence": 0.99,
         "channel": "blue_bin",
-        "reason": "This is a non-beverage shampoo bottle. Shampoo bottles are accepted in the blue bin once empty, rinsed and dry.",
+        "reason": "This is a plastic shampoo bottle, not a prepackaged drink container. Empty shampoo bottles are recyclable in the blue bin once rinsed, clean and dry.",
         "preparation": [
-          "Empty out any remaining shampoo.",
-          "Rinse the bottle and let it dry.",
-          "Place it in the blue recycling bin."
-        ]
+          "Use up or empty the shampoo.",
+          "Rinse the bottle to remove residue.",
+          "Let it dry and put it in the blue recycling bin."
+        ],
+        "tip": "The blue plastic cap can be reattached before recycling."
       },
       "assertions": [],
-      "durationMs": 13031,
+      "durationMs": 9322,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Dove_shampoo_bottle.jpg"
     },
     {
@@ -4580,20 +4580,20 @@
         "partition": "regression"
       },
       "actual": {
-        "item": "250ml Fit Fresh drink carton (Tetra Pak)",
+        "item": "250ml FitFresh Tetra Pak beverage carton",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 0.99,
         "channel": "blue_bin",
-        "reason": "This is a single 250ml prepackaged drink in a Tetra Pak carton. Drink cartons are excluded from the container deposit scheme but are recyclable in Singapore's blue bin when empty, clean and dry.",
+        "reason": "This is a single 250ml prepackaged drink in a composite Tetra Pak carton. Beverage cartons are excluded from the Return Point scheme but are accepted in the blue bin when clean and dry.",
         "preparation": [
           "Empty the carton completely.",
           "Rinse it and let it dry.",
-          "Place it in the blue recycling bin."
+          "Flatten it if possible before placing it in the blue bin."
         ],
-        "tip": "Flatten the carton to save space in the bin."
+        "tip": "The printed nutrition panel states one 250ml serving per package."
       },
       "assertions": [],
-      "durationMs": 16779,
+      "durationMs": 6913,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Tetra_Brik_by_Tetra_Pak.jpg"
     },
     {
@@ -4610,20 +4610,19 @@
         "partition": "regression"
       },
       "actual": {
-        "item": "Pile of used household batteries, including AA and AAA batteries",
+        "item": "Assorted used household batteries, including AA, AAA, C, D and 9V batteries",
         "status": "special_handling",
         "confidence": 0.99,
         "channel": "ewaste_battery",
-        "reason": "Used household batteries such as AA and AAA cells are accepted at designated household battery collection points. They must not go into the blue recycling bin or general waste.",
+        "reason": "These are standalone household batteries accepted by designated battery collection points, not blue-bin recyclables.",
         "preparation": [
-          "Keep batteries dry and separate them from other recyclables.",
-          "Tape exposed terminals, especially on 9V, lithium and rechargeable batteries, to prevent short circuits.",
-          "Take them to a designated household battery recycling collection point."
+          "Take them to a designated household battery collection point.",
+          "Tape the terminals of lithium or 9V batteries and keep damaged or leaking batteries separate in a sealed bag."
         ],
-        "tip": "Leaking or swollen batteries should be handled carefully and kept away from heat; do not pierce or dismantle them."
+        "tip": "Do not place batteries in the blue recycling bin or general waste bin."
       },
       "assertions": [],
-      "durationMs": 39533,
+      "durationMs": 7124,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Used_batteries.jpg"
     },
     {
@@ -4644,15 +4643,15 @@
         "status": "special_handling",
         "confidence": 0.99,
         "channel": "lighting",
-        "reason": "All used bulbs, including incandescent bulbs, should go to dedicated lighting collection rather than the blue bin or general waste.",
+        "reason": "All used bulbs and tubes, including incandescent bulbs, should go through used lighting collection rather than the blue bin or general waste.",
         "preparation": [
-          "Switch off and let the bulb cool before removing it.",
-          "Handle it carefully to avoid breakage and take it to a used-lighting collection point."
+          "Handle the bulb carefully and keep it intact.",
+          "Take it to a used lighting collection point."
         ],
-        "tip": "If it breaks, ventilate the area and carefully contain the fragments; do not place loose broken glass in the blue bin."
+        "tip": "Do not place the bulb in the blue recycling bin."
       },
       "assertions": [],
-      "durationMs": 15961,
+      "durationMs": 5852,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Gluehlampe_01_KMJ.jpg"
     },
     {
@@ -4663,26 +4662,27 @@
       "expected": {
         "id": "nonbeverage-shattered-phone-en",
         "sourceId": "nonbeverage-shattered-phone",
+        "expectedItemKind": "ict_equipment",
         "locale": "en",
         "channel": "ewaste",
         "status": "special_handling",
         "partition": "regression"
       },
       "actual": {
-        "item": "Smartphone with a shattered screen",
+        "item": "Smartphone with a severely cracked screen",
         "status": "special_handling",
         "confidence": 0.99,
         "channel": "ewaste",
-        "reason": "A mobile phone is regulated ICT e-waste and should go to an e-waste collection point, even when badly damaged.",
+        "reason": "A mobile phone is regulated ICT e-waste, even when broken; its installed battery should remain inside the device.",
         "preparation": [
-          "Handle the shattered glass carefully and place the phone in a protective bag or box for transport.",
+          "Handle the cracked glass carefully and avoid pressing on any swollen or damaged battery.",
           "Back up and erase personal data if the phone can still be operated safely.",
-          "Do not dismantle the phone or remove its battery; take it to a designated e-waste collection point."
+          "Keep the battery installed and take the phone to a designated e-waste collection point."
         ],
-        "tip": "If the battery is swollen, hot or leaking, avoid charging or handling it unnecessarily and seek advice from the e-waste collector."
+        "tip": "Do not place the phone or its battery in the blue recycling bin."
       },
       "assertions": [],
-      "durationMs": 23246,
+      "durationMs": 7400,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Samsung_Galaxy_S2_shattered_screen.jpg"
     },
     {
@@ -4705,12 +4705,11 @@
         "channel": "general_waste",
         "reason": "Tissue paper is not recyclable in Singapore and should be disposed of as general waste.",
         "preparation": [
-          "Place it in a general waste bin."
-        ],
-        "tip": "Do not put tissue paper in the blue recycling bin, even if it appears clean."
+          "Place the tissue paper in the general waste bin."
+        ]
       },
       "assertions": [],
-      "durationMs": 18399,
+      "durationMs": 4720,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Used_tissue_paper_on_the_ground.jpg"
     },
     {
@@ -4731,15 +4730,14 @@
         "status": "special_handling",
         "confidence": 0.99,
         "channel": "bulky_waste",
-        "reason": "This is a mattress, which is too large for household recycling bins and is not accepted in the blue bin. Arrange bulky-item removal through your Town Council, building management, or a licensed waste collector.",
+        "reason": "A mattress is too large for household bins and requires bulky-item disposal; leaving it in a public area is illegal dumping.",
         "preparation": [
-          "Contact your Town Council, building management, or retailer to arrange bulky-item collection.",
-          "Move the mattress only as instructed for collection; do not leave it in a public area."
-        ],
-        "tip": "Dumping a mattress beside a public path is illegal dumping. A replacement-mattress retailer may offer removal of the old one."
+          "Arrange removal through your Town Council, building management or a licensed waste collector.",
+          "Keep it off public land and follow the collector's handling instructions."
+        ]
       },
       "assertions": [],
-      "durationMs": 17046,
+      "durationMs": 7515,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Mattress_dumped_next_to_Marsh_Road_-_geograph.org.uk_-_4238834.jpg"
     },
     {
@@ -4756,20 +4754,19 @@
         "partition": "regression"
       },
       "actual": {
-        "item": "Assorted clothing and trousers",
+        "item": "Assorted shirts, jackets and trousers",
         "status": "recyclable",
-        "confidence": 0.99,
+        "confidence": 0.98,
         "channel": "textile",
-        "reason": "The image shows shirts, trousers and other garments. Clean, dry and reusable clothing belongs in dedicated textile collection.",
+        "reason": "These appear to be clean, reusable clothes, which are accepted by dedicated textile collection points in Singapore.",
         "preparation": [
-          "Empty all pockets and remove non-textile accessories.",
-          "Ensure the garments are clean and dry.",
-          "Bag them securely and take them to a textile collection point."
+          "Ensure the clothes are clean and dry.",
+          "Bag them securely and take them to a dedicated textile collection point."
         ],
-        "tip": "Wearable garments can also be donated directly for reuse."
+        "tip": "Clothes in good condition can also be donated directly for reuse."
       },
       "assertions": [],
-      "durationMs": 18765,
+      "durationMs": 6804,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Hanging_shirts_and_jackets_(Unsplash).jpg"
     },
     {
@@ -4786,19 +4783,19 @@
         "partition": "regression"
       },
       "actual": {
-        "item": "一批衣物（衬衫、牛仔裤等）",
+        "item": "多件衣物（衬衫、夹克和长裤）",
         "status": "recyclable",
-        "confidence": 0.97,
+        "confidence": 0.98,
         "channel": "textile",
-        "reason": "图中为多件衣物，未见明显污渍、破损、潮湿或霉斑；干净、干燥且可重复使用的衣物应通过专门的纺织品回收渠道处理。",
+        "reason": "图中是外观完好、可重复使用的衣物，应交由专门的纺织品回收渠道，而不是蓝箱。",
         "preparation": [
-          "确认衣物干净、干燥，无霉斑或严重污渍",
-          "将衣物打包后投放至专门的纺织品回收点"
+          "先清洗并彻底晾干",
+          "将干净、可重复使用的衣物送到纺织品回收点"
         ],
-        "tip": "若衣物状况良好，也可直接捐赠给有需要的人或慈善机构。"
+        "tip": "状况良好的衣物也可考虑直接捐赠。严重污渍、破损、潮湿或发霉的纺织品应作一般垃圾处理。"
       },
       "assertions": [],
-      "durationMs": 15325,
+      "durationMs": 7737,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Hanging_shirts_and_jackets_(Unsplash).jpg"
     },
     {
@@ -4840,7 +4837,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 15088,
+      "durationMs": 6252,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:An_opened_can_of_diet_pepsi_sitting_on_a_table.jpg"
     },
     {
@@ -4861,7 +4858,7 @@
         ]
       },
       "actual": {
-        "item": "Plastic bottle of Hong Kong milk tea (310ml)",
+        "item": "310ml plastic bottle of prepackaged Hong Kong milk tea",
         "status": "recyclable",
         "confidence": 0.98,
         "channel": "return_point",
@@ -4882,7 +4879,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 18569,
+      "durationMs": 6502,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:HK_drink_%E9%B4%BB%E7%A6%8F%E5%A0%82_Hung_Fook_Tong_Hong_Kong_Style_MilkTea_plastic_bottle_green_November_2020_SS2_01.jpg"
     },
     {
@@ -4903,9 +4900,9 @@
         ]
       },
       "actual": {
-        "item": "Pepsi Max No Sugar soft drink can",
+        "item": "Pepsi Max No Sugar metal drink can",
         "status": "recyclable",
-        "confidence": 0.97,
+        "confidence": 0.98,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -4924,7 +4921,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 16514,
+      "durationMs": 6860,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Pepsi_Max_can.jpg"
     },
     {
@@ -4935,6 +4932,7 @@
       "expected": {
         "id": "holdout-cracked-phone-screen-v23-en",
         "sourceId": "holdout-cracked-phone-screen-v23",
+        "expectedItemKind": "ict_equipment",
         "locale": "en",
         "channel": "ewaste",
         "status": "special_handling",
@@ -4945,16 +4943,16 @@
         "status": "special_handling",
         "confidence": 0.99,
         "channel": "ewaste",
-        "reason": "A mobile phone is regulated ICT e-waste, even when its screen is damaged. It should go to an e-waste collection point rather than a blue bin or general waste.",
+        "reason": "A smartphone is regulated ICT e-waste, even when its screen is damaged.",
         "preparation": [
-          "Handle carefully to avoid cuts from the cracked glass.",
-          "Back up your data, sign out of accounts, and erase personal information if the phone still works.",
-          "Take the phone, with its battery still installed, to a designated e-waste collection point."
+          "Handle the cracked glass carefully and avoid touching loose shards.",
+          "Back up your data, sign out of accounts and factory-reset the phone if possible.",
+          "Remove the SIM and memory cards, then take the phone to a regulated e-waste collection point."
         ],
-        "tip": "If only the screen is damaged, consider repairing it for continued use before recycling."
+        "tip": "Keep the battery installed; do not dismantle the phone or place it in the blue recycling bin."
       },
       "assertions": [],
-      "durationMs": 14276,
+      "durationMs": 9111,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Smartphone_cracked_screen.jpg"
     },
     {
@@ -4971,19 +4969,19 @@
         "partition": "regression"
       },
       "actual": {
-        "item": "Compact fluorescent lamp (CFL) bulb",
+        "item": "Compact fluorescent lamp (CFL bulb)",
         "status": "special_handling",
         "confidence": 0.99,
         "channel": "lighting",
-        "reason": "This is a used CFL bulb, identifiable by its fluorescent U-shaped tubes and screw base. All used bulbs and tubes require dedicated lighting collection, not blue-bin recycling.",
+        "reason": "The printed 8W rating and U-shaped fluorescent tubes identify this as a CFL bulb. All used bulbs and tubes, including CFLs, require lighting collection rather than blue-bin recycling.",
         "preparation": [
-          "Keep the bulb intact and handle it carefully to avoid breakage.",
-          "Take it to a designated used-lighting collection point; do not place it in the blue recycling bin."
+          "Switch off and let the bulb cool before removing it.",
+          "Handle it carefully to avoid breakage and take it to a designated lighting collection point."
         ],
-        "tip": "CFLs contain a small amount of mercury, so avoid breaking the glass tubes."
+        "tip": "CFLs contain a small amount of mercury, so do not put them in the blue bin or general waste."
       },
       "assertions": [],
-      "durationMs": 24078,
+      "durationMs": 8159,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Energiesparlampe_01a.jpg"
     },
     {
@@ -5004,7 +5002,7 @@
         ]
       },
       "actual": {
-        "item": "Plastic bottled water",
+        "item": "Clear plastic bottled water",
         "status": "recyclable",
         "confidence": 0.97,
         "channel": "return_point",
@@ -5025,7 +5023,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 17157,
+      "durationMs": 6690,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Plastic_Water_Bottle.jpg"
     },
     {
@@ -5046,9 +5044,9 @@
         ]
       },
       "actual": {
-        "item": "Diet Sierra Mist lemon-lime soda can (355 ml)",
+        "item": "Diet Sierra Mist lemon-lime soda can (355ml)",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 0.99,
         "channel": "return_point",
         "reason": "This kind of drink container is in the deposit scheme. If you bought it in Singapore and it carries the Deposit Mark (10¢ SG RETURN), return it at a Return Point for S$0.10; the machine scans the barcode to decide. Without the Deposit Mark, or if bought outside Singapore, rinse it and put it in the blue recycling bin.",
         "preparation": [
@@ -5067,7 +5065,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 17118,
+      "durationMs": 6174,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Can_of_Diet_Sierra_Mist_lemon-lime_soda,_2011.jpg"
     },
     {
@@ -5088,7 +5086,7 @@
         ]
       },
       "actual": {
-        "item": "Canada Dry Ginger Ale metal drink can",
+        "item": "Canada Dry Ginger Ale can",
         "status": "recyclable",
         "confidence": 0.98,
         "channel": "return_point",
@@ -5109,7 +5107,7 @@
         }
       },
       "assertions": [],
-      "durationMs": 13562,
+      "durationMs": 5621,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Canada_Dry_ginger_ale_can.jpg"
     },
     {
@@ -5130,15 +5128,15 @@
         "status": "not_recyclable",
         "confidence": 0.99,
         "channel": "general_waste",
-        "reason": "Disposable face masks are not accepted in Singapore's blue recycling bins and should be disposed of as general waste.",
+        "reason": "Disposable face masks are not recyclable through Singapore's household recycling channels and belong in general waste.",
         "preparation": [
-          "Place the mask in a bag if practical",
-          "Dispose of it in a general waste bin"
+          "Place the mask in a bag if practical, then put it in a general waste bin.",
+          "Wash your hands after handling it."
         ],
-        "tip": "Avoid direct contact with discarded masks and wash your hands after handling them."
+        "tip": "Do not place face masks in the blue recycling bin."
       },
       "assertions": [],
-      "durationMs": 19055,
+      "durationMs": 8586,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Discarded_face_mask_along_the_pavement_in_Clarendon.jpg"
     },
     {
@@ -5155,20 +5153,20 @@
         "partition": "holdout"
       },
       "actual": {
-        "item": "75cl glass Buckfast Tonic Wine bottle",
+        "item": "Buckfast Tonic Wine glass bottle (75cl)",
         "status": "recyclable",
-        "confidence": 0.99,
+        "confidence": 0.98,
         "channel": "blue_bin",
-        "reason": "This is a single intact glass beverage bottle. Glass drink bottles are not eligible for the Return Point and can be recycled in the blue bin when clean and dry.",
+        "reason": "This is a single intact, uncontaminated 75cl glass beverage bottle. Glass drink bottles are excluded from the BCRS Return Point scheme but can be recycled in the blue bin when clean and dry.",
         "preparation": [
           "Empty any remaining contents.",
           "Rinse the bottle and let it dry.",
           "Place it in the blue recycling bin."
         ],
-        "tip": "The printed 75cl capacity is within 150ml-3L, but glass containers are excluded from the beverage container return scheme."
+        "tip": "Do not take this glass bottle to a BCRS Return Point; only eligible plastic and metal drink containers are accepted there."
       },
       "assertions": [],
-      "durationMs": 14659,
+      "durationMs": 8351,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Photo_of_an_empty_bottle_of_Buckfast_Tonic_Wine.JPG"
     },
     {
@@ -5185,20 +5183,20 @@
         "partition": "holdout"
       },
       "actual": {
-        "item": "Empty corrugated cardboard box",
+        "item": "Cardboard box",
         "status": "recyclable",
-        "confidence": 0.98,
+        "confidence": 0.99,
         "channel": "blue_bin",
-        "reason": "The clean, dry cardboard box is accepted as paper recycling in Singapore's blue bins.",
+        "reason": "This is a clean, dry cardboard box, which is accepted as paper packaging in Singapore's blue recycling bins.",
         "preparation": [
-          "Remove any non-paper contents or packaging.",
-          "Ensure the box is clean and dry.",
-          "Flatten the box to save space before placing it in the blue bin."
+          "Remove any non-paper contents and packaging.",
+          "Flatten the box.",
+          "Keep it clean and dry."
         ],
-        "tip": "Reuse the box for storage or moving if it is still sturdy."
+        "tip": "Remove plastic tape where practical; if the cardboard becomes greasy or heavily soiled, dispose of it as general waste."
       },
       "assertions": [],
-      "durationMs": 12172,
+      "durationMs": 5306,
       "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Box.agr.jpg"
     }
   ]

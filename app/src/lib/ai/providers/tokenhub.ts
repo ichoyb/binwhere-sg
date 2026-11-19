@@ -11,6 +11,9 @@ import type { Locale } from '@/lib/i18n/types';
 import { logEvent } from '@/lib/telemetry';
 import { z } from 'zod';
 import {
+  ItemKindSchema,
+  isEwasteItemKind,
+  applyItemKindPolicy,
   BeverageEvidenceSchema,
   BEVERAGE_EVIDENCE_JSON_SCHEMA,
   CHANNEL_STATUS,
@@ -91,6 +94,7 @@ export const STRICT_CLASSIFY_RESPONSE_FORMAT = {
       additionalProperties: false,
       properties: {
         item: { type: 'string', minLength: 1 },
+        item_kind: { type: 'string', enum: ItemKindSchema.options },
         confidence: { type: 'number', minimum: 0, maximum: 1 },
         channel: {
           type: ['string', 'null'],
@@ -112,7 +116,7 @@ export const STRICT_CLASSIFY_RESPONSE_FORMAT = {
         preparation: { type: 'array', items: { type: 'string' } },
         tip: { type: 'string' },
       },
-      required: ['item', 'confidence', 'channel', 'reason', 'preparation', 'tip'],
+      required: ['item', 'item_kind', 'confidence', 'channel', 'reason', 'preparation', 'tip'],
     },
   },
 } as const;
@@ -366,20 +370,26 @@ export class TokenHubProvider implements ClassifyProvider {
     }
 
     let result: ClassifyResult;
+    let itemKind: z.infer<typeof ItemKindSchema>;
     let evidence: z.infer<typeof BeverageEvidenceSchema>;
     try {
       const resultSchema = this.options.validateResultSemantics
         ? ClassifyResultSchema
         : ClassifyResultShapeSchema;
       const raw: unknown = JSON.parse(jsonMatch[0]);
-      const parsed = resultSchema.parse(withDerivedStatus(raw));
+      const { item_kind, ...classification } = withDerivedStatus(raw) as Record<string, unknown>;
+      itemKind = ItemKindSchema.parse(item_kind);
+      const parsed = resultSchema.parse(classification);
+      if (parsed.channel === 'ewaste' && !isEwasteItemKind(itemKind)) {
+        throw new Error('ewaste requires an electronic waste item_kind');
+      }
       const policySafe = this.options.enforceNotSurePolicy
         ? enforceNotSurePolicy(parsed, locale)
         : parsed;
       if (!this.options.nextActions) {
-        return this.options.ensureBcrsRefund
+        return applyItemKindPolicy(this.options.ensureBcrsRefund
           ? ensureBcrsRefundText(policySafe, locale)
-          : policySafe;
+          : policySafe, itemKind, locale);
       }
       evidence = BeverageEvidenceSchema.parse((raw as { beverage_evidence: unknown }).beverage_evidence);
       result = policySafe;
@@ -397,9 +407,9 @@ export class TokenHubProvider implements ClassifyProvider {
       locale,
       request.image ? 'image' : 'text',
     );
-    return ClassifyResultSchema.parse(this.options.ensureBcrsRefund
+    return ClassifyResultSchema.parse(applyItemKindPolicy(this.options.ensureBcrsRefund
       ? ensureBcrsRefundText(decided, locale)
-      : decided);
+      : decided, itemKind, locale));
   }
 }
 

@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { ItemKindSchema, isEwasteItemKind, type ItemKind } from '../item-kind';
+import { isDonationItemKind } from '../donation-mapping';
 import type { ClassifyResult } from './classify';
 import type { Locale } from '../i18n/types';
 import { ClassifyResultSchema } from './classify';
@@ -67,6 +69,15 @@ export const NearbyQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(20).default(5),
   radius: z.coerce.number().min(0.1).max(5).default(1),
   acceptedItem: z.string().trim().min(1).max(100).optional(),
+  itemKind: ItemKindSchema.optional(),
+}).superRefine((input, ctx) => {
+  if (input.itemKind === undefined) return;
+  if (input.acceptedItem !== undefined || !(
+    (input.channel === 'ewaste' && isEwasteItemKind(input.itemKind))
+    || (input.channel === 'donation' && isDonationItemKind(input.itemKind))
+  )) {
+    ctx.addIssue({ code: 'custom', path: ['itemKind'], message: 'itemKind must match the channel and cannot accompany acceptedItem' });
+  }
 });
 
 export type NearbyQuery = z.infer<typeof NearbyQuerySchema>;
@@ -77,6 +88,7 @@ export interface NearbyQueryInput {
   limit?: number;
   radius?: number;
   acceptedItem?: string;
+  itemKind?: ItemKind;
 }
 
 export const NearbyPointSchema = z.object({

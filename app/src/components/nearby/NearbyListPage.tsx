@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { getDestinationChannel } from '@binwhere/core';
+import { getResultDestinationQuery } from '@binwhere/core';
 import dynamic from 'next/dynamic';
 import type { ClassifyResult } from '@/lib/ai/types';
 import type { Locale } from '@/lib/i18n/types';
 import { t, type TranslationKey } from '@/lib/i18n';
-import { CHANNEL_TO_NEARBY, getFriendlyApiError } from '@/lib/constants';
+import { getFriendlyApiError } from '@/lib/constants';
 import BackButton from '@/components/shared/BackButton';
 import RecyclingPointCard from '@/components/shared/RecyclingPointCard';
 import ViewToggle from '@/components/nearby/ViewToggle';
@@ -23,9 +23,9 @@ interface NearbyListPageProps {
 
 export default function NearbyListPage({ result, userLocation, onBack, locale }: NearbyListPageProps) {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  const destination = getDestinationChannel(result);
-  const nearbyChannel = destination ? CHANNEL_TO_NEARBY[destination] : null;
-  const { points, loading, error } = useNearby(userLocation, nearbyChannel);
+  const query = getResultDestinationQuery(result);
+  const destination = query?.channel ?? null;
+  const { points, loading, error } = useNearby(userLocation, destination, undefined, query?.itemKind);
 
   const channelLabel = destination ? t(locale, `channel.${destination}` as TranslationKey) : '';
 

@@ -1,32 +1,15 @@
 import {
-  mapItemToAcceptedItem,
-  type ClassifyResult, type NearbyChannel, type NearbyPoint, type PointsLayer,
+  getResultDestinationQuery, type ResultDestinationQuery,
+  type ClassifyResult, type NearbyPoint, type PointsLayer,
 } from '@binwhere/core';
 import { fetchNearby } from '../api/client';
 import type { UserLocation } from '../hooks/useGeolocation';
 
-export interface DestinationQuery {
-  channel: NearbyChannel;
-  acceptedItem?: string;
-}
+export type DestinationQuery = ResultDestinationQuery;
 
 export function automaticDestination(result: ClassifyResult): DestinationQuery | null {
-  switch (result.channel) {
-    case 'return_point':
-    case 'ewaste':
-    case 'ewaste_battery':
-    case 'lighting':
-    case 'textile':
-      return { channel: result.channel };
-    case 'donation': {
-      const acceptedItem = mapItemToAcceptedItem(result.item);
-      return { channel: 'donation', ...(acceptedItem ? { acceptedItem } : {}) };
-    }
-    case 'bulky_waste':
-      return { channel: 'donation', acceptedItem: 'Furniture' };
-    default:
-      return null;
-  }
+  if (result.channel === 'blue_bin' || result.channel === null) return null;
+  return getResultDestinationQuery(result);
 }
 
 export function answerInitiallyExpanded(result: ClassifyResult): boolean {
@@ -46,7 +29,7 @@ export function destinationLayers(query: DestinationQuery): PointsLayer[] {
     case 'textile':
       return [query.channel];
     case 'donation':
-      return query.acceptedItem ? [] : ['donation'];
+      return query.itemKind ? [] : ['donation'];
     case 'ewaste':
     case 'ewaste_battery':
     case 'lighting':

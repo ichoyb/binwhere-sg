@@ -2,15 +2,27 @@
 
 评测代码位于 `app/scripts/classify-eval/`。运行环境为 Node v24.22.1。
 离线 CI 不调用模型；付费运行必须先获得用户批准。本文的生产身份对应
-2026-11-06 实际部署的 `b533bdb96f6042311013b95a36031957b6096681`。
+2026-11-19 冻结前锚定的实际部署版本 `f52c26d3513da4465090a43a90e15b81ebbe1b46`。
+owner 确认该部署代码树对应 `redesign` 提交 `5cc45df1c37c5eaed2e55002925e14841527daa4`，
+相较本槽基线 `b76a57dcda728269c145a892a1f45e1a275d0c5a` 仅改 `docs/` 下六份 runbook；
+`app/`、`packages/`、`mobile/` 及本文件均相同。生产常量按该基线内容固定，不在导入时查询部署状态。
 
 ## 当前真值与判定
 
-`sg-consumer-text-v4` 有 86 条文字用例；`sg-bcrs-v24` 有 32 条四语文字用例，
+`sg-consumer-text-v5` 有 109 条文字用例；`sg-bcrs-v25` 有 32 条四语文字用例，
 以及来自 75 个 SHA-256 固定来源的 79 条图片用例。其中 6 条是 holdout：代码和标签冻结后于
 2026-11-06 选定并逐像素复核，3 张回收点（立在玻璃盘上的塑料水瓶、浮木上印 355 mL 的罐、
 白底上的单个罐），3 张非回收点（路面上用过的口罩、草地上印 75cl 的空玻璃酒瓶、空纸箱）。
 其余都是 regression。
+
+识别模型必须报告语言无关的 `item_kind`。core 在饮料、玻璃和不确定策略后，仅为
+`ewaste` 保留四种电子废物种类，为 `donation` 保留 NEA 快照中 13 类对应种类。
+大家电和代步工具使用应用拥有的回收说明与 ALBA 预约链接，不自动查点或画路线；
+ICT 和不受管制小电器分别查 ict 和 non_regulated，捐赠按逗号拆分后的类别原文精确匹配。
+文字用例的 `locale` 默认为 en；新增 13 条电子废物和 10 条捐赠用例，中文、马来文和
+泰米尔文各 3 条捐赠用例。新增捐赠覆盖书、文具、玩具、婴童物品、家用品和三种电器。
+有 `expectedItemKind` 的候选必须同时答对种类才算 exact；生产不输出种类，生产评分
+保持渠道和状态判定，种类门槛只评候选。两张碎屏手机图片增加 ICT 种类真值，图片数不变。
 
 判定依据：2026-10-01 起，在新加坡销售的受管制饮料都必须印押金标志和条码，是否退款由回收机
 扫码比对 BCRS Ltd 的注册库决定，境外购买的即使印有标志也不退。所以照片里拍没拍到标志既不必要
@@ -51,6 +63,8 @@ check 动作都不提蓝色回收箱。四语应用文案均绑定在候选摘�
 | 项目 | 要求 |
 | --- | --- |
 | 普通文字 exact / channel / status | 各至少 90% |
+| 候选文字 item_kind 准确率 | 有种类真值的用例至少 90% |
+| 大家电或代步工具被答成 ICT 或其他小电器 | 0 次 |
 | 每个普通文字渠道 | 至少 80% |
 | 普通文字非必要不确定 | 少于 15% |
 | 安全渠道误导 | 错误非 null 渠道为 0 |
@@ -70,7 +84,7 @@ check 动作都不提蓝色回收箱。四语应用文案均绑定在候选摘�
 
 ## 实际部署版本的生产基线
 
-`PRODUCTION_PROFILE` 只记录 `production-b533bdb` 及完整 revision。
+`PRODUCTION_PROFILE` 只记录 `production-f52c26d` 及完整 revision。
 候选运行器拒绝 `--profile=production`，生产执行入口为 `baseline:production`。
 worktree 路径是必填参数，没有默认值。worktree 在仓库外，由 owner 创建并安装自己的依赖。
 部署版本原样运行，不打补丁：已跟踪文件不得有任何改动，超时也按部署值。
@@ -83,7 +97,7 @@ id、模式、locale、文字、来源 SHA-256、裁切，绝对路径不进入�
 脚本没有主干运行时模块导入；用 worktree 的 `createRequire` 锚点解析 sharp、app/core 各自的
 zod、`@binwhere/core`、provider、TokenHub 和 image-security。
 模块的实际相对路径、sharp 0.35.5、两份 zod 4.6.7、部署版本的文字和图片模型名
-（`hy3`、`kimi-k3.1-pro`）以及 Node 版本均记入输出。
+（`hy3`、`kimi-k3.1-pro-highspeed`）以及 Node 版本均记入输出。
 
 生产路由使用默认 `new TokenHubProvider()`，没有评测选项。主干完整序列化当前
 `DEFAULT_EXECUTION_POLICY`；子进程先比对它与部署版本默认策略的字段集合，再作为
@@ -106,17 +120,21 @@ zod、`@binwhere/core`、provider、TokenHub 和 image-security。
 CI 不读取旧 git 对象、worktree 或 fixture 缓存，不比较受 git 配置影响的 diff 文本。
 两份 lockfile 常量分别是：
 
-- app：`92d6ddaedafafb51665044a5e02b527822983d7785adc33dd2079ed82a7acede`
+- app：`bf0322b3908bd32f8c203b79f4f5876b7ceff3ad42a04710bf7ee4cbb8f8de6d`
 - core：`465985793d7630bd7ff724bbbcaf67423611c8037a90c06b221eff8550b95941`
 
 `production-validation.ts` 是两个候选运行器及 `release-evidence.ts` 共用的校验模块。
 `production-scoring.ts` 使用当前真值、`checkBcrsResult` 和候选共用的 `scoring.ts` 评分。
 付费有效结果写为以下两份文件，沿用原有字段并新增 `source`：
 
-- `baselines/sg-consumer-text-v4/production-b533bdb.json`
-- `baselines/sg-bcrs-v24/production-b533bdb.json`
+- `baselines/sg-consumer-text-v5/production-f52c26d.json`
+- `baselines/sg-bcrs-v25/production-f52c26d.json`
 
 `timestamp` 永远取子进程结束时间。重新评分旧原始输出不会刷新 24 小时窗口。
+第二段使用 owner 提供的原始输出重评分并写入上述两份基线后，删除
+`baselines/sg-consumer-text-v4/production-b533bdb.json` 和
+`baselines/sg-bcrs-v24/production-b533bdb.json`，再记录发布证据。
+
 原始输出包含运行时核对、清单摘要、模块路径、版本、模型名、执行策略、图片处理记录、
 是否空跑、开始结束时间，以及每条用例的结果或错误和耗时。
 
@@ -135,8 +153,8 @@ CI 不读取旧 git 对象、worktree 或 fixture 缓存，不比较受 git 配�
 
 ```bash
 REPO=$(git rev-parse --show-toplevel)
-WT=/private/tmp/binwhere-production-b533bdb
-git -C "$REPO" worktree add --detach "$WT" b533bdb96f6042311013b95a36031957b6096681
+WT=/private/tmp/binwhere-production-f52c26d
+git -C "$REPO" worktree add --detach "$WT" f52c26d3513da4465090a43a90e15b81ebbe1b46
 (cd "$WT/packages/core" && npm ci) && (cd "$WT/app" && npm ci)
 ```
 
@@ -144,6 +162,8 @@ git -C "$REPO" worktree add --detach "$WT" b533bdb96f6042311013b95a36031957b6096
 
 ```bash
 npm run fixtures:prefetch
+TOKENHUB_API_KEY=OFFLINE_DRY_RUN_NO_PAID_CALLS npm run test:classify -- --profile=candidate --dry-run
+TOKENHUB_API_KEY=OFFLINE_DRY_RUN_NO_PAID_CALLS npm run test:classify:bcrs -- --profile=candidate --dry-run
 RUN=$(mktemp -d /private/tmp/binwhere-baseline-run.XXXXXX)
 npm run baseline:production -- --worktree="$WT" --output="$RUN/dry-run.json" --dry-run
 npm run baseline:score -- --raw="$RUN/dry-run.json"

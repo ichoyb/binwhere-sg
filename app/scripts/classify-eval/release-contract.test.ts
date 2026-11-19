@@ -7,6 +7,8 @@ import ta from '../../../packages/core/src/i18n/locales/ta';
 import { TOKENHUB_TEXT_REQUEST, TOKENHUB_VISION_REQUEST } from '../../src/lib/ai/providers/tokenhub';
 import { CANDIDATE_PROFILE, profileDigest } from './baseline-profiles';
 import { BCRS_BASELINE, BCRS_IMAGE_CASES, BCRS_IMAGE_SOURCES, BCRS_TEXT_CASES } from './bcrs-test-cases';
+import { TEST_ITEMS } from './test-items';
+import { evaluateReport, scoreTextResults } from './scoring';
 import { checkBcrsResult, hasMinimumBcrsHoldouts, mentionsBlueBin } from './release-contract';
 
 const yes = { channel: 'return_point' } as const;
@@ -19,7 +21,7 @@ assert.equal(hasMinimumBcrsHoldouts([yes, no, no, no]), false);
 assert.equal(hasMinimumBcrsHoldouts([yes, yes, yes, no]), false);
 assert.equal(hasMinimumBcrsHoldouts([yes, yes, no, glass]), true);
 assert.equal(hasMinimumBcrsHoldouts([yes, yes, no, no, glass]), true);
-assert.equal(BCRS_BASELINE.id, 'sg-bcrs-v24');
+assert.equal(BCRS_BASELINE.id, 'sg-bcrs-v25');
 assert.equal(BCRS_IMAGE_CASES.length, 79);
 assert.equal(BCRS_TEXT_CASES.length, 32);
 assert.equal(new Set(BCRS_IMAGE_CASES.map(({ id }) => id)).size, 79);
@@ -59,6 +61,8 @@ for (const id of ['crushed-aluminium-can', 'five-litre-water-bottle', 'hundred-m
 
 // Mutating each emitted application string must invalidate the actual candidate digest.
 const keys = [
+  'ewaste.collection.title', 'ewaste.collection.reason', 'ewaste.collection.step1',
+  'ewaste.collection.step2', 'ewaste.collection.step3', 'ewaste.collection.book',
   'action.return.title', 'action.return.instruction', 'action.return.qualification',
   'action.check.title', 'action.check.instruction', 'action.check.qualification',
   'classify.cleanGlassReason', 'classify.cleanGlassPreparation',
@@ -152,3 +156,33 @@ for (const locale of ['en', 'zh', 'ms', 'ta'] as const) {
   assert.ok(checkBcrsResult(unknown, { ...uncertain, next_action: { ...uncertain.next_action!, type: 'try_return_point' } }, locale, true).length > 0);
 }
 console.log('PASS v23 truth invariants, minimum holdouts, 80 copy bindings and four-language release assertions');
+
+const exactTextResults = TEST_ITEMS.map((item) => ({
+  item, result: { item: item.text, channel: item.expectedChannel, status: item.expectedStatus,
+    confidence: 0.9, reason: 'Test', item_kind: item.expectedItemKind } as ClassifyResult,
+  channelMatch: true, statusMatch: true, durationMs: 1,
+}));
+const exactReport = scoreTextResults(exactTextResults);
+assert.equal(exactReport.exactAccuracy, 1);
+assert.equal(exactReport.itemKindAccuracy, 1);
+assert.equal(evaluateReport(exactReport).releaseEligible, true);
+const wrongKindResults = structuredClone(exactTextResults);
+wrongKindResults.find((entry) => entry.item.expectedItemKind === 'large_household_appliance')!.result.item_kind = 'ict_equipment';
+const wrongKindReport = scoreTextResults(wrongKindResults);
+assert.equal(wrongKindReport.exactAccuracy, (TEST_ITEMS.length - 1) / TEST_ITEMS.length);
+assert.equal(wrongKindReport.unsafeItemKindDiversions, 1);
+assert.equal(evaluateReport(wrongKindReport).itemKindPass, true);
+assert.equal(evaluateReport(wrongKindReport).itemKindSafetyPass, false);
+for (const entry of wrongKindResults) delete entry.result.item_kind;
+const missingKindReport = scoreTextResults(wrongKindResults);
+assert.equal(missingKindReport.itemKindAccuracy, 0);
+assert.equal(evaluateReport(missingKindReport).itemKindPass, false);
+const productionReport = scoreTextResults(wrongKindResults, false);
+assert.equal(productionReport.exactAccuracy, 1);
+assert.equal(evaluateReport(productionReport, false).releaseEligible, true);
+const phone = BCRS_IMAGE_CASES.find((entry) => entry.sourceId === 'nonbeverage-shattered-phone')!;
+const phoneAnswer: ClassifyResult = { item: 'broken phone', channel: 'ewaste', status: 'special_handling', confidence: 0.9,
+  reason: 'This phone is broken and goes to an e-waste collection point.' };
+assert.ok(checkBcrsResult(phone, phoneAnswer, 'en', true).some((failure) => failure.includes('item_kind')));
+assert.deepEqual(checkBcrsResult(phone, { ...phoneAnswer, item_kind: 'ict_equipment' }, 'en', true), []);
+console.log('PASS item-kind exactness, accuracy and zero-unsafe-kind gates; production retains channel/status scoring');

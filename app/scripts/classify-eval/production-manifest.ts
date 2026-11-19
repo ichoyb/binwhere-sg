@@ -22,7 +22,7 @@ export function currentManifestCases(cacheDirectory = CACHE_DIR): ManifestCase[]
   return [
     ...TEST_ITEMS.map((item, index) => ({
       id: `consumer-text-${index + 1}`, suite: 'text' as const, mode: 'text' as const,
-      locale: 'en' as const, text: item.text,
+      locale: item.locale ?? 'en', text: item.text,
     })),
     ...BCRS_TEXT_CASES.map((entry) => ({
       id: entry.id, suite: 'bcrs' as const, mode: 'text' as const, locale: entry.locale, text: entry.text,

@@ -111,7 +111,12 @@ export {
   buildBcrsGuideResult,
 } from './bcrs';
 export type { ReturnPointOpeningHours } from './bcrs';
-export { mapItemToAcceptedItem } from './donation-mapping';
+export { DONATION_CATEGORIES, isDonationItemKind } from './donation-mapping';
+export type { DonationItemKind } from './donation-mapping';
+export { ItemKindSchema, EWASTE_ITEM_KINDS, isEwasteItemKind } from './item-kind';
+export type { ItemKind, EwasteItemKind } from './item-kind';
+export { ALBA_COLLECTION_URL, requiresEwasteCollection, applyItemKindPolicy, getResultDestinationQuery, getResultTitleKey } from './result-routing';
+export type { ResultDestinationQuery } from './result-routing';
 export { ewasteAcceptTranslationKey } from './ewaste';
 export {
   BeverageEvidenceSchema,

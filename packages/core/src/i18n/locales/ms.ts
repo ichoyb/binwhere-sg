@@ -1,6 +1,15 @@
 import type en from './en';
 
 const ms: Record<keyof typeof en, string> = {
+  "ewaste.collection.title": "Atur Kutipan atau Pemulangan kepada Peruncit",
+  "ewaste.collection.reason": "Terlalu besar untuk tong e-sisa, jadi ia dikumpulkan secara berasingan.",
+  "ewaste.collection.step1": "Membeli yang baharu? Peruncit mesti mengambil barangan lama yang sama jenis secara percuma semasa penghantaran.",
+  "ewaste.collection.step2": "Atau tempah kutipan dari rumah oleh ALBA. Ia percuma pada hari bekerja untuk perkakas rumah besar seperti peti sejuk, mesin basuh dan TV.",
+  "ewaste.collection.step3": "Atau bawa ke acara kutipan e-sisa ALBA atau depot ALBA di 20 Tuas Loop.",
+  "ewaste.collection.book": "Tempah Kutipan ALBA",
+  "ewaste.monitor.reason": "Monitor komputer ialah e-sisa ICT terkawal. Bawa ke tong e-sisa jika muat melalui bukaan 50 cm × 25 cm.",
+  "ewaste.monitor.preparation": "Cabut semua kabel",
+  "ewaste.monitor.tip": "Terlalu besar untuk bukaan? Kutipan percuma dari rumah oleh ALBA juga menerima monitor komputer meja.",
   "classify.contaminatedBeveragePreparation": "Masukkan bekas ini ke dalam sampah biasa.",
   "classify.contaminatedBeverageReason": "Kotoran atau sisa yang tidak boleh dibilas menjadikan bekas ini tidak sesuai untuk kitar semula atau bayaran balik.",
   "classify.excludedBeveragePreparation": "Kosongkan dan bilas bekas ini, kemudian masukkan ke dalam tong kitar semula biru.",

@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { ItemKindSchema, isEwasteItemKind } from '../item-kind';
+import { isDonationItemKind } from '../donation-mapping';
 import { LocaleSchema } from '../i18n/types';
 import {
   ChannelTypeSchema,
@@ -54,10 +56,17 @@ export const ClassifyResultShapeSchema = z.object({
   /** Extra tip for the user */
   tip: z.string().trim().optional().transform((v) => (v && v.length > 0 ? v : undefined)),
   next_action: NextActionSchema.optional(),
+  item_kind: ItemKindSchema.optional(),
 });
 
 /** Runtime schema for an internally consistent AI classification result. */
 export const ClassifyResultSchema = ClassifyResultShapeSchema.superRefine((result, ctx) => {
+  if (result.item_kind !== undefined && !(
+    (result.channel === 'ewaste' && isEwasteItemKind(result.item_kind))
+    || (result.channel === 'donation' && isDonationItemKind(result.item_kind))
+  )) {
+    ctx.addIssue({ code: 'custom', path: ['item_kind'], message: 'item_kind must match the disposal channel' });
+  }
   const action = result.next_action;
   if (action && (action.type === 'return_container'
     ? result.status !== 'recyclable' || result.channel !== 'return_point'

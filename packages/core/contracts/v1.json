@@ -124,6 +124,26 @@
             "instruction",
             "qualification"
           ]
+        },
+        "item_kind": {
+          "type": "string",
+          "enum": [
+            "ict_equipment",
+            "large_household_appliance",
+            "electric_mobility_device",
+            "other_electrical",
+            "books",
+            "stationery",
+            "toys",
+            "baby_and_children_items",
+            "household_goods",
+            "furniture",
+            "clothing",
+            "shoes",
+            "bags_and_accessories",
+            "food",
+            "other"
+          ]
         }
       },
       "required": [
@@ -176,6 +196,26 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 100
+        },
+        "itemKind": {
+          "type": "string",
+          "enum": [
+            "ict_equipment",
+            "large_household_appliance",
+            "electric_mobility_device",
+            "other_electrical",
+            "books",
+            "stationery",
+            "toys",
+            "baby_and_children_items",
+            "household_goods",
+            "furniture",
+            "clothing",
+            "shoes",
+            "bags_and_accessories",
+            "food",
+            "other"
+          ]
         }
       },
       "required": [

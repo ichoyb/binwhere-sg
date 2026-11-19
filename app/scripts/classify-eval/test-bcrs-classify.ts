@@ -55,7 +55,7 @@ import {
   checkBcrsResult,
 } from './release-contract';
 
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
+if (!process.argv.includes('--dry-run')) dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
 const RESULTS_DIR = path.join(__dirname, 'results');
 const CALL_SPACING_MS = 1_000;
@@ -245,7 +245,7 @@ async function main() {
   const results: RegressionResult[] = [];
   const truthSetDigest = BCRS_TRUTH_SET_DIGEST;
 
-  if (completeSuite) {
+  if (completeSuite && !process.argv.includes('--dry-run')) {
     assertProductionBaseline();
   }
 
@@ -264,6 +264,15 @@ async function main() {
       `${closestImagePair.rightSourceId} = ${closestImagePair.similarity.toFixed(6)}, ` +
       `limit ${BCRS_GATE_THRESHOLDS.nearDuplicateSimilarityLimit})\n`,
     );
+  }
+
+  if (process.argv.includes('--dry-run')) {
+    console.log(JSON.stringify({ dryRun: true, baseline: BCRS_BASELINE.id, truthSetDigest,
+      completeSuite, total: selected.length, expectedHoldoutTotal, closestImagePair,
+      cases: selected.map((entry) => ({ id: entry.testCase.id, mode: entry.mode,
+        locale: entry.testCase.locale, expectedItemKind: entry.testCase.expectedItemKind })),
+    }, null, 2));
+    return;
   }
 
   for (let index = 0; index < selected.length; index += 1) {

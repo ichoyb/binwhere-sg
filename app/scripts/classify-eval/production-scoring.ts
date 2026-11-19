@@ -21,7 +21,7 @@ export function scoreProductionRaw(raw: ProductionRawOutput) {
     const result = ClassifyResultSchema.parse(entry.result);
     return { item, result, durationMs: entry.durationMs,
       channelMatch: result.channel === item.expectedChannel, statusMatch: result.status === item.expectedStatus };
-  }));
+  }), false);
   const sourceMap = new Map(BCRS_IMAGE_SOURCES.map((source) => [source.id, source]));
   const results = [
     ...BCRS_TEXT_CASES.map((testCase) => ({ mode: 'text' as const, partition: 'regression' as const, testCase })),
@@ -31,7 +31,7 @@ export function scoreProductionRaw(raw: ProductionRawOutput) {
     const actual = ClassifyResultSchema.parse(entry.result);
     return {
       id: testCase.id, mode, locale: testCase.locale, partition, expected: testCase, actual,
-      assertions: checkBcrsResult(testCase, actual, testCase.locale, true), durationMs: entry.durationMs,
+      assertions: checkBcrsResult({ ...testCase, expectedItemKind: undefined }, actual, testCase.locale, true), durationMs: entry.durationMs,
       sourcePageUrl: 'sourceId' in testCase ? sourceMap.get(testCase.sourceId)?.sourcePageUrl : undefined,
     };
   });
@@ -46,7 +46,7 @@ export function scoreProductionRaw(raw: ProductionRawOutput) {
     text: {
       ...common, baseline: TEXT_BASELINE, truthSetDigest: TEXT_TRUTH_SET_DIGEST,
       models: { text: raw.source.models.text }, thresholds: TEXT_GATE_THRESHOLDS, testSetSize: TEST_ITEMS.length,
-      gates: [evaluateReport(report)], reports: [serializeTextReport(report)],
+      gates: [evaluateReport(report, false)], reports: [serializeTextReport(report)],
     },
     bcrs: {
       ...common, runKind: 'complete', baseline: BCRS_BASELINE, truthSetDigest: BCRS_TRUTH_SET_DIGEST,

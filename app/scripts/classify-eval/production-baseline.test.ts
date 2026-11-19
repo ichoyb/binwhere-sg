@@ -8,8 +8,8 @@ import { t, type ClassifyResult, type Locale } from '@binwhere/core';
 
 import { DEFAULT_EXECUTION_POLICY } from '../../src/lib/ai/provider';
 import { PRODUCTION_PROFILE, PRODUCTION_REVISION } from './baseline-profiles';
-import { BCRS_BASELINE, BCRS_IMAGE_CASES, BCRS_IMAGE_SOURCES, BCRS_TEXT_CASES } from './bcrs-test-cases';
-import { TEST_ITEMS, TEXT_BASELINE } from './test-items';
+import { BCRS_IMAGE_CASES, BCRS_IMAGE_SOURCES, BCRS_TEXT_CASES } from './bcrs-test-cases';
+import { TEST_ITEMS } from './test-items';
 import { CURRENT_MANIFEST_DIGEST, currentManifestCases, exportProductionManifest, manifestDigest } from './production-manifest';
 import { PRODUCTION_DEPENDENCIES, PRODUCTION_LOCKFILES, PRODUCTION_MODELS, PRODUCTION_MODULE_PATHS,
   PRODUCTION_NODE_VERSION } from './production-contract';
@@ -90,8 +90,8 @@ const missedHoldout = structuredClone(raw);
 const otherHoldoutId = BCRS_IMAGE_CASES.find((entry) => entry.partition === 'holdout' && entry.channel !== 'return_point')!.id;
 missedHoldout.results.find(({ id }) => id === otherHoldoutId)!.result = answer('return_point', 'recyclable');
 assert.equal(scoreProductionRaw(missedHoldout).bcrs.gate.releaseEligible, false, 'A false return point on a holdout fails the release gate');
-assert.equal(PRODUCTION_PROFILE.id, 'production-b533bdb');
-assert.equal(PRODUCTION_REVISION, 'b533bdb96f6042311013b95a36031957b6096681');
+assert.equal(PRODUCTION_PROFILE.id, 'production-f52c26d');
+assert.equal(PRODUCTION_REVISION, 'f52c26d3513da4465090a43a90e15b81ebbe1b46');
 
 const failures: Array<[string, (value: ProductionRawOutput) => void]> = [
   ['revision', (value) => { value.source.preflight.revision = '0'.repeat(40); }],
@@ -179,15 +179,24 @@ assert.equal(textReport.exactAccuracy, (TEST_ITEMS.length - 1) / TEST_ITEMS.leng
 assert.equal(textReport.unsafeDiversions, 1);
 assert.equal(textReport.perChannel.ewaste.correct, TEST_ITEMS.filter((item) => item.expectedChannel === 'ewaste').length - 1);
 
-// The committed baselines keep every field the scorer writes and the runners and release evidence read.
-const storedBaseline = (set: string) => JSON.parse(
-  readFileSync(join(__dirname, 'baselines', set, `${PRODUCTION_PROFILE.id}.json`), 'utf8'));
-const storedText = storedBaseline(TEXT_BASELINE.id);
-const storedBcrs = storedBaseline(BCRS_BASELINE.id);
-assert.deepEqual(Object.keys(scored.text).sort(), Object.keys(storedText).sort());
-assert.deepEqual(Object.keys(scored.bcrs).sort(), Object.keys(storedBcrs).sort());
-assert.deepEqual(Object.keys(scored.text.reports[0]).sort(), Object.keys(storedText.reports[0]).sort());
-assert.deepEqual(Object.keys(scored.bcrs.gate).sort(), Object.keys(storedBcrs.gate).sort());
+assert.deepEqual(Object.keys(scored.text).sort(), [
+  'timestamp', 'profile', 'source', 'baseline', 'truthSetDigest', 'models', 'thresholds', 'testSetSize', 'gates', 'reports',
+].sort());
+assert.deepEqual(Object.keys(scored.bcrs).sort(), [
+  'timestamp', 'profile', 'source', 'runKind', 'baseline', 'truthSetDigest', 'models', 'policySource',
+  'imagePipeline', 'imageIndependence', 'sources', 'gate', 'results',
+].sort());
+assert.deepEqual(Object.keys(scored.text.reports[0]).sort(), [
+  'provider', 'totalItems', 'channelAccuracy', 'statusAccuracy', 'exactAccuracy', 'itemKindAccuracy',
+  'unsafeItemKindDiversions', 'notSureCount', 'notSureRate', 'perChannel', 'avgConfidence', 'avgDurationMs',
+  'p50DurationMs', 'p95DurationMs', 'errors', 'unsafeDiversions', 'results',
+].sort());
+assert.deepEqual(Object.keys(scored.bcrs.gate).sort(), [
+  'measurementValid', 'releaseEligible', 'completeSuite', 'passed', 'total', 'textPassed', 'textTotal',
+  'imagePassed', 'imageTotal', 'imageExactAccuracy', 'imageReturnPointsFound', 'imageReturnPointTotal',
+  'imageReturnPointRecall', 'holdoutPassed', 'holdoutTotal', 'holdoutSafetyPassed', 'wrongChannelDirections',
+  'falseReturnPoints', 'notSureBlueBinMentions', 'providerErrors', 'thresholds',
+].sort());
 
 // A worker script may not acquire runtime dependencies from this checkout.
 const worker = ts.createSourceFile('production-worker.ts', readFileSync(join(__dirname, 'production-worker.ts'), 'utf8'), ts.ScriptTarget.Latest, true);
@@ -215,6 +224,9 @@ async function checkFiles() {
     assert.equal(written.length, 2);
     assert.ok(written.every((file) => file.endsWith(`/${PRODUCTION_PROFILE.id}.json`)));
     assert.equal(JSON.parse(readFileSync(written[0], 'utf8')).timestamp, raw.source.endedAt);
+    for (const [index, suite] of ['text', 'bcrs'].entries()) {
+      assert.deepEqual(JSON.parse(readFileSync(written[index], 'utf8')), JSON.parse(JSON.stringify(scored[suite as 'text' | 'bcrs'])));
+    }
     const cache = join(directory, 'cache');
     mkdirSync(cache);
     let downloads = 0;

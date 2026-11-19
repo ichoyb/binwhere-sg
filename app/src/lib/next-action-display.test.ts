@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { applyBeverageActionPolicy, t, type ClassifyResult } from '@binwhere/core';
+import { ALBA_COLLECTION_URL, applyItemKindPolicy, getResultDestinationQuery, getResultTitleKey, applyBeverageActionPolicy, t, type ClassifyResult } from '@binwhere/core';
 import ResultPage from '../components/result/ResultPage';
 import NearbyListPage from '../components/nearby/NearbyListPage';
 import { generateShareCard } from './share-card';
@@ -34,6 +34,27 @@ async function main() {
   assert.ok(nearby.includes('BCRS 退还点'));
   assert.ok(nearby.includes(t('zh', 'action.return.qualification')));
   assert.ok(nearby.includes('没有押金标志'));
+
+  for (const locale of ['en', 'zh', 'ms', 'ta'] as const) {
+    for (const kind of ['large_household_appliance', 'electric_mobility_device'] as const) {
+      const collection = applyItemKindPolicy({ item: 'Test', status: 'special_handling', channel: 'ewaste',
+        confidence: 0.9, reason: 'Model reason', tip: 'Model tip' }, kind, locale);
+      const html = renderToStaticMarkup(createElement(ResultPage, {
+        result: collection, capturedImage: null, userLocation: null, locale,
+        onScanAgain() {}, onViewNearby() {}, onRequestLocation() {},
+      }));
+      assert.ok(html.includes(t(locale, 'ewaste.collection.title')));
+      assert.ok(html.includes(t(locale, 'ewaste.collection.reason')));
+      assert.ok(html.includes(t(locale, 'ewaste.collection.book')));
+      assert.ok(html.includes(`href="${ALBA_COLLECTION_URL}"`));
+      assert.ok(html.includes('target="_blank" rel="noopener noreferrer"'));
+      assert.ok(!html.includes('Model tip'));
+      assert.ok(!html.includes(t(locale, 'instruction.ewaste')));
+      assert.ok(!html.includes(t(locale, 'result.gettingLocation')));
+      assert.equal(getResultDestinationQuery(collection), null);
+      assert.equal(getResultTitleKey(collection), 'ewaste.collection.title');
+    }
+  }
 
   // Exercise the actual canvas renderer, recording the visible text it draws.
   const drawn: string[] = [];

@@ -110,6 +110,7 @@ export async function POST(request: NextRequest) {
       mode,
       locale,
       channel: parsedResult.data.channel,
+      kind: parsedResult.data.item_kind,
       status: parsedResult.data.status,
       confidence: parsedResult.data.confidence,
       nextAction: parsedResult.data.next_action?.type,

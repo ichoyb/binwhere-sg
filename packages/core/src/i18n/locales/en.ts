@@ -1,4 +1,13 @@
 const en = {
+  "ewaste.collection.title": "Arrange Pickup or Retailer Take-back",
+  "ewaste.collection.reason": "Too large for e-waste bins, so it is collected separately.",
+  "ewaste.collection.step1": "Buying a new one? The retailer must take the old one away for free when delivering it.",
+  "ewaste.collection.step2": "Or book ALBA's doorstep collection. It is free on weekdays for large household appliances such as fridges, washing machines and TVs.",
+  "ewaste.collection.step3": "Or bring it to an ALBA e-waste collection drive or the ALBA depot at 20 Tuas Loop.",
+  "ewaste.collection.book": "Book ALBA Collection",
+  "ewaste.monitor.reason": "Computer monitors are regulated ICT e-waste. Bring it to an e-waste bin if it fits through the 50 cm × 25 cm slot.",
+  "ewaste.monitor.preparation": "Disconnect all cables",
+  "ewaste.monitor.tip": "Too big for the slot? ALBA's free doorstep collection also takes desktop monitors.",
   "classify.contaminatedBeveragePreparation": "Put it in general waste.",
   "classify.contaminatedBeverageReason": "Dirt or residue that can't be rinsed off makes this container unsuitable for recycling or a refund.",
   "classify.excludedBeveragePreparation": "Empty and rinse it, then put it in the blue recycling bin.",

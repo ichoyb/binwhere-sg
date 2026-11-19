@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { NearbyPoint, NearbyChannel } from '@/types/app';
-import type { ApiErrorCode } from '@binwhere/core';
+import type { ApiErrorCode, ItemKind } from '@binwhere/core';
 import { ApiError, fetchNearby } from '@/lib/api-client';
 
 /** Cache key for deduplication */
-function cacheKey(lat: number, lng: number, channel: string, acceptedItem?: string): string {
-  return `${lat.toFixed(4)},${lng.toFixed(4)},${channel}${acceptedItem ? `,${acceptedItem}` : ''}`;
+function cacheKey(lat: number, lng: number, channel: string, acceptedItem?: string, itemKind?: ItemKind): string {
+  return `${lat.toFixed(4)},${lng.toFixed(4)},${channel}${acceptedItem ? `,accepted:${acceptedItem}` : ''}${itemKind ? `,kind:${itemKind}` : ''}`;
 }
 
 /** Module-level cache to deduplicate across component instances */
@@ -22,6 +22,7 @@ export function useNearby(
   userLocation: { lat: number; lng: number } | null,
   channel: NearbyChannel | null,
   acceptedItem?: string,
+  itemKind?: ItemKind,
 ) {
   const [points, setPoints] = useState<NearbyPoint[]>([]);
   const [loading, setLoading] = useState(false);
@@ -34,7 +35,7 @@ export function useNearby(
       return;
     }
 
-    const key = cacheKey(userLocation.lat, userLocation.lng, channel, acceptedItem);
+    const key = cacheKey(userLocation.lat, userLocation.lng, channel, acceptedItem, itemKind);
 
     // Check cache first
     const cached = nearbyCache.get(key);
@@ -58,6 +59,7 @@ export function useNearby(
       channel,
       limit: 20,
       ...(acceptedItem && { acceptedItem }),
+      ...(itemKind && { itemKind }),
     })
       .then((data) => {
         if (!cancelled) {
@@ -77,7 +79,7 @@ export function useNearby(
       cancelled = true;
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userLocation?.lat, userLocation?.lng, channel, acceptedItem]);
+  }, [userLocation?.lat, userLocation?.lng, channel, acceptedItem, itemKind]);
 
   return { points, loading, error };
 }

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import type { NearbyChannel } from '@binwhere/core';
+import type { NearbyChannel, ItemKind } from '@binwhere/core';
 import { SpatialIndex } from './data-gov/geo/spatial-index';
 import type { GeoJSONFeature } from './data-gov/shared/types';
 import { queryNearby } from './nearby';
@@ -17,10 +17,10 @@ function point(id: number, description: string, acceptedItems = ''): GeoJSONFeat
     properties: { OBJECTID: id, DESCRIPTION: description, ACCEPTEDITEMS: acceptedItems } };
 }
 
-function query(features: GeoJSONFeature[], channel: NearbyChannel, limit: number, acceptedItem?: string) {
+function query(features: GeoJSONFeature[], channel: NearbyChannel, limit: number, acceptedItem?: string, itemKind?: ItemKind) {
   const index = new SpatialIndex();
   index.buildFromFeatures(features);
-  return queryNearby(index, { lat: 1.3, lng: 103.8, radius: 1, channel, limit, acceptedItem })
+  return queryNearby(index, { lat: 1.3, lng: 103.8, radius: 1, channel, limit, acceptedItem, itemKind })
     .map(({ properties }) => properties.OBJECTID);
 }
 
@@ -49,3 +49,13 @@ const donations = [
 assert.deepEqual(query(donations, 'donation', 2, 'fUrNiTuRe'), [10, 11]);
 assert.deepEqual(query(donations, 'donation', 2), [1, 2]);
 console.log('PASS donation item filtering precedes limit, while unfiltered donation retains distance order and limit');
+
+for (const [kind, ids] of [
+  ['ict_equipment', [4, 5]], ['other_electrical', [2]],
+  ['large_household_appliance', [5]], ['electric_mobility_device', [5]],
+] as const) {
+  assert.deepEqual(query(ewaste, 'ewaste', 5, undefined, kind), ids);
+}
+assert.deepEqual(query([point(1, '', 'Not Books'), point(2, '', 'Bookshelf'), point(3, '', 'Books, Stationery'),
+  point(4, '', ' books '), point(5, '', 'Books')], 'donation', 2, undefined, 'books'), [3, 5]);
+console.log('PASS every e-waste kind and exact case-sensitive donation category filtering before limit');

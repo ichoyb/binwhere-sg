@@ -1,6 +1,15 @@
 import type en from './en';
 
 const zh: Record<keyof typeof en, string> = {
+  "ewaste.collection.title": "预约上门回收或交商家回收",
+  "ewaste.collection.reason": "体积太大，放不进电子废弃物回收箱，需要另外安排回收。",
+  "ewaste.collection.step1": "如果您要买新的，商家送货时必须免费收走同类旧品。",
+  "ewaste.collection.step2": "也可以预约 ALBA 上门回收；冰箱、洗衣机、电视等大型家电在工作日免费。",
+  "ewaste.collection.step3": "或送到 ALBA 的电子废弃物回收活动，或位于 20 Tuas Loop 的 ALBA 仓库。",
+  "ewaste.collection.book": "预约 ALBA 上门回收",
+  "ewaste.monitor.reason": "电脑显示器属于受管制的 ICT 电子废弃物，能放进 50 × 25 厘米投放口的，可以送到电子废弃物回收箱。",
+  "ewaste.monitor.preparation": "拔掉所有线缆",
+  "ewaste.monitor.tip": "放不进投放口的话，ALBA 免费上门回收也收电脑显示器。",
   "classify.contaminatedBeveragePreparation": "放进一般垃圾。",
   "classify.contaminatedBeverageReason": "容器上有洗不掉的污物，不适合回收，也不能退押金。",
   "classify.excludedBeveragePreparation": "倒空并冲洗后，放进蓝色回收箱。",

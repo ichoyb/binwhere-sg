@@ -42,7 +42,7 @@ import {
 } from './release-contract';
 
 // Load .env from app directory
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
+if (!process.argv.includes('--dry-run')) dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
 interface StoredReport {
   totalItems: number;
@@ -112,7 +112,8 @@ function compareWithProduction(
       const candidate = candidateByText.get(result.text);
       if (!candidate) throw new Error(`Candidate is missing baseline case: ${result.text}`);
       const productionExact = result.channelMatch && result.statusMatch;
-      return productionExact && !(candidate.channelMatch && candidate.statusMatch);
+      const kindMatch = candidate.item.expectedItemKind === undefined || candidate.result?.item_kind === candidate.item.expectedItemKind;
+      return productionExact && !(candidate.channelMatch && candidate.statusMatch && kindMatch);
     })
     .map((result) => result.text);
 
@@ -164,7 +165,7 @@ async function testProvider(
 
     try {
       // Exercise the same deadline, retry and schema boundary used in production.
-      const result = await classifyItem({ text: item.text }, provider, executionPolicy);
+      const result = await classifyItem({ text: item.text, locale: item.locale ?? 'en' }, provider, executionPolicy);
       const duration = Date.now() - startTime;
 
       const channelMatch = result.channel === item.expectedChannel;
@@ -237,6 +238,14 @@ function printReport(report: ProviderReport): void {
 async function main() {
   const profile = selectProfile(parseArg('profile'));
   const truthSetDigest = TEXT_TRUTH_SET_DIGEST;
+  if (process.argv.includes('--dry-run')) {
+    console.log(JSON.stringify({ dryRun: true, baseline: TEXT_BASELINE.id, truthSetDigest,
+      profile: { id: profile.id, revision: profile.revision, digest: profileDigest(profile) },
+      total: TEST_ITEMS.length, kindCases: TEST_ITEMS.filter((item) => item.expectedItemKind).length,
+      cases: TEST_ITEMS.map((item) => ({ text: item.text, locale: item.locale ?? 'en', expectedItemKind: item.expectedItemKind })),
+    }, null, 2));
+    return;
+  }
   const productionBaseline = readProductionBaseline();
 
   console.log(`Classification Accuracy Gate`);
@@ -298,6 +307,8 @@ async function main() {
     console.log(`  Per-channel >=80%:${gate.perChannelPass ? 'PASS' : 'FAIL'}`);
     console.log(`  Not-sure <15%:    ${gate.notSurePass ? 'PASS' : 'FAIL'} (${(report.notSureRate * 100).toFixed(1)}%)`);
     console.log(`  Provider errors:  ${gate.errorsPass ? 'PASS' : 'FAIL'} (${report.errors})`);
+    console.log(`  Item kind >=90%:  ${gate.itemKindPass ? 'PASS' : 'FAIL'} (${(report.itemKindAccuracy * 100).toFixed(1)}%)`);
+    console.log(`  Unsafe kind:      ${gate.itemKindSafetyPass ? 'PASS' : 'FAIL'} (${report.unsafeItemKindDiversions})`);
     console.log(`  Unsafe diversion: ${gate.safetyPass ? 'PASS' : 'FAIL'} (${report.unsafeDiversions})`);
 
     if (!gate.releaseEligible) allPass = false;

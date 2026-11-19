@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  getResultShareText,
+  getResultShareText, getResultTitleKey, requiresEwasteCollection, ALBA_COLLECTION_URL,
   LOW_CONFIDENCE_THRESHOLD, t, type ClassifyResult, type Locale, type NearbyPoint, type TranslationKey,
 } from '@binwhere/core';
 import { GlassPanel } from '../components/Glass';
@@ -14,6 +14,7 @@ import { WalkingRouteDetails } from '../components/WalkingRouteDetails';
 import { useWalkingRoute } from '../hooks/useWalkingRoute';
 import { routeMapData } from '../map/route-data';
 import { answerInitiallyExpanded, automaticDestination, destinationLayers, findDestination, optionalDestination, type DestinationQuery } from '../lib/destination';
+import { openLink } from '../lib/open-link';
 import { reportError } from '../lib/reporting';
 import { destinationCamera, islandCamera } from '../map/camera';
 import { emptyMapData } from '../map/MapLayers';
@@ -68,7 +69,9 @@ export function AnswerScreen({ result, locale, photo, onClose, onScanAgain }: {
   const optional = optionalDestination(result);
   const action = result.next_action;
   const channel = result.channel;
-  const headline = action?.title ?? (channel ? t(locale, `instruction.${channel}` as TranslationKey) : result.reason);
+  const titleKey = getResultTitleKey(result);
+  const headline = action?.title ?? (titleKey ? t(locale, titleKey) : result.reason);
+  const collection = requiresEwasteCollection(result);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => focusAccessibility(headerRef.current));
@@ -269,12 +272,18 @@ export function AnswerScreen({ result, locale, photo, onClose, onScanAgain }: {
                   {result.reason ? <Text style={styles.body}>{result.reason}</Text> : null}
                   {channel ? <View style={styles.section}>
                     <Text style={styles.name} accessibilityRole="header">{t(locale, `channel.${channel}` as TranslationKey)}</Text>
-                    <Text style={styles.body}>{t(locale, `instruction.${channel}` as TranslationKey)}</Text>
+                    <Text style={styles.body}>{titleKey ? t(locale, titleKey) : result.reason}</Text>
                   </View> : null}
                   {channel !== 'return_point' && result.preparation?.length ? <View style={styles.section}>
                     <Text style={styles.name} accessibilityRole="header">{t(locale, 'result.beforeYouGo')}</Text>
                     {result.preparation.map((step, index) => <Text key={index} style={styles.body}>{index + 1}. {step}</Text>)}
                   </View> : null}
+                  {collection ? <Pressable accessibilityRole="link"
+                    accessibilityLabel={t(locale, 'ewaste.collection.book')}
+                    onPress={() => void openLink(ALBA_COLLECTION_URL).catch(reportError)}
+                    style={[styles.button, fontScale > 1 && styles.collectionLink]}>
+                    <Text style={styles.accent}>{t(locale, 'ewaste.collection.book')}</Text>
+                  </Pressable> : null}
                   {channel !== 'return_point' && result.tip ? <Text style={styles.body}>{t(locale, 'result.tip')}{result.tip}</Text> : null}
                 </>}
                 {channel === 'return_point' ? <View style={styles.section}>
@@ -329,6 +338,7 @@ export function AnswerScreen({ result, locale, photo, onClose, onScanAgain }: {
 }
 
 const styles = StyleSheet.create({
+  collectionLink: { alignSelf: 'stretch', width: '100%' },
   scaledActions: { flexDirection: 'column' },
   scaledAction: { flex: 0 },
   card: { position: 'absolute', left: 12, right: 12 },
