@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import type { PointsResponse } from '@binwhere/core';
+import { createExpression } from '@maplibre/maplibre-gl-style-spec';
 import { pointTypes, pointsToGeoJSON } from './points';
 import { pointColors, pointLayers } from './style';
 
@@ -52,3 +53,23 @@ for (const type of pointTypes) {
   assert.ok((core.paint!['circle-color'] as unknown[]).includes(pointColors[type]));
 }
 console.log('PASS layer controls share the point palette and type filters');
+
+assert.deepEqual(pointColors, {
+  blue_bin: '#28b8ff', return_point: '#20ffc0', ewaste: '#ffbf55', textile: '#cd8cff', donation: '#ff83b5',
+});
+for (const [id, neighborhoodOpacity] of [['point-glow', 0.17], ['point-outer-glow', 0.08]] as const) {
+  const layer = pointLayers().find((layer) => layer.id === id)!;
+  const opacity = createExpression(layer.paint!['circle-opacity'], `${id}.circle-opacity`);
+  assert.ok(opacity.result === 'success');
+  for (const zoom of [9, 10, 11, 12]) assert.equal(opacity.value.evaluate({ zoom }), 0);
+  assert.equal(opacity.value.evaluate({ zoom: 13 }), neighborhoodOpacity / 2);
+  for (const zoom of [14, 15, 16]) assert.equal(opacity.value.evaluate({ zoom }), neighborhoodOpacity);
+}
+const core = pointLayers().find((layer) => layer.id === 'point-core')!;
+const radius = createExpression(core.paint!['circle-radius'], 'point-core.circle-radius');
+assert.ok(radius.result === 'success');
+assert.equal(radius.value.evaluate({ zoom: 9 }), 0.45);
+assert.equal(radius.value.evaluate({ zoom: 14 }), 2.95);
+assert.equal(radius.value.evaluate({ zoom: 15 }), 3.4);
+assert.equal(core.paint!['circle-opacity'], 0.95);
+console.log('PASS island halos disappear, cores stay small, and neighborhood point sizes and palette remain unchanged');

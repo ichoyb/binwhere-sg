@@ -11,7 +11,7 @@ import { PRIVACY_POLICY_URL, SUPPORT_EMAIL } from '@binwhere/core';
  * below is the date of the last such change.
  */
 
-const EFFECTIVE_DATE = '19 November 2026';
+const EFFECTIVE_DATE = '20 November 2026';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -177,14 +177,14 @@ export default function PrivacyPage() {
 
       <Section title="Children">
         <p>
-          BinWhere is suitable for all ages and collects no personal information from anyone. It is
-          not directed at children under 13, and we do not knowingly collect personal data from them.
+          BinWhere needs no account and is not directed at children under 13. We do not knowingly
+          collect personal data from children under 13. The sections above describe what we process for every user.
         </p>
       </Section>
 
       <Section title="Your choices">
         <ul className="space-y-2 list-disc pl-5">
-          <li>You can withdraw camera or location access at any time in your device settings. Without location, the app still works; it just cannot list nearby points.</li>
+          <li>You can withdraw camera or location access at any time in your device settings. Without location access, BinWhere still identifies items, and in the iOS app you can choose a Singapore area by hand to find nearby points.</li>
           <li>You can delete your recent results in the app.</li>
           <li>Because we hold nothing that identifies you, we cannot look up or export data about a specific person. If you have a question or a request under Singapore’s Personal Data Protection Act, email us and we will respond.</li>
         </ul>

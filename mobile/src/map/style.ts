@@ -31,8 +31,8 @@ export const mapStyle: StyleSpecification = {
       source: 'basemap',
       'source-layer': 'earth',
       paint: {
-        'fill-color': '#102238',
-        'fill-outline-color': '#2c536e',
+        'fill-color': ['interpolate', ['linear'], ['zoom'], 11, '#1b3447', 14, '#102238'],
+        'fill-outline-color': ['interpolate', ['linear'], ['zoom'], 11, '#4c7183', 14, '#2c536e'],
       },
     },
     {
@@ -52,10 +52,10 @@ export const mapStyle: StyleSpecification = {
       filter: ['==', ['geometry-type'], 'Polygon'],
       maxzoom: 12,
       paint: {
-        'line-color': '#4b9ec5',
-        'line-width': 3,
-        'line-blur': 2,
-        'line-opacity': 0.3,
+        'line-color': '#659bb3',
+        'line-width': 2.4,
+        'line-blur': 0.6,
+        'line-opacity': 0.65,
       },
     },
     {
@@ -241,11 +241,11 @@ export function pointLayers(types: readonly PointsLayer[] = pointTypes): CircleL
   ];
   return [
     { id: 'point-glow', type: 'circle', source: 'points', filter,
-      paint: { 'circle-radius': 3, 'circle-color': color, 'circle-blur': 0.85, 'circle-opacity': 0.17 } },
+      paint: { 'circle-radius': 3, 'circle-color': color, 'circle-blur': 0.85, 'circle-opacity': ['interpolate', ['linear'], ['zoom'], 12, 0, 14, 0.17] } },
     { id: 'point-outer-glow', type: 'circle', source: 'points', filter,
-      paint: { 'circle-radius': 6.5, 'circle-color': color, 'circle-blur': 1, 'circle-opacity': 0.08 } },
+      paint: { 'circle-radius': 6.5, 'circle-color': color, 'circle-blur': 1, 'circle-opacity': ['interpolate', ['linear'], ['zoom'], 12, 0, 14, 0.08] } },
     { id: 'point-core', type: 'circle', source: 'points', filter,
-      paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 0.7, 15, 3.4],
+      paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 0.45, 11, 0.65, 13, 1.1, 14, 2.95, 15, 3.4],
         'circle-color': color, 'circle-opacity': 0.95 } },
   ];
 }

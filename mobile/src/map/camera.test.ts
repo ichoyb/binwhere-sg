@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { destinationCamera, cameraCommand, createMapCamera, islandCamera, type MapCameraTarget } from './camera';
+import { getPlanningArea } from '@binwhere/core';
+import { destinationCamera, cameraCommand, createMapCamera, islandCamera, neighborhoodCamera, type MapCameraTarget } from './camera';
 
 const require = createRequire(import.meta.url);
 const message = 'MapLibre version changed: first verify CameraUpdateItem.m::_makeCamera upstream. If pitch conversion is fixed, remove the zoom compensation before using the new version to avoid double compensation; revalidate bearing and native camera endpoints.';
@@ -13,13 +14,39 @@ assert.equal(require('@maplibre/maplibre-react-native/package.json').version, '1
 
 for (const [width, height] of [[375, 812], [402, 874], [440, 956]]) {
   const view = islandCamera(width, height);
-  assert.equal(view.pitch, 25);
+  assert.equal(view.pitch, 50);
   assert.equal(view.bearing, 0);
-  const longitudeSpan = width * 360 / (512 * 2 ** view.zoom);
-  assert.ok(view.center[0] - longitudeSpan / 2 < 103.59);
-  assert.ok(view.center[0] + longitudeSpan / 2 > 104.1);
+  assert.ok(view.zoom >= 9);
+  const mercatorY = (lat: number) => (1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2;
+  const world = 512 * 2 ** view.zoom;
+  const pitch = view.pitch * Math.PI / 180;
+  const project = ([lng, lat]: readonly [number, number]) => {
+    const north = (mercatorY(view.center[1]) - mercatorY(lat)) * world;
+    const perspective = 1 + north * Math.sin(pitch) / (height * 1.5);
+    const x = width / 2 + (lng - view.center[0]) / 360 * world / perspective;
+    const y = height / 2 - north * Math.cos(pitch) / perspective;
+    return { x, y };
+  };
+  const west = project([103.60571175813675, 1.2556909533995546]);
+  const east = project([104.08850938081741, 1.4008076989623583]);
+  assert.ok(west.x >= 8 - 1e-7);
+  assert.ok(width - east.x >= 8 - 1e-7);
+  assert.ok(Math.abs(west.x - (width - east.x)) <= 0.5);
+  for (const { y } of [west, east, project([view.center[0], 1.15]), project([view.center[0], 1.49])]) {
+    assert.ok(y > 144 && y < height - 240, 'island stays above the home controls');
+  }
+  const anchor = project([view.center[0], 1.32]).y / height;
+  assert.ok(anchor >= 0.5 && anchor <= 0.59 + 1e-7);
+  if (width === 375) assert.ok(anchor < 0.59);
+  else assert.ok(Math.abs(anchor - 0.59) < 1e-7);
 }
-console.log('PASS initial island camera frames the packaged map longitude range on portrait screens');
+console.log('PASS island perspective centers the Tuas and Pulau Tekong land extrema with equal 8pt margins and reserves home controls on every portrait size');
+
+const area = getPlanningArea('AM')!;
+for (const center of [[103.8454, 1.3691], [area.lng, area.lat]] as [number, number][]) {
+  assert.deepEqual(neighborhoodCamera(center), { center, zoom: 16, pitch: 55, bearing: 0 });
+}
+console.log('PASS startup and locate share the same device or manual-area neighborhood camera target');
 
 const target: MapCameraTarget = { center: [103.8448865, 1.368539], zoom: 17.1, pitch: 58, bearing: -24 };
 for (const [pitch, correction] of [[0, 0.9161555200470944], [25, 0.7742285056996883], [45, 0.41615552004709455]]) {

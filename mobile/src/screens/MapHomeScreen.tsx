@@ -11,6 +11,7 @@ import {
   useWindowDimensions, type NativeSyntheticEvent,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { GlassButton, GlassPanel } from '../components/Glass';
 import { AreaPicker } from '../components/AreaPicker';
 import { AreaControls, LocationFailureActions } from '../components/LocationControls';
@@ -24,14 +25,15 @@ import { reportError } from '../lib/reporting';
 import { openLink } from '../lib/open-link';
 import { straightLineKm } from '../lib/straight-line-distance';
 import { MapLayers, emptyMapData, type MapLabels } from '../map/MapLayers';
-import { cameraCommand, createMapCamera, destinationCamera, islandCamera, type MapCameraTarget } from '../map/camera';
+import { cameraCommand, createMapCamera, destinationCamera, islandCamera, neighborhoodCamera, type MapCameraTarget } from '../map/camera';
+import { startupCameraDecision } from '../map/startup-camera';
 import { pointsToGeoJSON, pointTypes, type MapPoints } from '../map/points';
 import { mapStyle, neighborhoodMinZoom, pointColors } from '../map/style';
 import { useAppState } from '../state/AppState';
 import { dark } from '../theme/dark';
 import { SharedMapContext } from '../map/SharedMap';
 import { routeMapData } from '../map/route-data';
-import { locationFailureNotice, sameLocationSelection, type LocationFailure } from '../lib/location-source';
+import { locationFailureNotice, sameLocationSelection, type Coordinates, type LocationFailure } from '../lib/location-source';
 import { announce, focusAccessibility } from '../lib/accessibility';
 import { destinationAnnouncement } from '../lib/accessibility-text';
 
@@ -63,6 +65,9 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
   const noticeLabel = useRef<ComponentRef<typeof Text>>(null);
   const pointOrigin = useRef<ComponentRef<typeof Text>>(null);
   const wasSearchOpen = useRef(searchOpen);
+  const startupLocation = useRef<Coordinates | null>(null);
+  const startupDecided = useRef(false);
+  const userMoved = useRef(false);
   const [ready, setReady] = useState(false);
   const [neighborhood, setNeighborhood] = useState(false);
   const [layersOpen, setLayersOpen] = useState(false);
@@ -156,6 +161,21 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
     else await camera.flyTo(target, durationMs);
   }, [reduceMotion]);
 
+  useEffect(() => {
+    if (!startupLocation.current && origin
+      && (locationSelection.locationSource === 'manual' || locationPermission?.granted)) {
+      startupLocation.current = origin;
+    }
+    const decision = startupCameraDecision({ ready, hasLocation: startupLocation.current !== null,
+      homeVisible, userMoved: userMoved.current, decided: startupDecided.current });
+    if (decision === 'wait') return;
+    startupDecided.current = true;
+    if (decision === 'skip') return;
+    const { lng, lat } = startupLocation.current!;
+    void move(neighborhoodCamera([lng, lat]), 2000)
+      .catch((error) => reportError(error, { operation: 'startup-map-camera' }));
+  }, [ready, origin, homeVisible, locationSelection, locationPermission?.granted, move]);
+
   const moveAndWait = useCallback(async (target: MapCameraTarget, durationMs = 1000) => {
     cameraSettled.current?.();
     await move(target, durationMs);
@@ -218,7 +238,7 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
         setNotice({ kind: 'failed', reason: result.reason, operation: 'locate' });
       } else {
         const next = result.location;
-        await move({ center: [next.lng, next.lat], zoom: 16, pitch: 25, bearing: 0 });
+        await move(neighborhoodCamera([next.lng, next.lat]));
         if (current() && result.kind === 'manual') setNotice({ kind: 'area' });
       }
     } catch (error) {
@@ -255,6 +275,7 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
     const map = mapRef.current!;
     const current = await createMapCamera(map, cameraRef.current!).read();
     if (current.zoom < neighborhoodMinZoom) {
+      userMoved.current = true;
       await move({ ...current, center: nativeEvent.lngLat,
         zoom: Math.min(current.zoom + 2, neighborhoodMinZoom) });
       return;
@@ -270,6 +291,7 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
   const cameraChanged = ({ nativeEvent }: NativeSyntheticEvent<ViewStateChangeEvent>) => {
     setNeighborhood(nativeEvent.zoom >= neighborhoodMinZoom);
     if (nativeEvent.userInteraction) {
+      userMoved.current = true;
       setAttributionExpanded(false);
       if (homeVisible && walking.route.kind !== 'success') { setSelected(null); clearHomeRoute(); }
     }
@@ -385,6 +407,12 @@ export function MapHomeScreen({ locale, onSearch, onCamera, onBcrsEntry, homeVis
       </Map>
       </View>
 
+      {homeVisible ? <LinearGradient pointerEvents="none"
+        accessibilityElementsHidden importantForAccessibility="no-hide-descendants"
+        colors={['rgba(3, 11, 23, 0.78)', 'rgba(3, 11, 23, 0.49226)',
+          'rgba(3, 11, 23, 0.25730)', 'rgba(3, 11, 23, 0.08488)', 'rgba(3, 11, 23, 0)']}
+        locations={[0, 0.25, 0.5, 0.75, 1]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: height * 0.48 }} /> : null}
       {homeVisible ? <>
         <View style={[styles.top, { top: insets.top + dark.gap }]} pointerEvents="box-none">
           <GlassButton label={t(locale, 'bcrs.guideItem')} style={styles.bcrs}
