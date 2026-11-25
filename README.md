@@ -4,7 +4,9 @@
 
 <a id="english"></a>
 
-BinWhere is a recycling guide for Singapore. Snap a photo or type an item, and it tells you where the item goes (the Blue Bin, a BCRS return point for drink containers, e-waste, textile and donation points, or general waste), what to do before you drop it off, and where the nearest drop-off point is.
+BinWhere is an AI recycling guide for Singapore. Snap a photo or type an item, and it tells you where the item goes (the Blue Bin, a BCRS return point for drink containers, e-waste, textile and donation points, or general waste), what to do before you drop it off, and where the nearest drop-off point is.
+
+Answers come from large language models through TokenHub on Tencent Cloud: Tencent's `hy3` for typed items and Moonshot AI's Kimi (`kimi-k3.1-pro-highspeed`) for photos.
 
 - Website: <https://binwhere.sg>
 - iPhone app: [BinWhere on the App Store (Singapore)](https://apps.apple.com/sg/app/binwhere/id6816734145)
@@ -30,7 +32,7 @@ cd packages/core && npm ci
 cd ../../app && npm ci && npm run prebuild && npm run dev
 ```
 
-`npm run prebuild` unpacks the recycling-point snapshot in `app/data/geo-snapshot` without going online. Classifying photos and text calls TokenHub (Tencent Cloud) and needs `TOKENHUB_API_KEY` in `app/.env`.
+`npm run prebuild` unpacks the recycling-point snapshot in `app/data/geo-snapshot` without going online. Classification needs a TokenHub API key, `TOKENHUB_API_KEY`, in `app/.env`.
 
 After the core step, the iPhone app builds with `cd mobile && npm ci && npm run ios` (Xcode and CocoaPods; Expo Go is not supported). It talks to `https://binwhere.sg` by default.
 
@@ -52,7 +54,9 @@ Please report security problems privately; see [SECURITY.md](SECURITY.md).
 
 # BinWhere（中文）
 
-BinWhere 是新加坡的回收指南。拍一张照片或输入物品名称，它会告诉你这件东西该去哪里（蓝色回收桶、饮料容器押金退还点、电子垃圾、旧衣与捐赠点，或一般垃圾），投放前要怎么处理，以及最近的投放点在哪里。
+BinWhere 是新加坡的 AI 回收指南。拍一张照片或输入物品名称，它会告诉你这件东西该去哪里（蓝色回收桶、饮料容器押金退还点、电子垃圾、旧衣与捐赠点，或一般垃圾），投放前要怎么处理，以及最近的投放点在哪里。
+
+回答由腾讯云 TokenHub 上的大语言模型生成：文字用腾讯的 `hy3`，照片用月之暗面的 Kimi（`kimi-k3.1-pro-highspeed`）。
 
 - 网站：<https://binwhere.sg>
 - iPhone App：[App Store（新加坡）上的 BinWhere](https://apps.apple.com/sg/app/binwhere/id6816734145)
@@ -78,7 +82,7 @@ cd packages/core && npm ci
 cd ../../app && npm ci && npm run prebuild && npm run dev
 ```
 
-`npm run prebuild` 只在本地展开 `app/data/geo-snapshot` 中的回收点快照，不联网。照片和文字识别调用腾讯云 TokenHub，需要在 `app/.env` 中设置 `TOKENHUB_API_KEY`。
+`npm run prebuild` 只在本地展开 `app/data/geo-snapshot` 中的回收点快照，不联网。识别需要在 `app/.env` 中设置 TokenHub 的 API key：`TOKENHUB_API_KEY`。
 
 完成 core 那一步后，iPhone App 用 `cd mobile && npm ci && npm run ios` 构建（需要 Xcode 和 CocoaPods，不支持 Expo Go），默认连接 `https://binwhere.sg`。
 
