@@ -1,0 +1,49 @@
+name: Report a problem · 反馈问题
+description: A bug, a wrong answer, or a missing or outdated recycling point · 程序错误、不对的识别结果，或缺失、过时的回收点
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issues here are public. Please leave out personal information and your exact location.
+        这里的 Issue 是公开的，请不要填写个人信息或你的精确位置。
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem? · 问题类型
+      options:
+        - Wrong answer · 识别结果不对
+        - Missing or outdated recycling point · 回收点缺失或过时
+        - Bug in the app or website · App 或网站故障
+        - Other · 其他
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where? · 在哪里
+      options:
+        - Website (binwhere.sg) · 网站
+        - iPhone app · iPhone App
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened? · 发生了什么
+      description: |
+        For a wrong answer: the item you photographed or typed, what BinWhere said and what you expected.
+        识别结果不对时：你拍摄或输入的物品、BinWhere 的回答，以及你认为正确的结果。
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Source or steps · 依据或复现步骤
+      description: |
+        A link to official guidance (for example NEA), the point's address, or steps to reproduce.
+        官方指引的链接（例如 NEA）、回收点地址，或复现步骤。
+  - type: input
+    id: version
+    attributes:
+      label: App version or browser · App 版本或浏览器
+      placeholder: "1.0 (7), iPhone 15 · Safari on macOS"
