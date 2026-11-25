@@ -1,15 +1,7 @@
 name: Deploy Web to Production
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - app/**
-      - packages/core/**
-      - .nvmrc
-      - ops/deploy-web-release.sh
-      - .github/workflows/deploy-web-production.yml
+  # Deploys start only by hand on master, after the owner's go; pushes never deploy.
   workflow_dispatch:
 
 permissions:

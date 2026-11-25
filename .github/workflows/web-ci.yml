@@ -5,6 +5,13 @@ on:
   push:
     branches:
       - master
+    # None of the checks read these paths.
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - 'scripts/**'
   workflow_dispatch:
 
 permissions:
